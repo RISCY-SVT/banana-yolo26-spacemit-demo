@@ -4,6 +4,7 @@ Raw evidence:
 
 ```text
 /data/ncnn-logs/ort-logs/2026-06-29_16-56-34/
+/data/ncnn-logs/ort-logs/2026-06-29_21-43-36/
 ```
 
 ## YOLO26 Float Coverage
@@ -36,6 +37,37 @@ Observed Q/DQ-heavy subgraphs include approximately:
 This means the current blocker is not decode, preprocessing, or CPU INT8
 correctness. It is rt204 EP support for the quantized Conv/Q/DQ pattern emitted
 by manual ONNX Runtime static quantization.
+
+The 2026-06-29 minimization pass narrowed this further:
+
+- toy Conv/Q/DQ/Clip/QLinearConv models pass on rt204;
+- extracted real YOLO26 first-block Q/DQ Conv fails at
+  `/model.0/conv/Conv_token_1`;
+- filtering only the first Conv in a two-Conv extracted block moves the failure
+  to the next Conv;
+- pass filters for `AddQDQPreMinmaxParams` and `QLinearLeaglization` did not
+  avoid the compile failure.
+
+Therefore the current operator blocker is best described as the rt204 compiler
+path for real YOLO26 Q/DQ Conv blocks, not a generic ONNX Q/DQ or Clip parser
+failure.
+
+## YOLO26 INT8 Fallbacks
+
+The smallest correct Q/DQ fallback found so far is:
+
+```bash
+SPACEMIT_EP_DISABLE_OP_TYPE_FILTER=QuantizeLinear;DequantizeLinear;Conv
+```
+
+This keeps semantics correct by pushing the problematic Q/DQ Conv regions away
+from SpaceMIT EP. It is CPU-heavy and should not be treated as an accelerated
+INT8 path.
+
+An end-to-end QOperator Conv+MatMul candidate runs with sane semantics under
+rt204, but raw CPU/EP parity is loose and the dumped EP subgraphs do not prove
+that `QLinearConv` or `QLinearMatMul` are accelerated. Perf smoke was slower
+than FP32. This makes QOperator a separate fallback-gate candidate only.
 
 ## YOLO11 RT204 Signal
 

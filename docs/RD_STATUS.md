@@ -19,8 +19,17 @@ remote.
 - Manual ONNX Runtime static Q/DQ over `Conv`/`MatMul` creates CPU-good INT8
   candidates for both YOLO26 end-to-end `[1,300,6]` and traditional
   `[1,84,8400]` contracts.
-- RT204 SpaceMIT EP currently blocks board INT8: CPU-good Q/DQ candidates fail
-  EP compilation with `output_type not implemented for clip minmax`.
+- RT204 SpaceMIT EP currently blocks accelerated board Q/DQ INT8: CPU-good Q/DQ
+  candidates fail EP compilation with `output_type not implemented for clip
+  minmax`. The minimized failing model is the extracted real YOLO26 first Conv
+  Q/DQ block, not a synthetic toy Conv/QDQ/Clip graph.
+- Provider pass filters do not avoid the compile failure. The smallest correct
+  Q/DQ fallback is
+  `SPACEMIT_EP_DISABLE_OP_TYPE_FILTER=QuantizeLinear;DequantizeLinear;Conv`,
+  which is CPU-heavy and not an accelerated INT8 path.
+- A QOperator e2e Conv+MatMul candidate runs semantically under rt204, but raw
+  CPU/EP parity is loose, offload is not proven for `QLinearConv`/`QLinearMatMul`,
+  and perf smoke is slower than FP32. It needs a separate fallback gate.
 - RT204 YOLO11 direct tensor-probe results are promising for a future separate
   adoption gate, but this R&D repository does not change the frozen YOLO11
   production policy.
@@ -30,10 +39,12 @@ remote.
 ```text
 /data/ncnn-logs/ort-logs/2026-06-29_16-03-40/
 /data/ncnn-logs/ort-logs/2026-06-29_16-56-34/
+/data/ncnn-logs/ort-logs/2026-06-29_21-43-36/
 ```
 
 ## Next Gate
 
-Reduce or rewrite the INT8 Q/DQ pattern so rt204 can compile it, or obtain a
-vendor-supported YOLO26 INT8 quantization recipe for SpacemiT ORT 2.0.4. Keep
-YOLO11 rt204 reevaluation as a separate future adoption gate.
+Package the extracted real YOLO26 Q/DQ Conv repro for vendor/runtime feedback,
+then run a separate QOperator fallback gate only if semantic parity and offload
+coverage can be tightened. Keep YOLO11 rt204 reevaluation as a separate future
+adoption gate.

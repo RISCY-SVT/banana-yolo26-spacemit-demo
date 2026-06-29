@@ -2,14 +2,15 @@
 
 ## Immediate YOLO26 R&D Gate
 
-- Reduce the CPU-good manual ONNX Runtime Q/DQ graph to the smallest failing
-  rt204 EP compile case around the first Conv/Q/DQ region.
-- Test whether an alternate static quantization format, quantizing fewer op
-  types, or excluding the first stem Conv avoids `output_type not implemented
-  for clip minmax` without losing CPU oracle correctness.
-- Ask the runtime vendor whether SpacemiT ORT `2.0.4` supports the ONNX Runtime
-  static Q/DQ Conv/MatMul pattern used by YOLO26, and whether a different
-  quantization recipe is required.
+- Package the extracted `yolo26_first_conv_qdq_output_block.onnx` repro and
+  supporting logs for vendor/runtime feedback. This is the smallest real-graph
+  failure found so far.
+- Ask the runtime vendor whether SpacemiT ORT `2.0.4` supports the real YOLO26
+  ONNX Runtime static Q/DQ Conv pattern and whether the internal `clip minmax`
+  output-type failure has a provider option or model-rewrite workaround.
+- Run a separate QOperator fallback gate only if needed. It must tighten
+  CPU/EP parity, prove or disprove `QLinearConv`/`QLinearMatMul` offload, and
+  explain why smoke latency is slower than FP32.
 
 ## YOLO11 RT204 Follow-Up
 
@@ -23,4 +24,4 @@
 - Do not modify `/data/banana-yolo11-spacemit-demo` from this R&D repo.
 - Do not claim YOLO26 production readiness.
 - Do not attempt INT8 performance claims until SpaceMIT EP executes a
-  CPU-good INT8 candidate.
+  CPU-good INT8 candidate with proven useful offload.

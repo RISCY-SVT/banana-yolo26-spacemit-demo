@@ -4,6 +4,7 @@ Raw evidence:
 
 ```text
 /data/ncnn-logs/ort-logs/2026-06-29_16-56-34/
+/data/ncnn-logs/ort-logs/2026-06-29_21-43-36/
 ```
 
 ## Scope
@@ -81,3 +82,30 @@ Provider filter diagnostics:
 YOLO26 INT8 board EP is blocked by rt204 EP compilation of CPU-good Q/DQ INT8
 subgraphs. The next useful work is a quantization-pattern reduction pass or a
 vendor-supported SpacemiT ORT 2.0.4 YOLO26 INT8 recipe.
+
+## 2026-06-29 Q/DQ Blocker Minimization Update
+
+The follow-up minimization pass reduced the blocker to an extracted real YOLO26
+first Conv Q/DQ block:
+
+```text
+yolo26_first_conv_qdq_output_block.onnx
+/model.0/conv/Conv_token_1
+output_type not implemented for clip minmax
+```
+
+Synthetic toy Conv/Q/DQ/Clip/QLinearConv models pass on rt204, so the failure is
+not a generic Q/DQ Conv rejection. It is tied to the real YOLO26 quantized Conv
+pattern or the rt204 internal min/max handling path for that pattern.
+
+Bounded export and quantization changes did not remove the blocker. The
+smallest correct Q/DQ fallback is:
+
+```bash
+SPACEMIT_EP_DISABLE_OP_TYPE_FILTER=QuantizeLinear;DequantizeLinear;Conv
+```
+
+That fallback restores semantics through CPU-heavy execution and is not an
+accelerated INT8 benchmark path.
+
+See `docs/YOLO26_QDQ_RT204_BLOCKER_MINIMIZATION.md` for the detailed decision.

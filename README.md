@@ -28,11 +28,22 @@ workspace.
 - Current RT204 result: SpacemiT ORT `2.0.4` runs the latest YOLO26 640
   end-to-end and traditional FP32 ONNX exports on BPI-F3/K1X without SIGILL and
   with CPU-level semantics.
-- INT8 status: CPU oracle is partially fixed, but board EP is blocked.
+- INT8 status: CPU oracle is good for manual ORT Q/DQ and selected QOperator
+  candidates, but board EP is still blocked for accelerated Q/DQ Conv.
   Ultralytics `quantize=8` still collapses confidence/class scores to zero.
   Manual ONNX Runtime static Q/DQ over `Conv`/`MatMul` produces CPU-good INT8
   candidates, but rt204 SpaceMIT EP fails to compile those Q/DQ subgraphs with
   `output_type not implemented for clip minmax`.
+- Minimal Q/DQ blocker: extracted real YOLO26 first-block model
+  `yolo26_first_conv_qdq_output_block.onnx`, containing the first quantized
+  Conv surrounded by Q/DQ, fails at `/model.0/conv/Conv_token_1`. Synthetic
+  toy Conv/QDQ/Clip/QLinearConv models do not reproduce the failure.
+- Smallest correct fallback: force Q/DQ Conv regions to CPU with
+  `SPACEMIT_EP_DISABLE_OP_TYPE_FILTER=QuantizeLinear;DequantizeLinear;Conv`.
+  This restores semantics but is CPU-heavy and is not an accelerated INT8 path.
+- QOperator e2e fallback signal: runs semantically on canonical, bus, and blank
+  oracle images, but raw CPU/EP parity is loose, dumped subgraphs do not prove
+  `QLinearConv`/`QLinearMatMul` offload, and perf smoke is slower than FP32.
 - YOLO11-on-rt204 status: a direct R&D tensor probe against frozen YOLO11
   dynamic640 INT8, vendor320 q.onnx, and FP16 keep_io 640 did not abort and
   produced sane semantics on CPU and SpaceMIT EP. This is only a future adoption
@@ -47,6 +58,7 @@ Detailed R&D reports:
 - `docs/YOLO26_ORACLE_RESULTS.md`
 - `docs/RUNTIME_204_NOTES.md`
 - `docs/YOLO26_INT8_RT204_FORENSICS.md`
+- `docs/YOLO26_QDQ_RT204_BLOCKER_MINIMIZATION.md`
 - `docs/RT204_OPERATOR_SUPPORT.md`
 
 ## Frozen YOLO11 production policy, for comparison only

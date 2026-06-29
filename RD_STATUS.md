@@ -2,7 +2,7 @@
 
 ## Current Stage
 
-`BANANA-YOLO26-INT8-RT204-OPERATOR-SUPPORT-FORENSICS-001`
+`BANANA-YOLO26-INT8-QDQ-RT204-BLOCKER-MINIMIZATION-001`
 
 This is an INT8 calibration/export and rt204 operator-support forensic stage.
 It does not establish a production demo path and it does not modify the frozen
@@ -50,12 +50,18 @@ YOLO11 production repo.
 - Manual ONNX Runtime static Q/DQ over `Conv` and `MatMul` creates CPU-good
   INT8 candidates for both end-to-end `[1,300,6]` and traditional `[1,84,8400]`
   contracts.
-- RT204 SpaceMIT EP does not yet accept those CPU-good INT8 candidates: the EP
-  compiler fails inside the Q/DQ/Conv subgraph with
+- RT204 SpaceMIT EP does not yet accept those CPU-good Q/DQ INT8 candidates:
+  the EP compiler fails inside real YOLO26 Q/DQ Conv blocks with
   `output_type not implemented for clip minmax`.
-- Provider filter diagnostics show that disabling `QuantizeLinear`,
-  `DequantizeLinear`, and `Conv` can recover correctness through CPU-heavy
-  fallback, but that path is slower and is not an accelerated INT8 solution.
+- The failure was minimized to `yolo26_first_conv_qdq_output_block.onnx`, an
+  extracted first Conv/Q/DQ block from the real YOLO26 graph. Synthetic toy
+  Conv/QDQ/Clip/QLinearConv models pass, so the issue is specific to the real
+  quantized Conv pattern or rt204 internal min/max handling for that pattern.
+- Provider pass filters do not fix the blocker. Disabling
+  `QuantizeLinear;DequantizeLinear;Conv` recovers correctness through CPU-heavy
+  fallback, but that is not an accelerated INT8 solution.
+- A QOperator e2e candidate is semantically promising but not proven as an
+  accelerated path and was slower than FP32 in smoke testing.
 - Frozen YOLO11 production models were probed read-only with rt204. The direct
   tensor probe did not abort for dynamic640 INT8, vendor320 q.onnx, or FP16
   keep_io 640 and produced sane semantics; this remains only a future separate
@@ -65,4 +71,5 @@ Raw evidence for this stage:
 
 ```text
 /data/ncnn-logs/ort-logs/2026-06-29_16-56-34/
+/data/ncnn-logs/ort-logs/2026-06-29_21-43-36/
 ```
