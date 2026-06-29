@@ -15,7 +15,6 @@ import onnx
 
 
 def main() -> int:
-def main() -> int:
     """Run the graph inspection CLI.
 
     Returns:

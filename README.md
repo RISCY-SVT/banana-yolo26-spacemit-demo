@@ -1,4 +1,48 @@
-# banana-yolo11-spacemit-demo
+# banana-yolo26-spacemit-demo
+
+Isolated R&D workspace for Banana Pi BPI-F3 / SpacemiT K1X YOLO26
+experiments using SpacemiT ONNX Runtime.
+
+This repository was bootstrapped from the production
+`banana-yolo11-spacemit-demo` release tag and is intentionally separated from
+the frozen YOLO11 production repository. Use this tree only for YOLO26,
+SpacemiT ORT 2.0.4, K1/K3 runtime architecture-selection, API/provider-option,
+decode-contract, and model/runtime compatibility work.
+
+See `TEMPLATE_SOURCE.md` for the exact source tag/commit used to seed this
+workspace.
+
+## R&D status
+
+- Production claims: none.
+- Production remotes: disabled; the inherited remote is renamed to
+  `template-yolo11-gitlab`.
+- Current focus: YOLO26n export/decode contract and SpacemiT ORT 2.0.4 runtime
+  forensics.
+- Frozen production baseline: the YOLO11 project remains
+  `banana-yolo11-spacemit-demo` at tag `production-2026-07-02`.
+
+## Frozen YOLO11 production policy, for comparison only
+
+- Primary image visual: generated `dynamic640` INT8 on `rt201`.
+- Normal camera: generated `dynamic640` INT8 on `rt201`.
+- Fast-live camera: vendor320 INT8 on `rt123`, `320x320` letterbox.
+- Vendor320 trusted visual: `rt123`.
+- Vendor320 low-latency perf: raw `rt201`, perf-only.
+- Vendor320 `rt201` visual workaround: available, SHA256-guarded, non-default.
+- FP16: experimental only, `keep_io` 640 on `rt201`/`rt202b1`.
+- YOLO26n: P2 only in the production repo, not production.
+- Stable `rt202`: staged/tested, not adopted in the production repo.
+
+## Template notes
+
+The remainder of this README still contains template-era YOLO11 operational
+details. Treat them as inherited helper documentation until the R&D code path is
+renamed and narrowed around YOLO26.
+
+---
+
+## Inherited YOLO11 Template Reference
 
 Standalone C++ demo repository for Banana Pi BPI-F3 / SpacemiT K1X using the vendor-tested ONNX Runtime stack:
 
