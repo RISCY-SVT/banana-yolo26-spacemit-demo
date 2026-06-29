@@ -19,8 +19,28 @@ workspace.
   `template-yolo11-gitlab`.
 - Current focus: YOLO26n export/decode contract and SpacemiT ORT 2.0.4 runtime
   forensics.
+- Current CPU oracle: Ultralytics `8.4.82` with the default YOLO26 end-to-end
+  export path. This produces ONNX output shape `[1,300,6]` and sane detections
+  on the canonical photo and standard oracle images.
+- Known bad path: Ultralytics `8.3.233` exports the same public checkpoint as
+  traditional `[1,84,N]` by default, rejects the documented `end2end` argument,
+  and reproduces the previous false `refrigerator` result.
+- Current RT204 result: SpacemiT ORT `2.0.4` runs the latest YOLO26 640
+  end-to-end and traditional FP32 ONNX exports on BPI-F3/K1X without SIGILL and
+  with CPU-level semantics.
+- INT8 status: not feasible yet. `quantize=8` can create a Q/DQ ONNX, but the
+  generated model produced zero detections in the host CPU oracle smoke and the
+  default calibration path attempted to auto-download `coco8`; a task-local
+  calibration recipe is required before any board EP INT8 claim.
 - Frozen production baseline: the YOLO11 project remains
   `banana-yolo11-spacemit-demo` at tag `production-2026-07-02`.
+
+Detailed R&D reports:
+
+- `docs/RD_STATUS.md`
+- `docs/YOLO26_EXPORT_API_FORENSICS.md`
+- `docs/YOLO26_ORACLE_RESULTS.md`
+- `docs/RUNTIME_204_NOTES.md`
 
 ## Frozen YOLO11 production policy, for comparison only
 
