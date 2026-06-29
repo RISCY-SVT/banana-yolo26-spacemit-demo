@@ -2,19 +2,17 @@
 
 ## P0
 
-None.
+None for the isolated YOLO26 R&D repo.
 
 ## P1
 
-None.
+None for the current forensic stage.
 
 ## P2
 
-| Issue | Status | Next step |
-| --- | --- | --- |
-| Stable public `spacemit-ort 2.0.2` adoption | evaluated, not adopted | Keep explicit `rt202` tag for reproduction; do not promote before runtime-side fix/vendor guidance. |
-| YOLO26n 640 INT8 | candidate only | Separate decode/contract and quantization investigation. |
-| Latest-frame/drop-old-frames camera pipeline | deferred | Treat as post-release R&D. |
-| Official public 640 INT8 artifact | deferred | Search after release; do not block current scope. |
-| Public 320 FP16 chain | deferred | Investigate only after release. |
-| Drive mirror remote snapshot | handoff hygiene | Run or verify external Drive mirror sync before final management handoff if not already completed. |
+- YOLO26 INT8 board EP: CPU-good manual Q/DQ candidates fail rt204 SpaceMIT EP
+  compilation with `output_type not implemented for clip minmax`.
+- Ultralytics `quantize=8` preset: Q/DQ exports score-collapse to zero
+  detections in CPU ORT.
+- YOLO11 rt204 adoption: direct tensor-probe smoke is positive, but full
+  production app/camera/perf regression is still required in a separate task.

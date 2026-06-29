@@ -17,8 +17,8 @@ workspace.
 - Production claims: none.
 - Production remotes: disabled; the inherited remote is renamed to
   `template-yolo11-gitlab`.
-- Current focus: YOLO26n export/decode contract and SpacemiT ORT 2.0.4 runtime
-  forensics.
+- Current focus: YOLO26n INT8 calibration/export and SpacemiT ORT 2.0.4
+  operator/runtime forensics.
 - Current CPU oracle: Ultralytics `8.4.82` with the default YOLO26 end-to-end
   export path. This produces ONNX output shape `[1,300,6]` and sane detections
   on the canonical photo and standard oracle images.
@@ -28,10 +28,15 @@ workspace.
 - Current RT204 result: SpacemiT ORT `2.0.4` runs the latest YOLO26 640
   end-to-end and traditional FP32 ONNX exports on BPI-F3/K1X without SIGILL and
   with CPU-level semantics.
-- INT8 status: not feasible yet. `quantize=8` can create a Q/DQ ONNX, but the
-  generated model produced zero detections in the host CPU oracle smoke and the
-  default calibration path attempted to auto-download `coco8`; a task-local
-  calibration recipe is required before any board EP INT8 claim.
+- INT8 status: CPU oracle is partially fixed, but board EP is blocked.
+  Ultralytics `quantize=8` still collapses confidence/class scores to zero.
+  Manual ONNX Runtime static Q/DQ over `Conv`/`MatMul` produces CPU-good INT8
+  candidates, but rt204 SpaceMIT EP fails to compile those Q/DQ subgraphs with
+  `output_type not implemented for clip minmax`.
+- YOLO11-on-rt204 status: a direct R&D tensor probe against frozen YOLO11
+  dynamic640 INT8, vendor320 q.onnx, and FP16 keep_io 640 did not abort and
+  produced sane semantics on CPU and SpaceMIT EP. This is only a future adoption
+  signal; the production YOLO11 policy remains frozen.
 - Frozen production baseline: the YOLO11 project remains
   `banana-yolo11-spacemit-demo` at tag `production-2026-07-02`.
 
@@ -41,6 +46,8 @@ Detailed R&D reports:
 - `docs/YOLO26_EXPORT_API_FORENSICS.md`
 - `docs/YOLO26_ORACLE_RESULTS.md`
 - `docs/RUNTIME_204_NOTES.md`
+- `docs/YOLO26_INT8_RT204_FORENSICS.md`
+- `docs/RT204_OPERATOR_SUPPORT.md`
 
 ## Frozen YOLO11 production policy, for comparison only
 

@@ -1,42 +1,30 @@
-# Daily Status 2026-06-28_18-57-22
+# Daily Status 2026-06-29_16-56-34
 
 ## Goal For This Run
 
-Run Day 3 release-candidate packaging, mirror verification, fresh-clone
-validation, final smoke checks, and handoff readiness without changing the
-frozen production runtime/model policy.
+Investigate YOLO26 INT8 calibration/export behavior and SpacemiT ORT `2.0.4`
+operator support without modifying the frozen YOLO11 production repo.
 
 ## Done
 
-- Verified Day 0 commit `f3f160cd615b02d66a9d3a4b49b1209f8e2df0fb`.
-- Verified Day 1 commit `601b1de5e9c7d77d4b06da465c91175e0dd6d9e2`.
-- Verified Day 2 commit `d202cdf76ce3e0742a665396a6eb157e5b3efe5e`.
-- Confirmed local Day 2 baseline matched `origin/master` at Day 3 start.
-- Verified frozen production scope across README and production docs.
-- Ran build/deploy from the current repository.
-- Verified loader proof for deployed production binaries.
-- Ran final image, normal camera, fast-live, forced-headless, and benchmark
-  smoke checks.
-- Generated release handoff artifacts under `release/`.
-- Fixed the pinned `rt202b1` URL encoding for reproducible fresh clone fetch.
-- Preserved production policy: primary visual remains generated dynamic640 INT8
-  on `rt201`; fast-live remains vendor320 INT8 on `rt123`.
+- Verified the YOLO11 production repo remained at
+  `production-2026-07-02 -> 9c0933be58ee122389d1a43f45f81e80655d6904`.
+- Built task-local oracle and calibration image sets under the YOLO26 repo.
+- Reconfirmed YOLO26 float CPU oracle and rt204 FP32 SpaceMIT EP parity.
+- Proved Ultralytics `quantize=8` Q/DQ exports produce zero detections in CPU
+  ORT for both end-to-end and traditional YOLO26 contracts.
+- Produced manual ONNX Runtime static Q/DQ INT8 candidates that are CPU-good.
+- Proved rt204 SpaceMIT EP currently fails to compile those CPU-good Q/DQ
+  candidates with `output_type not implemented for clip minmax`.
+- Ran provider filter diagnostics and a diagnostic perf smoke.
+- Rechecked frozen YOLO11 models through rt204 direct tensor probe as R&D-only
+  evidence.
 
 ## Evidence
 
 ```text
-/data/ncnn-logs/ort-logs/2026-06-28_18-57-22/
+/data/ncnn-logs/ort-logs/2026-06-29_16-56-34/
 ```
-
-Key artifacts:
-
-- `artifacts/repo_continuity.md`
-- `artifacts/fresh_clone_validation.md`
-- `artifacts/loader_integrity_proof.md`
-- `artifacts/final_smoke_matrix.md`
-- `artifacts/final_performance_smoke.md`
-- `artifacts/docs_doxygen_sanity.md`
-- `release/`
 
 ## Open P0
 
@@ -44,17 +32,16 @@ None.
 
 ## Open P1
 
-None.
+None for this R&D stage.
 
 ## Risks
 
-- Stable `rt202` remains non-adopted because Day 2 showed aborts on current
-  dynamic640, FP16 640, and vendor320 paths.
-- Drive `_sync/latest` anchors were not visible locally during Day 3; an
-  external mirror sync/remote-snapshot verification should run before final
-  management handoff if it has not already run.
+- YOLO26 INT8 acceleration is blocked by rt204 EP Q/DQ/Conv compile support.
+- Manual CPU fallback can recover correctness but is too slow and not an
+  accelerated board INT8 solution.
 
 ## Next Actions
 
-After Day 3 commit/push, run a quick GitHub fresh-clone fetch/build smoke from
-the pushed commit and perform the external Drive mirror verification snapshot.
+- Reduce the Q/DQ failure to a minimal model or obtain a vendor-supported rt204
+  YOLO26 INT8 quantization recipe.
+- Keep YOLO11 rt204 reevaluation separate from production policy.

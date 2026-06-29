@@ -2,10 +2,11 @@
 
 ## Current Stage
 
-`BANANA-YOLO26-EXPORT-API-MISMATCH-FORENSICS-001`
+`BANANA-YOLO26-INT8-RT204-OPERATOR-SUPPORT-FORENSICS-001`
 
-This is an export/API mismatch forensic stage. It does not establish a
-production demo path and it does not modify the frozen YOLO11 production repo.
+This is an INT8 calibration/export and rt204 operator-support forensic stage.
+It does not establish a production demo path and it does not modify the frozen
+YOLO11 production repo.
 
 ## Guardrails
 
@@ -24,6 +25,8 @@ production demo path and it does not modify the frozen YOLO11 production repo.
   `end2end=False`?
 - Does CPU ONNX decode match Ultralytics before EP acceleration?
 - Is INT8 feasible after float semantics are correct?
+- Does rt204 SpaceMIT EP compile and execute CPU-good Q/DQ INT8 models?
+- Does rt204 deserve a future YOLO11 production adoption gate?
 
 ## Current Answers
 
@@ -41,12 +44,25 @@ production demo path and it does not modify the frozen YOLO11 production repo.
   end-to-end and traditional latest exports.
 - RT204 SpaceMIT EP runs latest YOLO26 FP32 640 end-to-end and traditional
   exports on BPI-F3/K1X with sane semantic parity against CPU.
-- INT8 is blocked: `quantize=8` exported a Q/DQ ONNX, but the generated model
-  returned zero detections in host CPU smoke and used an unsuitable default
-  `coco8` auto-calibration path.
+- Ultralytics `quantize=8` remains unsuitable for this checkpoint/graph: every
+  tested Q/DQ export returned zero detections in the CPU oracle, even with
+  task-local small and representative calibration YAML files.
+- Manual ONNX Runtime static Q/DQ over `Conv` and `MatMul` creates CPU-good
+  INT8 candidates for both end-to-end `[1,300,6]` and traditional `[1,84,8400]`
+  contracts.
+- RT204 SpaceMIT EP does not yet accept those CPU-good INT8 candidates: the EP
+  compiler fails inside the Q/DQ/Conv subgraph with
+  `output_type not implemented for clip minmax`.
+- Provider filter diagnostics show that disabling `QuantizeLinear`,
+  `DequantizeLinear`, and `Conv` can recover correctness through CPU-heavy
+  fallback, but that path is slower and is not an accelerated INT8 solution.
+- Frozen YOLO11 production models were probed read-only with rt204. The direct
+  tensor probe did not abort for dynamic640 INT8, vendor320 q.onnx, or FP16
+  keep_io 640 and produced sane semantics; this remains only a future separate
+  adoption-gate signal.
 
 Raw evidence for this stage:
 
 ```text
-/data/ncnn-logs/ort-logs/2026-06-29_16-03-40/
+/data/ncnn-logs/ort-logs/2026-06-29_16-56-34/
 ```

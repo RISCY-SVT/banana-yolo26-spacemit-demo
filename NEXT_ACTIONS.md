@@ -1,31 +1,26 @@
 # Next Actions
 
-## Final Acceptance
+## Immediate YOLO26 R&D Gate
 
-- Push the Day 3 release/handoff commit only after Doxygen, hygiene,
-  fresh-clone recovery, and result-packet export pass.
-- Verify the Google Drive mirror or remote snapshot for:
-  - repository docs
-  - `release/` handoff files
-  - Day 3 log directory `/data/ncnn-logs/ort-logs/2026-06-28_18-57-22/`
-- Use `release/DEMO_COMMANDS.md` for operator smoke commands.
+- Reduce the CPU-good manual ONNX Runtime Q/DQ graph to the smallest failing
+  rt204 EP compile case around the first Conv/Q/DQ region.
+- Test whether an alternate static quantization format, quantizing fewer op
+  types, or excluding the first stem Conv avoids `output_type not implemented
+  for clip minmax` without losing CPU oracle correctness.
+- Ask the runtime vendor whether SpacemiT ORT `2.0.4` supports the ONNX Runtime
+  static Q/DQ Conv/MatMul pattern used by YOLO26, and whether a different
+  quantization recipe is required.
 
-## Release Notes To Preserve
+## YOLO11 RT204 Follow-Up
 
-- Primary production visual branch: generated `dynamic640` INT8 on `rt201`.
-- Normal camera branch: generated `dynamic640` INT8 on `rt201`.
-- Fast-live branch: vendor320 INT8 on `rt123`.
-- Vendor320 raw `rt201`: benchmark/perf-only.
-- Vendor320 `rt201` workaround: SHA256-guarded, non-default.
-- FP16: experimental keep_io 640 coverage only on `rt201`/`rt202b1`.
-- Stable `rt202`: evaluated on Day 2, not adopted.
-- YOLO26n: P2 candidate only.
-- Camera recording remains opt-in.
+- Keep YOLO11 production frozen on the `production-2026-07-02` policy.
+- If rt204 adoption becomes desirable, open a separate YOLO11 gate that reruns
+  the full app, loader, camera, and performance matrix against rt204. The direct
+  tensor-probe signal from this R&D pass is not enough for adoption.
 
-## Post-Release Backlog
+## Preserve
 
-- Stable `rt202` runtime-side abort follow-up with vendor guidance.
-- YOLO26n decode/contract/quantization investigation.
-- Latest-frame/drop-old-frames camera pipeline R&D.
-- Official public 640 INT8 artifact search.
-- Public 320 FP16 chain investigation.
+- Do not modify `/data/banana-yolo11-spacemit-demo` from this R&D repo.
+- Do not claim YOLO26 production readiness.
+- Do not attempt INT8 performance claims until SpaceMIT EP executes a
+  CPU-good INT8 candidate.

@@ -34,3 +34,18 @@ The false `refrigerator` is reproduced by `8.3.233` but not by `8.4.0` or
 
 Conclusion: version mismatch caused wrong behavior and the newer package path
 fixes the CPU oracle.
+
+## INT8 CPU Oracle Update
+
+The latest INT8 pass found two different outcomes:
+
+- Ultralytics `quantize=8` is not an acceptable YOLO26 INT8 oracle path yet.
+  It exported Q/DQ ONNX models for both output contracts, but CPU ORT decoded
+  zero detections on all nonblank oracle images.
+- Manual ONNX Runtime static Q/DQ over `Conv`/`MatMul` produced CPU-good INT8
+  candidates with meaningful detections on canonical, bus, zidane, and camera
+  still inputs, while keeping the blank image clean for the accepted candidates.
+
+The CPU-good manual Q/DQ models are evidence that INT8 is not fundamentally
+blocked at the model/decode layer. The current blocker is rt204 SpaceMIT EP
+compilation of those Q/DQ subgraphs, documented in `docs/RUNTIME_204_NOTES.md`.
