@@ -95,3 +95,19 @@ vendor-ready rt204 repros for CPU-good manual ONNX Runtime Q/DQ models.
 
 The original rt204 vendor repro bundle remains the evidence to send for the
 runtime/compiler issue.
+
+## Legacy Runtime Cross-Check Addendum
+
+The legacy-runtime Q/DQ sanity gate did not find a better accepted runtime for
+the same CPU-good YOLO26 manual Q/DQ candidates.
+
+- `rt201`, `rt202b1`, and `rt204` reproduce the `clip minmax` Q/DQ Conv failure.
+- Stable `rt202` fails the gate with `tcm buffer alloc failed for core id 0`.
+- `rt123` can run the tested Q/DQ models without the visible `clip minmax`
+  message, but full-model SpaceMIT outputs do not match same-runtime CPU hashes
+  and no accepted full-model SpaceMIT subgraph/offload proof was produced.
+- Filter rows remain diagnostic fallback only; they require disabling key INT8
+  ops and do not preserve CPU hash parity.
+
+This reinforces that the actionable path remains vendor/runtime support for the
+Q/DQ Conv compiler issue, not switching to an older runtime.

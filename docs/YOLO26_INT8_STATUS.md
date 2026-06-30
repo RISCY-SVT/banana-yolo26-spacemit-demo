@@ -10,6 +10,7 @@ Raw evidence:
 /data/ncnn-logs/ort-logs/2026-06-30_08-45-33/
 /data/ncnn-logs/ort-logs/2026-06-30_09-38-36/
 /data/ncnn-logs/ort-logs/2026-06-30_14-21-27/
+/data/ncnn-logs/ort-logs/2026-06-30_17-29-25/
 ```
 
 ## Current Decision
@@ -119,3 +120,30 @@ confirmed the closure status only:
   traditional zero-score CPU oracle.
 - XSlim dynamic quantization remains diagnostic only.
 - No INT8 FPS is claimed.
+
+## Legacy Runtime Q/DQ Gate Addendum
+
+The legacy-runtime Q/DQ gate tested `rt123`, `rt201`, `rt202b1`, stable
+`rt202`, and `rt204` against the known CPU-good YOLO26 manual Q/DQ candidates
+plus the tiny and real Q/DQ Conv repros.
+
+Decision:
+
+```text
+LEGACY_RUNTIME_QDQ_CLOSED_NO_ACCELERATED_PATH: yes
+```
+
+Findings:
+
+- `rt201`, `rt202b1`, and `rt204` reproduce the Q/DQ Conv
+  `output_type not implemented for clip minmax` blocker.
+- Stable `rt202` fails this gate with `tcm buffer alloc failed for core id 0`
+  on SpaceMIT EP rows.
+- `rt123` avoids the visible `clip minmax` error on the tested full models, but
+  its full-model SpaceMIT outputs do not match same-runtime CPU hashes and no
+  SpaceMIT subgraph dump was produced for the accepted-looking full row.
+- Diagnostic filter rows are fallback-only: they run only after disabling
+  `QuantizeLinear;DequantizeLinear;Conv` or `MatMul;Add`, do not preserve
+  same-runtime CPU hashes, and are not accepted as accelerated INT8.
+
+See `docs/LEGACY_RUNTIME_QDQ_SANITY.md`.

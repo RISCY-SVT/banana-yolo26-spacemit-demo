@@ -66,6 +66,11 @@ remote.
   dynamic640 INT8 runs on rt204 but is slower than frozen rt201 production, and
   YOLO11 XSlim FP32/FP16 fail or time out after rt204 `YoloDecode` dispatch
   errors.
+- Legacy-runtime Q/DQ sanity testing did not find an accepted YOLO26 INT8
+  acceleration path. `rt201`, `rt202b1`, and `rt204` reproduce the Q/DQ Conv
+  `clip minmax` blocker; stable `rt202` fails with TCM allocation; and `rt123`
+  full-model rows do not preserve same-runtime CPU hash parity. Filter rows are
+  diagnostic fallback only.
 
 ## Raw Evidence
 
@@ -78,6 +83,7 @@ remote.
 /data/ncnn-logs/ort-logs/2026-06-30_08-45-33/
 /data/ncnn-logs/ort-logs/2026-06-30_09-38-36/
 /data/ncnn-logs/ort-logs/2026-06-30_14-21-27/
+/data/ncnn-logs/ort-logs/2026-06-30_17-29-25/
 ```
 
 ## Next Gate
@@ -88,5 +94,7 @@ traditional zero-score reports to the XSlim maintainers. Treat XSlim dynamic
 quantization as a separate compressed/weight-dequantized diagnostic lane unless
 future XSlim releases produce a CPU-good static PTQ model that rt204
 accelerates. Use the FP16 body/head keep-IO artifact as the current best YOLO26
-precision baseline. Keep YOLO11 rt204 reevaluation as a separate future
-adoption gate.
+precision baseline. The next practical stage is FP16 full-I/O compatibility or
+vendor/upstream issue submission; another INT8 runtime search is not justified
+until one of those upstream blockers changes. Keep YOLO11 rt204 reevaluation as
+a separate future adoption gate.

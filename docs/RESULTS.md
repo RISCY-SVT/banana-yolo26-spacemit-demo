@@ -2,6 +2,34 @@
 
 This file is updated after board validation.
 
+## Legacy runtime Q/DQ sanity gate, 2026-06-30
+
+Run directory:
+
+```text
+/data/ncnn-logs/ort-logs/2026-06-30_17-29-25/
+```
+
+This bounded gate checked whether older SpacemiT ORT runtimes could run the
+CPU-good YOLO26 manual Q/DQ INT8 candidates better than `rt204`.
+
+| Runtime | Default Q/DQ result | Filter/fallback result | Decision |
+| --- | --- | --- | --- |
+| `rt123` | Minimal/full rows run, but full outputs do not match same-runtime CPU hash and no full-row subgraph dump was produced. | Same non-parity. | Not accepted. |
+| `rt201` | Fails Q/DQ Conv with `output_type not implemented for clip minmax`. | `QuantizeLinear;DequantizeLinear;Conv` filter runs, but disables key INT8 ops and misses CPU hash parity. | Not accepted. |
+| `rt202b1` | Fails Q/DQ Conv with `clip minmax`. | Filter rows are diagnostic fallback only and miss CPU hash parity. | Not accepted. |
+| `rt202` | Fails with `tcm buffer alloc failed for core id 0`. | Still fails in this gate. | Not accepted. |
+| `rt204` | Control runtime reproduces `clip minmax`. | Same diagnostic fallback-only behavior as previous gates. | Not accepted. |
+
+Decision:
+
+```text
+LEGACY_RUNTIME_QDQ_CLOSED_NO_ACCELERATED_PATH: yes
+```
+
+YOLO26 INT8 board acceleration remains blocked pending runtime/vendor/tooling
+fixes. See `docs/LEGACY_RUNTIME_QDQ_SANITY.md`.
+
 ## YOLO26 FP32/FP16/XSlim effect matrix, 2026-06-30
 
 Run directory:
