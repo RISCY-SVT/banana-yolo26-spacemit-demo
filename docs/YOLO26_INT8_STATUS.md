@@ -11,6 +11,7 @@ Raw evidence:
 /data/ncnn-logs/ort-logs/2026-06-30_09-38-36/
 /data/ncnn-logs/ort-logs/2026-06-30_14-21-27/
 /data/ncnn-logs/ort-logs/2026-06-30_17-29-25/
+/data/ncnn-logs/ort-logs/2026-06-30_18-30-54/
 ```
 
 ## Current Decision
@@ -147,3 +148,22 @@ Findings:
   same-runtime CPU hashes, and are not accepted as accelerated INT8.
 
 See `docs/LEGACY_RUNTIME_QDQ_SANITY.md`.
+
+## FP16 Full-I/O Closeout Addendum
+
+The FP16 full-I/O compatibility gate did not reopen INT8 work. It only
+reconfirmed the closure status:
+
+- Ultralytics `quantize=8` remains CPU-bad.
+- Manual ORT Q/DQ remains CPU-good but blocked by rt204/legacy runtime
+  Q/DQ Conv compile/offload behavior.
+- XSlim static PTQ remains blocked by e2e `ReduceMax` and traditional
+  zero-score CPU oracle issues.
+- XSlim dynamic remains diagnostic only.
+- No INT8 FPS is claimed.
+
+Decision remains:
+
+```text
+YOLO26 INT8 ONNX board acceleration is blocked pending vendor/runtime/tooling fixes.
+```

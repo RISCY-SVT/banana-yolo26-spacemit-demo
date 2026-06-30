@@ -65,6 +65,9 @@ workspace.
   4 threads. It passes CPU and rt204 semantic sanity and reaches
   `383.332266 ms / 2.608703 FPS` app forward-only. See
   `docs/YOLO26_FP16_STATUS.md`.
+- FP16 full-I/O gate: native body-FP16/head-FP32 full-I/O is now accepted for
+  correctness and rt204 execution, but it is not faster than keep-IO FP16. The
+  keep-IO FP16 artifact remains the best local YOLO26 path.
 - INT8 closure: YOLO26 INT8 ONNX board acceleration is blocked pending rt204
   Q/DQ Conv compiler support. See `docs/YOLO26_INT8_STATUS.md` and
   `docs/RT204_QDQ_CONV_VENDOR_BUG_REPORT.md`.
@@ -104,6 +107,8 @@ Detailed R&D reports:
 - `docs/RT204_QDQ_CONV_VENDOR_BUG_REPORT.md`
 - `docs/YOLO26_VS_YOLO11_BASELINE.md`
 - `docs/CUSTOM_IME_INTEGRATION_FEASIBILITY.md`
+- `docs/RD_FINAL_REPORT_EN.md`
+- `docs/RD_FINAL_REPORT_RU.md`
 
 ## Frozen YOLO11 production policy, for comparison only
 

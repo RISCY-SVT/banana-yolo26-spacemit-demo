@@ -2,6 +2,44 @@
 
 This file is updated after board validation.
 
+## YOLO26 FP16 full-I/O compatibility gate and R&D closeout, 2026-06-30
+
+Run directory:
+
+```text
+/data/ncnn-logs/ort-logs/2026-06-30_18-30-54/
+```
+
+This pass accepted YOLO26 native body-FP16/head-FP32 full-I/O as a correct
+rt204 path, but kept the existing keep-IO FP16 artifact as the best local YOLO26
+path because full-I/O is not faster.
+
+| Variant | Runtime | Metric class | Mean latency ms | FPS | Status |
+| --- | --- | --- | ---: | ---: | --- |
+| YOLO26 FP32 e2e 640 | rt204 | `perf_test forward` | 562.934799 | 1.776405 | baseline |
+| YOLO26 FP32 e2e 640 | rt204 | `app forward-only` | 573.281930 | 1.744342 | baseline |
+| YOLO26 FP32 e2e 640 | rt204 | `app full image benchmark` | 523.119274 | 1.911610 | baseline |
+| YOLO26 FP16 keep-IO 640 | rt204 | `perf_test forward` | 379.777774 | 2.633119 | best local FP16 path |
+| YOLO26 FP16 keep-IO 640 | rt204 | `app forward-only` | 383.229967 | 2.609399 | best local FP16 path |
+| YOLO26 FP16 keep-IO 640 | rt204 | `app full image benchmark` | 398.091562 | 2.511985 | best local FP16 path |
+| YOLO26 FP16 full-I/O 640 | rt204 | `perf_test forward` | 380.472087 | 2.628314 | accepted, not faster |
+| YOLO26 FP16 full-I/O 640 | rt204 | `app forward-only` | 388.609808 | 2.573275 | accepted, not faster |
+| YOLO26 FP16 full-I/O 640 | rt204 | `app full image benchmark` | 399.345008 | 2.504100 | accepted, not faster |
+| YOLO26 XSlim FP16 | rt204 | load/app smoke | N/A | N/A | rejected: `/model.23/Concat_6` mixed dtypes |
+
+Decisions:
+
+- YOLO26 full-I/O FP16 accepted: yes.
+- YOLO26 keep-IO FP16 remains best local path: yes.
+- XSlim FP16 recovered: no.
+- YOLO26 INT8 remains blocked pending vendor/upstream fixes: yes.
+- Local R&D decision: `CLOSE_RND_LOCAL_WORK_COMPLETE`.
+
+Final bilingual R&D reports:
+
+- `docs/RD_FINAL_REPORT_EN.md`
+- `docs/RD_FINAL_REPORT_RU.md`
+
 ## Legacy runtime Q/DQ sanity gate, 2026-06-30
 
 Run directory:

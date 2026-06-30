@@ -116,9 +116,28 @@ bool IsGeneratedFp16FullIoModel(const std::string& model_path)
     return name == "yolov11n_320x320.fp16.onnx" || name == "yolov11n_640x640.fp16.onnx";
 }
 
-/** @brief Return one known fixed output tensor shape for the repo-managed FP16 models. */
-std::vector<int64_t> KnownFp16OutputShape(int input_size)
+/** @brief Return whether the path matches one YOLO26 R&D FP16 model with float32 input. */
+bool IsYolo26Fp16FloatInputModel(const std::string& model_path)
 {
+    const std::string name = std::filesystem::path(model_path).filename().string();
+    return name == "yolo26n_640_e2e_native_fp16_body_headfp32_keep_io.onnx" ||
+           name == "yolo26n_640_e2e_native_fp16_keep_io.onnx" ||
+           name == "yolo26n_640_e2e_xslim_fp16.onnx";
+}
+
+/** @brief Return whether the path matches one YOLO26 R&D FP16 model with float16 input. */
+bool IsYolo26Fp16FloatInputOutputModel(const std::string& model_path)
+{
+    const std::string name = std::filesystem::path(model_path).filename().string();
+    return name == "yolo26n_640_e2e_native_fp16_body_headfp32_full_io.onnx" ||
+           name == "yolo26n_640_e2e_native_fp16_full_io.onnx";
+}
+
+/** @brief Return one known fixed output tensor shape for the repo-managed FP16 models. */
+std::vector<int64_t> KnownFp16OutputShape(const std::string& model_path, int input_size)
+{
+    if (IsYolo26Fp16FloatInputModel(model_path) || IsYolo26Fp16FloatInputOutputModel(model_path))
+        return {1, 300, 6};
     if (input_size == 320)
         return {1, 84, 2100};
     if (input_size == 640)
@@ -274,7 +293,10 @@ void Yolo11Detector::ResolveInputShape()
     {
         input_height_ = options_.input_size;
         input_width_ = options_.input_size;
-        if (IsGeneratedFp16KeepIoModel(options_.model) || IsGeneratedFp16FullIoModel(options_.model))
+        if (IsGeneratedFp16KeepIoModel(options_.model) ||
+            IsGeneratedFp16FullIoModel(options_.model) ||
+            IsYolo26Fp16FloatInputModel(options_.model) ||
+            IsYolo26Fp16FloatInputOutputModel(options_.model))
         {
             input_shape_ = {1, 3, options_.input_size, options_.input_size};
             metadata_fallback_applied_ = true;
@@ -320,6 +342,44 @@ void Yolo11Detector::ResolveInputShape()
             if (!metadata_fallback_reason_.empty())
                 metadata_fallback_reason_ += ';';
             metadata_fallback_reason_ += "output-dtype=fp16-by-model-contract";
+        }
+    }
+    else if (IsYolo26Fp16FloatInputModel(options_.model))
+    {
+        if (input_element_type_ != ONNX_TENSOR_ELEMENT_DATA_TYPE_FLOAT)
+        {
+            input_element_type_ = ONNX_TENSOR_ELEMENT_DATA_TYPE_FLOAT;
+            metadata_fallback_applied_ = true;
+            if (!metadata_fallback_reason_.empty())
+                metadata_fallback_reason_ += ';';
+            metadata_fallback_reason_ += "input-dtype=fp32-by-yolo26-fp16-contract";
+        }
+        if (output_element_type_ != ONNX_TENSOR_ELEMENT_DATA_TYPE_FLOAT16)
+        {
+            output_element_type_ = ONNX_TENSOR_ELEMENT_DATA_TYPE_FLOAT16;
+            metadata_fallback_applied_ = true;
+            if (!metadata_fallback_reason_.empty())
+                metadata_fallback_reason_ += ';';
+            metadata_fallback_reason_ += "output-dtype=fp16-by-yolo26-fp16-contract";
+        }
+    }
+    else if (IsYolo26Fp16FloatInputOutputModel(options_.model))
+    {
+        if (input_element_type_ != ONNX_TENSOR_ELEMENT_DATA_TYPE_FLOAT16)
+        {
+            input_element_type_ = ONNX_TENSOR_ELEMENT_DATA_TYPE_FLOAT16;
+            metadata_fallback_applied_ = true;
+            if (!metadata_fallback_reason_.empty())
+                metadata_fallback_reason_ += ';';
+            metadata_fallback_reason_ += "input-dtype=fp16-by-yolo26-full-io-contract";
+        }
+        if (output_element_type_ != ONNX_TENSOR_ELEMENT_DATA_TYPE_FLOAT16)
+        {
+            output_element_type_ = ONNX_TENSOR_ELEMENT_DATA_TYPE_FLOAT16;
+            metadata_fallback_applied_ = true;
+            if (!metadata_fallback_reason_.empty())
+                metadata_fallback_reason_ += ';';
+            metadata_fallback_reason_ += "output-dtype=fp16-by-yolo26-full-io-contract";
         }
     }
     else
@@ -527,10 +587,10 @@ Yolo11Detector::OutputTensor Yolo11Detector::RunSingle(const std::vector<float>&
     }
     catch (const std::exception&)
     {
-        output.shape = KnownFp16OutputShape(options_.input_size);
+        output.shape = KnownFp16OutputShape(options_.model, options_.input_size);
     }
     if (output.shape.empty())
-        output.shape = KnownFp16OutputShape(options_.input_size);
+        output.shape = KnownFp16OutputShape(options_.model, options_.input_size);
     size_t count = 0;
     try
     {

@@ -84,17 +84,24 @@ remote.
 /data/ncnn-logs/ort-logs/2026-06-30_09-38-36/
 /data/ncnn-logs/ort-logs/2026-06-30_14-21-27/
 /data/ncnn-logs/ort-logs/2026-06-30_17-29-25/
+/data/ncnn-logs/ort-logs/2026-06-30_18-30-54/
 ```
 
 ## Next Gate
 
-Use the FP32 package as the baseline for future work. Send the tiny Q/DQ Conv
-`kernel_shape` repro to the runtime vendor, and send the XSlim ReduceMax plus
-traditional zero-score reports to the XSlim maintainers. Treat XSlim dynamic
-quantization as a separate compressed/weight-dequantized diagnostic lane unless
-future XSlim releases produce a CPU-good static PTQ model that rt204
-accelerates. Use the FP16 body/head keep-IO artifact as the current best YOLO26
-precision baseline. The next practical stage is FP16 full-I/O compatibility or
-vendor/upstream issue submission; another INT8 runtime search is not justified
-until one of those upstream blockers changes. Keep YOLO11 rt204 reevaluation as
-a separate future adoption gate.
+The FP16 full-I/O compatibility gate accepted the native
+body-FP16/head-FP32 full-I/O model for correctness and rt204 execution, but it
+did not beat the keep-IO FP16 artifact. Keep the body-FP16/head-FP32 keep-IO
+artifact as the current best YOLO26 local path.
+
+Local R&D is now effectively closed unless a new vendor/runtime/tooling change
+appears. Send the tiny Q/DQ Conv `kernel_shape` repro to the runtime vendor,
+and send the XSlim ReduceMax plus traditional zero-score reports to the XSlim
+maintainers. Another INT8 runtime search is not justified until one of those
+upstream blockers changes. Keep YOLO11 rt204 reevaluation as a separate future
+adoption gate.
+
+Final bilingual reports:
+
+- `docs/RD_FINAL_REPORT_EN.md`
+- `docs/RD_FINAL_REPORT_RU.md`

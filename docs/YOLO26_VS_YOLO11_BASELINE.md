@@ -12,6 +12,7 @@ YOLO26 R&D evidence:
 ```text
 /data/ncnn-logs/ort-logs/2026-06-30_07-56-51/
 /data/ncnn-logs/ort-logs/2026-06-30_14-21-27/
+/data/ncnn-logs/ort-logs/2026-06-30_18-30-54/
 ```
 
 ## Comparison Table
@@ -32,6 +33,9 @@ workloads.
 | YOLO26n FP16 body/head keep-IO | rt204 | `perf_test forward` | 398.610405 | 2.50864 | R&D FP16 baseline |
 | YOLO26n FP16 body/head keep-IO | rt204 | `app forward-only` | 383.332266 | 2.608703 | R&D FP16 baseline |
 | YOLO26n FP16 body/head keep-IO | rt204 | `app full image benchmark` | 399.035502 | 2.506043 | R&D FP16 baseline |
+| YOLO26n FP16 full-I/O body/head | rt204 | `perf_test forward` | 380.472087 | 2.628314 | accepted, but not faster than keep-IO |
+| YOLO26n FP16 full-I/O body/head | rt204 | `app forward-only` | 388.609808 | 2.573275 | accepted, but not faster than keep-IO |
+| YOLO26n FP16 full-I/O body/head | rt204 | `app full image benchmark` | 399.345008 | 2.504100 | accepted, but not faster than keep-IO |
 
 ## R&D-Only YOLO11 rt204 Retrospective
 
@@ -58,6 +62,7 @@ Ultralytics export path to the current YOLO26 end-to-end export/decoder chain.
 ## Decision
 
 YOLO26 FP32 is not currently competitive with YOLO11 production INT8 on K1X.
-YOLO26 FP16 is materially faster than YOLO26 FP32, but it is still slower than
-the frozen YOLO11 production INT8 branch. Frozen YOLO11 remains the production
-deliverable.
+YOLO26 FP16 is materially faster than YOLO26 FP32, and full-I/O FP16 is now
+correct on rt204, but keep-IO FP16 remains the better local YOLO26 path and
+both FP16 variants are still slower than the frozen YOLO11 production INT8
+branch. Frozen YOLO11 remains the production deliverable.
