@@ -17,8 +17,8 @@ workspace.
 - Production claims: none.
 - Production remotes: disabled; the inherited remote is renamed to
   `template-yolo11-gitlab`.
-- Current focus: YOLO26n INT8 calibration/export and SpacemiT ORT 2.0.4
-  operator/runtime forensics.
+- Current focus: YOLO26n FP32/FP16 baselines, XSlim effect measurement, and
+  SpacemiT ORT 2.0.4 operator/runtime forensics.
 - Current CPU oracle: Ultralytics `8.4.82` with the default YOLO26 end-to-end
   export path. This produces ONNX output shape `[1,300,6]` and sane detections
   on the canonical photo and standard oracle images.
@@ -58,6 +58,13 @@ workspace.
 - Current FP32 baseline package: YOLO26n FP32 end-to-end 640 now has a
   reproducible public sanity suite and rt204 baseline table. See
   `docs/YOLO26_FP32_BASELINE.md`.
+- Current FP32 frozen baseline: rt204, cluster0, 4 threads, with
+  `578.041776 ms / 1.729979 FPS` app forward-only and
+  `522.079210 ms / 1.915418 FPS` app full-image benchmark.
+- Current FP16 baseline: native body-FP16/head-FP32 keep-IO, rt204, cluster0,
+  4 threads. It passes CPU and rt204 semantic sanity and reaches
+  `383.332266 ms / 2.608703 FPS` app forward-only. See
+  `docs/YOLO26_FP16_STATUS.md`.
 - INT8 closure: YOLO26 INT8 ONNX board acceleration is blocked pending rt204
   Q/DQ Conv compiler support. See `docs/YOLO26_INT8_STATUS.md` and
   `docs/RT204_QDQ_CONV_VENDOR_BUG_REPORT.md`.
@@ -68,6 +75,10 @@ workspace.
   because all class scores collapse to zero. XSlim `--dynq` remains
   CPU-good/rt204-runnable diagnostic only, not static activation INT8. See
   `docs/XSlim_INT8_STATUS.md` and `docs/XSlim_INT8_EVALUATION.md`.
+- XSlim FP32/FP16 effect: XSlim simplify-only does not improve YOLO26 app-level
+  FP32 performance, XSlim FP16 is invalid for the current YOLO26 e2e graph, and
+  R&D-copy YOLO11 XSlim variants fail on rt204 `YoloDecode` dispatch. See
+  `docs/XSLIM_FP32_FP16_EFFECT_MATRIX.md`.
 - Custom IME/custom-op status: possible only as a future experimental lane, not
   a near-term fix for the rt204 Q/DQ Conv blocker. See
   `docs/CUSTOM_IME_INTEGRATION_FEASIBILITY.md`.
@@ -85,9 +96,11 @@ Detailed R&D reports:
 - `docs/RT204_QDQ_CONV_VENDOR_REPRO_AND_QOPERATOR_GATE.md`
 - `docs/RT204_OPERATOR_SUPPORT.md`
 - `docs/YOLO26_FP32_BASELINE.md`
+- `docs/YOLO26_FP16_STATUS.md`
 - `docs/YOLO26_INT8_STATUS.md`
 - `docs/XSlim_INT8_STATUS.md`
 - `docs/XSlim_INT8_EVALUATION.md`
+- `docs/XSLIM_FP32_FP16_EFFECT_MATRIX.md`
 - `docs/RT204_QDQ_CONV_VENDOR_BUG_REPORT.md`
 - `docs/YOLO26_VS_YOLO11_BASELINE.md`
 - `docs/CUSTOM_IME_INTEGRATION_FEASIBILITY.md`

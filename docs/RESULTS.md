@@ -2,6 +2,50 @@
 
 This file is updated after board validation.
 
+## YOLO26 FP32/FP16/XSlim effect matrix, 2026-06-30
+
+Run directory:
+
+```text
+/data/ncnn-logs/ort-logs/2026-06-30_14-21-27/
+```
+
+This pass froze the current YOLO26 FP32 rt204 baseline and added a YOLO26 FP16
+R&D baseline. It did not reopen YOLO26 INT8; INT8 board acceleration remains
+blocked pending rt204/vendor and XSlim/upstream fixes.
+
+| Variant | Runtime | Metric class | Mean latency ms | FPS | Status |
+| --- | --- | --- | ---: | ---: | --- |
+| YOLO26 FP32 e2e 640 | rt204 | `perf_test forward` | 572.153613 | 1.74774 | frozen R&D FP32 baseline |
+| YOLO26 FP32 e2e 640 | rt204 | `app forward-only` | 578.041776 | 1.729979 | frozen R&D FP32 baseline |
+| YOLO26 FP32 e2e 640 | rt204 | `app full image benchmark` | 522.079210 | 1.915418 | frozen R&D FP32 baseline |
+| YOLO26 FP16 body/head keep-IO 640 | rt204 | `perf_test forward` | 398.610405 | 2.50864 | accepted R&D FP16 baseline |
+| YOLO26 FP16 body/head keep-IO 640 | rt204 | `app forward-only` | 383.332266 | 2.608703 | accepted R&D FP16 baseline |
+| YOLO26 FP16 body/head keep-IO 640 | rt204 | `app full image benchmark` | 399.035502 | 2.506043 | accepted R&D FP16 baseline |
+| YOLO26 FP32 XSlim simplify-only | rt204 | `app forward-only` | 582.029471 | 1.718126 | no app-level improvement |
+| YOLO26 XSlim FP16 | rt204 | load/app smoke | N/A | N/A | rejected: `/model.23/Concat_6` mixed dtypes |
+
+The FP16 body/head keep-IO model is faster than FP32 by about `1.51x` in app
+forward-only and `1.31x` in app full-image benchmark. XSlim does not improve
+YOLO26 FP32 or FP16 in this stage.
+
+R&D-only YOLO11 rt204 retrospective:
+
+| Variant | Runtime | Metric class | Mean latency ms | FPS | Status |
+| --- | --- | --- | ---: | ---: | --- |
+| YOLO11 dynamic640 INT8 copy | rt204 | `app forward-only` | 201.454112 | 4.963910 | pass but slower than frozen rt201 production |
+| YOLO11 FP32 vanilla copy | rt204 | `app forward-only` | 539.131433 | 1.854835 | pass, diagnostic only |
+| YOLO11 FP32 XSlim copy | rt204 | app forward | N/A | N/A | fails/hangs after `YoloDecode` dispatch error |
+| YOLO11 FP16 keep-IO copy | rt204 | `app forward-only` | 341.651391 | 2.926960 | pass, R&D signal only |
+| YOLO11 FP16 XSlim copy | rt204 | app forward/full | N/A | N/A | fails/timeouts after `YoloDecode` dispatch error |
+
+See:
+
+- `docs/YOLO26_FP32_BASELINE.md`
+- `docs/YOLO26_FP16_STATUS.md`
+- `docs/XSLIM_FP32_FP16_EFFECT_MATRIX.md`
+- `docs/YOLO26_VS_YOLO11_BASELINE.md`
+
 ## XSlim static PTQ follow-up, 2026-06-30
 
 Run directory:

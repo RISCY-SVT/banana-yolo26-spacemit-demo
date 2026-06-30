@@ -4,6 +4,7 @@ Raw evidence:
 
 ```text
 /data/ncnn-logs/ort-logs/2026-06-30_07-56-51/
+/data/ncnn-logs/ort-logs/2026-06-30_14-21-27/
 ```
 
 ## Scope
@@ -70,6 +71,30 @@ tables/yolo26_rt204_ep_decode_matrix.md
 These are R&D baseline numbers, not production FPS claims. Metric classes must
 not be mixed.
 
+### Frozen Baseline, 2026-06-30 Effect Matrix Pass
+
+The current frozen FP32 configuration is `cluster0`, 4 threads, rt204
+SpaceMITExecutionProvider. Threads 1 and 2 are slower; 8 threads is not valid on
+this board/runtime path because rt204 reports four available AI cores.
+
+| Metric class | Runtime | Model | Mean latency ms | FPS | Notes |
+| --- | --- | --- | ---: | ---: | --- |
+| `perf_test forward` | rt204 SpaceMIT EP | YOLO26n FP32 e2e 640 | 572.153613 | 1.74774 | 100 runs, `taskset` cluster0. |
+| `app forward-only` | rt204 SpaceMIT EP | YOLO26n FP32 e2e 640 | 578.041776 | 1.729979 | 50x5 runs, cluster0, 4 threads. |
+| `app full image benchmark` | rt204 SpaceMIT EP | YOLO26n FP32 e2e 640 | 522.079210 | 1.915418 | Bus image, 20x3 runs. |
+| `app full image single` | rt204 SpaceMIT EP | YOLO26n FP32 e2e 640 | 692-716 | 1.397-1.444 | Blank, COCO-like, bus, and private canonical single-image smoke. |
+
+Thread sweep:
+
+| Threads | `perf_test` mean ms | `perf_test` FPS | App forward mean ms | App forward FPS | Verdict |
+| ---: | ---: | ---: | ---: | ---: | --- |
+| 1 | 966.161291 | 1.03501 | 1031.074570 | 0.969862 | slower |
+| 2 | 728.455689 | 1.37274 | 714.754028 | 1.399083 | slower |
+| 4 | 564.233550 | 1.77227 | 569.225401 | 1.756773 | best valid config |
+| 8 | N/A | N/A | N/A | N/A | invalid: only four AI cores available |
+
+### Earlier FP32 Baseline Package
+
 | Metric class | Runtime | Model | Mean latency ms | FPS | Notes |
 | --- | --- | --- | ---: | ---: | --- |
 | `perf_test forward` | rt204 SpaceMIT EP | YOLO26n FP32 e2e 640 | 568.943339 | 1.75761 | Pure ORT forward ceiling, 100 runs. |
@@ -112,3 +137,7 @@ Example:
 YOLO26 FP32 is a working R&D baseline on K1X with rt204. It is not currently
 competitive with the frozen YOLO11 production INT8 branch on latency, but it is
 the correct baseline for future YOLO26 runtime/operator work.
+
+For precision comparison, see `docs/YOLO26_FP16_STATUS.md`. The accepted FP16
+body/head keep-IO artifact is faster than this FP32 baseline, but it remains
+R&D-only.

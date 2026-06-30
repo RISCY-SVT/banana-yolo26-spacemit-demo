@@ -42,9 +42,13 @@ remote.
   adoption gate, but this R&D repository does not change the frozen YOLO11
   production policy.
 - YOLO26 FP32 now has a reproducible public sanity suite and baseline package.
-  The current rt204 FP32 end-to-end 640 baseline is approximately
-  `568.943 ms / 1.758 FPS` in `perf_test forward`, and
-  `564.531 ms / 1.771 FPS` in app forward-only on the Ultralytics bus image.
+  The current frozen rt204 FP32 end-to-end 640 baseline uses cluster0 with
+  4 threads: `572.153613 ms / 1.74774 FPS` in `perf_test forward`,
+  `578.041776 ms / 1.729979 FPS` in app forward-only, and
+  `522.079210 ms / 1.915418 FPS` in app full-image benchmark.
+- YOLO26 FP16 is available as a native body-FP16/head-FP32 keep-IO R&D model.
+  It keeps float32 app input, outputs float16, passes the public sanity suite,
+  and runs on rt204 at `383.332266 ms / 2.608703 FPS` app forward-only.
 - YOLO26 INT8 ONNX board acceleration is formally closed as blocked by rt204
   Q/DQ Conv compiler support until vendor/runtime changes or a separately
   proven partial fallback becomes useful.
@@ -55,6 +59,13 @@ remote.
   but both are CPU-bad because all class scores collapse to zero. XSlim
   `--dynq` remains CPU-good and rt204-runnable diagnostic only; it is not
   accepted as accelerated static INT8.
+- Direct full-model FP16 conversions and XSlim FP16 are rejected for the current
+  YOLO26 e2e graph because the head contains mixed dtype hazards. XSlim FP32
+  simplify-only does not improve YOLO26 app-level performance.
+- R&D-copy YOLO11 rt204 checks did not reveal a missed production opportunity:
+  dynamic640 INT8 runs on rt204 but is slower than frozen rt201 production, and
+  YOLO11 XSlim FP32/FP16 fail or time out after rt204 `YoloDecode` dispatch
+  errors.
 
 ## Raw Evidence
 
@@ -66,6 +77,7 @@ remote.
 /data/ncnn-logs/ort-logs/2026-06-30_07-56-51/
 /data/ncnn-logs/ort-logs/2026-06-30_08-45-33/
 /data/ncnn-logs/ort-logs/2026-06-30_09-38-36/
+/data/ncnn-logs/ort-logs/2026-06-30_14-21-27/
 ```
 
 ## Next Gate
@@ -75,4 +87,6 @@ Use the FP32 package as the baseline for future work. Send the tiny Q/DQ Conv
 traditional zero-score reports to the XSlim maintainers. Treat XSlim dynamic
 quantization as a separate compressed/weight-dequantized diagnostic lane unless
 future XSlim releases produce a CPU-good static PTQ model that rt204
-accelerates. Keep YOLO11 rt204 reevaluation as a separate future adoption gate.
+accelerates. Use the FP16 body/head keep-IO artifact as the current best YOLO26
+precision baseline. Keep YOLO11 rt204 reevaluation as a separate future
+adoption gate.

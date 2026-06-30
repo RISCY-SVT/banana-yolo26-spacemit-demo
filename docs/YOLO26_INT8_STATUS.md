@@ -9,6 +9,7 @@ Raw evidence:
 /data/ncnn-logs/ort-logs/2026-06-30_07-56-51/
 /data/ncnn-logs/ort-logs/2026-06-30_08-45-33/
 /data/ncnn-logs/ort-logs/2026-06-30_09-38-36/
+/data/ncnn-logs/ort-logs/2026-06-30_14-21-27/
 ```
 
 ## Current Decision
@@ -106,3 +107,15 @@ XSLIM_STATIC_YOLO26_INT8_NEEDS_UPSTREAM_FIX
   is not a usable INT8 path because CPU semantics already failed.
 
 No CPU-good and rt204-EP-good XSlim static YOLO26 INT8 candidate exists.
+
+## FP32/FP16 Effect Matrix Addendum
+
+The FP32/FP16/XSlim effect pass did not reopen INT8 implementation work. It
+confirmed the closure status only:
+
+- INT8 acceleration remains blocked pending upstream/vendor fixes.
+- The vendor Q/DQ Conv `clip minmax` repro remains the actionable rt204 issue.
+- XSlim static PTQ remains blocked by e2e `ReduceMax` handling and
+  traditional zero-score CPU oracle.
+- XSlim dynamic quantization remains diagnostic only.
+- No INT8 FPS is claimed.
