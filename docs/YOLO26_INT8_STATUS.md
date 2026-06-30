@@ -7,6 +7,7 @@ Raw evidence:
 /data/ncnn-logs/ort-logs/2026-06-29_21-43-36/
 /data/ncnn-logs/ort-logs/2026-06-30_06-12-26/
 /data/ncnn-logs/ort-logs/2026-06-30_07-56-51/
+/data/ncnn-logs/ort-logs/2026-06-30_08-45-33/
 ```
 
 ## Current Decision
@@ -60,3 +61,24 @@ The isolated trigger is Q/DQ Conv with explicit `kernel_shape=[3,3]`.
 YOLO26 INT8 should not move to board performance benchmarking as an accelerated
 INT8 path until rt204/vendor EP compiler support changes or the partial
 fallback is proven in a separate placement/performance gate.
+
+## XSlim Gate Addendum
+
+SpacemiT XSlim `2.1.0` was evaluated after the INT8 closure decision.
+
+- Static XSlim PTQ did not produce an accepted YOLO26 INT8 model in this gate.
+  The e2e `[1,300,6]` export fails inside XSlim/PPQ `ReduceMax`; the
+  traditional `[1,84,8400]` path entered long block-wise calibration without a
+  practical bounded output.
+- XSlim `--dynq` produced CPU-good and rt204-runnable e2e/traditional models.
+  These are diagnostic dynamic/weight-dequantized graphs with normal `Conv`
+  nodes and `DequantizeLinear` weights, not static Q/DQ or QOperator INT8
+  graphs.
+- Because no CPU-good static XSlim INT8 model reached rt204 EP, XSlim does not
+  change the current decision.
+
+Current XSlim decision:
+
+```text
+XSLIM_YOLO26_INT8_PARTIAL_FALLBACK_ONLY
+```

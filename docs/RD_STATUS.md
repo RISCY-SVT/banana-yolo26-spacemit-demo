@@ -48,6 +48,15 @@ remote.
 - YOLO26 INT8 ONNX board acceleration is formally closed as blocked by rt204
   Q/DQ Conv compiler support until vendor/runtime changes or a separately
   proven partial fallback becomes useful.
+- XSlim `2.1.0` was evaluated as the SpacemiT chip-aware PTQ path. Static
+  XSlim PTQ did not produce an accepted YOLO26 INT8 model in the bounded gate:
+  e2e `[1,300,6]` export fails inside XSlim/PPQ `ReduceMax`, and traditional
+  `[1,84,8400]` export enters long block-wise calibration without producing a
+  practical task-local candidate. XSlim `--dynq` produces CPU-good and rt204 EP
+  runnable diagnostic models, but their graphs contain `Conv` plus
+  `DequantizeLinear` weights and no `QLinearConv`/`QLinearMatMul` or static
+  activation Q/DQ offload. This is a partial fallback/diagnostic only, not an
+  accepted accelerated INT8 path.
 
 ## Raw Evidence
 
@@ -57,11 +66,14 @@ remote.
 /data/ncnn-logs/ort-logs/2026-06-29_21-43-36/
 /data/ncnn-logs/ort-logs/2026-06-30_06-12-26/
 /data/ncnn-logs/ort-logs/2026-06-30_07-56-51/
+/data/ncnn-logs/ort-logs/2026-06-30_08-45-33/
 ```
 
 ## Next Gate
 
 Use the FP32 package as the baseline for future work. Send the tiny Q/DQ Conv
 `kernel_shape` repro to the runtime vendor or run a narrow partial-fallback
-placement/performance gate for the stripped-kernel model. Keep YOLO11 rt204
-reevaluation as a separate future adoption gate.
+placement/performance gate for the stripped-kernel model. Treat XSlim dynamic
+quantization as a separate compressed/weight-dequantized diagnostic lane unless
+future XSlim releases produce a CPU-good static PTQ model that rt204 accelerates.
+Keep YOLO11 rt204 reevaluation as a separate future adoption gate.

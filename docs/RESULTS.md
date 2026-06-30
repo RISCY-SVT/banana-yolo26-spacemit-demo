@@ -2,6 +2,46 @@
 
 This file is updated after board validation.
 
+## XSlim INT8 rt204 gate, 2026-06-30
+
+Run directory:
+
+```text
+/data/ncnn-logs/ort-logs/2026-06-30_08-45-33/
+```
+
+XSlim `2.1.0` was evaluated as the SpacemiT chip-aware PTQ path for YOLO26n
+INT8 on rt204.
+
+| Candidate | Contract | CPU oracle | rt204 EP | Decision |
+| --- | --- | --- | --- | --- |
+| XSlim static PTQ e2e | `[1,300,6]` | no model | not run | blocked by XSlim/PPQ `ReduceMax` executor error. |
+| XSlim static PTQ traditional | `[1,84,8400]` | no accepted model | not run | bounded attempts entered long block-wise calibration without a practical output. |
+| XSlim `--dynq` e2e | `[1,300,6]` | pass | pass | diagnostic only; not static INT8 acceleration. |
+| XSlim `--dynq` traditional | `[1,84,8400]` | pass | pass | diagnostic only; not static INT8 acceleration. |
+
+XSlim dynamic quantization did not reproduce the rt204 Q/DQ Conv
+`clip minmax` failure because it does not emit the same static Q/DQ Conv graph.
+It also did not prove useful INT8 offload: the accepted diagnostic graphs have
+`Conv=102`, `DequantizeLinear=102`, `QuantizeLinear=0`, `QLinearConv=0`, and
+`QLinearMatMul=0`.
+
+Bounded process/session timing smoke on board showed SpaceMIT EP was faster
+than CPU for the XSlim dynamic diagnostic graph:
+
+| Model | CPU mean sec | SpaceMIT EP mean sec | Metric caveat |
+| --- | ---: | ---: | --- |
+| e2e `--dynq` | 5.407 | 1.257 | Includes process start, session load/compile, and one inference. |
+| traditional `--dynq` | 5.363 | 1.240 | Includes process start, session load/compile, and one inference. |
+
+Decision:
+
+```text
+XSLIM_YOLO26_INT8_PARTIAL_FALLBACK_ONLY
+```
+
+See `docs/XSlim_INT8_EVALUATION.md`.
+
 ## YOLO26 FP32 baseline and INT8 closure, 2026-06-30
 
 Run directory:

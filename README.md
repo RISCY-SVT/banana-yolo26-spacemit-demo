@@ -61,6 +61,13 @@ workspace.
 - INT8 closure: YOLO26 INT8 ONNX board acceleration is blocked pending rt204
   Q/DQ Conv compiler support. See `docs/YOLO26_INT8_STATUS.md` and
   `docs/RT204_QDQ_CONV_VENDOR_BUG_REPORT.md`.
+- XSlim status: SpacemiT XSlim `2.1.0` was evaluated as the intended
+  chip-aware PTQ path. Static XSlim PTQ did not produce an accepted YOLO26 INT8
+  model: e2e export is blocked at XSlim/PPQ `ReduceMax`, and traditional export
+  entered impractical block-wise calibration in the bounded gate. XSlim
+  `--dynq` produces CPU-good and rt204-runnable diagnostic models, but those
+  graphs use `Conv + DequantizeLinear` rather than static Q/DQ or QOperator
+  INT8 offload. See `docs/XSlim_INT8_EVALUATION.md`.
 - Custom IME/custom-op status: possible only as a future experimental lane, not
   a near-term fix for the rt204 Q/DQ Conv blocker. See
   `docs/CUSTOM_IME_INTEGRATION_FEASIBILITY.md`.
@@ -79,6 +86,7 @@ Detailed R&D reports:
 - `docs/RT204_OPERATOR_SUPPORT.md`
 - `docs/YOLO26_FP32_BASELINE.md`
 - `docs/YOLO26_INT8_STATUS.md`
+- `docs/XSlim_INT8_EVALUATION.md`
 - `docs/RT204_QDQ_CONV_VENDOR_BUG_REPORT.md`
 - `docs/YOLO26_VS_YOLO11_BASELINE.md`
 - `docs/CUSTOM_IME_INTEGRATION_FEASIBILITY.md`

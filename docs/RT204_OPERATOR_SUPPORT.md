@@ -6,6 +6,7 @@ Raw evidence:
 /data/ncnn-logs/ort-logs/2026-06-29_16-56-34/
 /data/ncnn-logs/ort-logs/2026-06-29_21-43-36/
 /data/ncnn-logs/ort-logs/2026-06-30_06-12-26/
+/data/ncnn-logs/ort-logs/2026-06-30_08-45-33/
 ```
 
 ## YOLO26 Float Coverage
@@ -91,6 +92,14 @@ accelerated INT8 path.
 The 2026-06-30 FP32 baseline/INT8 closure pass did not reopen INT8
 experimentation. It formalized the current decision: accelerated YOLO26 INT8
 ONNX on rt204 is blocked pending vendor/runtime Q/DQ Conv compiler support.
+
+The 2026-06-30 XSlim gate did not invalidate that decision. XSlim static PTQ
+did not produce an accepted YOLO26 INT8 model for rt204. XSlim dynamic
+quantization does run on rt204 EP and avoids the Q/DQ Conv `clip minmax`
+failure, but only because the resulting graph is not the same static Q/DQ
+pattern: it contains normal `Conv` nodes plus `DequantizeLinear` weights and no
+`QLinearConv`/`QLinearMatMul`. Treat it as a diagnostic compressed graph, not
+as proof of accelerated static INT8 support.
 
 ## YOLO26 FP32 Baseline
 
