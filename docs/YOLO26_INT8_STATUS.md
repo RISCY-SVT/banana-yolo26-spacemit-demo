@@ -167,3 +167,16 @@ Decision remains:
 ```text
 YOLO26 INT8 ONNX board acceleration is blocked pending vendor/runtime/tooling fixes.
 ```
+
+## Vendor Packet Closeout
+
+The vendor-ready evidence packets are indexed in:
+
+```text
+docs/VENDOR_REPORT_PACKETS.md
+```
+
+Packet A targets the SpaceMIT EP / ONNX Runtime Q/DQ Conv `clip minmax`
+compiler blocker. Packet B targets the XSlim static PTQ blockers: e2e
+two-input `ReduceMax` executor failure and traditional static zero-score CPU
+oracle.

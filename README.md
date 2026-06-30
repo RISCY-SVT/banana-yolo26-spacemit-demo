@@ -109,6 +109,7 @@ Detailed R&D reports:
 - `docs/CUSTOM_IME_INTEGRATION_FEASIBILITY.md`
 - `docs/RD_FINAL_REPORT_EN.md`
 - `docs/RD_FINAL_REPORT_RU.md`
+- `docs/VENDOR_REPORT_PACKETS.md`
 
 ## Frozen YOLO11 production policy, for comparison only
 

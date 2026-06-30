@@ -101,6 +101,10 @@ maintainers. Another INT8 runtime search is not justified until one of those
 upstream blockers changes. Keep YOLO11 rt204 reevaluation as a separate future
 adoption gate.
 
+Vendor-ready packet index:
+
+- `docs/VENDOR_REPORT_PACKETS.md`
+
 Final bilingual reports:
 
 - `docs/RD_FINAL_REPORT_EN.md`
