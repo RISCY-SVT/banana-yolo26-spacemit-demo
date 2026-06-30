@@ -88,6 +88,21 @@ cannot find kernel config for this vlen 256 and weight type u8
 that stripped model. This is a partial fallback candidate only, not a proven
 accelerated INT8 path.
 
+The 2026-06-30 FP32 baseline/INT8 closure pass did not reopen INT8
+experimentation. It formalized the current decision: accelerated YOLO26 INT8
+ONNX on rt204 is blocked pending vendor/runtime Q/DQ Conv compiler support.
+
+## YOLO26 FP32 Baseline
+
+The current rt204 FP32 end-to-end 640 baseline is working and reproducible:
+
+- `perf_test forward`: `568.943339 ms`, `1.75761 FPS`;
+- app forward-only on Ultralytics bus: `564.531070 ms`, `1.771382 FPS`;
+- app full image benchmark on Ultralytics bus: `521.868004 ms`,
+  `1.916193 FPS`;
+- rt204 EP semantic pass on public Ultralytics assets, COCO-derived images,
+  blank sanity image, and private canonical reference.
+
 ## YOLO11 RT204 Signal
 
 Frozen YOLO11 production models were probed read-only in this R&D workspace:

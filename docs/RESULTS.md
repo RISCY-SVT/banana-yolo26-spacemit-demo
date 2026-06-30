@@ -2,6 +2,39 @@
 
 This file is updated after board validation.
 
+## YOLO26 FP32 baseline and INT8 closure, 2026-06-30
+
+Run directory:
+
+```text
+/data/ncnn-logs/ort-logs/2026-06-30_07-56-51/
+```
+
+YOLO26 FP32 end-to-end 640 is now the working R&D baseline on rt204. PyTorch,
+ONNX Runtime CPU, and rt204 SpaceMIT EP agree semantically on the public
+standard sanity suite. The suite includes Ultralytics bus/zidane assets,
+COCO-derived task-local images, a blank negative control, and the private
+canonical photo only as an additional non-public reference.
+
+| Metric class | Runtime | Model | Mean latency ms | FPS | Status |
+| --- | --- | --- | ---: | ---: | --- |
+| `perf_test forward` | rt204 SpaceMIT EP | YOLO26n FP32 e2e 640 | 568.943339 | 1.75761 | pass |
+| `app forward-only` | rt204 SpaceMIT EP | YOLO26n FP32 e2e 640 | 564.531070 | 1.771382 | pass |
+| `app full image benchmark` | rt204 SpaceMIT EP | YOLO26n FP32 e2e 640 | 521.868004 | 1.916193 | pass on Ultralytics bus |
+| `app full image single` | rt204 SpaceMIT EP | YOLO26n FP32 e2e 640 | 696-715 | 1.40-1.44 | pass on bus, COCO-like, and private canonical images |
+
+YOLO26 INT8 ONNX board acceleration is closed as blocked for the current rt204
+path: CPU-good manual Q/DQ INT8 exists, but rt204 SpaceMIT EP fails Q/DQ Conv
+compile with `output_type not implemented for clip minmax`. The vendor-ready
+minimal repro is documented in `docs/RT204_QDQ_CONV_VENDOR_BUG_REPORT.md`.
+
+See:
+
+- `docs/YOLO26_FP32_BASELINE.md`
+- `docs/YOLO26_INT8_STATUS.md`
+- `docs/YOLO26_VS_YOLO11_BASELINE.md`
+- `docs/CUSTOM_IME_INTEGRATION_FEASIBILITY.md`
+
 For the final consolidated FPS/latency view across production, experimental,
 and rejected/P2 variants, see `docs/FPS_SUMMARY.md`. That file is the
 authoritative summary table; this file preserves the underlying Day-by-Day

@@ -152,8 +152,11 @@ banana_demo_runtime_vendor_dir_name() {
     rt202)
       printf 'spacemit-ort.riscv64.2.0.2\n'
       ;;
+    rt204)
+      printf 'spacemit-ort.riscv64.2.0.4\n'
+      ;;
     *)
-      echo "ERROR: unsupported runtime tag=${runtime_tag}; use rt123|rt201|rt202b1|rt202" >&2
+      echo "ERROR: unsupported runtime tag=${runtime_tag}; use rt123|rt201|rt202b1|rt202|rt204" >&2
       return 2
       ;;
   esac
@@ -207,8 +210,12 @@ banana_demo_runtime_tag_from_override() {
       printf 'rt202\n'
       return 0
       ;;
+    rt204|2.0.4)
+      printf 'rt204\n'
+      return 0
+      ;;
     *)
-      echo "ERROR: unsupported BANANA_DEMO_RUNTIME_TAG=${override}; use auto|rt123|rt201|rt202b1|rt202" >&2
+      echo "ERROR: unsupported BANANA_DEMO_RUNTIME_TAG=${override}; use auto|rt123|rt201|rt202b1|rt202|rt204" >&2
       return 2
       ;;
   esac

@@ -624,11 +624,12 @@ std::vector<Detection> Yolo11Detector::Decode(const OutputTensor& output, const 
 
         if (channels == 6)
         {
-            // Vendor-exported `[N,6]` boxes-last outputs are already decoded to xyxy + score + class.
-            det.x1 = access(anchor, 0);
-            det.y1 = access(anchor, 1);
-            det.x2 = access(anchor, 2);
-            det.y2 = access(anchor, 3);
+            // End-to-end `[N,6]` outputs are xyxy + score + class in model-input coordinates.
+            // Undo the letterbox transform so YOLO26/YOLOv10-style boxes align with source images.
+            det.x1 = (access(anchor, 0) - info.pad_x) * info.scale_x;
+            det.y1 = (access(anchor, 1) - info.pad_y) * info.scale_y;
+            det.x2 = (access(anchor, 2) - info.pad_x) * info.scale_x;
+            det.y2 = (access(anchor, 3) - info.pad_y) * info.scale_y;
             det.score = access(anchor, 4);
             det.class_id = static_cast<int>(access(anchor, 5));
             if (det.score <= options_.conf_threshold)

@@ -33,6 +33,8 @@ fetch_one_runtime() {
       cp -f "/data/SpacemiT/${name}.tar.gz" "${archive}"
     elif [[ -f "${ROOT_DIR}/.deps/cache/runtime_matrix/${name}.tar.gz" ]]; then
       cp -f "${ROOT_DIR}/.deps/cache/runtime_matrix/${name}.tar.gz" "${archive}"
+    elif [[ -f "${ROOT_DIR}/.deps/runtimes/rt204/downloads/${name}.tar.gz" ]]; then
+      cp -f "${ROOT_DIR}/.deps/runtimes/rt204/downloads/${name}.tar.gz" "${archive}"
     else
       curl -L --fail --output "${archive}" "${url}"
     fi

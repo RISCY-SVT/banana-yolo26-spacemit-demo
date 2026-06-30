@@ -55,6 +55,15 @@ workspace.
   dynamic640 INT8, vendor320 q.onnx, and FP16 keep_io 640 did not abort and
   produced sane semantics on CPU and SpaceMIT EP. This is only a future adoption
   signal; the production YOLO11 policy remains frozen.
+- Current FP32 baseline package: YOLO26n FP32 end-to-end 640 now has a
+  reproducible public sanity suite and rt204 baseline table. See
+  `docs/YOLO26_FP32_BASELINE.md`.
+- INT8 closure: YOLO26 INT8 ONNX board acceleration is blocked pending rt204
+  Q/DQ Conv compiler support. See `docs/YOLO26_INT8_STATUS.md` and
+  `docs/RT204_QDQ_CONV_VENDOR_BUG_REPORT.md`.
+- Custom IME/custom-op status: possible only as a future experimental lane, not
+  a near-term fix for the rt204 Q/DQ Conv blocker. See
+  `docs/CUSTOM_IME_INTEGRATION_FEASIBILITY.md`.
 - Frozen production baseline: the YOLO11 project remains
   `banana-yolo11-spacemit-demo` at tag `production-2026-07-02`.
 
@@ -68,6 +77,11 @@ Detailed R&D reports:
 - `docs/YOLO26_QDQ_RT204_BLOCKER_MINIMIZATION.md`
 - `docs/RT204_QDQ_CONV_VENDOR_REPRO_AND_QOPERATOR_GATE.md`
 - `docs/RT204_OPERATOR_SUPPORT.md`
+- `docs/YOLO26_FP32_BASELINE.md`
+- `docs/YOLO26_INT8_STATUS.md`
+- `docs/RT204_QDQ_CONV_VENDOR_BUG_REPORT.md`
+- `docs/YOLO26_VS_YOLO11_BASELINE.md`
+- `docs/CUSTOM_IME_INTEGRATION_FEASIBILITY.md`
 
 ## Frozen YOLO11 production policy, for comparison only
 

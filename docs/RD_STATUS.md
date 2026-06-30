@@ -41,6 +41,13 @@ remote.
 - RT204 YOLO11 direct tensor-probe results are promising for a future separate
   adoption gate, but this R&D repository does not change the frozen YOLO11
   production policy.
+- YOLO26 FP32 now has a reproducible public sanity suite and baseline package.
+  The current rt204 FP32 end-to-end 640 baseline is approximately
+  `568.943 ms / 1.758 FPS` in `perf_test forward`, and
+  `564.531 ms / 1.771 FPS` in app forward-only on the Ultralytics bus image.
+- YOLO26 INT8 ONNX board acceleration is formally closed as blocked by rt204
+  Q/DQ Conv compiler support until vendor/runtime changes or a separately
+  proven partial fallback becomes useful.
 
 ## Raw Evidence
 
@@ -49,10 +56,12 @@ remote.
 /data/ncnn-logs/ort-logs/2026-06-29_16-56-34/
 /data/ncnn-logs/ort-logs/2026-06-29_21-43-36/
 /data/ncnn-logs/ort-logs/2026-06-30_06-12-26/
+/data/ncnn-logs/ort-logs/2026-06-30_07-56-51/
 ```
 
 ## Next Gate
 
-Send the tiny Q/DQ Conv `kernel_shape` repro to the runtime vendor or run a
-narrow partial-fallback placement/performance gate for the stripped-kernel
-model. Keep YOLO11 rt204 reevaluation as a separate future adoption gate.
+Use the FP32 package as the baseline for future work. Send the tiny Q/DQ Conv
+`kernel_shape` repro to the runtime vendor or run a narrow partial-fallback
+placement/performance gate for the stripped-kernel model. Keep YOLO11 rt204
+reevaluation as a separate future adoption gate.
