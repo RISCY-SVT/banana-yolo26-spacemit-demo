@@ -82,3 +82,16 @@ SPACEMIT_EP_DISABLE_OP_TYPE_FILTER=QuantizeLinear;DequantizeLinear;Conv
 This restores correctness by moving the problematic Q/DQ Conv regions away
 from SpaceMIT EP. It is CPU-heavy and must not be described as accelerated
 YOLO26 INT8.
+
+## XSlim Static PTQ Addendum
+
+The XSlim static PTQ follow-up did not close this vendor blocker.
+
+XSlim traditional `minmax` static PTQ generated a Q/DQ ONNX model that runs on
+rt204 without the `clip minmax` compile error, but the model is CPU-bad: class
+score channels are all zero before rt204 is involved. This is useful as a
+separate XSlim calibration/export finding, but it does not invalidate the
+vendor-ready rt204 repros for CPU-good manual ONNX Runtime Q/DQ models.
+
+The original rt204 vendor repro bundle remains the evidence to send for the
+runtime/compiler issue.

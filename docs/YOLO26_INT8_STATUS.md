@@ -8,6 +8,7 @@ Raw evidence:
 /data/ncnn-logs/ort-logs/2026-06-30_06-12-26/
 /data/ncnn-logs/ort-logs/2026-06-30_07-56-51/
 /data/ncnn-logs/ort-logs/2026-06-30_08-45-33/
+/data/ncnn-logs/ort-logs/2026-06-30_09-38-36/
 ```
 
 ## Current Decision
@@ -82,3 +83,26 @@ Current XSlim decision:
 ```text
 XSLIM_YOLO26_INT8_PARTIAL_FALLBACK_ONLY
 ```
+
+## XSlim Static PTQ Follow-Up
+
+The follow-up XSlim static PTQ pass refined the decision:
+
+```text
+XSLIM_STATIC_YOLO26_INT8_NEEDS_UPSTREAM_FIX
+```
+
+- The e2e `[1,300,6]` path fails in XSlim/PPQ `ReduceMax` handling on both
+  XSlim `2.1.0` and main/`2.1.1`. The failure reproduces with tiny ONNX models
+  after XSlim converts ReduceMax to a two-input form.
+- Config-level workarounds (`ignore_op_types`, `ignore_op_names`,
+  `skip_onnxsim`, `opset=18`, `calibration_type=minmax`) do not avoid the e2e
+  failure.
+- Traditional `[1,84,8400]` static PTQ with `calibration_type=minmax` and
+  `percentile` now emits Q/DQ ONNX models, but both are CPU-bad: class score
+  channels are all zero on public sanity images even at very low confidence.
+- A diagnostic rt204 run of the CPU-bad minmax model executes, proving that this
+  XSlim graph shape can avoid the previous `clip minmax` compile error, but it
+  is not a usable INT8 path because CPU semantics already failed.
+
+No CPU-good and rt204-EP-good XSlim static YOLO26 INT8 candidate exists.

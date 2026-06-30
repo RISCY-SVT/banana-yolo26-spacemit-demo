@@ -109,3 +109,29 @@ This pass found no production-impacting miss in the frozen YOLO11 release:
 
 YOLO11 + XSlim remains a possible post-release R&D lane, not a retroactive
 production blocker.
+
+## Static PTQ Follow-Up
+
+A follow-up pass in:
+
+```text
+/data/ncnn-logs/ort-logs/2026-06-30_09-38-36/
+```
+
+refined the static PTQ status:
+
+- the e2e `[1,300,6]` failure is a generic XSlim/PPQ ReduceMax executor issue,
+  reproduced with tiny ONNX models containing two-input ReduceMax after XSlim's
+  internal opset conversion;
+- traditional `[1,84,8400]` `minmax` and `percentile` static configs finish and
+  emit Q/DQ ONNX models;
+- those static traditional models are CPU-bad because class score channels are
+  all zero on public sanity images;
+- a diagnostic rt204 run of the CPU-bad `minmax` model executes, but that is not
+  a usable INT8 path.
+
+Updated static decision:
+
+```text
+XSLIM_STATIC_YOLO26_INT8_NEEDS_UPSTREAM_FIX
+```

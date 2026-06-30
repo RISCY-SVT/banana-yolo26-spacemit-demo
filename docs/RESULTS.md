@@ -2,6 +2,32 @@
 
 This file is updated after board validation.
 
+## XSlim static PTQ follow-up, 2026-06-30
+
+Run directory:
+
+```text
+/data/ncnn-logs/ort-logs/2026-06-30_09-38-36/
+```
+
+The follow-up pass minimized the static e2e failure and found two traditional
+static configs that emit ONNX but fail CPU oracle.
+
+| Candidate | Contract | XSlim result | CPU oracle | rt204 diagnostic | Decision |
+| --- | --- | --- | --- | --- | --- |
+| e2e static PTQ | `[1,300,6]` | fails in XSlim/PPQ `ReduceMax` | no model | not run | upstream fix needed |
+| tiny ReduceMax repro | minimal ONNX | same `ReduceMax` failure | n/a | n/a | confirms generic XSlim executor issue |
+| traditional static `minmax` | `[1,84,8400]` | emits Q/DQ ONNX | fail: all class scores zero | runs, still zero scores | rejected |
+| traditional static `percentile` | `[1,84,8400]` | emits Q/DQ ONNX | fail: all class scores zero | not promoted | rejected |
+
+Decision:
+
+```text
+XSLIM_STATIC_YOLO26_INT8_NEEDS_UPSTREAM_FIX
+```
+
+See `docs/XSlim_INT8_STATUS.md`.
+
 ## XSlim INT8 rt204 gate, 2026-06-30
 
 Run directory:

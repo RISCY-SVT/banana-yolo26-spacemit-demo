@@ -101,6 +101,13 @@ pattern: it contains normal `Conv` nodes plus `DequantizeLinear` weights and no
 `QLinearConv`/`QLinearMatMul`. Treat it as a diagnostic compressed graph, not
 as proof of accelerated static INT8 support.
 
+The static XSlim follow-up added one nuance: traditional `minmax` static PTQ can
+emit a Q/DQ graph that runs on rt204 without the `clip minmax` compile failure.
+That graph is still rejected because its CPU oracle is bad: all class score
+channels are zero on public sanity images. Therefore rt204 acceptance remains
+blocked by absence of a CPU-good static XSlim candidate, not by this diagnostic
+model's ability to compile.
+
 ## YOLO26 FP32 Baseline
 
 The current rt204 FP32 end-to-end 640 baseline is working and reproducible:
