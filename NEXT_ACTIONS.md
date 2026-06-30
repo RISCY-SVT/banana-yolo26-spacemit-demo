@@ -2,15 +2,17 @@
 
 ## Immediate YOLO26 R&D Gate
 
-- Package the extracted `yolo26_first_conv_qdq_output_block.onnx` repro and
-  supporting logs for vendor/runtime feedback. This is the smallest real-graph
-  failure found so far.
-- Ask the runtime vendor whether SpacemiT ORT `2.0.4` supports the real YOLO26
-  ONNX Runtime static Q/DQ Conv pattern and whether the internal `clip minmax`
-  output-type failure has a provider option or model-rewrite workaround.
-- Run a separate QOperator fallback gate only if needed. It must tighten
-  CPU/EP parity, prove or disprove `QLinearConv`/`QLinearMatMul` offload, and
-  explain why smoke latency is slower than FP32.
+- Send the tiny vendor repro `15_conv_qdq_attr_kernel_shape.onnx` and the
+  supplemental `yolo26_first_conv_qdq_output_block.onnx` to the runtime vendor.
+  Ask whether SpacemiT ORT `2.0.4` supports Q/DQ Conv with explicit
+  `kernel_shape` and whether the internal `clip minmax` output-type failure has
+  a provider option or patch.
+- If continuing locally, run a narrow partial-fallback placement/performance
+  gate for the stripped-kernel Q/DQ model with
+  `SPACEMIT_EP_DISABLE_OP_TYPE_FILTER=MatMul;Add`. That gate must prove useful
+  EP placement and compare against FP32 without making production claims.
+- Do not pursue QOperator for performance unless a future runtime can show
+  `QLinearConv`/`QLinearMatMul` offload and stable CPU/EP semantics.
 
 ## YOLO11 RT204 Follow-Up
 
@@ -23,5 +25,5 @@
 
 - Do not modify `/data/banana-yolo11-spacemit-demo` from this R&D repo.
 - Do not claim YOLO26 production readiness.
-- Do not attempt INT8 performance claims until SpaceMIT EP executes a
-  CPU-good INT8 candidate with proven useful offload.
+- Do not attempt INT8 performance claims until SpaceMIT EP executes a CPU-good
+  INT8 candidate with proven useful offload.

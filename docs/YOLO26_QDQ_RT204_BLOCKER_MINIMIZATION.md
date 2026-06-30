@@ -4,6 +4,7 @@ Raw evidence:
 
 ```text
 /data/ncnn-logs/ort-logs/2026-06-29_21-43-36/
+/data/ncnn-logs/ort-logs/2026-06-30_06-12-26/
 ```
 
 ## Scope
@@ -27,7 +28,8 @@ The previous pass established:
 
 ## Minimal Reproduction Result
 
-Synthetic minimal ONNX models were not enough to reproduce the failure:
+The 2026-06-29 pass first proved that basic synthetic ONNX models were not
+enough to reproduce the failure:
 
 - single Conv FP32;
 - single Conv with Q/DQ;
@@ -54,6 +56,24 @@ The two-Conv extracted block shows the same behavior: filtering the first Conv
 only moves the failure to the next quantized Conv. This proves the blocker is
 not a single bad node name; it is the rt204 compiler path for the real YOLO26
 Q/DQ Conv pattern.
+
+The 2026-06-30 vendor-repro pass reduced the trigger further to a tiny
+synthetic model:
+
+```text
+15_conv_qdq_attr_kernel_shape.onnx
+```
+
+That model is a small Q/DQ Conv graph with an explicit Conv
+`kernel_shape=[3,3]` attribute. CPU ORT runs it, while rt204 SpaceMIT EP fails
+with the same:
+
+```text
+output_type not implemented for clip minmax
+```
+
+The attr-isolation matrix showed that `kernel_shape` alone is sufficient to
+trigger the failure; `dilations` alone and `group` alone pass.
 
 ## Export and Quantization Settings
 
@@ -100,9 +120,31 @@ sane semantics on canonical, bus, and blank oracle images. However:
   offload;
 - perf smoke on generated input was slower than FP32.
 
-This path is a partial fallback candidate, not a replacement for a correct
-accelerated Q/DQ INT8 path. It should enter a separate focused fallback gate
-before any performance claims.
+The follow-up QOperator gate showed that this path is not ready for a
+performance gate. The dumped EP subgraphs do not include `QLinearConv` or
+`QLinearMatMul`, CPU/EP raw parity is loose, the bus oracle changes top
+semantics under EP, and bounded timing smoke is slower than FP32.
+
+## Strip-Kernel Partial Fallback Signal
+
+Removing optional Conv `kernel_shape` attributes from the full YOLO26 Q/DQ
+model is CPU-exact relative to the original Q/DQ model. It avoids the first
+Conv `clip minmax` compiler failure, but exposes a second rt204 issue:
+
+```text
+/model.10/m/m.0/attn/MatMul
+cannot find kernel config for this vlen 256 and weight type u8
+```
+
+The smallest correct fallback seen for that stripped model is:
+
+```bash
+SPACEMIT_EP_DISABLE_OP_TYPE_FILTER=MatMul;Add
+```
+
+This is a partial fallback candidate only. Bounded timing smoke is slower than
+FP32, and placement/performance must be proven in a separate gate before any
+benchmarking claim.
 
 ## Decision
 
@@ -110,12 +152,12 @@ before any performance claims.
 YOLO26 INT8 status: partial
 ```
 
-Manual INT8 CPU oracle is good, but rt204 Q/DQ Conv full-offload is blocked.
-YOLO26 INT8 is not ready for board performance benchmarking as an accelerated
+Manual INT8 CPU oracle is good, but rt204 Q/DQ full-offload is blocked. YOLO26
+INT8 is not ready for full board performance benchmarking as an accelerated
 Q/DQ path.
 
 The next useful task is:
 
 ```text
-BANANA-YOLO26-RT204-QDQ-CONV-VENDOR-REPRO-AND-QOPERATOR-GATE-001
+BANANA-YOLO26-RT204-PARTIAL-FALLBACK-PERF-PLACEMENT-GATE-001
 ```

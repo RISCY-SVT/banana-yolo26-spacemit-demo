@@ -5,6 +5,7 @@ Raw evidence:
 ```text
 /data/ncnn-logs/ort-logs/2026-06-29_16-56-34/
 /data/ncnn-logs/ort-logs/2026-06-29_21-43-36/
+/data/ncnn-logs/ort-logs/2026-06-30_06-12-26/
 ```
 
 ## Scope
@@ -94,9 +95,11 @@ yolo26_first_conv_qdq_output_block.onnx
 output_type not implemented for clip minmax
 ```
 
-Synthetic toy Conv/Q/DQ/Clip/QLinearConv models pass on rt204, so the failure is
-not a generic Q/DQ Conv rejection. It is tied to the real YOLO26 quantized Conv
-pattern or the rt204 internal min/max handling path for that pattern.
+The initial synthetic toy Conv/Q/DQ/Clip/QLinearConv set passed on rt204, so
+the failure was not reproduced by a generic no-attribute toy graph. The
+2026-06-30 attr-isolation pass later found that explicit Conv
+`kernel_shape=[3,3]` is sufficient to reproduce the same rt204 internal min/max
+handling failure.
 
 Bounded export and quantization changes did not remove the blocker. The
 smallest correct Q/DQ fallback is:
@@ -109,3 +112,31 @@ That fallback restores semantics through CPU-heavy execution and is not an
 accelerated INT8 benchmark path.
 
 See `docs/YOLO26_QDQ_RT204_BLOCKER_MINIMIZATION.md` for the detailed decision.
+
+## 2026-06-30 Vendor-Repro and QOperator Gate Update
+
+The smallest current reproducer is no longer the real YOLO26 first Conv block.
+The failure is reproduced by a tiny synthetic Q/DQ Conv model with explicit
+`kernel_shape=[3,3]`:
+
+```text
+15_conv_qdq_attr_kernel_shape.onnx
+```
+
+The real YOLO26 first Conv block remains as a supplemental repro. The exact
+failure is still:
+
+```text
+output_type not implemented for clip minmax
+```
+
+QOperator was gated and rejected for the next performance stage because useful
+`QLinearConv`/`QLinearMatMul` offload was not visible in dumped subgraphs, raw
+CPU/EP parity was loose, and the bus oracle changed top semantics under EP.
+
+Stripping optional Conv `kernel_shape` attributes from the full Q/DQ model is
+CPU-exact and avoids the first Conv blocker, but a second rt204 issue appears
+in the attention MatMul path. A partial fallback with
+`SPACEMIT_EP_DISABLE_OP_TYPE_FILTER=MatMul;Add` restores smoke semantics for
+that stripped model, but it remains a future placement/performance-gate
+candidate rather than a ready INT8 benchmark path.

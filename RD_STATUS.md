@@ -2,7 +2,7 @@
 
 ## Current Stage
 
-`BANANA-YOLO26-INT8-QDQ-RT204-BLOCKER-MINIMIZATION-001`
+`BANANA-YOLO26-RT204-QDQ-CONV-VENDOR-REPRO-AND-QOPERATOR-GATE-001`
 
 This is an INT8 calibration/export and rt204 operator-support forensic stage.
 It does not establish a production demo path and it does not modify the frozen
@@ -50,18 +50,23 @@ YOLO11 production repo.
 - Manual ONNX Runtime static Q/DQ over `Conv` and `MatMul` creates CPU-good
   INT8 candidates for both end-to-end `[1,300,6]` and traditional `[1,84,8400]`
   contracts.
-- RT204 SpaceMIT EP does not yet accept those CPU-good Q/DQ INT8 candidates:
-  the EP compiler fails inside real YOLO26 Q/DQ Conv blocks with
-  `output_type not implemented for clip minmax`.
-- The failure was minimized to `yolo26_first_conv_qdq_output_block.onnx`, an
-  extracted first Conv/Q/DQ block from the real YOLO26 graph. Synthetic toy
-  Conv/QDQ/Clip/QLinearConv models pass, so the issue is specific to the real
-  quantized Conv pattern or rt204 internal min/max handling for that pattern.
+- RT204 SpaceMIT EP does not yet accept full CPU-good Q/DQ INT8 candidates:
+  the EP compiler fails with `output_type not implemented for clip minmax`.
+- The current smallest repro is `15_conv_qdq_attr_kernel_shape.onnx`, a tiny
+  synthetic Q/DQ Conv graph with explicit `kernel_shape=[3,3]`. The extracted
+  `yolo26_first_conv_qdq_output_block.onnx` remains a supplemental real-graph
+  repro.
 - Provider pass filters do not fix the blocker. Disabling
   `QuantizeLinear;DequantizeLinear;Conv` recovers correctness through CPU-heavy
   fallback, but that is not an accelerated INT8 solution.
-- A QOperator e2e candidate is semantically promising but not proven as an
-  accelerated path and was slower than FP32 in smoke testing.
+- QOperator candidates are not performance-gate ready: raw CPU/EP parity is
+  loose, the bus oracle changes top semantics under EP, dumped subgraphs do not
+  include `QLinearConv` or `QLinearMatMul`, and bounded timing smoke is slower
+  than FP32.
+- Stripping optional Conv `kernel_shape` attributes from the full Q/DQ model is
+  CPU-exact and avoids the first Conv blocker, but exposes a second attention
+  MatMul issue. `SPACEMIT_EP_DISABLE_OP_TYPE_FILTER=MatMul;Add` restores smoke
+  semantics for that stripped model and is only a partial fallback candidate.
 - Frozen YOLO11 production models were probed read-only with rt204. The direct
   tensor probe did not abort for dynamic640 INT8, vendor320 q.onnx, or FP16
   keep_io 640 and produced sane semantics; this remains only a future separate
@@ -72,4 +77,5 @@ Raw evidence for this stage:
 ```text
 /data/ncnn-logs/ort-logs/2026-06-29_16-56-34/
 /data/ncnn-logs/ort-logs/2026-06-29_21-43-36/
+/data/ncnn-logs/ort-logs/2026-06-30_06-12-26/
 ```

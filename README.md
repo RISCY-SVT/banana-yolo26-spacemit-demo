@@ -29,21 +29,28 @@ workspace.
   end-to-end and traditional FP32 ONNX exports on BPI-F3/K1X without SIGILL and
   with CPU-level semantics.
 - INT8 status: CPU oracle is good for manual ORT Q/DQ and selected QOperator
-  candidates, but board EP is still blocked for accelerated Q/DQ Conv.
+  candidates, but board EP is still blocked for full accelerated Q/DQ INT8.
   Ultralytics `quantize=8` still collapses confidence/class scores to zero.
   Manual ONNX Runtime static Q/DQ over `Conv`/`MatMul` produces CPU-good INT8
-  candidates, but rt204 SpaceMIT EP fails to compile those Q/DQ subgraphs with
+  candidates, but rt204 SpaceMIT EP fails to compile the Q/DQ Conv path with
   `output_type not implemented for clip minmax`.
-- Minimal Q/DQ blocker: extracted real YOLO26 first-block model
-  `yolo26_first_conv_qdq_output_block.onnx`, containing the first quantized
-  Conv surrounded by Q/DQ, fails at `/model.0/conv/Conv_token_1`. Synthetic
-  toy Conv/QDQ/Clip/QLinearConv models do not reproduce the failure.
+- Minimal Q/DQ blocker: tiny synthetic model
+  `15_conv_qdq_attr_kernel_shape.onnx`, a Q/DQ Conv with explicit
+  `kernel_shape=[3,3]`, reproduces the rt204 compiler failure. The supplemental
+  real YOLO26 repro remains `yolo26_first_conv_qdq_output_block.onnx`, which
+  fails at `/model.0/conv/Conv_token_1`.
 - Smallest correct fallback: force Q/DQ Conv regions to CPU with
   `SPACEMIT_EP_DISABLE_OP_TYPE_FILTER=QuantizeLinear;DequantizeLinear;Conv`.
   This restores semantics but is CPU-heavy and is not an accelerated INT8 path.
-- QOperator e2e fallback signal: runs semantically on canonical, bus, and blank
-  oracle images, but raw CPU/EP parity is loose, dumped subgraphs do not prove
-  `QLinearConv`/`QLinearMatMul` offload, and perf smoke is slower than FP32.
+- QOperator e2e fallback signal: not performance-gate ready. It runs, but raw
+  CPU/EP parity is loose, the bus oracle changes top semantics under EP, dumped
+  subgraphs do not include `QLinearConv`/`QLinearMatMul`, and bounded timing
+  smoke is slower than FP32.
+- Partial fallback signal: stripping optional Conv `kernel_shape` attributes is
+  CPU-exact and avoids the first Conv blocker, but exposes a second rt204
+  attention-path issue. `SPACEMIT_EP_DISABLE_OP_TYPE_FILTER=MatMul;Add`
+  restores smoke semantics for that stripped model, but remains only a future
+  placement/performance-gate candidate.
 - YOLO11-on-rt204 status: a direct R&D tensor probe against frozen YOLO11
   dynamic640 INT8, vendor320 q.onnx, and FP16 keep_io 640 did not abort and
   produced sane semantics on CPU and SpaceMIT EP. This is only a future adoption
@@ -59,6 +66,7 @@ Detailed R&D reports:
 - `docs/RUNTIME_204_NOTES.md`
 - `docs/YOLO26_INT8_RT204_FORENSICS.md`
 - `docs/YOLO26_QDQ_RT204_BLOCKER_MINIMIZATION.md`
+- `docs/RT204_QDQ_CONV_VENDOR_REPRO_AND_QOPERATOR_GATE.md`
 - `docs/RT204_OPERATOR_SUPPORT.md`
 
 ## Frozen YOLO11 production policy, for comparison only

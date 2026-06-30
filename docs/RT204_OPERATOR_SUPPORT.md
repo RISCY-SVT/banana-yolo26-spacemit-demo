@@ -5,6 +5,7 @@ Raw evidence:
 ```text
 /data/ncnn-logs/ort-logs/2026-06-29_16-56-34/
 /data/ncnn-logs/ort-logs/2026-06-29_21-43-36/
+/data/ncnn-logs/ort-logs/2026-06-30_06-12-26/
 ```
 
 ## YOLO26 Float Coverage
@@ -48,9 +49,15 @@ The 2026-06-29 minimization pass narrowed this further:
 - pass filters for `AddQDQPreMinmaxParams` and `QLinearLeaglization` did not
   avoid the compile failure.
 
-Therefore the current operator blocker is best described as the rt204 compiler
-path for real YOLO26 Q/DQ Conv blocks, not a generic ONNX Q/DQ or Clip parser
-failure.
+The 2026-06-30 vendor-repro pass reduced the blocker to a tiny synthetic Q/DQ
+Conv model with explicit `kernel_shape=[3,3]`:
+
+```text
+15_conv_qdq_attr_kernel_shape.onnx
+```
+
+Attr isolation showed that `kernel_shape` is sufficient to trigger the
+`clip minmax` failure. `dilations` alone and `group` alone pass.
 
 ## YOLO26 INT8 Fallbacks
 
@@ -64,10 +71,22 @@ This keeps semantics correct by pushing the problematic Q/DQ Conv regions away
 from SpaceMIT EP. It is CPU-heavy and should not be treated as an accelerated
 INT8 path.
 
-An end-to-end QOperator Conv+MatMul candidate runs with sane semantics under
-rt204, but raw CPU/EP parity is loose and the dumped EP subgraphs do not prove
-that `QLinearConv` or `QLinearMatMul` are accelerated. Perf smoke was slower
-than FP32. This makes QOperator a separate fallback-gate candidate only.
+An end-to-end QOperator Conv+MatMul candidate runs under rt204, but the gate
+rejected it for performance benchmarking: raw CPU/EP parity is loose, the bus
+oracle changes top semantics under EP, dumped subgraphs do not contain
+`QLinearConv` or `QLinearMatMul`, and bounded timing smoke is slower than FP32.
+
+Removing optional Conv `kernel_shape` attributes from the full Q/DQ model is
+CPU-exact and avoids the first Conv blocker, but exposes an attention MatMul
+runtime issue:
+
+```text
+cannot find kernel config for this vlen 256 and weight type u8
+```
+
+`SPACEMIT_EP_DISABLE_OP_TYPE_FILTER=MatMul;Add` restores smoke semantics for
+that stripped model. This is a partial fallback candidate only, not a proven
+accelerated INT8 path.
 
 ## YOLO11 RT204 Signal
 
