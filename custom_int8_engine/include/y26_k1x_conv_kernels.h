@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstddef>
 #include <cstdint>
 
 extern "C" {
@@ -43,6 +44,48 @@ void y26_pack_b_mmt4d_4x8_s8(const std::int8_t* matrix_nk,
                              int row_offset_n,
                              int col_offset_k,
                              std::int8_t* dst_4x8_transposed_nk);
+
+std::size_t y26_mmt4d_packed_b_bytes(int output_c, int kernel_k);
+
+std::size_t y26_conv_mmt4d_a_workspace_bytes(const Y26Conv2DParams* params,
+                                             int kernel_h,
+                                             int kernel_w);
+
+int y26_conv1x1_prepack_weights_mmt4d_s8(const std::int8_t* weights_oc_ic,
+                                         const Y26Conv2DParams* params,
+                                         std::int8_t* packed_b_mmt4d,
+                                         std::size_t packed_b_bytes,
+                                         std::int32_t* weight_sums_oc);
+
+int y26_conv3x3_prepack_weights_mmt4d_s8(const std::int8_t* weights_oc_kh_kw_ic,
+                                         const Y26Conv2DParams* params,
+                                         std::int8_t* packed_b_mmt4d,
+                                         std::size_t packed_b_bytes,
+                                         std::int32_t* weight_sums_oc);
+
+int y26_conv1x1_i8s8s32_nhwc_ime_prepacked(const std::int8_t* input_nhwc_s8,
+                                            const std::int8_t* packed_b_mmt4d,
+                                            std::int32_t* raw_output_nhwc,
+                                            const Y26Conv2DParams* params,
+                                            int input_storage_zero_point_s8,
+                                            std::int8_t* workspace,
+                                            std::size_t workspace_bytes);
+
+int y26_conv3x3_i8s8s32_nhwc_ime_prepacked(const std::int8_t* input_nhwc_s8,
+                                            const std::int8_t* packed_b_mmt4d,
+                                            std::int32_t* raw_output_nhwc,
+                                            const Y26Conv2DParams* params,
+                                            int input_storage_zero_point_s8,
+                                            std::int8_t* workspace,
+                                            std::size_t workspace_bytes);
+
+int y26_conv2d_apply_u8_as_s8_correction_nhwc(const std::int32_t* raw_dot_nhwc,
+                                               const std::int32_t* bias_oc,
+                                               const std::int32_t* weight_sums_oc,
+                                               std::int32_t* corrected_output_nhwc,
+                                               int output_m,
+                                               int output_c,
+                                               int activation_zero_point_u8);
 
 int y26_conv1x1_i8s8s32_nhwc_scalar(const std::int8_t* input_nhwc,
                                      const std::int8_t* weights_oc_ic,

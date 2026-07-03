@@ -1,0 +1,142 @@
+{
+  "model": "/data/banana-yolo26-spacemit-demo/.deps/models/yolo26/int8_rt204_forensics/manual_ort/manual_e2e_rep_conv_matmul_qdq.onnx",
+  "model_sha256": "30a94e4738606673b5e0a73499cbc977167f046f8fa8637d6040ce744f429c0c",
+  "oracle_model": "/data/banana-yolo26-spacemit-demo/.deps/custom_int8_engine/stage3_oracle/stage3_selected_conv_outputs.onnx",
+  "python": {
+    "numpy": "2.5.0",
+    "onnx": "1.22.0",
+    "onnxruntime": "1.27.0"
+  },
+  "selected": [
+    {
+      "activation_q_shape": [
+        1,
+        32,
+        160,
+        160
+      ],
+      "activation_scale": 0.5825009942054749,
+      "activation_zero_point_u8": 0,
+      "attrs": {
+        "dilations": [
+          1,
+          1
+        ],
+        "group": 1,
+        "kernel_shape": [
+          1,
+          1
+        ],
+        "pads": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "strides": [
+          1,
+          1
+        ]
+      },
+      "bias_q_shape": [
+        32
+      ],
+      "dequant_max_abs_diff_vs_ort": 9.5367431640625e-06,
+      "fixture_params": {
+        "compare_h": 4,
+        "compare_w": 4,
+        "input_c": 32,
+        "input_h": 4,
+        "input_w": 4,
+        "output_c": 32,
+        "output_h": 4,
+        "output_w": 4
+      },
+      "input_q_tensor": "/model.1/act/Mul_output_0_QuantizeLinear_Output",
+      "label": "conv1x1_model_2_cv1",
+      "node": "/model.2/cv1/conv/Conv",
+      "sha256": {
+        "bias_i32": "cc52f992b7aca9d4b27822fb317b906c0d7d37067082aca44a978734bfeec5ed",
+        "expected_i32": "0298637ff0cf0c7c092bb2cc97e4cbbbd52a1b575d755426f9a7ace0012d0d2a",
+        "input_s8": "0f27ba1e6c11d7d413336eabc832b4ea2df9f728abeab41e3b60a23a597ab335",
+        "weights_ohwi_s8": "552e93f5a6ff5b214cfdffb7178f93a736bca92815d987beb38f871cef94efda"
+      },
+      "weight_q_shape": [
+        32,
+        32,
+        1,
+        1
+      ],
+      "weight_scale_shape": [
+        32
+      ],
+      "weight_zero_point_max": 0,
+      "weight_zero_point_min": 0
+    },
+    {
+      "activation_q_shape": [
+        1,
+        16,
+        160,
+        160
+      ],
+      "activation_scale": 0.18348428606987,
+      "activation_zero_point_u8": 2,
+      "attrs": {
+        "dilations": [
+          1,
+          1
+        ],
+        "group": 1,
+        "kernel_shape": [
+          3,
+          3
+        ],
+        "pads": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "strides": [
+          1,
+          1
+        ]
+      },
+      "bias_q_shape": [
+        8
+      ],
+      "dequant_max_abs_diff_vs_ort": 2.384185791015625e-07,
+      "fixture_params": {
+        "compare_h": 4,
+        "compare_w": 4,
+        "input_c": 16,
+        "input_h": 5,
+        "input_w": 5,
+        "output_c": 8,
+        "output_h": 5,
+        "output_w": 5
+      },
+      "input_q_tensor": "/model.2/Split_output_1_QuantizeLinear_Output",
+      "label": "conv3x3_model_2_m0_cv1",
+      "node": "/model.2/m.0/cv1/conv/Conv",
+      "sha256": {
+        "bias_i32": "b978b35dd8ee7fe05bbde6c3f4fdb2693651eac45ada529921d69857695d3bf4",
+        "expected_i32": "04a25d45b658856477fa40f04306a35a70d9187be3d39cd7b1a2f57f062d5bd0",
+        "input_s8": "2b3ab8fdf65dfb6eeea81aef732899b4903acbba33a48439b9c4d714d575076b",
+        "weights_ohwi_s8": "7149db66752ce429ec3c3948d9ae4f4707e1b09611635e199a300778bf3473f9"
+      },
+      "weight_q_shape": [
+        8,
+        16,
+        3,
+        3
+      ],
+      "weight_scale_shape": [
+        8
+      ],
+      "weight_zero_point_max": 0,
+      "weight_zero_point_min": 0
+    }
+  ]
+}

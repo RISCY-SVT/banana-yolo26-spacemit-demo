@@ -1,0 +1,139 @@
+# commands for BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE3-BLOCK-PACKING-OPTIMIZATION-001
+[2026-07-03T13:59:29+02:00] bootstrap: sed -n '1,240p' /data/.codex/skills/lab_bridge_packet_workflow/SKILL.md
+[2026-07-03T13:59:29+02:00] bootstrap: sed -n '1,240p' /data/.codex/skills/k1x_env_sanity/SKILL.md
+[2026-07-03T13:59:29+02:00] bootstrap: sed -n '1,240p' /data/.codex/skills/k1x_git_hygiene/SKILL.md
+[2026-07-03T13:59:29+02:00] cmd: mkdir -p "$LOG_DIR/artifacts" "$LOG_DIR/run_logs" "$TASK_RUN_DIR/artifacts" "$REPO_STAGE_DIR"
+[2026-07-03T13:59:50+02:00] cmd: /data/lab/scripts/check-bridge-layout.sh
+[2026-07-03T13:59:54+02:00] exit_code: /data/lab/scripts/check-bridge-layout.sh -> 0
+[2026-07-03T13:59:54+02:00] cmd: /data/lab/scripts/init-shared-log-run.sh contcodex BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE3-BLOCK-PACKING-OPTIMIZATION-001 stage3-block-packing
+[2026-07-03T13:59:54+02:00] exit_code: /data/lab/scripts/init-shared-log-run.sh contcodex BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE3-BLOCK-PACKING-OPTIMIZATION-001 stage3-block-packing -> 0
+[2026-07-03T13:59:54+02:00] cmd: pwd
+[2026-07-03T13:59:54+02:00] exit_code: pwd -> 0
+[2026-07-03T13:59:54+02:00] cmd: date -Is
+[2026-07-03T13:59:54+02:00] exit_code: date -Is -> 0
+[2026-07-03T13:59:54+02:00] cmd: hostname
+[2026-07-03T13:59:54+02:00] exit_code: hostname -> 0
+[2026-07-03T13:59:54+02:00] cmd: git status --short --branch
+[2026-07-03T13:59:54+02:00] exit_code: git status --short --branch -> 0
+[2026-07-03T13:59:54+02:00] cmd: git branch --show-current
+[2026-07-03T13:59:54+02:00] exit_code: git branch --show-current -> 0
+[2026-07-03T13:59:54+02:00] cmd: git rev-parse HEAD
+[2026-07-03T13:59:54+02:00] exit_code: git rev-parse HEAD -> 0
+[2026-07-03T13:59:54+02:00] cmd: git log --oneline -n 8
+[2026-07-03T13:59:54+02:00] exit_code: git log --oneline -n 8 -> 0
+[2026-07-03T13:59:54+02:00] cmd: git remote -v
+[2026-07-03T13:59:54+02:00] exit_code: git remote -v -> 0
+[2026-07-03T14:00:25+02:00] cmd: sed -n '1,220p' stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/STAGE2_FINAL_REPORT.md
+[2026-07-03T14:00:25+02:00] exit_code: sed -n '1,220p' stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/STAGE2_FINAL_REPORT.md -> 0
+[2026-07-03T14:00:26+02:00] cmd: sed -n '1,220p' stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001/stage1_final_report.md
+[2026-07-03T14:00:26+02:00] cmd: sed -n '1,220p' stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE0-RECOVERY-AND-DESIGN-001/final-report.md
+[2026-07-03T14:00:26+02:00] exit_code: sed -n '1,220p' stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001/stage1_final_report.md -> 0
+[2026-07-03T14:00:26+02:00] exit_code: sed -n '1,220p' stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE0-RECOVERY-AND-DESIGN-001/final-report.md -> 0
+[2026-07-03T14:00:26+02:00] cmd: rg --files custom_int8_engine | sort
+[2026-07-03T14:00:26+02:00] exit_code: rg --files custom_int8_engine | sort -> 0
+[2026-07-03T14:00:56+02:00] cmd: sed -n '1,260p' custom_int8_engine/include/y26_k1x_conv_kernels.h
+[2026-07-03T14:00:56+02:00] exit_code: sed -n '1,260p' custom_int8_engine/include/y26_k1x_conv_kernels.h -> 0
+[2026-07-03T14:00:57+02:00] cmd: sed -n '1,320p' custom_int8_engine/kernels/conv3x3_i8s8s32_ime.cpp
+[2026-07-03T14:00:57+02:00] cmd: sed -n '1,260p' custom_int8_engine/kernels/conv1x1_i8s8s32_ime.cpp
+[2026-07-03T14:00:57+02:00] exit_code: sed -n '1,320p' custom_int8_engine/kernels/conv3x3_i8s8s32_ime.cpp -> 0
+[2026-07-03T14:00:57+02:00] exit_code: sed -n '1,260p' custom_int8_engine/kernels/conv1x1_i8s8s32_ime.cpp -> 0
+[2026-07-03T14:00:57+02:00] cmd: sed -n '1,280p' custom_int8_engine/kernels/pack_mmt4d.cpp
+[2026-07-03T14:00:57+02:00] exit_code: sed -n '1,280p' custom_int8_engine/kernels/pack_mmt4d.cpp -> 0
+[2026-07-03T14:01:26+02:00] cmd: sed -n '1,260p' custom_int8_engine/kernels/conv1x1_i8s8s32_scalar.cpp
+[2026-07-03T14:01:26+02:00] exit_code: sed -n '1,260p' custom_int8_engine/kernels/conv1x1_i8s8s32_scalar.cpp -> 0
+[2026-07-03T14:01:26+02:00] cmd: sed -n '1,300p' custom_int8_engine/kernels/conv3x3_i8s8s32_scalar.cpp
+[2026-07-03T14:01:26+02:00] exit_code: sed -n '1,300p' custom_int8_engine/kernels/conv3x3_i8s8s32_scalar.cpp -> 0
+[2026-07-03T14:01:26+02:00] cmd: sed -n '1,320p' custom_int8_engine/CMakeLists.txt
+[2026-07-03T14:01:26+02:00] exit_code: sed -n '1,320p' custom_int8_engine/CMakeLists.txt -> 0
+[2026-07-03T14:01:26+02:00] cmd: sed -n '1,320p' custom_int8_engine/tests/CMakeLists.txt
+[2026-07-03T14:01:26+02:00] exit_code: sed -n '1,320p' custom_int8_engine/tests/CMakeLists.txt -> 0
+[2026-07-03T14:01:40+02:00] cmd: cmake -S custom_int8_engine -B .deps/custom_int8_engine/build-host-native-stage3 -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_CXX_COMPILER=/usr/bin/g++
+[2026-07-03T14:01:42+02:00] exit_code: cmake -S custom_int8_engine -B .deps/custom_int8_engine/build-host-native-stage3 -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_CXX_COMPILER=/usr/bin/g++ -> 0
+[2026-07-03T14:01:42+02:00] cmd: cmake --build .deps/custom_int8_engine/build-host-native-stage3 -j8
+[2026-07-03T14:01:48+02:00] exit_code: cmake --build .deps/custom_int8_engine/build-host-native-stage3 -j8 -> 0
+[2026-07-03T14:01:48+02:00] cmd: ctest --test-dir .deps/custom_int8_engine/build-host-native-stage3 --output-on-failure
+[2026-07-03T14:01:48+02:00] exit_code: ctest --test-dir .deps/custom_int8_engine/build-host-native-stage3 --output-on-failure -> 0
+[2026-07-03T14:02:07+02:00] cmd: k1x env sanity source /data/build_scripts/01-env.sh and compiler/sysroot probe
+[2026-07-03T14:02:07+02:00] exit_code: k1x env sanity source /data/build_scripts/01-env.sh and compiler/sysroot probe -> 0
+[2026-07-03T14:02:07+02:00] cmd: cmake cross build configure .deps/custom_int8_engine/build-riscv-cross-stage3
+[2026-07-03T14:02:09+02:00] exit_code: cmake cross build configure .deps/custom_int8_engine/build-riscv-cross-stage3 -> 0
+[2026-07-03T14:02:09+02:00] cmd: cmake --build .deps/custom_int8_engine/build-riscv-cross-stage3 -j8
+[2026-07-03T14:02:17+02:00] exit_code: cmake --build .deps/custom_int8_engine/build-riscv-cross-stage3 -j8 -> 0
+[2026-07-03T14:02:35+02:00] cmd: deploy Stage2 smoke binaries to board for Stage3 baseline
+[2026-07-03T14:02:37+02:00] exit_code: deploy Stage2 smoke binaries to board for Stage3 baseline -> 0
+[2026-07-03T14:02:37+02:00] cmd: board Stage3 baseline smoke on cluster0
+[2026-07-03T14:02:38+02:00] exit_code: board Stage3 baseline smoke on cluster0 -> 0
+[2026-07-03T14:02:52+02:00] cmd: find existing python virtual environments excluding xslim
+[2026-07-03T14:03:37+02:00] exit_code: find existing python virtual environments excluding xslim -> 0
+[2026-07-03T14:03:37+02:00] cmd: probe system python onnx numpy onnxruntime
+[2026-07-03T14:03:38+02:00] exit_code: probe system python onnx numpy onnxruntime -> 0
+[2026-07-03T14:03:57+02:00] cmd: python3 -m venv .deps/custom_int8_engine/venv-onnx-stage3
+[2026-07-03T14:04:06+02:00] exit_code: python3 -m venv .deps/custom_int8_engine/venv-onnx-stage3 -> 0
+[2026-07-03T14:04:06+02:00] cmd: .deps/custom_int8_engine/venv-onnx-stage3/bin/python -m pip install --upgrade pip
+[2026-07-03T14:04:11+02:00] exit_code: .deps/custom_int8_engine/venv-onnx-stage3/bin/python -m pip install --upgrade pip -> 0
+[2026-07-03T14:04:11+02:00] cmd: .deps/custom_int8_engine/venv-onnx-stage3/bin/python -m pip install onnx numpy onnxruntime
+[2026-07-03T14:04:37+02:00] exit_code: .deps/custom_int8_engine/venv-onnx-stage3/bin/python -m pip install onnx numpy onnxruntime -> 0
+[2026-07-03T14:04:37+02:00] cmd: record onnx tooling versions
+[2026-07-03T14:04:38+02:00] exit_code: record onnx tooling versions -> 0
+[2026-07-03T14:05:04+02:00] cmd: inspect accepted QDQ ONNX Conv candidates
+[2026-07-03T14:05:05+02:00] exit_code: inspect accepted QDQ ONNX Conv candidates -> 0
+[2026-07-03T14:05:41+02:00] cmd: inspect selected Conv QDQ metadata
+[2026-07-03T14:05:42+02:00] exit_code: inspect selected Conv QDQ metadata -> 0
+[2026-07-03T14:06:00+02:00] cmd: probe bias tensors and ORT load
+[2026-07-03T14:06:02+02:00] exit_code: probe bias tensors and ORT load -> 0
+[2026-07-03T14:06:18+02:00] cmd: inspect selected Conv bias producers
+[2026-07-03T14:06:19+02:00] exit_code: inspect selected Conv bias producers -> 0
+[2026-07-03T14:09:07+02:00] cmd: validate selected real Conv quantized oracle math
+[2026-07-03T14:09:09+02:00] exit_code: validate selected real Conv quantized oracle math -> 0
+[2026-07-03T14:12:56+02:00] cmd: run extract_stage3_real_conv_oracle.py
+[2026-07-03T14:12:58+02:00] exit_code: run extract_stage3_real_conv_oracle.py -> 0
+[2026-07-03T14:13:19+02:00] cmd: wc -c custom_int8_engine/tests/stage3_real_conv_fixture.h stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE3-BLOCK-PACKING-OPTIMIZATION-001/real_layer_oracle_data.json
+[2026-07-03T14:13:19+02:00] exit_code: wc -c custom_int8_engine/tests/stage3_real_conv_fixture.h stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE3-BLOCK-PACKING-OPTIMIZATION-001/real_layer_oracle_data.json -> 0
+[2026-07-03T14:13:19+02:00] cmd: LC_ALL=C rg -n '[^ -~]' custom_int8_engine/tests/stage3_real_conv_fixture.h stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE3-BLOCK-PACKING-OPTIMIZATION-001/real_layer_oracle_data.json || true
+[2026-07-03T14:13:19+02:00] cmd: sed -n '1,120p' stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE3-BLOCK-PACKING-OPTIMIZATION-001/real_layer_oracle_data.json
+[2026-07-03T14:13:19+02:00] exit_code: sed -n '1,120p' stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE3-BLOCK-PACKING-OPTIMIZATION-001/real_layer_oracle_data.json -> 0
+[2026-07-03T14:13:19+02:00] exit_code: LC_ALL=C rg -n '[^ -~]' custom_int8_engine/tests/stage3_real_conv_fixture.h stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE3-BLOCK-PACKING-OPTIMIZATION-001/real_layer_oracle_data.json || true -> 0
+[2026-07-03T14:13:29+02:00] cmd: tail -n 80 custom_int8_engine/tests/stage3_real_conv_fixture.h
+[2026-07-03T14:13:29+02:00] exit_code: tail -n 80 custom_int8_engine/tests/stage3_real_conv_fixture.h -> 0
+[2026-07-03T14:15:55+02:00] cmd: sed -n '1,160p' custom_int8_engine/tests/test_requant_rounding.cpp
+[2026-07-03T14:15:55+02:00] exit_code: sed -n '1,160p' custom_int8_engine/tests/test_requant_rounding.cpp -> 0
+[2026-07-03T14:16:21+02:00] cmd: cmake -S custom_int8_engine -B .deps/custom_int8_engine/build-host-native-stage3 -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_CXX_COMPILER=/usr/bin/g++
+[2026-07-03T14:16:21+02:00] exit_code: cmake -S custom_int8_engine -B .deps/custom_int8_engine/build-host-native-stage3 -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_CXX_COMPILER=/usr/bin/g++ -> 0
+[2026-07-03T14:16:21+02:00] cmd: cmake --build .deps/custom_int8_engine/build-host-native-stage3 -j8
+[2026-07-03T14:16:26+02:00] exit_code: cmake --build .deps/custom_int8_engine/build-host-native-stage3 -j8 -> 0
+[2026-07-03T14:16:26+02:00] cmd: ctest --test-dir .deps/custom_int8_engine/build-host-native-stage3 --output-on-failure
+[2026-07-03T14:16:27+02:00] exit_code: ctest --test-dir .deps/custom_int8_engine/build-host-native-stage3 --output-on-failure -> 0
+[2026-07-03T14:16:42+02:00] cmd: cmake cross build configure .deps/custom_int8_engine/build-riscv-cross-stage3
+[2026-07-03T14:16:42+02:00] exit_code: cmake cross build configure .deps/custom_int8_engine/build-riscv-cross-stage3 -> 0
+[2026-07-03T14:16:43+02:00] cmd: cmake --build .deps/custom_int8_engine/build-riscv-cross-stage3 -j8
+[2026-07-03T14:16:50+02:00] exit_code: cmake --build .deps/custom_int8_engine/build-riscv-cross-stage3 -j8 -> 0
+[2026-07-03T14:17:08+02:00] cmd: deploy Stage3 binaries to board
+[2026-07-03T14:17:10+02:00] exit_code: deploy Stage3 binaries to board -> 0
+[2026-07-03T14:17:10+02:00] cmd: board Stage3 real fixture and packing bench on cluster0
+[2026-07-03T14:17:14+02:00] exit_code: board Stage3 real fixture and packing bench on cluster0 -> 0
+[2026-07-03T14:17:41+02:00] cmd: git status --short --branch && git diff --stat
+[2026-07-03T14:17:41+02:00] exit_code: git status --short --branch && git diff --stat -> 0
+[2026-07-03T14:18:05+02:00] cmd: search local control/exchange for sliding vmadot references
+[2026-07-03T14:18:05+02:00] exit_code: search local control/exchange for sliding vmadot references -> 0
+[2026-07-03T14:20:31+02:00] cmd: git diff --check
+[2026-07-03T14:20:31+02:00] exit_code: git diff --check -> 0
+[2026-07-03T14:20:31+02:00] cmd: git diff --cached --check || true
+[2026-07-03T14:20:32+02:00] exit_code: git diff --cached --check || true -> 0
+[2026-07-03T14:20:32+02:00] cmd: host native rebuild and CTest final
+[2026-07-03T14:20:34+02:00] exit_code: host native rebuild and CTest final -> 0
+[2026-07-03T14:20:34+02:00] cmd: riscv cross rebuild final
+[2026-07-03T14:20:36+02:00] exit_code: riscv cross rebuild final -> 0
+[2026-07-03T14:20:36+02:00] cmd: git status --short --branch
+[2026-07-03T14:20:36+02:00] exit_code: git status --short --branch -> 0
+[2026-07-03T14:20:36+02:00] cmd: find custom_int8_engine stages -type l -print
+[2026-07-03T14:20:37+02:00] exit_code: find custom_int8_engine stages -type l -print -> 0
+[2026-07-03T14:20:37+02:00] cmd: path hygiene scan Stage3 touched paths
+[2026-07-03T14:20:37+02:00] exit_code: path hygiene scan Stage3 touched paths -> 0
+[2026-07-03T14:20:37+02:00] cmd: secret-like scan touched tracked text
+[2026-07-03T14:20:38+02:00] exit_code: secret-like scan touched tracked text -> 0
+[2026-07-03T14:21:00+02:00] cmd: secret-pattern self-check command logs
+[2026-07-03T14:21:00+02:00] exit_code: secret-pattern self-check command logs -> 0
+[2026-07-03T14:21:21+02:00] cmd: copy Stage3 reports to log artifacts and task-run artifacts
+[2026-07-03T14:21:22+02:00] exit_code: copy Stage3 reports to log artifacts and task-run artifacts -> 0
+[2026-07-03T14:21:22+02:00] cmd: write raw evidence paths
+[2026-07-03T14:21:22+02:00] exit_code: write raw evidence paths -> 0
