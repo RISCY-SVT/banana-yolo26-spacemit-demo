@@ -1,0 +1,222 @@
+# pre-log command: cat /data/.codex/skills/lab_bridge_packet_workflow/SKILL.md
+# exit=0
+# pre-log command: cat /data/.codex/skills/k1x_env_sanity/SKILL.md
+# exit=0
+# pre-log command: cat /data/.codex/skills/k1x_git_hygiene/SKILL.md
+# exit=0
+$ /data/lab/scripts/check-bridge-layout.sh
+# exit=0
+$ /data/lab/scripts/init-shared-log-run.sh contcodex BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE5-FIRST-BLOCK-INTEGRATION-001 first-block-integration
+# exit=0
+# task packet missing under /exchange/tasks/inbox/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE5-FIRST-BLOCK-INTEGRATION-001; continuing from direct prompt
+$ pwd
+# exit=0
+$ date -u +%Y-%m-%d_%H-%M-%S
+# exit=0
+$ hostname
+# exit=0
+$ pwd
+# exit=0
+$ git status --short --branch
+# exit=0
+$ git rev-parse HEAD
+# exit=0
+$ git branch --show-current
+# exit=0
+$ git log --oneline -n 12
+# exit=0
+$ git remote -v
+# exit=0
+$ test -r stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE4-PACKING-REPAIR-001/STAGE4_FINAL_REPORT.md
+# exit=0
+$ test -r custom_int8_engine/include/y26_k1x_conv_kernels.h
+# exit=0
+$ test -r custom_int8_engine/kernels/conv_mmt4d_prepack.cpp
+# exit=0
+$ test -r custom_int8_engine/tools/bench_stage4_packing.cpp
+# exit=0
+$ sed -n 1,220p stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE4-PACKING-REPAIR-001/STAGE4_FINAL_REPORT.md
+# exit=0
+$ git rev-parse HEAD
+# exit=0
+$ git tag --points-at HEAD
+# exit=0
+$ bash -lc set -euo pipefail; source /data/build_scripts/01-env.sh; printf "CC=%s\nCXX=%s\nK1_ARCH_FLAGS=%s\nK1_SYSROOT_OVERLAY=%s\nBANANA_SSH_TARGET=%s\n" "${CC:-}" "${CXX:-}" "${K1_ARCH_FLAGS:-}" "${K1_SYSROOT_OVERLAY:-}" "${BANANA_SSH_TARGET:-${BANANA_SSH:-}}"
+# exit=0
+$ bash -lc set -euo pipefail; source /data/build_scripts/01-env.sh; ${CC:-riscv64-unknown-linux-gnu-gcc} --version | head -n 2
+# exit=0
+$ bash -lc set -euo pipefail; source /data/build_scripts/01-env.sh; CC=${CC:-riscv64-unknown-linux-gnu-gcc}; ARCH_FLAGS=${K1_ARCH_FLAGS:-"-march=rv64gcv_zvfh -mabi=lp64d"}; echo "ARCH_FLAGS=$ARCH_FLAGS"; echo | "$CC" $ARCH_FLAGS -dM -E - | rg -n "__riscv_vector|__riscv_zvfh|__riscv_zfh" || true
+# exit=0
+$ bash -lc set -euo pipefail; source /data/build_scripts/01-env.sh; test -d "${K1_SYSROOT_OVERLAY:-/data/sysroots/k1x-gtk3-overlay}"; printf "SYSROOT_OVERLAY=%s\n" "${K1_SYSROOT_OVERLAY:-/data/sysroots/k1x-gtk3-overlay}"
+# exit=0
+$ bash -lc set -euo pipefail; source /data/build_scripts/01-env.sh; printf "BOARD_TARGET=%s\n" "${BANANA_SSH_TARGET:-${BANANA_SSH:-}}"
+# exit=0
+$ rg --files custom_int8_engine
+# exit=0
+$ sed -n 1,240p custom_int8_engine/CMakeLists.txt
+# exit=0
+$ sed -n 1,260p custom_int8_engine/include/y26_k1x_conv_kernels.h
+# exit=0
+$ sed -n 1,320p custom_int8_engine/kernels/conv_mmt4d_prepack.cpp
+# exit=0
+$ sed -n 1,240p custom_int8_engine/tests/CMakeLists.txt
+# exit=0
+$ sed -n 1,320p custom_int8_engine/tests/test_stage4_packing_repair.cpp
+# exit=0
+$ sed -n 1,260p custom_int8_engine/tools/bench_stage4_packing.cpp
+# exit=0
+$ sed -n 1,240p stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE4-PACKING-REPAIR-001/microbench_stage4_report.md
+# exit=0
+$ sed -n 1,220p stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE4-PACKING-REPAIR-001/conv1x1_stage4_report.md
+# exit=0
+$ sed -n 1,220p stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE4-PACKING-REPAIR-001/conv3x3_stage4_report.md
+# exit=0
+$ cmake -S custom_int8_engine -B .deps/custom_int8_engine/build-host-native-stage5 -DCMAKE_BUILD_TYPE=Debug -DY26_K1X_ENABLE_IME=OFF -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_CXX_COMPILER=/usr/bin/g++
+# exit=0
+$ cmake --build .deps/custom_int8_engine/build-host-native-stage5 -j8
+# exit=0
+$ ctest --test-dir .deps/custom_int8_engine/build-host-native-stage5 --output-on-failure
+# exit=0
+$ python3 -m venv .deps/custom_int8_engine/venv-stage5-onnx
+# exit=0
+$ .deps/custom_int8_engine/venv-stage5-onnx/bin/python -m pip --version
+# exit=0
+$ .deps/custom_int8_engine/venv-stage5-onnx/bin/python -m pip install onnx onnxruntime numpy
+# exit=0
+$ .deps/custom_int8_engine/venv-stage5-onnx/bin/python -c import sys, onnx, onnxruntime, numpy; print("python", sys.version); print("onnx", onnx.__version__); print("onnxruntime", onnxruntime.__version__); print("numpy", numpy.__version__)
+# exit=0
+$ test -r .deps/models/yolo26/int8_rt204_forensics/manual_ort/manual_e2e_rep_conv_matmul_qdq.onnx
+# exit=0
+$ sha256sum .deps/models/yolo26/int8_rt204_forensics/manual_ort/manual_e2e_rep_conv_matmul_qdq.onnx
+# exit=0
+$ sed -n 1,260p custom_int8_engine/tools/extract_stage3_real_conv_oracle.py
+# exit=0
+$ sed -n 1,260p custom_int8_engine/tests/stage3_real_conv_fixture.h
+# exit=0
+$ sed -n 1,260p custom_int8_engine/tests/test_stage3_real_conv_fixture.cpp
+# exit=0
+$ .deps/custom_int8_engine/venv-stage5-onnx/bin/python -
+# exit=0
+$ bash -lc rg --files .deps data models scripts custom_int8_engine 2>/dev/null | rg "(\.npy$|\.bin$|\.jpg$|\.png$|input|preprocess|image)" | head -n 200 || true
+# exit=0
+$ bash -lc find .deps/custom_int8_engine -maxdepth 4 -type f | rg "(oracle|input|npy|bin|stage3|stage4)" | head -n 200 || true
+# exit=0
+$ rg -n apply_u8_as_s8_correction|activation_zero_point|weight_sums custom_int8_engine/kernels custom_int8_engine/include
+# exit=0
+$ sed -n 300,520p custom_int8_engine/kernels/conv_mmt4d_prepack.cpp
+# exit=0
+$ sed -n 580,620p custom_int8_engine/kernels/conv_mmt4d_prepack.cpp
+# exit=0
+$ rg -n build-riscv|CMAKE_SYSTEM|K1_ARCH_FLAGS|Y26_K1X_ENABLE_IME stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE4-PACKING-REPAIR-001/commands.txt stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE3-BLOCK-PACKING-OPTIMIZATION-001/commands.txt stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/commands.txt
+# exit=0
+$ sed -n 1,260p custom_int8_engine/tests/CMakeLists.txt
+# exit=0
+$ sed -n 1,180p custom_int8_engine/CMakeLists.txt
+# exit=0
+$ apply_patch stage5 block runner, test, bench, CMake updates
+# exit=0
+$ apply_patch add Stage5 ONNX oracle extractor
+# exit=0
+$ .deps/custom_int8_engine/venv-stage5-onnx/bin/python custom_int8_engine/tools/extract_stage5_block_oracle.py --model .deps/models/yolo26/int8_rt204_forensics/manual_ort/manual_e2e_rep_conv_matmul_qdq.onnx --dump-dir .deps/custom_int8_engine/stage5_oracle/2026-07-03_22-07-15 --fixture-header-out custom_int8_engine/tests/stage5_block0_fixture.h --metadata-out .deps/custom_int8_engine/stage5_oracle/2026-07-03_22-07-15/metadata.json
+# exit=0
+$ sed -n 1,220p custom_int8_engine/tests/stage5_block0_fixture.h
+# exit=0
+$ sed -n 1,220p .deps/custom_int8_engine/stage5_oracle/2026-07-03_22-07-15/metadata.json
+# exit=0
+$ bash -lc find .deps/custom_int8_engine/stage5_oracle/2026-07-03_22-07-15 -type f -maxdepth 3 -print0 | xargs -0 sha256sum
+# exit=0
+$ bash -lc printf "run_ts=%s\n" "$(cat stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE5-FIRST-BLOCK-INTEGRATION-001/run_ts.txt)"; printf "log_dir=%s\n" "$(cat stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE5-FIRST-BLOCK-INTEGRATION-001/log_dir.txt)"; printf "task_run_dir=%s\n" "$(cat stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE5-FIRST-BLOCK-INTEGRATION-001/task_run_dir.txt)"; printf "shared_log=%s\n" "$(cat stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE5-FIRST-BLOCK-INTEGRATION-001/shared-log-dir.txt)"
+# exit=0
+$ git status --short --branch
+# exit=0
+$ cmake -S custom_int8_engine -B .deps/custom_int8_engine/build-host-native-stage5 -DCMAKE_BUILD_TYPE=Debug -DY26_K1X_ENABLE_IME=OFF -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_CXX_COMPILER=/usr/bin/g++
+# exit=0
+$ cmake --build .deps/custom_int8_engine/build-host-native-stage5 -j8
+# exit=0
+$ ctest --test-dir .deps/custom_int8_engine/build-host-native-stage5 --output-on-failure
+# exit=0
+$ .deps/custom_int8_engine/build-host-native-stage5/tests/test_stage5_first_block_runner
+# exit=0
+$ .deps/custom_int8_engine/build-host-native-stage5/bench_stage5_first_block 1
+# exit=0
+$ bash -lc set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; cmake -S custom_int8_engine -B .deps/custom_int8_engine/build-riscv-stage5 -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS="$K1_ARCH_FLAGS" -DY26_K1X_ENABLE_IME=ON -DY26_K1X_ENABLE_TESTS=ON -DY26_K1X_BUILD_TOOLS=ON
+# exit=0
+$ bash -lc set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; cmake --build .deps/custom_int8_engine/build-riscv-stage5 -j"$(nproc)"
+# exit=0
+$ file .deps/custom_int8_engine/build-riscv-stage5/tests/test_stage5_first_block_runner .deps/custom_int8_engine/build-riscv-stage5/bench_stage5_first_block
+# exit=0
+$ bash -lc set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; TARGET=${BANANA_SSH_TARGET:-${BANANA_SSH:-svt@banana}}; REMOTE_DIR=/home/svt/yolo26-custom-int8-stage5/2026-07-03_22-07-15; ssh -o BatchMode=yes -o ConnectTimeout=5 "$TARGET" "mkdir -p $REMOTE_DIR"; scp -o BatchMode=yes -o ConnectTimeout=5 .deps/custom_int8_engine/build-riscv-stage5/tests/test_ime_runtime_probe .deps/custom_int8_engine/build-riscv-stage5/tests/test_vmadot_4x4x8_board_probe .deps/custom_int8_engine/build-riscv-stage5/tests/test_stage4_packing_repair .deps/custom_int8_engine/build-riscv-stage5/tests/test_stage5_first_block_runner .deps/custom_int8_engine/build-riscv-stage5/bench_stage5_first_block "$TARGET:$REMOTE_DIR/"; printf "%s\n" "$REMOTE_DIR"
+# exit=0
+$ bash -lc set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; TARGET=${BANANA_SSH_TARGET:-${BANANA_SSH:-svt@banana}}; ssh -o BatchMode=yes -o ConnectTimeout=5 "$TARGET" "uname -a; hostname; cat /sys/devices/system/cpu/online"
+# exit=0
+$ bash -lc set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; TARGET=${BANANA_SSH_TARGET:-${BANANA_SSH:-svt@banana}}; REMOTE_DIR=/home/svt/yolo26-custom-int8-stage5/2026-07-03_22-07-15; ssh -o BatchMode=yes -o ConnectTimeout=5 "$TARGET" "cd $REMOTE_DIR && taskset -c 0-3 ./test_ime_runtime_probe"
+# exit=0
+$ bash -lc set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; TARGET=${BANANA_SSH_TARGET:-${BANANA_SSH:-svt@banana}}; REMOTE_DIR=/home/svt/yolo26-custom-int8-stage5/2026-07-03_22-07-15; ssh -o BatchMode=yes -o ConnectTimeout=5 "$TARGET" "cd $REMOTE_DIR && taskset -c 0-3 ./test_vmadot_4x4x8_board_probe"
+# exit=0
+$ bash -lc set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; TARGET=${BANANA_SSH_TARGET:-${BANANA_SSH:-svt@banana}}; REMOTE_DIR=/home/svt/yolo26-custom-int8-stage5/2026-07-03_22-07-15; ssh -o BatchMode=yes -o ConnectTimeout=5 "$TARGET" "cd $REMOTE_DIR && taskset -c 0-3 ./test_stage4_packing_repair"
+# exit=0
+$ bash -lc set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; TARGET=${BANANA_SSH_TARGET:-${BANANA_SSH:-svt@banana}}; REMOTE_DIR=/home/svt/yolo26-custom-int8-stage5/2026-07-03_22-07-15; ssh -o BatchMode=yes -o ConnectTimeout=5 "$TARGET" "cd $REMOTE_DIR && taskset -c 0 ./test_stage5_first_block_runner"
+# exit=0
+$ bash -lc set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; TARGET=${BANANA_SSH_TARGET:-${BANANA_SSH:-svt@banana}}; REMOTE_DIR=/home/svt/yolo26-custom-int8-stage5/2026-07-03_22-07-15; ssh -o BatchMode=yes -o ConnectTimeout=5 "$TARGET" "cd $REMOTE_DIR && taskset -c 1 ./test_stage5_first_block_runner"
+# exit=0
+$ bash -lc set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; TARGET=${BANANA_SSH_TARGET:-${BANANA_SSH:-svt@banana}}; REMOTE_DIR=/home/svt/yolo26-custom-int8-stage5/2026-07-03_22-07-15; ssh -o BatchMode=yes -o ConnectTimeout=5 "$TARGET" "cd $REMOTE_DIR && taskset -c 2 ./test_stage5_first_block_runner"
+# exit=0
+$ bash -lc set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; TARGET=${BANANA_SSH_TARGET:-${BANANA_SSH:-svt@banana}}; REMOTE_DIR=/home/svt/yolo26-custom-int8-stage5/2026-07-03_22-07-15; ssh -o BatchMode=yes -o ConnectTimeout=5 "$TARGET" "cd $REMOTE_DIR && taskset -c 3 ./test_stage5_first_block_runner"
+# exit=0
+$ bash -lc set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; TARGET=${BANANA_SSH_TARGET:-${BANANA_SSH:-svt@banana}}; REMOTE_DIR=/home/svt/yolo26-custom-int8-stage5/2026-07-03_22-07-15; ssh -o BatchMode=yes -o ConnectTimeout=5 "$TARGET" "cd $REMOTE_DIR && taskset -c 0 ./bench_stage5_first_block 3"
+# exit=0
+$ apply_patch add Stage5 reports and Stage6 prompt
+# exit=0
+$ git diff --check
+# exit=0
+$ git status --short --branch
+# exit=0
+$ find custom_int8_engine stages -type l -print
+# exit=0
+$ git diff --stat
+# exit=0
+$ bash -lc git ls-files -z | xargs -0 -r ls -l | sort -k5 -n | tail -n 25
+# exit=0
+$ bash -lc git status --short | sed -n "1,220p"
+# exit=0
+$ bash -lc set -euo pipefail; git status --porcelain | awk "{print \$2}" | rg "^(custom_int8_engine|stages)/" | while read -r p; do [ -f "$p" ] && printf "%s\0" "$p"; done | xargs -0 -r rg -n "BEGIN (RSA|OPENSSH|PRIVATE)|PRIVATE KEY|AKIA|SECRET|TOKEN|PASSWORD|xox[baprs]-|ghp_[A-Za-z0-9]" || true
+# exit=0
+$ bash -lc set -euo pipefail; { git diff --name-only; git ls-files --others --exclude-standard; } | rg "^(custom_int8_engine|stages)/" | rg -v "commands\.txt$" | while read -r p; do [ -f "$p" ] && printf "%s\0" "$p"; done | xargs -0 -r rg -n "BEGIN (RSA|OPENSSH|PRIVATE)|PRIVATE KEY|AKIA|SECRET|TOKEN|PASSWORD|xox[baprs]-|ghp_[A-Za-z0-9]" || true
+# exit=0
+$ bash -lc { git diff --name-only; git ls-files --others --exclude-standard; } | rg "^(custom_int8_engine|stages)/" | while read -r p; do [ -f "$p" ] && wc -c "$p"; done | sort -n | tail -n 30
+# exit=0
+$ apply_patch add Stage5 source_hygiene_report.md
+# exit=0
+$ bash -lc set -euo pipefail; STAGE_ID="BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE5-FIRST-BLOCK-INTEGRATION-001"; REPO="/data/banana-yolo26-spacemit-demo"; REPO_STAGE_DIR="$REPO/stages/$STAGE_ID"; TASK_RUN_DIR="/data/lab/task-runs/$STAGE_ID"; LOG_DIR="$(cat "$REPO_STAGE_DIR/log_dir.txt")"; mkdir -p "$TASK_RUN_DIR/artifacts" "$LOG_DIR/artifacts"; cp "$REPO_STAGE_DIR/STAGE5_SUMMARY_RU.md" "$TASK_RUN_DIR/result-summary.md"; cp "$REPO_STAGE_DIR/STAGE5_FINAL_REPORT.md" "$TASK_RUN_DIR/final-report.md"; cp "$REPO_STAGE_DIR"/*.md "$TASK_RUN_DIR/artifacts/"; cp "$REPO_STAGE_DIR"/*.md "$LOG_DIR/artifacts/"; cp "$REPO_STAGE_DIR/commands.txt" "$TASK_RUN_DIR/artifacts/commands.txt"; cp "$REPO_STAGE_DIR/commands.txt" "$LOG_DIR/artifacts/commands.txt"; cp "$REPO_STAGE_DIR/shared-log-dir.txt" "$TASK_RUN_DIR/shared-log-dir.txt"; printf "%s\n" "$LOG_DIR" "$REPO_STAGE_DIR" "$TASK_RUN_DIR" "$REPO/.deps/custom_int8_engine/stage5_oracle/$(cat "$REPO_STAGE_DIR/run_ts.txt")" "$REPO/.deps/custom_int8_engine/build-host-native-stage5" "$REPO/.deps/custom_int8_engine/build-riscv-stage5" "/home/svt/yolo26-custom-int8-stage5/$(cat "$REPO_STAGE_DIR/run_ts.txt")" > "$TASK_RUN_DIR/raw-evidence-paths.txt"; printf "%s\n" "/home/svt/yolo26-custom-int8-stage5/$(cat "$REPO_STAGE_DIR/run_ts.txt")" > "$TASK_RUN_DIR/board-remote-paths.txt"; ls -la "$TASK_RUN_DIR"; ls -la "$TASK_RUN_DIR/artifacts" | sed -n "1,120p"
+# exit=0
+$ /data/lab/scripts/scan-export-candidates.sh /data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE5-FIRST-BLOCK-INTEGRATION-001/artifacts
+# exit=0
+$ git diff --check
+# exit=0
+$ git add custom_int8_engine stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE5-FIRST-BLOCK-INTEGRATION-001
+# exit=0
+$ git diff --cached --stat
+# exit=0
+$ git diff --cached --check
+# exit=0
+$ git commit -m Integrate first YOLO26 custom INT8 block runner
+# exit=0
+$ git show --stat --oneline --no-renames HEAD
+# exit=0
+$ bash -lc set -euo pipefail; STAGE_ID="BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE5-FIRST-BLOCK-INTEGRATION-001"; REPO="/data/banana-yolo26-spacemit-demo"; REPO_STAGE_DIR="$REPO/stages/$STAGE_ID"; TASK_RUN_DIR="/data/lab/task-runs/$STAGE_ID"; LOG_DIR="$(cat "$REPO_STAGE_DIR/log_dir.txt")"; cp "$REPO_STAGE_DIR/commands.txt" "$TASK_RUN_DIR/artifacts/commands.txt"; cp "$REPO_STAGE_DIR/commands.txt" "$LOG_DIR/artifacts/commands.txt"; git show --stat --oneline --no-renames HEAD > "$TASK_RUN_DIR/artifacts/git-show-stat.txt"; cp "$TASK_RUN_DIR/artifacts/git-show-stat.txt" "$LOG_DIR/artifacts/git-show-stat.txt"; cp "$REPO_STAGE_DIR/STAGE5_SUMMARY_RU.md" "$TASK_RUN_DIR/result-summary.md"; cp "$REPO_STAGE_DIR/STAGE5_FINAL_REPORT.md" "$TASK_RUN_DIR/final-report.md"
+# exit=0
+$ /data/lab/scripts/scan-export-candidates.sh /data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE5-FIRST-BLOCK-INTEGRATION-001/artifacts
+# exit=0
+$ /data/lab/scripts/export-result-packet.sh BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE5-FIRST-BLOCK-INTEGRATION-001
+# exit=1
+$ find /exchange/results/outbox/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE5-FIRST-BLOCK-INTEGRATION-001 -maxdepth 2 -type f -print
+# exit=1
+$ bash -lc set -euo pipefail; STAGE_ID="BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE5-FIRST-BLOCK-INTEGRATION-001"; REPO="/data/banana-yolo26-spacemit-demo"; REPO_STAGE_DIR="$REPO/stages/$STAGE_ID"; TASK_RUN_DIR="/data/lab/task-runs/$STAGE_ID"; LOG_DIR="$(cat "$REPO_STAGE_DIR/log_dir.txt")"; RUN_TS="$(cat "$REPO_STAGE_DIR/run_ts.txt")"; printf "%s\n" "$LOG_DIR" "$REPO_STAGE_DIR" "$TASK_RUN_DIR" "$REPO/.deps/custom_int8_engine/stage5_oracle/$RUN_TS" "$REPO/.deps/custom_int8_engine/build-host-native-stage5" "$REPO/.deps/custom_int8_engine/build-riscv-stage5" > "$TASK_RUN_DIR/raw-evidence-paths.txt"; printf "%s\n" "/home/svt/yolo26-custom-int8-stage5/$RUN_TS" > "$TASK_RUN_DIR/board-remote-paths.txt"; cat "$TASK_RUN_DIR/raw-evidence-paths.txt"
+# exit=0
+$ /data/lab/scripts/scan-export-candidates.sh /data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE5-FIRST-BLOCK-INTEGRATION-001/artifacts
+# exit=0
+$ /data/lab/scripts/export-result-packet.sh BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE5-FIRST-BLOCK-INTEGRATION-001
+# exit=0
+$ find /exchange/results/outbox/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE5-FIRST-BLOCK-INTEGRATION-001 -maxdepth 2 -type f -print
+# exit=0
+$ git add stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE5-FIRST-BLOCK-INTEGRATION-001/commands.txt && git commit --amend --no-edit

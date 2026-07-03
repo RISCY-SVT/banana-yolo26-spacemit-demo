@@ -21,6 +21,7 @@ add_library(y26_k1x_custom_int8_engine
     kernels/vmadot_4x4x8_scalar.cpp
     kernels/vmadot_stub.cpp
     src/engine_stub.cpp
+    src/block_runner.cpp
     src/model_format.cpp
     src/quant_metadata.cpp
 )
@@ -90,6 +91,16 @@ if(Y26_K1X_BUILD_TOOLS)
     target_compile_options(bench_stage4_packing PRIVATE -Wall -Wextra -Wpedantic)
     if(Y26_K1X_ENABLE_IME)
         target_compile_definitions(bench_stage4_packing PRIVATE Y26_K1X_ENABLE_IME_ASM=1)
+    endif()
+
+    add_executable(bench_stage5_first_block
+        tools/bench_stage5_first_block.cpp
+    )
+    target_link_libraries(bench_stage5_first_block PRIVATE y26_k1x_custom_int8_engine)
+    target_include_directories(bench_stage5_first_block PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/tests")
+    target_compile_options(bench_stage5_first_block PRIVATE -Wall -Wextra -Wpedantic)
+    if(Y26_K1X_ENABLE_IME)
+        target_compile_definitions(bench_stage5_first_block PRIVATE Y26_K1X_ENABLE_IME_ASM=1)
     endif()
 endif()
 
