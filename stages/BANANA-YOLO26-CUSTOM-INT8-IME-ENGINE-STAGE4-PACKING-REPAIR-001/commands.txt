@@ -1,0 +1,96 @@
+RUN_TS=2026-07-03_19-26-42
+STAGE_ID=BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE4-PACKING-REPAIR-001
+LOG_DIR=/data/ncnn-logs/ai-team/2026-07-03_19-26-42/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE4-PACKING-REPAIR-001
+REPO_STAGE_DIR=/data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE4-PACKING-REPAIR-001
+TASK_RUN_DIR=/data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE4-PACKING-REPAIR-001
+COMMAND: mkdir -p "$LOG_DIR" "$LOG_DIR/artifacts" "$LOG_DIR/run_logs" "$REPO_STAGE_DIR" "$TASK_RUN_DIR" "$TASK_RUN_DIR/artifacts"
+EXIT_CODE: 0
+COMMAND: /data/lab/scripts/check-bridge-layout.sh
+EXIT_CODE: 0
+COMMAND: /data/lab/scripts/init-shared-log-run.sh contcodex BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE4-PACKING-REPAIR-001 stage4-packing-repair
+EXIT_CODE: 0
+COMMAND: test -r /exchange/tasks/inbox/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE4-PACKING-REPAIR-001/task.md && test -r /exchange/tasks/inbox/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE4-PACKING-REPAIR-001/manifest.yaml
+EXIT_CODE: 1
+COMMAND: cd /data/banana-yolo26-spacemit-demo && pwd
+EXIT_CODE: 0
+COMMAND: git status --short --branch
+EXIT_CODE: 0
+COMMAND: git branch --show-current
+EXIT_CODE: 0
+COMMAND: git rev-parse HEAD
+EXIT_CODE: 0
+COMMAND: git log --oneline -n 12
+EXIT_CODE: 0
+COMMAND: git remote -v
+EXIT_CODE: 0
+COMMAND: cmake -S custom_int8_engine -B .deps/custom_int8_engine/build-host-native-stage4-baseline -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_CXX_COMPILER=/usr/bin/g++
+COMMAND: cmake --build .deps/custom_int8_engine/build-host-native-stage4-baseline -j$(nproc)
+COMMAND: ctest --test-dir .deps/custom_int8_engine/build-host-native-stage4-baseline --output-on-failure
+EXIT_CODE: 0
+EXIT_CODE: 0
+EXIT_CODE: 0
+COMMAND: source /data/build_scripts/01-env.sh; command -v "${CC:-riscv64-unknown-linux-gnu-gcc}"; "${CC:-riscv64-unknown-linux-gnu-gcc}" --version; echo | "${CC:-riscv64-unknown-linux-gnu-gcc}" ${K1_ARCH_FLAGS:--march=rv64gcv_zvfh -mabi=lp64d} -dM -E - | rg -n "__riscv_vector|__riscv_zvfh|__riscv_zfh" || true; test -d "${K1_SYSROOT_OVERLAY:-/data/sysroots/k1x-gtk3-overlay}"; echo BOARD_TARGET="${BANANA_SSH_TARGET:-${BANANA_SSH:-}}"
+EXIT_CODE: 0
+COMMAND: source /data/build_scripts/01-env.sh; cmake -S custom_int8_engine -B .deps/custom_int8_engine/build-riscv-cross-stage4-baseline -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS="$K1_ARCH_FLAGS" -DY26_K1X_ENABLE_IME=ON
+COMMAND: cmake --build .deps/custom_int8_engine/build-riscv-cross-stage4-baseline -j$(nproc)
+EXIT_CODE: 0
+EXIT_CODE: 0
+COMMAND: ssh svt@banana 'mkdir -p /home/svt/yolo26-custom-int8-stage4/2026-07-03_19-26-42/baseline'
+COMMAND: scp baseline RISC-V test/bench binaries to svt@banana:/home/svt/yolo26-custom-int8-stage4/2026-07-03_19-26-42/baseline/
+COMMAND: ssh svt@banana 'cd /home/svt/yolo26-custom-int8-stage4/2026-07-03_19-26-42/baseline && uname -a && taskset -c 0-3 ./test_ime_runtime_probe && taskset -c 0-3 ./test_vmadot_4x4x8_board_probe && taskset -c 0-3 ./test_conv1x1_ime_fixture && taskset -c 0-3 ./test_conv3x3_ime_fixture && taskset -c 0-3 ./test_stage3_real_conv_fixture && taskset -c 0 ./bench_stage3_packing 3'
+EXIT_CODE: 0
+EXIT_CODE: 0
+EXIT_CODE: 0
+COMMAND: cmake -S custom_int8_engine -B .deps/custom_int8_engine/build-host-native-stage4-dev -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_CXX_COMPILER=/usr/bin/g++
+COMMAND: cmake --build .deps/custom_int8_engine/build-host-native-stage4-dev -j$(nproc)
+EXIT_CODE: 0
+EXIT_CODE: 0
+COMMAND: cmake -S custom_int8_engine -B .deps/custom_int8_engine/build-host-native-stage4-dev -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_CXX_COMPILER=/usr/bin/g++
+COMMAND: cmake --build .deps/custom_int8_engine/build-host-native-stage4-dev -j$(nproc)
+COMMAND: ctest --test-dir .deps/custom_int8_engine/build-host-native-stage4-dev --output-on-failure
+EXIT_CODE: 0
+EXIT_CODE: 0
+EXIT_CODE: 0
+COMMAND: source /data/build_scripts/01-env.sh; cmake -S custom_int8_engine -B .deps/custom_int8_engine/build-riscv-cross-stage4-dev -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS="$K1_ARCH_FLAGS" -DY26_K1X_ENABLE_IME=ON
+COMMAND: cmake --build .deps/custom_int8_engine/build-riscv-cross-stage4-dev -j$(nproc)
+EXIT_CODE: 0
+EXIT_CODE: 0
+COMMAND: ssh svt@banana 'mkdir -p /home/svt/yolo26-custom-int8-stage4/2026-07-03_19-26-42/final'
+COMMAND: scp Stage4 RISC-V test/bench binaries to svt@banana:/home/svt/yolo26-custom-int8-stage4/2026-07-03_19-26-42/final/
+COMMAND: ssh svt@banana 'cd /home/svt/yolo26-custom-int8-stage4/2026-07-03_19-26-42/final && uname -a && taskset -c 0-3 ./test_ime_runtime_probe && taskset -c 0-3 ./test_vmadot_4x4x8_board_probe && taskset -c 0-3 ./test_conv1x1_ime_fixture && taskset -c 0-3 ./test_conv3x3_ime_fixture && taskset -c 0-3 ./test_stage3_real_conv_fixture && taskset -c 0-3 ./test_stage4_packing_repair && taskset -c 0 ./bench_stage4_packing 5'
+EXIT_CODE: 0
+EXIT_CODE: 0
+EXIT_CODE: 0
+COMMAND: test -x .deps/custom_int8_engine/venv-onnx-stage3/bin/python && .deps/custom_int8_engine/venv-onnx-stage3/bin/python - <<'PY'
+EXIT_CODE: 0
+COMMAND: git diff --check
+COMMAND: git diff --cached --check || true
+COMMAND: git status --short --branch
+COMMAND: find custom_int8_engine stages -type l -print
+COMMAND: git diff --name-only
+EXIT_CODE: 0
+EXIT_CODE: 0
+EXIT_CODE: 0
+EXIT_CODE: 0
+EXIT_CODE: 0
+COMMAND: { git diff --name-only; git ls-files --others --exclude-standard custom_int8_engine stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE4-PACKING-REPAIR-001; } | sort -u
+EXIT_CODE: 0
+COMMAND: rg -n 'BEGIN (RSA|OPENSSH|PRIVATE)|PRIVATE KEY|AKIA|SECRET|TOKEN|PASSWORD|xoxb-|ghp_' $(cat /data/ncnn-logs/ai-team/2026-07-03_19-26-42/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE4-PACKING-REPAIR-001/run_logs/changed_files_all_precommit.txt) || true
+EXIT_CODE: 0
+COMMAND: git ls-files -z | xargs -0 -r ls -l | sort -k5 -n | tail -n 20
+EXIT_CODE: 0
+COMMAND: write /data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE4-PACKING-REPAIR-001/source_hygiene_report.md from hygiene scan outputs
+EXIT_CODE: 0
+COMMAND: rg -v '(^|/)commands\.txt$' /data/ncnn-logs/ai-team/2026-07-03_19-26-42/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE4-PACKING-REPAIR-001/run_logs/changed_files_all_precommit.txt > /data/ncnn-logs/ai-team/2026-07-03_19-26-42/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE4-PACKING-REPAIR-001/run_logs/changed_files_secret_scan_filtered.txt
+EXIT_CODE: 0
+COMMAND: xargs -r rg -n 'BEGIN (RSA|OPENSSH|PRIVATE)|PRIVATE KEY|AKIA|xoxb-|ghp_' < /data/ncnn-logs/ai-team/2026-07-03_19-26-42/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE4-PACKING-REPAIR-001/run_logs/changed_files_secret_scan_filtered.txt || true
+EXIT_CODE: 0
+COMMAND: git diff --check
+COMMAND: git add custom_int8_engine/CMakeLists.txt custom_int8_engine/include/y26_k1x_conv_kernels.h custom_int8_engine/kernels/conv_mmt4d_prepack.cpp custom_int8_engine/tests/CMakeLists.txt custom_int8_engine/tests/test_stage4_packing_repair.cpp custom_int8_engine/tools/bench_stage4_packing.cpp stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE4-PACKING-REPAIR-001
+COMMAND: git diff --cached --check
+COMMAND: git commit -m 'Repair custom INT8 Conv packing and workspace dataflow'
+EXIT_CODE: 0
+EXIT_CODE: 0
+EXIT_CODE: 0
+COMMAND: git add stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE4-PACKING-REPAIR-001/commands.txt
+COMMAND: git commit --amend --no-edit
