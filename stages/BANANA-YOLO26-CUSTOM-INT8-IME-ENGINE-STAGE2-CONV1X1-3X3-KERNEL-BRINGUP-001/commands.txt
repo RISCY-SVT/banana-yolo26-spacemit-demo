@@ -1,0 +1,264 @@
+RUN_TS=2026-07-03_12-27-20
+STAGE_ID=BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001
+LOG_DIR=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001
+REPO=/data/banana-yolo26-spacemit-demo
+TASK_RUN_DIR=/data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001
+REPO_STAGE_DIR=/data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001
++ bootstrap: create Stage 2 log, task-run, and repo stage dirs
+exit_code=0
+
++ /data/lab/scripts/check-bridge-layout.sh
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/bridge_check.log
+
++ test -r /exchange/tasks/inbox/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/task.md && test -r /exchange/tasks/inbox/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/manifest.yaml
+exit_code=1 caveat=no_incoming_task_packet
+
++ /data/lab/scripts/init-shared-log-run.sh contcodex BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001 stage2-conv-kernels
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/init_shared_log.log
+
++ cd '/data/banana-yolo26-spacemit-demo' && pwd
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/start_pwd.log
+
++ date -u '+%Y-%m-%dT%H:%M:%SZ'
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/start_date.log
+
++ hostname
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/start_hostname.log
+
++ cd '/data/banana-yolo26-spacemit-demo' && git status --short --branch
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/start_git_status.log
+
++ cd '/data/banana-yolo26-spacemit-demo' && git branch --show-current
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/start_git_branch.log
+
++ cd '/data/banana-yolo26-spacemit-demo' && git rev-parse HEAD
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/start_git_head.log
+
++ cd '/data/banana-yolo26-spacemit-demo' && git log --oneline -n 12
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/start_git_log.log
+
++ cd '/data/banana-yolo26-spacemit-demo' && git remote -v
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/start_git_remote.log
+
++ cd '/data/banana-yolo26-spacemit-demo' && git diff --stat && git ls-files --others --exclude-standard
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/stage1_dirty_tree_stat.log
+
++ cd '/data/banana-yolo26-spacemit-demo' && git diff --check
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/stage1_diff_check.log
+
++ cd '/data/banana-yolo26-spacemit-demo' && find custom_int8_engine stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001 -print | LC_ALL=C grep -n '[^ -~]' || true
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/stage1_path_hygiene.log
+
++ cd '/data/banana-yolo26-spacemit-demo' && env -u CC -u CXX LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 cmake -S custom_int8_engine -B .deps/custom_int8_engine/build-host-native -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_CXX_COMPILER=/usr/bin/g++
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/stage1_host_cmake.log
+
++ cd '/data/banana-yolo26-spacemit-demo' && env -u CC -u CXX LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 cmake --build .deps/custom_int8_engine/build-host-native -j"8"
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/stage1_host_build.log
+
++ cd '/data/banana-yolo26-spacemit-demo' && env LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 ctest --test-dir .deps/custom_int8_engine/build-host-native --output-on-failure
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/stage1_host_ctest.log
+
++ cd '/data/banana-yolo26-spacemit-demo' && git add custom_int8_engine/CMakeLists.txt custom_int8_engine/tests/CMakeLists.txt custom_int8_engine/include/y26_k1x_vmadot.h custom_int8_engine/kernels/vmadot_4x4x8_ime.cpp custom_int8_engine/kernels/vmadot_4x4x8_scalar.cpp custom_int8_engine/tests/test_vmadot_4x4x8_board_probe.cpp custom_int8_engine/tests/test_vmadot_4x4x8_host_vectors.cpp custom_int8_engine/tests/test_vmadot_4x4x8_scalar.cpp custom_int8_engine/tools/bench_vmadot_microkernel.cpp custom_int8_engine/tools/generate_vmadot_test_vectors.py custom_int8_engine/tools/inspect_vmadot_disasm.sh custom_int8_engine/tools/run_vmadot_board.sh stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/stage1_git_add.log
+
++ cd '/data/banana-yolo26-spacemit-demo' && git commit -m 'Prove smt.vmadot Stage 1 microkernel on K1X'
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/stage1_commit.log
+
++ cd '/data/banana-yolo26-spacemit-demo' && git status --short --branch && git rev-parse HEAD
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/post_stage1_checkpoint_status.log
+
++ cd '/data/banana-yolo26-spacemit-demo' && sed -n '1,220p' stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE0-RECOVERY-AND-DESIGN-001/first_layer_shape_tile_plan.md && sed -n '1,220p' stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE0-RECOVERY-AND-DESIGN-001/quantization_and_scales_plan.md && sed -n '1,180p' stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE0-RECOVERY-AND-DESIGN-001/oracle_plan.md
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/read_stage0_reports.log
+
++ cd '/data/banana-yolo26-spacemit-demo' && sed -n '1,220p' stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001/stage1_final_report.md && sed -n '1,200p' stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001/asm_parser_disassembly_report.md && sed -n '1,180p' stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001/microbench_report.md
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/read_stage1_reports.log
+
++ cd '/data/banana-yolo26-spacemit-demo' && sed -n '1,240p' custom_int8_engine/CMakeLists.txt && sed -n '1,220p' custom_int8_engine/tests/CMakeLists.txt && sed -n '1,220p' custom_int8_engine/include/y26_k1x_vmadot.h && sed -n '1,260p' custom_int8_engine/kernels/vmadot_4x4x8_ime.cpp
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/read_stage1_code.log
+
++ set -euo pipefail; source /data/build_scripts/01-env.sh; CC=${CC:-riscv64-unknown-linux-gnu-gcc}; command -v "$CC"; "$CC" --version | sed -n "1,3p"; ARCH_FLAGS=${K1_ARCH_FLAGS:-"-march=rv64gcv_zvfh -mabi=lp64d"}; printf "ARCH_FLAGS=%s\n" "$ARCH_FLAGS"; echo | "$CC" $ARCH_FLAGS -dM -E - | rg -n "__riscv_vector|__riscv_zvfh|__riscv_zfh" || true; SYSROOT_OVERLAY=${K1_SYSROOT_OVERLAY:-/data/sysroots/k1x-gtk3-overlay}; test -d "$SYSROOT_OVERLAY"; printf "SYSROOT_OVERLAY=%s\n" "$SYSROOT_OVERLAY"; TARGET=${BANANA_SSH_TARGET:-${BANANA_SSH:-svt@banana}}; printf "BOARD_TARGET=%s\n" "$TARGET"
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/k1x_env_sanity.log
+
++ printf "control_doc=%s\n" /control/specs/docs/spacemit-ime-asciidoc.md; test -r /control/specs/docs/spacemit-ime-asciidoc.md && rg -n "vmadot1|vmadot2|vmadot3|vmadotn|vfmadot|smt\.vmadot" /control/specs/docs/spacemit-ime-asciidoc.md || true; find /control/specs/drafts/0003-ncnn-int8-ime-mmt4d /exchange/results/archive/W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001 /data/lab/task-runs/W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001 /data/ncnn-logs/ai-team -maxdepth 6 -type f 2>/dev/null | rg "W1-IME|vmadot|IME|mmt4d|report|summary|final" | head -n 120
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/ime_evidence_search.log
+
++ cd '/data/banana-yolo26-spacemit-demo' && sed -n '1,220p' custom_int8_engine/kernels/vmadot_4x4x8_scalar.cpp && sed -n '1,220p' custom_int8_engine/tests/test_pack_a_layout.cpp && sed -n '1,220p' custom_int8_engine/tests/test_pack_b_layout.cpp
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/read_scalar_pack_tests.log
+
++ cd '/data/banana-yolo26-spacemit-demo' && rg --files custom_int8_engine | sort
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/list_engine_files.log
+
++ cd '/data/banana-yolo26-spacemit-demo' && sed -n '1,260p' custom_int8_engine/tools/bench_vmadot_microkernel.cpp && sed -n '1,260p' custom_int8_engine/tests/test_vmadot_4x4x8_board_probe.cpp
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/read_bench_board_probe.log
+
++ cd '/data/banana-yolo26-spacemit-demo' && sed -n '1,260p' custom_int8_engine/include/y26_k1x_engine.h && sed -n '1,220p' custom_int8_engine/src/engine_stub.cpp && sed -n '1,220p' custom_int8_engine/kernels/vmadot_stub.cpp
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/read_engine_stub.log
+
++ cd '/data/banana-yolo26-spacemit-demo' && env -u CC -u CXX LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 cmake -S custom_int8_engine -B .deps/custom_int8_engine/build-host-native -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_CXX_COMPILER=/usr/bin/g++
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/host_cmake_stage2.log
+
++ cd '/data/banana-yolo26-spacemit-demo' && env -u CC -u CXX LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 cmake --build .deps/custom_int8_engine/build-host-native -j"8"
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/host_build_stage2.log
+
++ cd '/data/banana-yolo26-spacemit-demo' && env LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 ctest --test-dir .deps/custom_int8_engine/build-host-native --output-on-failure
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/host_ctest_stage2.log
+
++ cd '/data/banana-yolo26-spacemit-demo' && rg -n 'build-k1x|build-riscv|CMAKE_CXX_COMPILER|CMAKE_C_COMPILER|CMAKE_SYSROOT|march|mabi|Y26_K1X_ENABLE_IME' stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001/commands.txt
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/read_stage1_cross_commands.log
+
++ cd /data/banana-yolo26-spacemit-demo && set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; cmake -S custom_int8_engine -B .deps/custom_int8_engine/build-riscv-cross -DCMAKE_BUILD_TYPE=Release -DCMAKE_SYSTEM_NAME=Linux -DCMAKE_SYSTEM_PROCESSOR=riscv64 -DCMAKE_C_COMPILER=riscv64-unknown-linux-gnu-gcc -DCMAKE_CXX_COMPILER=riscv64-unknown-linux-gnu-g++ -DCMAKE_SYSROOT="$K1_SYSROOT_BASE" -DCMAKE_CXX_FLAGS="$K1_ARCH_FLAGS" -DCMAKE_EXE_LINKER_FLAGS="-static-libstdc++ -static-libgcc" -DY26_K1X_ENABLE_IME=ON -DY26_K1X_ENABLE_TESTS=ON -DY26_K1X_BUILD_TOOLS=ON
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/cross_cmake_stage2.log
+
++ cd /data/banana-yolo26-spacemit-demo && set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; cmake --build .deps/custom_int8_engine/build-riscv-cross -j"$(nproc)"
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/cross_build_stage2.log
+
++ cd /data/banana-yolo26-spacemit-demo && file .deps/custom_int8_engine/build-riscv-cross/tests/test_ime_runtime_probe .deps/custom_int8_engine/build-riscv-cross/tests/test_conv1x1_ime_fixture .deps/custom_int8_engine/build-riscv-cross/tests/test_conv3x3_ime_fixture .deps/custom_int8_engine/build-riscv-cross/bench_vmadot_hotpath .deps/custom_int8_engine/build-riscv-cross/bench_conv_kernels
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/cross_file_stage2.log
+
++ cd '/data/banana-yolo26-spacemit-demo' && env -u CC -u CXX LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 cmake --build .deps/custom_int8_engine/build-host-native -j"8"
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/host_build_stage2_after_assert_fix.log
+
++ cd '/data/banana-yolo26-spacemit-demo' && env LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 ctest --test-dir .deps/custom_int8_engine/build-host-native --output-on-failure
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/host_ctest_stage2_after_assert_fix.log
+
++ cd /data/banana-yolo26-spacemit-demo && set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; cmake --build .deps/custom_int8_engine/build-riscv-cross -j"$(nproc)"
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/cross_build_stage2_after_assert_fix.log
+
++ cd /data/banana-yolo26-spacemit-demo && set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; riscv64-unknown-linux-gnu-objdump -d .deps/custom_int8_engine/build-riscv-cross/bench_vmadot_hotpath | rg -n -A8 -B8 "smt\.vmadot|\.insn"
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/objdump_vmadot_hotpath.log
+
++ cd /data/banana-yolo26-spacemit-demo && set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; riscv64-unknown-linux-gnu-objdump -d .deps/custom_int8_engine/build-riscv-cross/tests/test_conv1x1_ime_fixture | rg -n -A8 -B8 "smt\.vmadot|\.insn"
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/objdump_conv_fixture.log
+
++ set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; TARGET=${BANANA_SSH_TARGET:-svt@banana}; timeout 15s ssh -o BatchMode=yes -o ConnectTimeout=5 "$TARGET" "uname -a && nproc && lscpu | sed -n '1,18p'"
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/board_uname.log
+
++ set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; TARGET=${BANANA_SSH_TARGET:-svt@banana}; REMOTE_DIR=/home/svt/yolo26-custom-int8-stage2/2026-07-03_12-27-20; timeout 15s ssh -o BatchMode=yes -o ConnectTimeout=5 "$TARGET" "mkdir -p '$REMOTE_DIR'"; printf 'REMOTE_DIR=%s\n' "$REMOTE_DIR"
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/board_prepare_remote.log
+
++ set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; TARGET=${BANANA_SSH_TARGET:-svt@banana}; REMOTE_DIR=/home/svt/yolo26-custom-int8-stage2/2026-07-03_12-27-20; timeout 30s scp -o BatchMode=yes -o ConnectTimeout=5 .deps/custom_int8_engine/build-riscv-cross/tests/test_ime_runtime_probe .deps/custom_int8_engine/build-riscv-cross/tests/test_vmadot_4x4x8_board_probe .deps/custom_int8_engine/build-riscv-cross/tests/test_conv1x1_ime_fixture .deps/custom_int8_engine/build-riscv-cross/tests/test_conv3x3_ime_fixture .deps/custom_int8_engine/build-riscv-cross/bench_vmadot_hotpath .deps/custom_int8_engine/build-riscv-cross/bench_conv_kernels "$TARGET:$REMOTE_DIR/"; printf 'REMOTE_DIR=%s\n' "$REMOTE_DIR"
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/board_deploy_stage2.log
+
++ set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; TARGET=${BANANA_SSH_TARGET:-svt@banana}; timeout 40s ssh -o BatchMode=yes -o ConnectTimeout=5 "$TARGET" 'set -e; cd /home/svt/yolo26-custom-int8-stage2/2026-07-03_12-27-20; for cpu in 0 1 2 3; do echo PROBE_CPU=$cpu; taskset -c $cpu ./test_ime_runtime_probe; done'
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/board_probe_cpu0_3.log
+
++ set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; TARGET=${BANANA_SSH_TARGET:-svt@banana}; timeout 40s ssh -o BatchMode=yes -o ConnectTimeout=5 "$TARGET" 'set -e; cd /home/svt/yolo26-custom-int8-stage2/2026-07-03_12-27-20; for cpu in 0 1 2 3; do echo VMADOT_CPU=$cpu; taskset -c $cpu ./test_vmadot_4x4x8_board_probe; done'
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/board_vmadot_fixture_cpu0_3.log
+
++ set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; TARGET=${BANANA_SSH_TARGET:-svt@banana}; timeout 60s ssh -o BatchMode=yes -o ConnectTimeout=5 "$TARGET" 'set -e; cd /home/svt/yolo26-custom-int8-stage2/2026-07-03_12-27-20; echo CONV1X1_CLUSTER0; taskset -c 0-3 ./test_conv1x1_ime_fixture; echo CONV3X3_CLUSTER0; taskset -c 0-3 ./test_conv3x3_ime_fixture'
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/board_conv_fixtures_cluster0.log
+
++ set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; TARGET=${BANANA_SSH_TARGET:-svt@banana}; timeout 40s ssh -o BatchMode=yes -o ConnectTimeout=5 "$TARGET" 'set -e; cd /home/svt/yolo26-custom-int8-stage2/2026-07-03_12-27-20; taskset -c 0 ./bench_vmadot_hotpath 20000 5'
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/board_bench_vmadot_hotpath.log
+
++ set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; TARGET=${BANANA_SSH_TARGET:-svt@banana}; timeout 60s ssh -o BatchMode=yes -o ConnectTimeout=5 "$TARGET" 'set -e; cd /home/svt/yolo26-custom-int8-stage2/2026-07-03_12-27-20; taskset -c 0-3 ./bench_conv_kernels 200 5'
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/board_bench_conv_kernels.log
+
++ cd '/data/banana-yolo26-spacemit-demo' && env -u CC -u CXX LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 cmake --build .deps/custom_int8_engine/build-host-native -j"8"
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/host_build_after_bench_core.log
+
++ cd /data/banana-yolo26-spacemit-demo && set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; cmake --build .deps/custom_int8_engine/build-riscv-cross -j"$(nproc)"
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/cross_build_after_bench_core.log
+
++ set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; TARGET=${BANANA_SSH_TARGET:-svt@banana}; REMOTE_DIR=/home/svt/yolo26-custom-int8-stage2/2026-07-03_12-27-20; timeout 20s scp -o BatchMode=yes -o ConnectTimeout=5 .deps/custom_int8_engine/build-riscv-cross/bench_conv_kernels "$TARGET:$REMOTE_DIR/bench_conv_kernels"
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/board_deploy_bench_conv_updated.log
+
++ set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; TARGET=${BANANA_SSH_TARGET:-svt@banana}; REMOTE_DIR=/home/svt/yolo26-custom-int8-stage2/2026-07-03_12-27-20; timeout 20s scp -o BatchMode=yes -o ConnectTimeout=5 .deps/custom_int8_engine/build-riscv-cross/bench_conv_kernels "$TARGET:$REMOTE_DIR/bench_conv_kernels"
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/board_deploy_bench_conv_updated_retry.log
+
++ set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; TARGET=${BANANA_SSH_TARGET:-svt@banana}; REMOTE_DIR=/home/svt/yolo26-custom-int8-stage2/2026-07-03_12-27-20; timeout 60s ssh -o BatchMode=yes -o ConnectTimeout=5 "$TARGET" "set -e; cd $REMOTE_DIR; taskset -c 0-3 ./bench_conv_kernels 200 5"
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/board_bench_conv_kernels_with_core_retry.log
+
++ cd '/data/banana-yolo26-spacemit-demo' && rg -n 'Conv|/model\.|kernel|stride|padding|unsupported|MatMul' stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE0-RECOVERY-AND-DESIGN-001/graph_inventory.md stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE0-RECOVERY-AND-DESIGN-001/artifact_inventory.md | head -n 160
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/read_stage0_graph_conv_candidates.log
+
++ cd '/data/banana-yolo26-spacemit-demo' && rg -n 'manual_e2e_rep_conv_matmul_qdq.onnx|full path|realpath|SHA256|model input shape|model output contract' stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE0-RECOVERY-AND-DESIGN-001/artifact_inventory.md | head -n 80
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/stage0_artifact_path_extract.log
+
++ python3 - <<'PY'
+from pathlib import Path
+import re
+inv = Path('/data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE0-RECOVERY-AND-DESIGN-001/artifact_inventory.md').read_text()
+paths = re.findall(r']*manual_e2e_rep_conv_matmul_qdq\.onnx)]*manual_e2e_rep_conv_matmul_qdq\.onnx)', inv)
+if not paths:
+    print('no_model_path_found')
+    raise SystemExit(0)
+model_path = paths[0]
+print('model_path=' + model_path)
+try:
+    import onnx
+except Exception as exc:
+    print('onnx_import_failed=' + repr(exc))
+    raise SystemExit(0)
+model = onnx.load(model_path)
+init = {x.name: x for x in model.graph.initializer}
+for node in model.graph.node:
+    if node.op_type == 'Conv':
+        attrs = {a.name: onnx.helper.get_attribute_value(a) for a in node.attribute}
+        print('first_conv_name=' + (node.name or '<unnamed>'))
+        print('inputs=' + ','.join(node.input))
+        print('outputs=' + ','.join(node.output))
+        print('attrs=' + repr(attrs))
+        for inp in node.input:
+            if inp in init:
+                dims = [d for d in init[inp].dims]
+                print('initializer_shape:%s=%s' % (inp, dims))
+        break
+else:
+    print('no_conv_found')
+PY
+exit_code=1 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/inspect_first_conv_onnx.log
+
++ cat >/tmp/stage2_inspect_first_conv.py && python3 /tmp/stage2_inspect_first_conv.py
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/inspect_first_conv_onnx_retry.log
+
++ cd '/data/banana-yolo26-spacemit-demo' && env LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 ctest --test-dir .deps/custom_int8_engine/build-host-native --output-on-failure
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/final_host_ctest.log
+
++ cd '/data/banana-yolo26-spacemit-demo' && git diff --check
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/final_git_diff_check.log
+
++ cd '/data/banana-yolo26-spacemit-demo' && git status --short --branch
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/final_git_status_short.log
+
++ cd '/data/banana-yolo26-spacemit-demo' && find . -type l -print
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/final_find_symlinks.log
+
++ cd '/data/banana-yolo26-spacemit-demo' && find custom_int8_engine stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001 -print | LC_ALL=C grep -n '[^ -~]' || true
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/final_path_hygiene_stage2.log
+
++ cd '/data/banana-yolo26-spacemit-demo' && { git diff --name-only HEAD; git ls-files --others --exclude-standard; } | sort -u | rg '^(custom_int8_engine|stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001)/' | rg -v 'commands\.txt$' | xargs -r rg -n 'BEGIN (RSA|OPENSSH|PRIVATE)|PRIVATE KEY|AKIA|SECRET|TOKEN|PASSWORD|\.env' || true
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/final_source_secret_scan.log
+
++ set -euo pipefail; mkdir -p '/data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/artifacts' '/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/artifacts'; cp '/data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/STAGE2_FINAL_REPORT.md' '/data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/final-report.md'; cp '/data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/STAGE2_SUMMARY_RU.md' '/data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/result-summary.md'; cp '/data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001'/*.md '/data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/artifacts/'; cp '/data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001'/*.md '/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/artifacts/'; cp '/data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/commands.txt' '/data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/artifacts/commands.txt'; printf '%s\n' '/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001' '/data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001' '/data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001' '/data/banana-yolo26-spacemit-demo/.deps/custom_int8_engine/build-host-native' '/data/banana-yolo26-spacemit-demo/.deps/custom_int8_engine/build-riscv-cross' > '/data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/raw-evidence-paths.txt'; printf '%s\n' "" > '/data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/shared-log-dir.txt'; ls -la '/data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001'; ls -la '/data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/artifacts' | sed -n '1,80p'
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/prepare_result_packet.log
+
++ set -euo pipefail; /data/lab/scripts/scan-export-candidates.sh '/data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/artifacts'
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/scan_export_candidates.log
+
++ set -euo pipefail; /data/lab/scripts/export-result-packet.sh 'BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001'
+exit_code=1 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/export_result_packet.log
+
++ set -euo pipefail; SHARED=$(cat '/data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/shared-log-dir.txt'); printf '%s\n' "$SHARED" > '/data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/shared-log-dir.txt'; cat '/data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/shared-log-dir.txt'
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/fix_shared_log_pointer.log
+
++ set -euo pipefail; cp '/data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/commands.txt' '/data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/artifacts/commands.txt'; cp '/data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/commands.txt' '/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/artifacts/commands.txt'
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/refresh_command_artifacts.log
+
++ set -euo pipefail; /data/lab/scripts/scan-export-candidates.sh '/data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/artifacts'
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/scan_export_candidates_retry.log
+
++ set -euo pipefail; /data/lab/scripts/export-result-packet.sh 'BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001'
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/export_result_packet_retry.log
+
++ cd '/data/banana-yolo26-spacemit-demo' && git add custom_int8_engine stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/precommit_git_add_stage2.log
+
++ cd '/data/banana-yolo26-spacemit-demo' && git diff --cached --check
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/precommit_cached_diff_check.log
+
++ cd '/data/banana-yolo26-spacemit-demo' && git status --short --branch
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-03_12-27-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001/run_logs/precommit_status.log
+
++ cd '/data/banana-yolo26-spacemit-demo' && git add custom_int8_engine stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE2-CONV1X1-3X3-KERNEL-BRINGUP-001 && git commit -m 'Bring up smt.vmadot Conv1x1 and Conv3x3 kernels'
+exit_code=0 recorded_after_success_in_log_dir_only
