@@ -1,0 +1,328 @@
+[2026-07-03T10:58:16+02:00] export LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8
+[2026-07-03T10:58:16+02:00] STAGE_ID=BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001
+[2026-07-03T10:58:16+02:00] RUN_TS=2026-07-03_10-58-16
+[2026-07-03T10:58:16+02:00] mkdir -p /data/ncnn-logs/ai-team/2026-07-03_10-58-16/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001/artifacts /data/ncnn-logs/ai-team/2026-07-03_10-58-16/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001/run_logs /data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001 /data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001/artifacts /data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001/run_logs
+[2026-07-03T10:58:16+02:00] pwd
+[2026-07-03T10:58:16+02:00] date -Is
+[2026-07-03T10:58:16+02:00] hostname
+[2026-07-03T10:58:39+02:00] /data/lab/scripts/check-bridge-layout.sh
+[exit 0] /data/lab/scripts/check-bridge-layout.sh
+[2026-07-03T10:58:43+02:00] test -r /exchange/tasks/inbox/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001/task.md
+[2026-07-03T10:58:43+02:00] /data/lab/scripts/init-shared-log-run.sh contcodex BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001 stage1-vmadot-microkernel
+[exit 0] /data/lab/scripts/init-shared-log-run.sh contcodex BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001 stage1-vmadot-microkernel
+[2026-07-03T10:58:43+02:00] pwd
+[exit 0] pwd
+[2026-07-03T10:58:43+02:00] git status --short --branch
+[exit 0] git status --short --branch
+[2026-07-03T10:58:43+02:00] git branch --show-current
+[exit 0] git branch --show-current
+[2026-07-03T10:58:43+02:00] git rev-parse HEAD
+[exit 0] git rev-parse HEAD
+[2026-07-03T10:58:43+02:00] git log --oneline -n 12
+[exit 0] git log --oneline -n 12
+[2026-07-03T10:58:43+02:00] git remote -v
+[exit 0] git remote -v
+[2026-07-03T10:59:01+02:00] git status --porcelain=v1
+[exit 0] git status --porcelain=v1
+[2026-07-03T10:59:01+02:00] sh -c git ls-files --others --exclude-standard | LC_ALL=C sort
+[exit 0] sh -c git ls-files --others --exclude-standard | LC_ALL=C sort
+[2026-07-03T10:59:17+02:00] git add custom_int8_engine app/backend_custom_int8 scripts/bench_custom_int8.sh models/custom_int8 stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE0-RECOVERY-AND-DESIGN-001
+[exit 0] git add custom_int8_engine app/backend_custom_int8 scripts/bench_custom_int8.sh models/custom_int8 stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE0-RECOVERY-AND-DESIGN-001
+[2026-07-03T10:59:17+02:00] git status --short --branch
+[exit 0] git status --short --branch
+[2026-07-03T10:59:17+02:00] git commit -m Stage 0 custom INT8 IME engine recovery and skeleton
+[exit 0] git commit -m Stage 0 custom INT8 IME engine recovery and skeleton
+[2026-07-03T10:59:18+02:00] git rev-parse HEAD
+[exit 0] git rev-parse HEAD
+[2026-07-03T10:59:18+02:00] git status --short --branch
+[exit 0] git status --short --branch
+[2026-07-03T10:59:48+02:00] sed -n 1,220p stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE0-RECOVERY-AND-DESIGN-001/final-report.md
+[exit 0] sed -n 1,220p stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE0-RECOVERY-AND-DESIGN-001/final-report.md
+[2026-07-03T10:59:48+02:00] sed -n 1,220p stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE0-RECOVERY-AND-DESIGN-001/summary.ru.md
+[exit 0] sed -n 1,220p stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE0-RECOVERY-AND-DESIGN-001/summary.ru.md
+[2026-07-03T10:59:48+02:00] sed -n 1,220p stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE0-RECOVERY-AND-DESIGN-001/static_model_format_v0.md
+[exit 0] sed -n 1,220p stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE0-RECOVERY-AND-DESIGN-001/static_model_format_v0.md
+[2026-07-03T10:59:49+02:00] sed -n 1,220p stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE0-RECOVERY-AND-DESIGN-001/quantization_and_scales_plan.md
+[exit 0] sed -n 1,220p stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE0-RECOVERY-AND-DESIGN-001/quantization_and_scales_plan.md
+[2026-07-03T10:59:49+02:00] sed -n 1,220p stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE0-RECOVERY-AND-DESIGN-001/signedness_zero_point_audit.tsv
+[exit 0] sed -n 1,220p stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE0-RECOVERY-AND-DESIGN-001/signedness_zero_point_audit.tsv
+[2026-07-03T10:59:49+02:00] sed -n 1,220p stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE0-RECOVERY-AND-DESIGN-001/first_layer_shape_tile_plan.md
+[exit 0] sed -n 1,220p stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE0-RECOVERY-AND-DESIGN-001/first_layer_shape_tile_plan.md
+[2026-07-03T10:59:49+02:00] sed -n 1,220p stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE0-RECOVERY-AND-DESIGN-001/cluster0_safety_plan.md
+[exit 0] sed -n 1,220p stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE0-RECOVERY-AND-DESIGN-001/cluster0_safety_plan.md
+[2026-07-03T10:59:49+02:00] sed -n 1,220p stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE0-RECOVERY-AND-DESIGN-001/oracle_plan.md
+[exit 0] sed -n 1,220p stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE0-RECOVERY-AND-DESIGN-001/oracle_plan.md
+[2026-07-03T10:59:49+02:00] sed -n 1,220p stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE0-RECOVERY-AND-DESIGN-001/performance_gate_plan.md
+[exit 0] sed -n 1,220p stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE0-RECOVERY-AND-DESIGN-001/performance_gate_plan.md
+[2026-07-03T10:59:49+02:00] test -r /control/specs/docs/spacemit-ime-asciidoc.md
+[exit 0] test -r /control/specs/docs/spacemit-ime-asciidoc.md
+[2026-07-03T10:59:49+02:00] sed -n 1,260p /control/specs/docs/spacemit-ime-asciidoc.md
+[exit 0] sed -n 1,260p /control/specs/docs/spacemit-ime-asciidoc.md
+[2026-07-03T10:59:49+02:00] find /exchange/results/archive -maxdepth 4 -type d -name *W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001* -print
+[exit 0] find /exchange/results/archive -maxdepth 4 -type d -name *W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001* -print
+[2026-07-03T10:59:49+02:00] find /exchange/results/outbox -maxdepth 4 -type d -name *W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001* -print
+[exit 0] find /exchange/results/outbox -maxdepth 4 -type d -name *W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001* -print
+[2026-07-03T10:59:49+02:00] find /data/lab/task-runs -maxdepth 3 -type d -name *W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001* -print
+[exit 0] find /data/lab/task-runs -maxdepth 3 -type d -name *W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001* -print
+[2026-07-03T10:59:50+02:00] sh -c find /data/ncnn-logs/ai-team -maxdepth 5 -type d -name '*W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001*' -print | LC_ALL=C sort
+[exit 0] sh -c find /data/ncnn-logs/ai-team -maxdepth 5 -type d -name '*W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001*' -print | LC_ALL=C sort
+[2026-07-03T10:59:50+02:00] rg -n smt\.vmadot|vmadotn|vmadot1|vmadot2|vmadot3|SIGILL|CPU0|CPU4|cluster0|oracle /control/specs/drafts/0003-ncnn-int8-ime-mmt4d /exchange/results/archive/W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001 /data/lab/task-runs/W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001
+[exit 0] rg -n smt\.vmadot|vmadotn|vmadot1|vmadot2|vmadot3|SIGILL|CPU0|CPU4|cluster0|oracle /control/specs/drafts/0003-ncnn-int8-ime-mmt4d /exchange/results/archive/W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001 /data/lab/task-runs/W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001
+[2026-07-03T11:00:08+02:00] find custom_int8_engine -maxdepth 3 -type f -print
+[exit 0] find custom_int8_engine -maxdepth 3 -type f -print
+[2026-07-03T11:00:08+02:00] sed -n 1,240p custom_int8_engine/CMakeLists.txt
+[exit 0] sed -n 1,240p custom_int8_engine/CMakeLists.txt
+[2026-07-03T11:00:08+02:00] sed -n 1,260p custom_int8_engine/tests/CMakeLists.txt
+[exit 0] sed -n 1,260p custom_int8_engine/tests/CMakeLists.txt
+[2026-07-03T11:00:08+02:00] sed -n 1,260p custom_int8_engine/include/y26_k1x_engine.h
+[exit 0] sed -n 1,260p custom_int8_engine/include/y26_k1x_engine.h
+[2026-07-03T11:00:08+02:00] sed -n 1,260p custom_int8_engine/kernels/vmadot_stub.cpp
+[exit 0] sed -n 1,260p custom_int8_engine/kernels/vmadot_stub.cpp
+[2026-07-03T11:00:08+02:00] sed -n 1,240p custom_int8_engine/tests/test_vmadot_scalar_oracle_fixture.cpp
+[exit 0] sed -n 1,240p custom_int8_engine/tests/test_vmadot_scalar_oracle_fixture.cpp
+[2026-07-03T11:00:08+02:00] sed -n 1,220p /data/build_scripts/01-env.sh
+[exit 0] sed -n 1,220p /data/build_scripts/01-env.sh
+[2026-07-03T11:00:08+02:00] sh -c find scripts -maxdepth 2 -type f -print | LC_ALL=C sort | sed -n '1,160p'
+[exit 0] sh -c find scripts -maxdepth 2 -type f -print | LC_ALL=C sort | sed -n '1,160p'
+[2026-07-03T11:00:08+02:00] sh -c env | LC_ALL=C sort | rg 'BANANA|BPI|K1|SSH|RISCV|TOOLROOT|SYSROOT|CROSS|BOARD'
+[exit 0] sh -c env | LC_ALL=C sort | rg 'BANANA|BPI|K1|SSH|RISCV|TOOLROOT|SYSROOT|CROSS|BOARD'
+[2026-07-03T11:00:34+02:00] UNLOGGED-RETROACTIVE: attempted read-only printf/sed inspection; failed with printf option error before useful output
+[2026-07-03T11:00:34+02:00] sed -n selected run_logs for CMake/header inspection
+[exit 0] sed -n selected run_logs for CMake/header inspection
+[2026-07-03T11:01:00+02:00] sh -c rg -n 'smt\.vmadot|vmadot\b|vmadot1|vmadot2|vmadot3|vmadotn|\.insn|opcode' /control/specs/docs/spacemit-ime-asciidoc.md /control/specs/drafts/0003-ncnn-int8-ime-mmt4d /exchange/results/archive/W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001 /data/lab/task-runs/W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001 /data/ncnn-logs/ai-team/2026-06-26/2026-06-26_09-59-28__contcodex__W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001__int8-vmadot-toolchain-hardware-proof /data/ncnn-logs/ai-team/2026-06-26/2026-06-26_11-09-43__contcodex__W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001__int8-vmadot-toolchain-hardware-proof 2>/dev/null | sed -n '1,260p'
+[exit 0] sh -c rg -n 'smt\.vmadot|vmadot\b|vmadot1|vmadot2|vmadot3|vmadotn|\.insn|opcode' /control/specs/docs/spacemit-ime-asciidoc.md /control/specs/drafts/0003-ncnn-int8-ime-mmt4d /exchange/results/archive/W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001 /data/lab/task-runs/W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001 /data/ncnn-logs/ai-team/2026-06-26/2026-06-26_09-59-28__contcodex__W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001__int8-vmadot-toolchain-hardware-proof /data/ncnn-logs/ai-team/2026-06-26/2026-06-26_11-09-43__contcodex__W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001__int8-vmadot-toolchain-hardware-proof 2>/dev/null | sed -n '1,260p'
+[2026-07-03T11:01:01+02:00] sh -c find /exchange/results/archive/W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001 /data/lab/task-runs/W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001 /data/ncnn-logs/ai-team/2026-06-26/2026-06-26_09-59-28__contcodex__W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001__int8-vmadot-toolchain-hardware-proof /data/ncnn-logs/ai-team/2026-06-26/2026-06-26_11-09-43__contcodex__W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001__int8-vmadot-toolchain-hardware-proof -maxdepth 5 -type f | LC_ALL=C sort | sed -n '1,260p'
+[exit 0] sh -c find /exchange/results/archive/W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001 /data/lab/task-runs/W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001 /data/ncnn-logs/ai-team/2026-06-26/2026-06-26_09-59-28__contcodex__W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001__int8-vmadot-toolchain-hardware-proof /data/ncnn-logs/ai-team/2026-06-26/2026-06-26_11-09-43__contcodex__W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001__int8-vmadot-toolchain-hardware-proof -maxdepth 5 -type f | LC_ALL=C sort | sed -n '1,260p'
+[2026-07-03T11:01:29+02:00] sh -c rg -n 'smt\.vmadot|vmadot\b|vmadot1|vmadot2|vmadot3|vmadotn|\.insn|opcode' /control/specs/docs/spacemit-ime-asciidoc.md /control/specs/drafts/0003-ncnn-int8-ime-mmt4d /exchange/results/archive/W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001 /data/lab/task-runs/W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001 /data/ncnn-logs/ai-team/2026-06-26/2026-06-26_09-59-28__contcodex__W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001__int8-vmadot-toolchain-hardware-proof /data/ncnn-logs/ai-team/2026-06-26/2026-06-26_11-09-43__contcodex__W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001__int8-vmadot-toolchain-hardware-proof 2>/dev/null | sed -n '1,320p'
+[exit 0] sh -c rg -n 'smt\.vmadot|vmadot\b|vmadot1|vmadot2|vmadot3|vmadotn|\.insn|opcode' /control/specs/docs/spacemit-ime-asciidoc.md /control/specs/drafts/0003-ncnn-int8-ime-mmt4d /exchange/results/archive/W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001 /data/lab/task-runs/W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001 /data/ncnn-logs/ai-team/2026-06-26/2026-06-26_09-59-28__contcodex__W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001__int8-vmadot-toolchain-hardware-proof /data/ncnn-logs/ai-team/2026-06-26/2026-06-26_11-09-43__contcodex__W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001__int8-vmadot-toolchain-hardware-proof 2>/dev/null | sed -n '1,320p'
+[2026-07-03T11:01:30+02:00] sh -c find /exchange/results/archive/W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001 /data/lab/task-runs/W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001 /data/ncnn-logs/ai-team/2026-06-26/2026-06-26_09-59-28__contcodex__W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001__int8-vmadot-toolchain-hardware-proof /data/ncnn-logs/ai-team/2026-06-26/2026-06-26_11-09-43__contcodex__W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001__int8-vmadot-toolchain-hardware-proof -maxdepth 5 -type f | LC_ALL=C sort | sed -n '1,320p'
+[exit 0] sh -c find /exchange/results/archive/W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001 /data/lab/task-runs/W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001 /data/ncnn-logs/ai-team/2026-06-26/2026-06-26_09-59-28__contcodex__W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001__int8-vmadot-toolchain-hardware-proof /data/ncnn-logs/ai-team/2026-06-26/2026-06-26_11-09-43__contcodex__W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001__int8-vmadot-toolchain-hardware-proof -maxdepth 5 -type f | LC_ALL=C sort | sed -n '1,320p'
+[2026-07-03T11:01:30+02:00] sh -c rg -n 'smt\.vmadot|vmadot' . /data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE0-RECOVERY-AND-DESIGN-001 2>/dev/null | sed -n '1,260p'
+[exit 0] sh -c rg -n 'smt\.vmadot|vmadot' . /data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE0-RECOVERY-AND-DESIGN-001 2>/dev/null | sed -n '1,260p'
+[2026-07-03T11:02:00+02:00] sh -c find /data/lab/task-runs/W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001/sources -maxdepth 2 -type f | LC_ALL=C sort
+[exit 0] sh -c find /data/lab/task-runs/W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001/sources -maxdepth 2 -type f | LC_ALL=C sort
+[2026-07-03T11:02:18+02:00] sh -c find /data/lab/task-runs/W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001/sources -maxdepth 2 -type f | LC_ALL=C sort
+[exit 0] sh -c find /data/lab/task-runs/W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001/sources -maxdepth 2 -type f | LC_ALL=C sort
+[2026-07-03T11:02:18+02:00] sh -c for f in /data/lab/task-runs/W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001/sources/*oracle* /data/lab/task-runs/W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001/sources/*probe_vmadot*; do if test -f "$f"; then printf "%s\n" "===== $(basename "$f") ====="; sed -n "1,260p" "$f"; fi; done
+[exit 0] sh -c for f in /data/lab/task-runs/W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001/sources/*oracle* /data/lab/task-runs/W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001/sources/*probe_vmadot*; do if test -f "$f"; then printf "%s\n" "===== $(basename "$f") ====="; sed -n "1,260p" "$f"; fi; done
+[2026-07-03T11:02:18+02:00] sh -c find /data/lab/task-runs/W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001 -maxdepth 4 -type f \( -name "*oracle*" -o -name "*probe_vmadot*" -o -name "*disasm*" -o -name "*matrix.tsv" \) | LC_ALL=C sort | sed -n "1,260p"
+[exit 0] sh -c find /data/lab/task-runs/W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001 -maxdepth 4 -type f \( -name "*oracle*" -o -name "*probe_vmadot*" -o -name "*disasm*" -o -name "*matrix.tsv" \) | LC_ALL=C sort | sed -n "1,260p"
+[2026-07-03T11:07:06+02:00] READ_SKILL /data/.codex/skills/k1x_env_sanity/SKILL.md
+[2026-07-03T11:07:07+02:00] apply_patch Stage1 microkernel API/tests/tools
+[2026-07-03T11:07:07+02:00] chmod +x custom_int8_engine/tools/generate_vmadot_test_vectors.py custom_int8_engine/tools/inspect_vmadot_disasm.sh custom_int8_engine/tools/run_vmadot_board.sh
+[exit 0] chmod +x custom_int8_engine/tools/generate_vmadot_test_vectors.py custom_int8_engine/tools/inspect_vmadot_disasm.sh custom_int8_engine/tools/run_vmadot_board.sh
+[2026-07-03T11:07:07+02:00] git diff --stat
+[exit 0] git diff --stat
+[2026-07-03T11:07:07+02:00] env -u CC -u CXX LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 cmake -S custom_int8_engine -B .deps/custom_int8_engine/build-host-native -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_CXX_COMPILER=/usr/bin/g++
+[exit 0] env -u CC -u CXX LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 cmake -S custom_int8_engine -B .deps/custom_int8_engine/build-host-native -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_CXX_COMPILER=/usr/bin/g++
+[2026-07-03T11:07:08+02:00] env -u CC -u CXX LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 cmake --build .deps/custom_int8_engine/build-host-native -j8
+[exit 0] env -u CC -u CXX LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 cmake --build .deps/custom_int8_engine/build-host-native -j8
+[2026-07-03T11:07:13+02:00] env -u CC -u CXX LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 ctest --test-dir .deps/custom_int8_engine/build-host-native --output-on-failure
+[exit 8] env -u CC -u CXX LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 ctest --test-dir .deps/custom_int8_engine/build-host-native --output-on-failure
+[2026-07-03T11:07:13+02:00] env -u CC -u CXX LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 .deps/custom_int8_engine/build-host-native/bench_vmadot_microkernel 10000 5
+[exit 0] env -u CC -u CXX LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 .deps/custom_int8_engine/build-host-native/bench_vmadot_microkernel 10000 5
+[2026-07-03T11:07:35+02:00] python3 -
+[exit 0] python3 -
+[2026-07-03T11:07:59+02:00] apply_patch fix host vector constants
+[2026-07-03T11:07:59+02:00] env -u CC -u CXX LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 cmake --build .deps/custom_int8_engine/build-host-native -j8
+[exit 0] env -u CC -u CXX LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 cmake --build .deps/custom_int8_engine/build-host-native -j8
+[2026-07-03T11:08:00+02:00] env -u CC -u CXX LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 ctest --test-dir .deps/custom_int8_engine/build-host-native --output-on-failure
+[exit 0] env -u CC -u CXX LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 ctest --test-dir .deps/custom_int8_engine/build-host-native --output-on-failure
+[2026-07-03T11:08:00+02:00] env -u CC -u CXX LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 .deps/custom_int8_engine/build-host-native/bench_vmadot_microkernel 10000 5
+[exit 0] env -u CC -u CXX LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 .deps/custom_int8_engine/build-host-native/bench_vmadot_microkernel 10000 5
+[2026-07-03T11:08:45+02:00] bash -lc set -euo pipefail; source /data/build_scripts/01-env.sh; printf "TOOLCHAIN_ROOT=%s\nK1_ARCH_FLAGS=%s\nK1_SYSROOT_BASE=%s\nK1_SYSROOT_OVERLAY=%s\nBANANA_SSH_TARGET=%s\nPATH=%s\n" "$TOOLCHAIN_ROOT" "$K1_ARCH_FLAGS" "$K1_SYSROOT_BASE" "$K1_SYSROOT_OVERLAY" "$BANANA_SSH_TARGET" "$PATH"
+[exit 0] bash -lc set -euo pipefail; source /data/build_scripts/01-env.sh; printf "TOOLCHAIN_ROOT=%s\nK1_ARCH_FLAGS=%s\nK1_SYSROOT_BASE=%s\nK1_SYSROOT_OVERLAY=%s\nBANANA_SSH_TARGET=%s\nPATH=%s\n" "$TOOLCHAIN_ROOT" "$K1_ARCH_FLAGS" "$K1_SYSROOT_BASE" "$K1_SYSROOT_OVERLAY" "$BANANA_SSH_TARGET" "$PATH"
+[2026-07-03T11:08:46+02:00] bash -lc set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; command -v riscv64-unknown-linux-gnu-gcc; command -v riscv64-unknown-linux-gnu-g++; command -v riscv64-unknown-linux-gnu-objdump
+[exit 0] bash -lc set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; command -v riscv64-unknown-linux-gnu-gcc; command -v riscv64-unknown-linux-gnu-g++; command -v riscv64-unknown-linux-gnu-objdump
+[2026-07-03T11:08:46+02:00] bash -lc set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; riscv64-unknown-linux-gnu-gcc --version; riscv64-unknown-linux-gnu-g++ --version; riscv64-unknown-linux-gnu-as --version | sed -n "1,4p"
+[exit 0] bash -lc set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; riscv64-unknown-linux-gnu-gcc --version; riscv64-unknown-linux-gnu-g++ --version; riscv64-unknown-linux-gnu-as --version | sed -n "1,4p"
+[2026-07-03T11:08:47+02:00] bash -lc set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; echo "ARCH_FLAGS=$K1_ARCH_FLAGS"; echo | riscv64-unknown-linux-gnu-gcc $K1_ARCH_FLAGS -dM -E - | rg -n "__riscv_vector|__riscv_zvfh|__riscv_zfh" || true
+[exit 0] bash -lc set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; echo "ARCH_FLAGS=$K1_ARCH_FLAGS"; echo | riscv64-unknown-linux-gnu-gcc $K1_ARCH_FLAGS -dM -E - | rg -n "__riscv_vector|__riscv_zvfh|__riscv_zfh" || true
+[2026-07-03T11:08:47+02:00] bash -lc set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; test -d "$K1_SYSROOT_BASE"; test -d "$K1_SYSROOT_OVERLAY"; printf "base=%s\noverlay=%s\n" "$K1_SYSROOT_BASE" "$K1_SYSROOT_OVERLAY"
+[exit 0] bash -lc set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; test -d "$K1_SYSROOT_BASE"; test -d "$K1_SYSROOT_OVERLAY"; printf "base=%s\noverlay=%s\n" "$K1_SYSROOT_BASE" "$K1_SYSROOT_OVERLAY"
+[2026-07-03T11:08:48+02:00] bash -lc set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; cmake -S custom_int8_engine -B .deps/custom_int8_engine/build-k1x-vmadot -DCMAKE_BUILD_TYPE=Release -DCMAKE_SYSTEM_NAME=Linux -DCMAKE_SYSTEM_PROCESSOR=riscv64 -DCMAKE_C_COMPILER=riscv64-unknown-linux-gnu-gcc -DCMAKE_CXX_COMPILER=riscv64-unknown-linux-gnu-g++ -DCMAKE_SYSROOT="$K1_SYSROOT_BASE" -DCMAKE_CXX_FLAGS="$K1_ARCH_FLAGS" -DCMAKE_EXE_LINKER_FLAGS="-static-libstdc++ -static-libgcc" -DY26_K1X_ENABLE_IME=ON -DY26_K1X_ENABLE_TESTS=ON -DY26_K1X_BUILD_TOOLS=ON
+[exit 0] bash -lc set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; cmake -S custom_int8_engine -B .deps/custom_int8_engine/build-k1x-vmadot -DCMAKE_BUILD_TYPE=Release -DCMAKE_SYSTEM_NAME=Linux -DCMAKE_SYSTEM_PROCESSOR=riscv64 -DCMAKE_C_COMPILER=riscv64-unknown-linux-gnu-gcc -DCMAKE_CXX_COMPILER=riscv64-unknown-linux-gnu-g++ -DCMAKE_SYSROOT="$K1_SYSROOT_BASE" -DCMAKE_CXX_FLAGS="$K1_ARCH_FLAGS" -DCMAKE_EXE_LINKER_FLAGS="-static-libstdc++ -static-libgcc" -DY26_K1X_ENABLE_IME=ON -DY26_K1X_ENABLE_TESTS=ON -DY26_K1X_BUILD_TOOLS=ON
+[2026-07-03T11:08:50+02:00] bash -lc set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; cmake --build .deps/custom_int8_engine/build-k1x-vmadot -j"$(nproc)"
+[exit 0] bash -lc set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; cmake --build .deps/custom_int8_engine/build-k1x-vmadot -j"$(nproc)"
+[2026-07-03T11:08:56+02:00] sh -c file .deps/custom_int8_engine/build-k1x-vmadot/tests/test_vmadot_4x4x8_board_probe .deps/custom_int8_engine/build-k1x-vmadot/bench_vmadot_microkernel
+[exit 0] sh -c file .deps/custom_int8_engine/build-k1x-vmadot/tests/test_vmadot_4x4x8_board_probe .deps/custom_int8_engine/build-k1x-vmadot/bench_vmadot_microkernel
+[2026-07-03T11:09:42+02:00] apply_patch replace assert-only host vector checks
+[2026-07-03T11:09:42+02:00] env -u CC -u CXX LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 cmake --build .deps/custom_int8_engine/build-host-native -j8
+[exit 0] env -u CC -u CXX LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 cmake --build .deps/custom_int8_engine/build-host-native -j8
+[2026-07-03T11:09:43+02:00] env -u CC -u CXX LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 ctest --test-dir .deps/custom_int8_engine/build-host-native --output-on-failure
+[exit 0] env -u CC -u CXX LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 ctest --test-dir .deps/custom_int8_engine/build-host-native --output-on-failure
+[2026-07-03T11:09:44+02:00] bash -lc set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; cmake --build .deps/custom_int8_engine/build-k1x-vmadot -j"$(nproc)"
+[exit 0] bash -lc set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; cmake --build .deps/custom_int8_engine/build-k1x-vmadot -j"$(nproc)"
+[2026-07-03T11:09:45+02:00] bash -lc set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; riscv64-unknown-linux-gnu-objdump -d .deps/custom_int8_engine/build-k1x-vmadot/tests/test_vmadot_4x4x8_board_probe | rg -n -A8 -B8 "vmadot|smt\\.vmadot"
+[exit 0] bash -lc set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; riscv64-unknown-linux-gnu-objdump -d .deps/custom_int8_engine/build-k1x-vmadot/tests/test_vmadot_4x4x8_board_probe | rg -n -A8 -B8 "vmadot|smt\\.vmadot"
+[2026-07-03T11:09:46+02:00] bash -lc set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; riscv64-unknown-linux-gnu-objdump -d .deps/custom_int8_engine/build-k1x-vmadot/bench_vmadot_microkernel | rg -n -A8 -B8 "vmadot|smt\\.vmadot"
+[exit 0] bash -lc set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; riscv64-unknown-linux-gnu-objdump -d .deps/custom_int8_engine/build-k1x-vmadot/bench_vmadot_microkernel | rg -n -A8 -B8 "vmadot|smt\\.vmadot"
+[2026-07-03T11:10:19+02:00] apply_patch add board probe current CPU logging
+[2026-07-03T11:10:19+02:00] env -u CC -u CXX LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 cmake --build .deps/custom_int8_engine/build-host-native -j8
+[exit 0] env -u CC -u CXX LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 cmake --build .deps/custom_int8_engine/build-host-native -j8
+[2026-07-03T11:10:20+02:00] env -u CC -u CXX LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 ctest --test-dir .deps/custom_int8_engine/build-host-native --output-on-failure
+[exit 0] env -u CC -u CXX LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 ctest --test-dir .deps/custom_int8_engine/build-host-native --output-on-failure
+[2026-07-03T11:10:21+02:00] bash -lc set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; cmake --build .deps/custom_int8_engine/build-k1x-vmadot -j"$(nproc)"
+[exit 0] bash -lc set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; cmake --build .deps/custom_int8_engine/build-k1x-vmadot -j"$(nproc)"
+[2026-07-03T11:10:53+02:00] bash -lc set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; timeout 8s ssh -o BatchMode=yes -o ConnectTimeout=5 "$BANANA_SSH_TARGET" "uname -a; nproc; id; printf current_cpu=; cat /proc/self/stat | awk '{print $39}'"
+[exit 1] bash -lc set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; timeout 8s ssh -o BatchMode=yes -o ConnectTimeout=5 "$BANANA_SSH_TARGET" "uname -a; nproc; id; printf current_cpu=; cat /proc/self/stat | awk '{print $39}'"
+[2026-07-03T11:11:25+02:00] bash -lc set -eo pipefail; source /data/build_scripts/01-env.sh >/dev/null; timeout 8s ssh -o BatchMode=yes -o ConnectTimeout=5 "$BANANA_SSH_TARGET" "uname -a; nproc; id; taskset -pc \$\$"
+[exit 0] bash -lc set -eo pipefail; source /data/build_scripts/01-env.sh >/dev/null; timeout 8s ssh -o BatchMode=yes -o ConnectTimeout=5 "$BANANA_SSH_TARGET" "uname -a; nproc; id; taskset -pc \$\$"
+[2026-07-03T11:11:26+02:00] bash -lc set -eo pipefail; source /data/build_scripts/01-env.sh >/dev/null; REMOTE_DIR=/home/svt/contcodex/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001; timeout 8s ssh -o BatchMode=yes -o ConnectTimeout=5 "$BANANA_SSH_TARGET" "mkdir -p $REMOTE_DIR"
+[exit 0] bash -lc set -eo pipefail; source /data/build_scripts/01-env.sh >/dev/null; REMOTE_DIR=/home/svt/contcodex/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001; timeout 8s ssh -o BatchMode=yes -o ConnectTimeout=5 "$BANANA_SSH_TARGET" "mkdir -p $REMOTE_DIR"
+[2026-07-03T11:11:27+02:00] bash -lc set -eo pipefail; source /data/build_scripts/01-env.sh >/dev/null; REMOTE_DIR=/home/svt/contcodex/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001; timeout 20s scp -o BatchMode=yes -o ConnectTimeout=5 .deps/custom_int8_engine/build-k1x-vmadot/tests/test_vmadot_4x4x8_board_probe "$BANANA_SSH_TARGET:$REMOTE_DIR/test_vmadot_4x4x8_board_probe"
+[exit 0] bash -lc set -eo pipefail; source /data/build_scripts/01-env.sh >/dev/null; REMOTE_DIR=/home/svt/contcodex/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001; timeout 20s scp -o BatchMode=yes -o ConnectTimeout=5 .deps/custom_int8_engine/build-k1x-vmadot/tests/test_vmadot_4x4x8_board_probe "$BANANA_SSH_TARGET:$REMOTE_DIR/test_vmadot_4x4x8_board_probe"
+[2026-07-03T11:11:29+02:00] bash -lc set -eo pipefail; source /data/build_scripts/01-env.sh >/dev/null; REMOTE_DIR=/home/svt/contcodex/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001; timeout 20s scp -o BatchMode=yes -o ConnectTimeout=5 .deps/custom_int8_engine/build-k1x-vmadot/bench_vmadot_microkernel "$BANANA_SSH_TARGET:$REMOTE_DIR/bench_vmadot_microkernel"
+[exit 0] bash -lc set -eo pipefail; source /data/build_scripts/01-env.sh >/dev/null; REMOTE_DIR=/home/svt/contcodex/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001; timeout 20s scp -o BatchMode=yes -o ConnectTimeout=5 .deps/custom_int8_engine/build-k1x-vmadot/bench_vmadot_microkernel "$BANANA_SSH_TARGET:$REMOTE_DIR/bench_vmadot_microkernel"
+[2026-07-03T11:11:30+02:00] bash -lc set -eo pipefail; source /data/build_scripts/01-env.sh >/dev/null; REMOTE_DIR=/home/svt/contcodex/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001; timeout 15s ssh -o BatchMode=yes -o ConnectTimeout=5 "$BANANA_SSH_TARGET" "taskset -c 0 \$REMOTE_DIR/test_vmadot_4x4x8_board_probe"
+[exit 127] bash -lc set -eo pipefail; source /data/build_scripts/01-env.sh >/dev/null; REMOTE_DIR=/home/svt/contcodex/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001; timeout 15s ssh -o BatchMode=yes -o ConnectTimeout=5 "$BANANA_SSH_TARGET" "taskset -c 0 \$REMOTE_DIR/test_vmadot_4x4x8_board_probe"
+[2026-07-03T11:11:31+02:00] bash -lc set -eo pipefail; source /data/build_scripts/01-env.sh >/dev/null; REMOTE_DIR=/home/svt/contcodex/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001; timeout 15s ssh -o BatchMode=yes -o ConnectTimeout=5 "$BANANA_SSH_TARGET" "taskset -c 1 \$REMOTE_DIR/test_vmadot_4x4x8_board_probe"
+[exit 127] bash -lc set -eo pipefail; source /data/build_scripts/01-env.sh >/dev/null; REMOTE_DIR=/home/svt/contcodex/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001; timeout 15s ssh -o BatchMode=yes -o ConnectTimeout=5 "$BANANA_SSH_TARGET" "taskset -c 1 \$REMOTE_DIR/test_vmadot_4x4x8_board_probe"
+[2026-07-03T11:11:32+02:00] bash -lc set -eo pipefail; source /data/build_scripts/01-env.sh >/dev/null; REMOTE_DIR=/home/svt/contcodex/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001; timeout 15s ssh -o BatchMode=yes -o ConnectTimeout=5 "$BANANA_SSH_TARGET" "taskset -c 2 \$REMOTE_DIR/test_vmadot_4x4x8_board_probe"
+[exit 127] bash -lc set -eo pipefail; source /data/build_scripts/01-env.sh >/dev/null; REMOTE_DIR=/home/svt/contcodex/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001; timeout 15s ssh -o BatchMode=yes -o ConnectTimeout=5 "$BANANA_SSH_TARGET" "taskset -c 2 \$REMOTE_DIR/test_vmadot_4x4x8_board_probe"
+[2026-07-03T11:11:34+02:00] bash -lc set -eo pipefail; source /data/build_scripts/01-env.sh >/dev/null; REMOTE_DIR=/home/svt/contcodex/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001; timeout 15s ssh -o BatchMode=yes -o ConnectTimeout=5 "$BANANA_SSH_TARGET" "taskset -c 3 \$REMOTE_DIR/test_vmadot_4x4x8_board_probe"
+[exit 127] bash -lc set -eo pipefail; source /data/build_scripts/01-env.sh >/dev/null; REMOTE_DIR=/home/svt/contcodex/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001; timeout 15s ssh -o BatchMode=yes -o ConnectTimeout=5 "$BANANA_SSH_TARGET" "taskset -c 3 \$REMOTE_DIR/test_vmadot_4x4x8_board_probe"
+[2026-07-03T11:11:35+02:00] bash -lc set -eo pipefail; source /data/build_scripts/01-env.sh >/dev/null; REMOTE_DIR=/home/svt/contcodex/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001; timeout 25s ssh -o BatchMode=yes -o ConnectTimeout=5 "$BANANA_SSH_TARGET" "taskset -c 0 $REMOTE_DIR/bench_vmadot_microkernel 10000 5"
+[exit 0] bash -lc set -eo pipefail; source /data/build_scripts/01-env.sh >/dev/null; REMOTE_DIR=/home/svt/contcodex/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001; timeout 25s ssh -o BatchMode=yes -o ConnectTimeout=5 "$BANANA_SSH_TARGET" "taskset -c 0 $REMOTE_DIR/bench_vmadot_microkernel 10000 5"
+[2026-07-03T11:12:04+02:00] bash -lc set -eo pipefail; source /data/build_scripts/01-env.sh >/dev/null; timeout 15s ssh -o BatchMode=yes -o ConnectTimeout=5 "$BANANA_SSH_TARGET" "taskset -c 0 /home/svt/contcodex/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001/test_vmadot_4x4x8_board_probe"
+[exit 0] bash -lc set -eo pipefail; source /data/build_scripts/01-env.sh >/dev/null; timeout 15s ssh -o BatchMode=yes -o ConnectTimeout=5 "$BANANA_SSH_TARGET" "taskset -c 0 /home/svt/contcodex/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001/test_vmadot_4x4x8_board_probe"
+[2026-07-03T11:12:06+02:00] bash -lc set -eo pipefail; source /data/build_scripts/01-env.sh >/dev/null; timeout 15s ssh -o BatchMode=yes -o ConnectTimeout=5 "$BANANA_SSH_TARGET" "taskset -c 1 /home/svt/contcodex/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001/test_vmadot_4x4x8_board_probe"
+[exit 0] bash -lc set -eo pipefail; source /data/build_scripts/01-env.sh >/dev/null; timeout 15s ssh -o BatchMode=yes -o ConnectTimeout=5 "$BANANA_SSH_TARGET" "taskset -c 1 /home/svt/contcodex/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001/test_vmadot_4x4x8_board_probe"
+[2026-07-03T11:12:07+02:00] bash -lc set -eo pipefail; source /data/build_scripts/01-env.sh >/dev/null; timeout 15s ssh -o BatchMode=yes -o ConnectTimeout=5 "$BANANA_SSH_TARGET" "taskset -c 2 /home/svt/contcodex/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001/test_vmadot_4x4x8_board_probe"
+[exit 0] bash -lc set -eo pipefail; source /data/build_scripts/01-env.sh >/dev/null; timeout 15s ssh -o BatchMode=yes -o ConnectTimeout=5 "$BANANA_SSH_TARGET" "taskset -c 2 /home/svt/contcodex/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001/test_vmadot_4x4x8_board_probe"
+[2026-07-03T11:12:08+02:00] bash -lc set -eo pipefail; source /data/build_scripts/01-env.sh >/dev/null; timeout 15s ssh -o BatchMode=yes -o ConnectTimeout=5 "$BANANA_SSH_TARGET" "taskset -c 3 /home/svt/contcodex/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001/test_vmadot_4x4x8_board_probe"
+[exit 0] bash -lc set -eo pipefail; source /data/build_scripts/01-env.sh >/dev/null; timeout 15s ssh -o BatchMode=yes -o ConnectTimeout=5 "$BANANA_SSH_TARGET" "taskset -c 3 /home/svt/contcodex/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001/test_vmadot_4x4x8_board_probe"
+[2026-07-03T11:13:27+02:00] apply_patch add direct IME microbench path
+[2026-07-03T11:13:27+02:00] env -u CC -u CXX LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 cmake --build .deps/custom_int8_engine/build-host-native -j8
+[exit 0] env -u CC -u CXX LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 cmake --build .deps/custom_int8_engine/build-host-native -j8
+[2026-07-03T11:13:30+02:00] env -u CC -u CXX LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 ctest --test-dir .deps/custom_int8_engine/build-host-native --output-on-failure
+[exit 0] env -u CC -u CXX LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 ctest --test-dir .deps/custom_int8_engine/build-host-native --output-on-failure
+[2026-07-03T11:13:30+02:00] env -u CC -u CXX LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 .deps/custom_int8_engine/build-host-native/bench_vmadot_microkernel 10000 5
+[exit 0] env -u CC -u CXX LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 .deps/custom_int8_engine/build-host-native/bench_vmadot_microkernel 10000 5
+[2026-07-03T11:13:30+02:00] bash -lc set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; cmake --build .deps/custom_int8_engine/build-k1x-vmadot -j"$(nproc)"
+[exit 0] bash -lc set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; cmake --build .deps/custom_int8_engine/build-k1x-vmadot -j"$(nproc)"
+[2026-07-03T11:13:36+02:00] bash -lc set -eo pipefail; source /data/build_scripts/01-env.sh >/dev/null; REMOTE_DIR=/home/svt/contcodex/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001; timeout 20s scp -o BatchMode=yes -o ConnectTimeout=5 .deps/custom_int8_engine/build-k1x-vmadot/bench_vmadot_microkernel "$BANANA_SSH_TARGET:$REMOTE_DIR/bench_vmadot_microkernel"
+[exit 0] bash -lc set -eo pipefail; source /data/build_scripts/01-env.sh >/dev/null; REMOTE_DIR=/home/svt/contcodex/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001; timeout 20s scp -o BatchMode=yes -o ConnectTimeout=5 .deps/custom_int8_engine/build-k1x-vmadot/bench_vmadot_microkernel "$BANANA_SSH_TARGET:$REMOTE_DIR/bench_vmadot_microkernel"
+[2026-07-03T11:13:37+02:00] bash -lc set -eo pipefail; source /data/build_scripts/01-env.sh >/dev/null; REMOTE_DIR=/home/svt/contcodex/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001; timeout 25s ssh -o BatchMode=yes -o ConnectTimeout=5 "$BANANA_SSH_TARGET" "taskset -c 0 $REMOTE_DIR/bench_vmadot_microkernel 10000 5"
+[exit 0] bash -lc set -eo pipefail; source /data/build_scripts/01-env.sh >/dev/null; REMOTE_DIR=/home/svt/contcodex/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001; timeout 25s ssh -o BatchMode=yes -o ConnectTimeout=5 "$BANANA_SSH_TARGET" "taskset -c 0 $REMOTE_DIR/bench_vmadot_microkernel 10000 5"
+[2026-07-03T11:13:38+02:00] bash -lc set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; riscv64-unknown-linux-gnu-objdump -d .deps/custom_int8_engine/build-k1x-vmadot/bench_vmadot_microkernel | rg -n -A8 -B8 "smt\\.vmadot"
+[exit 0] bash -lc set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; riscv64-unknown-linux-gnu-objdump -d .deps/custom_int8_engine/build-k1x-vmadot/bench_vmadot_microkernel | rg -n -A8 -B8 "smt\\.vmadot"
+[2026-07-03T11:14:26+02:00] apply_patch move direct bench SIGILL guard to smoke
+[2026-07-03T11:14:26+02:00] env -u CC -u CXX LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 cmake --build .deps/custom_int8_engine/build-host-native -j8
+[exit 0] env -u CC -u CXX LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 cmake --build .deps/custom_int8_engine/build-host-native -j8
+[2026-07-03T11:14:30+02:00] env -u CC -u CXX LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 ctest --test-dir .deps/custom_int8_engine/build-host-native --output-on-failure
+[exit 0] env -u CC -u CXX LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 ctest --test-dir .deps/custom_int8_engine/build-host-native --output-on-failure
+[2026-07-03T11:14:30+02:00] bash -lc set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; cmake --build .deps/custom_int8_engine/build-k1x-vmadot -j"$(nproc)"
+[exit 0] bash -lc set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; cmake --build .deps/custom_int8_engine/build-k1x-vmadot -j"$(nproc)"
+[2026-07-03T11:14:35+02:00] bash -lc set -eo pipefail; source /data/build_scripts/01-env.sh >/dev/null; REMOTE_DIR=/home/svt/contcodex/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001; timeout 20s scp -o BatchMode=yes -o ConnectTimeout=5 .deps/custom_int8_engine/build-k1x-vmadot/bench_vmadot_microkernel "$BANANA_SSH_TARGET:$REMOTE_DIR/bench_vmadot_microkernel"
+[exit 0] bash -lc set -eo pipefail; source /data/build_scripts/01-env.sh >/dev/null; REMOTE_DIR=/home/svt/contcodex/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001; timeout 20s scp -o BatchMode=yes -o ConnectTimeout=5 .deps/custom_int8_engine/build-k1x-vmadot/bench_vmadot_microkernel "$BANANA_SSH_TARGET:$REMOTE_DIR/bench_vmadot_microkernel"
+[2026-07-03T11:14:36+02:00] bash -lc set -eo pipefail; source /data/build_scripts/01-env.sh >/dev/null; REMOTE_DIR=/home/svt/contcodex/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001; timeout 25s ssh -o BatchMode=yes -o ConnectTimeout=5 "$BANANA_SSH_TARGET" "taskset -c 0 $REMOTE_DIR/bench_vmadot_microkernel 10000 5"
+[exit 0] bash -lc set -eo pipefail; source /data/build_scripts/01-env.sh >/dev/null; REMOTE_DIR=/home/svt/contcodex/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001; timeout 25s ssh -o BatchMode=yes -o ConnectTimeout=5 "$BANANA_SSH_TARGET" "taskset -c 0 $REMOTE_DIR/bench_vmadot_microkernel 10000 5"
+[2026-07-03T11:14:38+02:00] bash -lc set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; riscv64-unknown-linux-gnu-objdump -d .deps/custom_int8_engine/build-k1x-vmadot/bench_vmadot_microkernel | rg -n -A8 -B8 "smt\\.vmadot"
+[exit 0] bash -lc set -euo pipefail; source /data/build_scripts/01-env.sh >/dev/null; riscv64-unknown-linux-gnu-objdump -d .deps/custom_int8_engine/build-k1x-vmadot/bench_vmadot_microkernel | rg -n -A8 -B8 "smt\\.vmadot"
+[2026-07-03T11:15:10+02:00] sh -c rg -n 'vmadot1|vmadot2|vmadot3|vmadotn' /data/lab/task-runs/W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001/artifacts /data/ncnn-logs/ai-team/2026-06-26/2026-06-26_09-59-28__contcodex__W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001__int8-vmadot-toolchain-hardware-proof/artifacts /control/specs/drafts/0003-ncnn-int8-ime-mmt4d 2>/dev/null | sed -n '1,260p'
+[exit 0] sh -c rg -n 'vmadot1|vmadot2|vmadot3|vmadotn' /data/lab/task-runs/W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001/artifacts /data/ncnn-logs/ai-team/2026-06-26/2026-06-26_09-59-28__contcodex__W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001__int8-vmadot-toolchain-hardware-proof/artifacts /control/specs/drafts/0003-ncnn-int8-ime-mmt4d 2>/dev/null | sed -n '1,260p'
+[2026-07-03T11:15:10+02:00] sh -c if test -f /data/lab/task-runs/W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001/artifacts/board/board-exec-matrix.tsv; then sed -n '1,80p' /data/lab/task-runs/W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001/artifacts/board/board-exec-matrix.tsv; fi
+[exit 0] sh -c if test -f /data/lab/task-runs/W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001/artifacts/board/board-exec-matrix.tsv; then sed -n '1,80p' /data/lab/task-runs/W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001/artifacts/board/board-exec-matrix.tsv; fi
+[2026-07-03T11:15:10+02:00] custom_int8_engine/tools/generate_vmadot_test_vectors.py
+[exit 0] custom_int8_engine/tools/generate_vmadot_test_vectors.py
+[2026-07-03T11:18:07+02:00] READ_SKILL /data/.codex/skills/k1x_git_hygiene/SKILL.md
+[2026-07-03T11:18:07+02:00] apply_patch add Stage1 reports
+[2026-07-03T11:18:07+02:00] git status --short --branch
+[exit 0] git status --short --branch
+[2026-07-03T11:18:08+02:00] git diff --stat
+[exit 0] git diff --stat
+[2026-07-03T11:18:08+02:00] git diff --check
+[exit 0] git diff --check
+[2026-07-03T11:18:08+02:00] find . -type l -print
+[exit 0] find . -type l -print
+[2026-07-03T11:18:14+02:00] python3 -
+[exit 0] python3 -
+[2026-07-03T11:18:14+02:00] sh -c { git diff --name-only HEAD; git ls-files --others --exclude-standard; } | LC_ALL=C sort -u
+[exit 0] sh -c { git diff --name-only HEAD; git ls-files --others --exclude-standard; } | LC_ALL=C sort -u
+[2026-07-03T11:18:43+02:00] git status --short --branch
+[exit 0] git status --short --branch
+[2026-07-03T11:18:43+02:00] git diff --check
+[exit 0] git diff --check
+[2026-07-03T11:18:43+02:00] find . -type l -print
+[exit 0] find . -type l -print
+[2026-07-03T11:18:49+02:00] python3 -
+[exit 0] python3 -
+[2026-07-03T11:18:49+02:00] sh -c { git diff --name-only HEAD; git ls-files --others --exclude-standard; } | LC_ALL=C sort -u
+[exit 0] sh -c { git diff --name-only HEAD; git ls-files --others --exclude-standard; } | LC_ALL=C sort -u
+[2026-07-03T11:18:49+02:00] bash -lc set -eo pipefail; files=(); while IFS= read -r f; do case "$f" in .deps/*|*.bin|*.onnx|*.jpg|*.png|*.so|*.a) continue;; esac; [ -f "$f" ] && files+=("$f"); done < <({ git diff --name-only HEAD; git ls-files --others --exclude-standard; } | LC_ALL=C sort -u); if [ ${#files[@]} -gt 0 ]; then rg -n "BEGIN (RSA|OPENSSH|PRIVATE)|PRIVATE KEY|AKIA|SECRET|TOKEN|PASSWORD|-----BEGIN" "${files[@]}" || true; fi
+[exit 0] bash -lc set -eo pipefail; files=(); while IFS= read -r f; do case "$f" in .deps/*|*.bin|*.onnx|*.jpg|*.png|*.so|*.a) continue;; esac; [ -f "$f" ] && files+=("$f"); done < <({ git diff --name-only HEAD; git ls-files --others --exclude-standard; } | LC_ALL=C sort -u); if [ ${#files[@]} -gt 0 ]; then rg -n "BEGIN (RSA|OPENSSH|PRIVATE)|PRIVATE KEY|AKIA|SECRET|TOKEN|PASSWORD|-----BEGIN" "${files[@]}" || true; fi
+[2026-07-03T11:18:50+02:00] sh -c git ls-files -z | xargs -0 -r ls -l | sort -k5 -n | tail -n 20
+[exit 0] sh -c git ls-files -z | xargs -0 -r ls -l | sort -k5 -n | tail -n 20
+[2026-07-03T11:18:50+02:00] sh -c if [ -f .gitignore ]; then rg -n "ncnn-logs|ai-team|task-runs|\\.deps|\\.onnx|\\.bin|models-int8" .gitignore || true; else echo "WARN no .gitignore"; fi
+[exit 0] sh -c if [ -f .gitignore ]; then rg -n "ncnn-logs|ai-team|task-runs|\\.deps|\\.onnx|\\.bin|models-int8" .gitignore || true; else echo "WARN no .gitignore"; fi
+[2026-07-03T11:19:09+02:00] bash -lc set -eo pipefail; files=(); while IFS= read -r f; do case "$f" in .deps/*|*/commands.txt|*.bin|*.onnx|*.jpg|*.png|*.so|*.a) continue;; esac; [ -f "$f" ] && files+=("$f"); done < <({ git diff --name-only HEAD; git ls-files --others --exclude-standard; } | LC_ALL=C sort -u); if [ ${#files[@]} -gt 0 ]; then rg -n "BEGIN (RSA|OPENSSH|PRIVATE)|PRIVATE KEY|AKIA|SECRET|TOKEN|PASSWORD|-----BEGIN" "${files[@]}" || true; fi
+[exit 0] bash -lc set -eo pipefail; files=(); while IFS= read -r f; do case "$f" in .deps/*|*/commands.txt|*.bin|*.onnx|*.jpg|*.png|*.so|*.a) continue;; esac; [ -f "$f" ] && files+=("$f"); done < <({ git diff --name-only HEAD; git ls-files --others --exclude-standard; } | LC_ALL=C sort -u); if [ ${#files[@]} -gt 0 ]; then rg -n "BEGIN (RSA|OPENSSH|PRIVATE)|PRIVATE KEY|AKIA|SECRET|TOKEN|PASSWORD|-----BEGIN" "${files[@]}" || true; fi
+[2026-07-03T11:20:10+02:00] apply_patch update stage1_final_report validation statuses
+[2026-07-03T11:20:10+02:00] sh -c set -e; for f in stage1_final_report.md summary.ru.md ime_evidence_recovery.md smt_vmadot_4x4x8_semantics.md asm_parser_disassembly_report.md host_scalar_correctness_report.md board_ime_correctness_report.md microbench_report.md zero_point_boundary_note.md sliding_vmadot_ops_note.md stage2_conv_kernel_prompt.md commands.txt; do cp "stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001/$f" "/data/ncnn-logs/ai-team/2026-07-03_10-58-16/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001/artifacts/$f"; cp "stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001/$f" "/data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001/artifacts/$f"; done
+[exit 0] sh -c set -e; for f in stage1_final_report.md summary.ru.md ime_evidence_recovery.md smt_vmadot_4x4x8_semantics.md asm_parser_disassembly_report.md host_scalar_correctness_report.md board_ime_correctness_report.md microbench_report.md zero_point_boundary_note.md sliding_vmadot_ops_note.md stage2_conv_kernel_prompt.md commands.txt; do cp "stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001/$f" "/data/ncnn-logs/ai-team/2026-07-03_10-58-16/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001/artifacts/$f"; cp "stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001/$f" "/data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001/artifacts/$f"; done
+[2026-07-03T11:20:10+02:00] sh -c set -e; for f in board_probe_retry_cpu0.stdout board_probe_retry_cpu1.stdout board_probe_retry_cpu2.stdout board_probe_retry_cpu3.stdout board_microbench_cpu0_final.stdout disasm_board_probe.stdout disasm_bench_final.stdout native_ctest_after_bench_warning_fix.stdout cross_build_after_bench_warning_fix.stdout; do if test -f "/data/ncnn-logs/ai-team/2026-07-03_10-58-16/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001/run_logs/$f"; then cp "/data/ncnn-logs/ai-team/2026-07-03_10-58-16/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001/run_logs/$f" "/data/ncnn-logs/ai-team/2026-07-03_10-58-16/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001/artifacts/$f"; cp "/data/ncnn-logs/ai-team/2026-07-03_10-58-16/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001/run_logs/$f" "/data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001/artifacts/$f"; fi; done
+[exit 0] sh -c set -e; for f in board_probe_retry_cpu0.stdout board_probe_retry_cpu1.stdout board_probe_retry_cpu2.stdout board_probe_retry_cpu3.stdout board_microbench_cpu0_final.stdout disasm_board_probe.stdout disasm_bench_final.stdout native_ctest_after_bench_warning_fix.stdout cross_build_after_bench_warning_fix.stdout; do if test -f "/data/ncnn-logs/ai-team/2026-07-03_10-58-16/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001/run_logs/$f"; then cp "/data/ncnn-logs/ai-team/2026-07-03_10-58-16/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001/run_logs/$f" "/data/ncnn-logs/ai-team/2026-07-03_10-58-16/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001/artifacts/$f"; cp "/data/ncnn-logs/ai-team/2026-07-03_10-58-16/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001/run_logs/$f" "/data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001/artifacts/$f"; fi; done
+[2026-07-03T11:20:10+02:00] bash -lc set -euo pipefail; TASK_RUN_DIR=/data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001; LOG_DIR=/data/ncnn-logs/ai-team/2026-07-03_10-58-16/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001; cp /data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001/summary.ru.md "$TASK_RUN_DIR/result-summary.md"; cp /data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001/stage1_final_report.md "$TASK_RUN_DIR/final-report.md"; printf "%s\n" "$LOG_DIR" > "$TASK_RUN_DIR/shared-log-dir.txt"; cat > "$TASK_RUN_DIR/raw-evidence-paths.txt" <<EOF
+$LOG_DIR
+$LOG_DIR/run_logs
+$LOG_DIR/artifacts
+/data/banana-yolo26-spacemit-demo/.deps/custom_int8_engine/build-host-native
+/data/banana-yolo26-spacemit-demo/.deps/custom_int8_engine/build-k1x-vmadot
+/home/svt/contcodex/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001
+/data/lab/task-runs/W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001
+/exchange/results/archive/W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001
+/control/specs/drafts/0003-ncnn-int8-ime-mmt4d
+EOF
+[exit 0] bash -lc set -euo pipefail; TASK_RUN_DIR=/data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001; LOG_DIR=/data/ncnn-logs/ai-team/2026-07-03_10-58-16/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001; cp /data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001/summary.ru.md "$TASK_RUN_DIR/result-summary.md"; cp /data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001/stage1_final_report.md "$TASK_RUN_DIR/final-report.md"; printf "%s\n" "$LOG_DIR" > "$TASK_RUN_DIR/shared-log-dir.txt"; cat > "$TASK_RUN_DIR/raw-evidence-paths.txt" <<EOF
+$LOG_DIR
+$LOG_DIR/run_logs
+$LOG_DIR/artifacts
+/data/banana-yolo26-spacemit-demo/.deps/custom_int8_engine/build-host-native
+/data/banana-yolo26-spacemit-demo/.deps/custom_int8_engine/build-k1x-vmadot
+/home/svt/contcodex/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001
+/data/lab/task-runs/W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001
+/exchange/results/archive/W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001
+/control/specs/drafts/0003-ncnn-int8-ime-mmt4d
+EOF
+[2026-07-03T11:20:11+02:00] sh -c find /data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001/artifacts -maxdepth 1 -type f -printf "%f\n" | LC_ALL=C sort
+[exit 0] sh -c find /data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001/artifacts -maxdepth 1 -type f -printf "%f\n" | LC_ALL=C sort
+[2026-07-03T11:20:26+02:00] /data/lab/scripts/scan-export-candidates.sh /data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001/artifacts
+[exit 0] /data/lab/scripts/scan-export-candidates.sh /data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001/artifacts
+[2026-07-03T11:20:42+02:00] /data/lab/scripts/export-result-packet.sh BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001
+[exit 1] /data/lab/scripts/export-result-packet.sh BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001
+[2026-07-03T11:21:10+02:00] sh -c cat /data/ncnn-logs/ai-team/2026-07-03_10-58-16/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001/run_logs/init_shared_log.stdout /data/ncnn-logs/ai-team/2026-07-03_10-58-16/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001/run_logs/init_shared_log.stderr 2>/dev/null || true
+[exit 0] sh -c cat /data/ncnn-logs/ai-team/2026-07-03_10-58-16/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001/run_logs/init_shared_log.stdout /data/ncnn-logs/ai-team/2026-07-03_10-58-16/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001/run_logs/init_shared_log.stderr 2>/dev/null || true
+[2026-07-03T11:21:10+02:00] printf shared log dir to /data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001/shared-log-dir.txt: /data/ncnn-logs/ai-team/2026-07-03/2026-07-03_08-58-43__contcodex__BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001__stage1-vmadot-microkernel
+[2026-07-03T11:21:10+02:00] /data/lab/scripts/export-result-packet.sh BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001
+[exit 1] /data/lab/scripts/export-result-packet.sh BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001
+[2026-07-03T11:21:34+02:00] bash -lc set -euo pipefail; TASK_RUN_DIR=/data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001; cat > "$TASK_RUN_DIR/raw-evidence-paths.txt" <<EOF
+/data/ncnn-logs/ai-team/2026-07-03_10-58-16/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001
+/data/ncnn-logs/ai-team/2026-07-03_10-58-16/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001/run_logs
+/data/ncnn-logs/ai-team/2026-07-03_10-58-16/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001/artifacts
+/data/banana-yolo26-spacemit-demo/.deps/custom_int8_engine/build-host-native
+/data/banana-yolo26-spacemit-demo/.deps/custom_int8_engine/build-k1x-vmadot
+/data/lab/task-runs/W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001
+/data/ncnn-logs/ai-team/2026-06-26/2026-06-26_09-59-28__contcodex__W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001__int8-vmadot-toolchain-hardware-proof
+EOF
+[exit 0] bash -lc set -euo pipefail; TASK_RUN_DIR=/data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001; cat > "$TASK_RUN_DIR/raw-evidence-paths.txt" <<EOF
+/data/ncnn-logs/ai-team/2026-07-03_10-58-16/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001
+/data/ncnn-logs/ai-team/2026-07-03_10-58-16/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001/run_logs
+/data/ncnn-logs/ai-team/2026-07-03_10-58-16/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001/artifacts
+/data/banana-yolo26-spacemit-demo/.deps/custom_int8_engine/build-host-native
+/data/banana-yolo26-spacemit-demo/.deps/custom_int8_engine/build-k1x-vmadot
+/data/lab/task-runs/W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001
+/data/ncnn-logs/ai-team/2026-06-26/2026-06-26_09-59-28__contcodex__W1-IME-INT8-VMADOT-TOOLCHAIN-HARDWARE-PROOF-001__int8-vmadot-toolchain-hardware-proof
+EOF
+[2026-07-03T11:21:34+02:00] /data/lab/scripts/export-result-packet.sh BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001
+[exit 0] /data/lab/scripts/export-result-packet.sh BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE1-SMTVMADOT-MICROKERNEL-001
+[2026-07-03T11:22:03+02:00] git rev-parse HEAD
+[exit 0] git rev-parse HEAD
+[2026-07-03T11:22:03+02:00] git branch --show-current
+[exit 0] git branch --show-current
+[2026-07-03T11:22:03+02:00] git status --short --branch
+[exit 0] git status --short --branch
+[2026-07-03T11:22:03+02:00] git diff --check
+[exit 0] git diff --check
+[2026-07-03T11:22:03+02:00] python3 -
+[exit 0] python3 -
