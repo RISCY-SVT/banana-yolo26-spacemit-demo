@@ -1,0 +1,12 @@
+function(y26_add_test name)
+    add_executable(${name} ${name}.cpp)
+    target_link_libraries(${name} PRIVATE y26_k1x_custom_int8_engine)
+    target_compile_options(${name} PRIVATE -Wall -Wextra -Wpedantic)
+    add_test(NAME ${name} COMMAND ${name})
+endfunction()
+
+y26_add_test(test_model_format_header)
+y26_add_test(test_requant_rounding)
+y26_add_test(test_pack_a_layout)
+y26_add_test(test_pack_b_layout)
+y26_add_test(test_vmadot_scalar_oracle_fixture)
