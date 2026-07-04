@@ -135,6 +135,16 @@ if(Y26_K1X_BUILD_TOOLS)
     if(Y26_K1X_ENABLE_IME)
         target_compile_definitions(bench_stage8_activation_requant PRIVATE Y26_K1X_ENABLE_IME_ASM=1)
     endif()
+
+    add_executable(bench_stage9_activation_fusion
+        tools/bench_stage9_activation_fusion.cpp
+    )
+    target_link_libraries(bench_stage9_activation_fusion PRIVATE y26_k1x_custom_int8_engine)
+    target_include_directories(bench_stage9_activation_fusion PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/tests")
+    target_compile_options(bench_stage9_activation_fusion PRIVATE -Wall -Wextra -Wpedantic)
+    if(Y26_K1X_ENABLE_IME)
+        target_compile_definitions(bench_stage9_activation_fusion PRIVATE Y26_K1X_ENABLE_IME_ASM=1)
+    endif()
 endif()
 
 if(Y26_K1X_ENABLE_TESTS)

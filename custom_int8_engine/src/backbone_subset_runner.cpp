@@ -82,7 +82,11 @@ bool activation_mode_valid(int mode) {
     return mode == Y26_ACTIVATION_MODE_SCALAR_FLOAT_REFERENCE ||
            mode == Y26_ACTIVATION_MODE_FIXED_REQUANT_ONLY ||
            mode == Y26_ACTIVATION_MODE_INT8_LUT ||
-           mode == Y26_ACTIVATION_MODE_FUSED_LUT_PACK;
+           mode == Y26_ACTIVATION_MODE_FUSED_LUT_PACK ||
+           mode == Y26_ACTIVATION_MODE_STAGE9_SCALAR_UNROLLED_LUT ||
+           mode == Y26_ACTIVATION_MODE_STAGE9_FIXED_REQUANT_LUT ||
+           mode == Y26_ACTIVATION_MODE_STAGE9_RVV_F32_LUT ||
+           mode == Y26_ACTIVATION_MODE_STAGE9_FUSED_CURRENT_LAYOUT;
 }
 
 int normalized_activation_mode(const Y26Stage7BackboneSubsetConfig& cfg) {
@@ -217,6 +221,19 @@ int apply_activation_requant(const Y26Stage7ConvNodeConfig& producer,
     if (activation_mode == Y26_ACTIVATION_MODE_INT8_LUT ||
         activation_mode == Y26_ACTIVATION_MODE_FUSED_LUT_PACK) {
         return y26_activation_requant_silu_int8_lut(&params, producer_i32, lut_256_s8, consumer_input_s8);
+    }
+    if (activation_mode == Y26_ACTIVATION_MODE_STAGE9_SCALAR_UNROLLED_LUT ||
+        activation_mode == Y26_ACTIVATION_MODE_STAGE9_FUSED_CURRENT_LAYOUT) {
+        return y26_activation_requant_silu_int8_lut_scalar_unrolled(
+            &params, producer_i32, lut_256_s8, consumer_input_s8);
+    }
+    if (activation_mode == Y26_ACTIVATION_MODE_STAGE9_FIXED_REQUANT_LUT) {
+        return y26_activation_requant_silu_int8_lut_fixed_requant(
+            &params, fixed_requant_params, producer_i32, lut_256_s8, consumer_input_s8);
+    }
+    if (activation_mode == Y26_ACTIVATION_MODE_STAGE9_RVV_F32_LUT) {
+        return y26_activation_requant_silu_int8_lut_rvv_f32(
+            &params, producer_i32, lut_256_s8, consumer_input_s8);
     }
     if (activation_mode == Y26_ACTIVATION_MODE_FIXED_REQUANT_ONLY) {
         return y26_activation_requant_silu_fixed_requant_only(

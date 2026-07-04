@@ -5,7 +5,7 @@ stage_id: `BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMI
 repo: `/data/banana-yolo26-spacemit-demo`
 branch: `yolo26-custom-int8-engine`
 start_head: `889b6717f1df74459c715342167588ca8b9d9100`
-end_head: `see-final-response-after-local-commit`
+end_head: `71e143271b2d09eb35511725e360c3c95bddfc09`
 pushed: false
 full_engine_implemented: false
 ncnn_source_mutated: false

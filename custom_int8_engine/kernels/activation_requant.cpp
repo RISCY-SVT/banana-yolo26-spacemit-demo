@@ -7,7 +7,12 @@
 #include <cmath>
 #include <cstddef>
 #include <cstdint>
+#include <cstring>
 #include <limits>
+
+#if defined(__riscv_vector)
+#include <riscv_vector.h>
+#endif
 
 namespace {
 
@@ -88,6 +93,231 @@ std::uint8_t requantize_accumulator_to_conv_code_float(const Y26ActivationRequan
 std::int8_t silu_lut_value_reference(const std::int8_t* lut_256_s8, std::uint8_t conv_code) {
     return lut_256_s8[static_cast<unsigned>(conv_code)];
 }
+
+std::uint8_t requantize_accumulator_to_conv_code_float_scale(std::int32_t accumulator,
+                                                             float acc_scale,
+                                                             float conv_output_scale,
+                                                             int conv_output_zero_point_u8) {
+    const float conv_float = static_cast<float>(accumulator) * acc_scale;
+    const double scaled = static_cast<double>(conv_float) / static_cast<double>(conv_output_scale);
+    const long rounded = static_cast<long>(std::nearbyint(scaled)) + static_cast<long>(conv_output_zero_point_u8);
+    return clamp_u8(rounded);
+}
+
+bool stage9_channel_loop_supported(const Y26ActivationRequantParams& params) {
+    constexpr int kMaxStage9Channels = 256;
+    return params.channels > 0 && params.channels <= kMaxStage9Channels &&
+           params.element_count % static_cast<std::size_t>(params.channels) == 0;
+}
+
+void build_acc_scales(const Y26ActivationRequantParams& params, float* acc_scales) {
+    for (int channel = 0; channel < params.channels; ++channel) {
+        acc_scales[channel] = params.input_scale * params.weight_scales[channel];
+    }
+}
+
+void requant_codes_scalar_unrolled(const Y26ActivationRequantParams& params,
+                                   const std::int32_t* __restrict producer_i32,
+                                   std::uint8_t* __restrict conv_code_u8) {
+    float acc_scales[256] {};
+    build_acc_scales(params, acc_scales);
+    const std::size_t pixels = params.element_count / static_cast<std::size_t>(params.channels);
+    const float conv_output_scale = params.conv_output_scale;
+    const int conv_zp = params.conv_output_zero_point_u8;
+    const std::int32_t* __restrict src = producer_i32;
+    std::uint8_t* __restrict dst = conv_code_u8;
+    for (std::size_t pixel = 0; pixel < pixels; ++pixel) {
+        int channel = 0;
+        for (; channel + 8 <= params.channels; channel += 8) {
+            dst[channel + 0] =
+                requantize_accumulator_to_conv_code_float_scale(src[channel + 0], acc_scales[channel + 0], conv_output_scale, conv_zp);
+            dst[channel + 1] =
+                requantize_accumulator_to_conv_code_float_scale(src[channel + 1], acc_scales[channel + 1], conv_output_scale, conv_zp);
+            dst[channel + 2] =
+                requantize_accumulator_to_conv_code_float_scale(src[channel + 2], acc_scales[channel + 2], conv_output_scale, conv_zp);
+            dst[channel + 3] =
+                requantize_accumulator_to_conv_code_float_scale(src[channel + 3], acc_scales[channel + 3], conv_output_scale, conv_zp);
+            dst[channel + 4] =
+                requantize_accumulator_to_conv_code_float_scale(src[channel + 4], acc_scales[channel + 4], conv_output_scale, conv_zp);
+            dst[channel + 5] =
+                requantize_accumulator_to_conv_code_float_scale(src[channel + 5], acc_scales[channel + 5], conv_output_scale, conv_zp);
+            dst[channel + 6] =
+                requantize_accumulator_to_conv_code_float_scale(src[channel + 6], acc_scales[channel + 6], conv_output_scale, conv_zp);
+            dst[channel + 7] =
+                requantize_accumulator_to_conv_code_float_scale(src[channel + 7], acc_scales[channel + 7], conv_output_scale, conv_zp);
+        }
+        for (; channel < params.channels; ++channel) {
+            dst[channel] =
+                requantize_accumulator_to_conv_code_float_scale(src[channel], acc_scales[channel], conv_output_scale, conv_zp);
+        }
+        src += params.channels;
+        dst += params.channels;
+    }
+}
+
+void requant_codes_fixed_unrolled(const Y26ActivationRequantParams& params,
+                                  const Y26FixedRequantParams* per_channel_params,
+                                  const std::int32_t* __restrict producer_i32,
+                                  std::uint8_t* __restrict conv_code_u8) {
+    const std::size_t pixels = params.element_count / static_cast<std::size_t>(params.channels);
+    const std::int32_t* __restrict src = producer_i32;
+    std::uint8_t* __restrict dst = conv_code_u8;
+    for (std::size_t pixel = 0; pixel < pixels; ++pixel) {
+        int channel = 0;
+        for (; channel + 8 <= params.channels; channel += 8) {
+            dst[channel + 0] = y26_requant_s32_to_u8_fixed_nearest_even(src[channel + 0], per_channel_params + channel + 0);
+            dst[channel + 1] = y26_requant_s32_to_u8_fixed_nearest_even(src[channel + 1], per_channel_params + channel + 1);
+            dst[channel + 2] = y26_requant_s32_to_u8_fixed_nearest_even(src[channel + 2], per_channel_params + channel + 2);
+            dst[channel + 3] = y26_requant_s32_to_u8_fixed_nearest_even(src[channel + 3], per_channel_params + channel + 3);
+            dst[channel + 4] = y26_requant_s32_to_u8_fixed_nearest_even(src[channel + 4], per_channel_params + channel + 4);
+            dst[channel + 5] = y26_requant_s32_to_u8_fixed_nearest_even(src[channel + 5], per_channel_params + channel + 5);
+            dst[channel + 6] = y26_requant_s32_to_u8_fixed_nearest_even(src[channel + 6], per_channel_params + channel + 6);
+            dst[channel + 7] = y26_requant_s32_to_u8_fixed_nearest_even(src[channel + 7], per_channel_params + channel + 7);
+        }
+        for (; channel < params.channels; ++channel) {
+            dst[channel] = y26_requant_s32_to_u8_fixed_nearest_even(src[channel], per_channel_params + channel);
+        }
+        src += params.channels;
+        dst += params.channels;
+    }
+}
+
+void lut_lookup_unrolled(const std::uint8_t* __restrict conv_code_u8,
+                         const std::int8_t* __restrict lut_256_s8,
+                         std::size_t element_count,
+                         std::int8_t* __restrict consumer_input_s8) {
+    std::size_t index = 0;
+    for (; index + 8 <= element_count; index += 8) {
+        consumer_input_s8[index + 0] = lut_256_s8[conv_code_u8[index + 0]];
+        consumer_input_s8[index + 1] = lut_256_s8[conv_code_u8[index + 1]];
+        consumer_input_s8[index + 2] = lut_256_s8[conv_code_u8[index + 2]];
+        consumer_input_s8[index + 3] = lut_256_s8[conv_code_u8[index + 3]];
+        consumer_input_s8[index + 4] = lut_256_s8[conv_code_u8[index + 4]];
+        consumer_input_s8[index + 5] = lut_256_s8[conv_code_u8[index + 5]];
+        consumer_input_s8[index + 6] = lut_256_s8[conv_code_u8[index + 6]];
+        consumer_input_s8[index + 7] = lut_256_s8[conv_code_u8[index + 7]];
+    }
+    for (; index < element_count; ++index) {
+        consumer_input_s8[index] = lut_256_s8[conv_code_u8[index]];
+    }
+}
+
+void requant_lut_scalar_unrolled_fused(const Y26ActivationRequantParams& params,
+                                       const std::int32_t* __restrict producer_i32,
+                                       const std::int8_t* __restrict lut_256_s8,
+                                       std::int8_t* __restrict consumer_input_s8) {
+    float acc_scales[256] {};
+    build_acc_scales(params, acc_scales);
+    const std::size_t pixels = params.element_count / static_cast<std::size_t>(params.channels);
+    const float conv_output_scale = params.conv_output_scale;
+    const int conv_zp = params.conv_output_zero_point_u8;
+    const std::int32_t* __restrict src = producer_i32;
+    std::int8_t* __restrict dst = consumer_input_s8;
+    for (std::size_t pixel = 0; pixel < pixels; ++pixel) {
+        int channel = 0;
+        for (; channel + 8 <= params.channels; channel += 8) {
+            dst[channel + 0] = lut_256_s8[requantize_accumulator_to_conv_code_float_scale(
+                src[channel + 0], acc_scales[channel + 0], conv_output_scale, conv_zp)];
+            dst[channel + 1] = lut_256_s8[requantize_accumulator_to_conv_code_float_scale(
+                src[channel + 1], acc_scales[channel + 1], conv_output_scale, conv_zp)];
+            dst[channel + 2] = lut_256_s8[requantize_accumulator_to_conv_code_float_scale(
+                src[channel + 2], acc_scales[channel + 2], conv_output_scale, conv_zp)];
+            dst[channel + 3] = lut_256_s8[requantize_accumulator_to_conv_code_float_scale(
+                src[channel + 3], acc_scales[channel + 3], conv_output_scale, conv_zp)];
+            dst[channel + 4] = lut_256_s8[requantize_accumulator_to_conv_code_float_scale(
+                src[channel + 4], acc_scales[channel + 4], conv_output_scale, conv_zp)];
+            dst[channel + 5] = lut_256_s8[requantize_accumulator_to_conv_code_float_scale(
+                src[channel + 5], acc_scales[channel + 5], conv_output_scale, conv_zp)];
+            dst[channel + 6] = lut_256_s8[requantize_accumulator_to_conv_code_float_scale(
+                src[channel + 6], acc_scales[channel + 6], conv_output_scale, conv_zp)];
+            dst[channel + 7] = lut_256_s8[requantize_accumulator_to_conv_code_float_scale(
+                src[channel + 7], acc_scales[channel + 7], conv_output_scale, conv_zp)];
+        }
+        for (; channel < params.channels; ++channel) {
+            dst[channel] = lut_256_s8[requantize_accumulator_to_conv_code_float_scale(
+                src[channel], acc_scales[channel], conv_output_scale, conv_zp)];
+        }
+        src += params.channels;
+        dst += params.channels;
+    }
+}
+
+void requant_lut_fixed_unrolled_fused(const Y26ActivationRequantParams& params,
+                                      const Y26FixedRequantParams* per_channel_params,
+                                      const std::int32_t* __restrict producer_i32,
+                                      const std::int8_t* __restrict lut_256_s8,
+                                      std::int8_t* __restrict consumer_input_s8) {
+    const std::size_t pixels = params.element_count / static_cast<std::size_t>(params.channels);
+    const std::int32_t* __restrict src = producer_i32;
+    std::int8_t* __restrict dst = consumer_input_s8;
+    for (std::size_t pixel = 0; pixel < pixels; ++pixel) {
+        int channel = 0;
+        for (; channel + 8 <= params.channels; channel += 8) {
+            dst[channel + 0] =
+                lut_256_s8[y26_requant_s32_to_u8_fixed_nearest_even(src[channel + 0], per_channel_params + channel + 0)];
+            dst[channel + 1] =
+                lut_256_s8[y26_requant_s32_to_u8_fixed_nearest_even(src[channel + 1], per_channel_params + channel + 1)];
+            dst[channel + 2] =
+                lut_256_s8[y26_requant_s32_to_u8_fixed_nearest_even(src[channel + 2], per_channel_params + channel + 2)];
+            dst[channel + 3] =
+                lut_256_s8[y26_requant_s32_to_u8_fixed_nearest_even(src[channel + 3], per_channel_params + channel + 3)];
+            dst[channel + 4] =
+                lut_256_s8[y26_requant_s32_to_u8_fixed_nearest_even(src[channel + 4], per_channel_params + channel + 4)];
+            dst[channel + 5] =
+                lut_256_s8[y26_requant_s32_to_u8_fixed_nearest_even(src[channel + 5], per_channel_params + channel + 5)];
+            dst[channel + 6] =
+                lut_256_s8[y26_requant_s32_to_u8_fixed_nearest_even(src[channel + 6], per_channel_params + channel + 6)];
+            dst[channel + 7] =
+                lut_256_s8[y26_requant_s32_to_u8_fixed_nearest_even(src[channel + 7], per_channel_params + channel + 7)];
+        }
+        for (; channel < params.channels; ++channel) {
+            dst[channel] =
+                lut_256_s8[y26_requant_s32_to_u8_fixed_nearest_even(src[channel], per_channel_params + channel)];
+        }
+        src += params.channels;
+        dst += params.channels;
+    }
+}
+
+#if defined(__riscv_vector)
+int requant_lut_rvv_f32_impl(const Y26ActivationRequantParams& params,
+                             const std::int32_t* producer_i32,
+                             const std::int8_t* lut_256_s8,
+                             std::int8_t* consumer_input_s8) {
+    if (!stage9_channel_loop_supported(params)) {
+        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    }
+    float acc_scales[256] {};
+    alignas(64) std::int32_t code_tmp[256] {};
+    build_acc_scales(params, acc_scales);
+    const std::size_t pixels = params.element_count / static_cast<std::size_t>(params.channels);
+    const std::int32_t* src = producer_i32;
+    std::int8_t* dst = consumer_input_s8;
+    for (std::size_t pixel = 0; pixel < pixels; ++pixel) {
+        int channel = 0;
+        while (channel < params.channels) {
+            const std::size_t vl = __riscv_vsetvl_e32m4(static_cast<std::size_t>(params.channels - channel));
+            vint32m4_t vacc = __riscv_vle32_v_i32m4(src + channel, vl);
+            vfloat32m4_t vf = __riscv_vfcvt_f_x_v_f32m4(vacc, vl);
+            vfloat32m4_t vscale = __riscv_vle32_v_f32m4(acc_scales + channel, vl);
+            vf = __riscv_vfmul_vv_f32m4(vf, vscale, vl);
+            vf = __riscv_vfdiv_vf_f32m4(vf, params.conv_output_scale, vl);
+            vint32m4_t vcode = __riscv_vfcvt_x_f_v_i32m4(vf, vl);
+            vcode = __riscv_vadd_vx_i32m4(vcode, params.conv_output_zero_point_u8, vl);
+            vcode = __riscv_vmax_vx_i32m4(vcode, 0, vl);
+            vcode = __riscv_vmin_vx_i32m4(vcode, 255, vl);
+            __riscv_vse32_v_i32m4(code_tmp + channel, vcode, vl);
+            channel += static_cast<int>(vl);
+        }
+        for (int c = 0; c < params.channels; ++c) {
+            dst[c] = lut_256_s8[static_cast<std::uint8_t>(code_tmp[c])];
+        }
+        src += params.channels;
+        dst += params.channels;
+    }
+    return Y26_CONV_STATUS_SUCCESS;
+}
+#endif
 
 }  // namespace
 
@@ -214,6 +444,105 @@ extern "C" int y26_activation_requant_silu_int8_lut(const Y26ActivationRequantPa
     return Y26_CONV_STATUS_SUCCESS;
 }
 
+extern "C" int y26_activation_requant_silu_int8_lut_scalar_unrolled(const Y26ActivationRequantParams* params,
+                                                                     const std::int32_t* producer_i32,
+                                                                     const std::int8_t* lut_256_s8,
+                                                                     std::int8_t* consumer_input_s8) {
+    if (!activation_params_valid(params) || producer_i32 == nullptr || lut_256_s8 == nullptr ||
+        consumer_input_s8 == nullptr || !stage9_channel_loop_supported(*params)) {
+        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    }
+    requant_lut_scalar_unrolled_fused(*params, producer_i32, lut_256_s8, consumer_input_s8);
+    return Y26_CONV_STATUS_SUCCESS;
+}
+
+extern "C" int y26_activation_requant_silu_int8_lut_fixed_requant(const Y26ActivationRequantParams* params,
+                                                                   const Y26FixedRequantParams* per_channel_params,
+                                                                   const std::int32_t* producer_i32,
+                                                                   const std::int8_t* lut_256_s8,
+                                                                   std::int8_t* consumer_input_s8) {
+    if (!activation_params_valid(params) || per_channel_params == nullptr || producer_i32 == nullptr ||
+        lut_256_s8 == nullptr || consumer_input_s8 == nullptr || !stage9_channel_loop_supported(*params)) {
+        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    }
+    requant_lut_fixed_unrolled_fused(*params, per_channel_params, producer_i32, lut_256_s8, consumer_input_s8);
+    return Y26_CONV_STATUS_SUCCESS;
+}
+
+extern "C" int y26_activation_requant_silu_int8_lut_rvv_f32(const Y26ActivationRequantParams* params,
+                                                             const std::int32_t* producer_i32,
+                                                             const std::int8_t* lut_256_s8,
+                                                             std::int8_t* consumer_input_s8) {
+    if (!activation_params_valid(params) || producer_i32 == nullptr || lut_256_s8 == nullptr ||
+        consumer_input_s8 == nullptr) {
+        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    }
+#if defined(__riscv_vector)
+    return requant_lut_rvv_f32_impl(*params, producer_i32, lut_256_s8, consumer_input_s8);
+#else
+    return Y26_CONV_STATUS_NOT_BUILT_WITH_IME;
+#endif
+}
+
+extern "C" int y26_activation_requant_silu_int8_lut_scalar_unrolled_profile(
+    const Y26ActivationRequantParams* params,
+    const std::int32_t* producer_i32,
+    const std::int8_t* lut_256_s8,
+    std::uint8_t* conv_code_u8,
+    std::int8_t* consumer_input_s8,
+    Y26Stage9ActivationTimingUs* timing) {
+    if (!activation_params_valid(params) || producer_i32 == nullptr || lut_256_s8 == nullptr ||
+        conv_code_u8 == nullptr || consumer_input_s8 == nullptr || timing == nullptr ||
+        !stage9_channel_loop_supported(*params)) {
+        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    }
+    *timing = Y26Stage9ActivationTimingUs {};
+    const auto total_begin = Clock::now();
+    auto begin = Clock::now();
+    requant_codes_scalar_unrolled(*params, producer_i32, conv_code_u8);
+    auto end = Clock::now();
+    timing->requant_arithmetic_us = elapsed_us(begin, end);
+
+    begin = Clock::now();
+    lut_lookup_unrolled(conv_code_u8, lut_256_s8, params->element_count, consumer_input_s8);
+    end = Clock::now();
+    timing->lut_lookup_us = elapsed_us(begin, end);
+    timing->store_write_us = timing->lut_lookup_us;
+    timing->packa_handoff_us = 0.0;
+    timing->total_us = elapsed_us(total_begin, Clock::now());
+    return Y26_CONV_STATUS_SUCCESS;
+}
+
+extern "C" int y26_activation_requant_silu_int8_lut_fixed_requant_profile(
+    const Y26ActivationRequantParams* params,
+    const Y26FixedRequantParams* per_channel_params,
+    const std::int32_t* producer_i32,
+    const std::int8_t* lut_256_s8,
+    std::uint8_t* conv_code_u8,
+    std::int8_t* consumer_input_s8,
+    Y26Stage9ActivationTimingUs* timing) {
+    if (!activation_params_valid(params) || per_channel_params == nullptr || producer_i32 == nullptr ||
+        lut_256_s8 == nullptr || conv_code_u8 == nullptr || consumer_input_s8 == nullptr || timing == nullptr ||
+        !stage9_channel_loop_supported(*params)) {
+        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    }
+    *timing = Y26Stage9ActivationTimingUs {};
+    const auto total_begin = Clock::now();
+    auto begin = Clock::now();
+    requant_codes_fixed_unrolled(*params, per_channel_params, producer_i32, conv_code_u8);
+    auto end = Clock::now();
+    timing->requant_arithmetic_us = elapsed_us(begin, end);
+
+    begin = Clock::now();
+    lut_lookup_unrolled(conv_code_u8, lut_256_s8, params->element_count, consumer_input_s8);
+    end = Clock::now();
+    timing->lut_lookup_us = elapsed_us(begin, end);
+    timing->store_write_us = timing->lut_lookup_us;
+    timing->packa_handoff_us = 0.0;
+    timing->total_us = elapsed_us(total_begin, Clock::now());
+    return Y26_CONV_STATUS_SUCCESS;
+}
+
 extern "C" int y26_activation_requant_silu_fixed_requant_only(const Y26ActivationRequantParams* params,
                                                                const Y26FixedRequantParams* per_channel_params,
                                                                const std::int32_t* producer_i32,
@@ -232,6 +561,69 @@ extern "C" int y26_activation_requant_silu_fixed_requant_only(const Y26Activatio
         const std::uint8_t act_q = y26_quantize_u8_nearest_even_f32(
             silu_f32(conv_dq), params->act_output_scale, params->act_output_zero_point_u8);
         consumer_input_s8[index] = signed_storage_from_u8(act_q);
+    }
+    return Y26_CONV_STATUS_SUCCESS;
+}
+
+extern "C" int y26_activation_packa_1x1_mmt4d_4x8_from_nhwc(const std::int8_t* input_nhwc_s8,
+                                                             int input_h,
+                                                             int input_w,
+                                                             int input_c,
+                                                             std::int8_t* packed_tiles,
+                                                             std::size_t packed_tile_bytes) {
+    if (input_nhwc_s8 == nullptr || packed_tiles == nullptr || input_h <= 0 || input_w <= 0 || input_c <= 0) {
+        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    }
+    const int output_m = input_h * input_w;
+    const int k_padded = ((input_c + 7) / 8) * 8;
+    const std::size_t expected = static_cast<std::size_t>((output_m + 3) / 4) *
+                                 static_cast<std::size_t>(k_padded / 8) * 32U;
+    if (packed_tile_bytes < expected) {
+        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    }
+    std::memset(packed_tiles, 0, expected);
+    for (int m0 = 0; m0 < output_m; m0 += 4) {
+        const std::size_t panel = static_cast<std::size_t>(m0 / 4) * static_cast<std::size_t>(k_padded / 8) * 32U;
+        for (int m = 0; m < 4; ++m) {
+            const int flat_m = m0 + m;
+            if (flat_m >= output_m) {
+                continue;
+            }
+            const std::int8_t* src = input_nhwc_s8 + static_cast<std::size_t>(flat_m) * input_c;
+            for (int c = 0; c < input_c; ++c) {
+                const int k_tile = c / 8;
+                const int k_lane = c % 8;
+                packed_tiles[panel + static_cast<std::size_t>(k_tile) * 32U + m * 8 + k_lane] = src[c];
+            }
+        }
+    }
+    return Y26_CONV_STATUS_SUCCESS;
+}
+
+extern "C" int y26_activation_unpacka_1x1_mmt4d_4x8_to_nhwc(const std::int8_t* packed_tiles,
+                                                             int input_h,
+                                                             int input_w,
+                                                             int input_c,
+                                                             std::int8_t* output_nhwc_s8) {
+    if (packed_tiles == nullptr || output_nhwc_s8 == nullptr || input_h <= 0 || input_w <= 0 || input_c <= 0) {
+        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    }
+    const int output_m = input_h * input_w;
+    const int k_padded = ((input_c + 7) / 8) * 8;
+    for (int m0 = 0; m0 < output_m; m0 += 4) {
+        const std::size_t panel = static_cast<std::size_t>(m0 / 4) * static_cast<std::size_t>(k_padded / 8) * 32U;
+        for (int m = 0; m < 4; ++m) {
+            const int flat_m = m0 + m;
+            if (flat_m >= output_m) {
+                continue;
+            }
+            std::int8_t* dst = output_nhwc_s8 + static_cast<std::size_t>(flat_m) * input_c;
+            for (int c = 0; c < input_c; ++c) {
+                const int k_tile = c / 8;
+                const int k_lane = c % 8;
+                dst[c] = packed_tiles[panel + static_cast<std::size_t>(k_tile) * 32U + m * 8 + k_lane];
+            }
+        }
     }
     return Y26_CONV_STATUS_SUCCESS;
 }
