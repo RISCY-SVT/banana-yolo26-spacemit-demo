@@ -1,0 +1,249 @@
+# Stage 11 command log
+# created: 2026-07-04T19:42:26+02:00
+# note: skill SKILL.md reads occurred immediately before LOG_DIR creation: sed -n on lab_bridge_packet_workflow, k1x_env_sanity, k1x_git_hygiene
+[cmd] pwd=/data :: mkdir -p '/data/ncnn-logs/ai-team/2026-07-04_19-42-26/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE11-BRANCH-BLOCK-EXPANSION-001/artifacts' '/data/ncnn-logs/ai-team/2026-07-04_19-42-26/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE11-BRANCH-BLOCK-EXPANSION-001/run_logs' '/data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE11-BRANCH-BLOCK-EXPANSION-001' '/data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE11-BRANCH-BLOCK-EXPANSION-001/artifacts'
+[exit] 0
+[cmd] pwd=/data :: /data/lab/scripts/check-bridge-layout.sh
+[exit] 0
+[cmd] pwd=/data :: /data/lab/scripts/init-shared-log-run.sh contcodex 'BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE11-BRANCH-BLOCK-EXPANSION-001' stage11-branch-block-expansion
+[exit] 0
+[cmd] pwd=/data :: printf 'No inbound packet at /exchange/tasks/inbox/%s\n' 'BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE11-BRANCH-BLOCK-EXPANSION-001'
+[exit] 0
+[cmd] pwd=/data :: cd '/data/banana-yolo26-spacemit-demo' && pwd
+[exit] 0
+[cmd] pwd=/data :: cd '/data/banana-yolo26-spacemit-demo' && git branch --show-current
+[exit] 0
+[cmd] pwd=/data :: cd '/data/banana-yolo26-spacemit-demo' && git rev-parse HEAD
+[exit] 0
+[cmd] pwd=/data :: cd '/data/banana-yolo26-spacemit-demo' && git status --short
+[exit] 0
+[cmd] pwd=/data :: cd '/data/banana-yolo26-spacemit-demo' && git remote -v
+[exit] 0
+[cmd] pwd=/data :: cd '/data/banana-yolo26-spacemit-demo' && git log --oneline -n 12
+[exit] 0
+[cmd] pwd=/data :: cd '/data/banana-yolo26-spacemit-demo' && rg -n 'pending-local-commit-see-final-response|see-final-response-after-local-commit|2eddbdf3418423e796a24ba060b5cf059a0f7e48|56a612bfcede03d626811cf6e4be29f13bfbdb2c' stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE10-BACKBONE-EXPANSION-POST-ACTIVATION-GATE-001 stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE9-RVV-REQUANT-LUT-FUSION-GATE-001 || true
+[exit] 0
+[cmd] pwd=/data :: cd '/data/banana-yolo26-spacemit-demo' && ls -1 stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE10-BACKBONE-EXPANSION-POST-ACTIVATION-GATE-001
+[exit] 0
+[cmd] pwd=/data :: cd '/data/banana-yolo26-spacemit-demo' && sed -n '1,220p' stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE10-BACKBONE-EXPANSION-POST-ACTIVATION-GATE-001/STAGE10_FINAL_REPORT.md && printf '\n--- component ---\n' && sed -n '1,220p' stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE10-BACKBONE-EXPANSION-POST-ACTIVATION-GATE-001/component_timing_report.md && printf '\n--- selection ---\n' && sed -n '1,220p' stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE10-BACKBONE-EXPANSION-POST-ACTIVATION-GATE-001/backbone_expansion_selection.md
+[exit] 0
+[cmd] pwd=/data/banana-yolo26-spacemit-demo :: apply_patch Stage10 STAGE10_FINAL_REPORT.md end_head traceability fix
+[exit] 0
+[cmd] pwd=/data :: cd '/data/banana-yolo26-spacemit-demo' && sed -n '1,240p' custom_int8_engine/include/y26_k1x_backbone_stage10_runner.h && printf '\n--- source 1 ---\n' && sed -n '1,260p' custom_int8_engine/src/backbone_stage10_runner.cpp && printf '\n--- source 2 ---\n' && sed -n '260,620p' custom_int8_engine/src/backbone_stage10_runner.cpp && printf '\n--- fixture ---\n' && sed -n '1,220p' custom_int8_engine/tests/stage10_backbone_expansion_fixture.h
+[exit] 0
+[cmd] pwd=/data :: cd '/data/banana-yolo26-spacemit-demo' && sed -n '1,260p' custom_int8_engine/include/y26_k1x_activation.h && printf '\n--- activation src ---\n' && sed -n '1,320p' custom_int8_engine/kernels/activation_requant.cpp
+[exit] 0
+[cmd] pwd=/data :: cd '/data/banana-yolo26-spacemit-demo' && sed -n '1,260p' custom_int8_engine/include/y26_k1x_conv_kernels.h && printf '\n--- prepack src ---\n' && sed -n '1,320p' custom_int8_engine/kernels/conv_mmt4d_prepack.cpp
+[exit] 0
+[cmd] pwd=/data :: cd '/data/banana-yolo26-spacemit-demo' && sed -n '1,260p' custom_int8_engine/include/y26_k1x_backbone_subset_runner.h
+[exit] 0
+[cmd] pwd=/data :: cd '/data/banana-yolo26-spacemit-demo' && sed -n '180,520p' custom_int8_engine/src/backbone_stage10_runner.cpp
+[exit] 0
+[cmd] pwd=/data :: cd '/data/banana-yolo26-spacemit-demo' && sed -n '1,260p' custom_int8_engine/tests/test_stage10_backbone_expansion_runner.cpp
+[exit] 0
+[cmd] pwd=/data :: cd '/data/banana-yolo26-spacemit-demo' && sed -n '1,320p' custom_int8_engine/tools/bench_stage10_backbone_expansion.cpp
+[exit] 0
+[cmd] pwd=/data :: cd '/data/banana-yolo26-spacemit-demo' && if [ -x .deps/custom_int8_engine/venv-stage10-onnx/bin/python ]; then .deps/custom_int8_engine/venv-stage10-onnx/bin/python - <<'PY'
+import onnx, onnxruntime, numpy
+print('python=venv-stage10-onnx')
+print('onnx', onnx.__version__)
+print('onnxruntime', onnxruntime.__version__)
+print('numpy', numpy.__version__)
+PY
+else python3 - <<'PY'
+try:
+ import onnx, onnxruntime, numpy
+ print('python=system')
+ print('onnx', onnx.__version__)
+ print('onnxruntime', onnxruntime.__version__)
+ print('numpy', numpy.__version__)
+except Exception as exc:
+ print('missing', exc)
+ raise SystemExit(1)
+PY
+fi
+[exit] 0
+[cmd] pwd=/data :: cd '/data/banana-yolo26-spacemit-demo' && .deps/custom_int8_engine/venv-stage10-onnx/bin/python - <<'PY'
+import onnx, numpy as np
+from onnx import numpy_helper
+p='.deps/models/yolo26/int8_rt204_forensics/manual_ort/manual_e2e_rep_conv_matmul_qdq.onnx'
+m=onnx.load(p)
+init={i.name:numpy_helper.to_array(i) for i in m.graph.initializer}
+print('model', p)
+for idx,n in enumerate(m.graph.node):
+    if n.name.startswith('/model.2') or '/model.2' in n.name:
+        print(idx, n.op_type, n.name)
+        print('  inputs', list(n.input))
+        print('  outputs', list(n.output))
+        attrs={a.name: onnx.helper.get_attribute_value(a) for a in n.attribute}
+        if attrs: print('  attrs', attrs)
+print('--- initializers matching model.2.m.0.cv2 ---')
+for k,v in init.items():
+    if 'model.2.m.0.cv2' in k or '/model.2/m.0/cv2' in k:
+        flat=v.reshape(-1)
+        print(k, v.dtype, v.shape, 'min', flat.min() if flat.size else None, 'max', flat.max() if flat.size else None, 'first', flat[:8].tolist())
+print('--- initializers matching model.2.m.0.cv1 act output and split output ---')
+keys=['/model.2/m.0/cv1/conv/Conv_output_0','/model.2/m.0/cv1/act/Mul_output_0','/model.2/m.0/cv2/conv/Conv_output_0','/model.2/Split_output_1']
+for key in list(init):
+    if any(s in key for s in keys) or 'model.2.m.0.cv1.conv' in key or 'model.2.m.0.cv2.conv' in key:
+        v=init[key]; flat=v.reshape(-1)
+        print(key, v.dtype, v.shape, 'vals', flat[:12].tolist(), 'minmax', (flat.min() if flat.size else None, flat.max() if flat.size else None))
+PY
+[exit] 0
+[cmd] pwd=/data :: cd '/data/banana-yolo26-spacemit-demo' && if [ ! -x .deps/custom_int8_engine/venv-stage11-onnx/bin/python ]; then python3 -m venv .deps/custom_int8_engine/venv-stage11-onnx && .deps/custom_int8_engine/venv-stage11-onnx/bin/python -m pip install --upgrade pip && .deps/custom_int8_engine/venv-stage11-onnx/bin/python -m pip install onnx numpy onnxruntime; fi && .deps/custom_int8_engine/venv-stage11-onnx/bin/python - <<'PY'
+import onnx, onnxruntime, numpy
+print('python=venv-stage11-onnx')
+print('onnx', onnx.__version__)
+print('onnxruntime', onnxruntime.__version__)
+print('numpy', numpy.__version__)
+PY
+[exit] 0
+[cmd] pwd=/data :: cd '/data/banana-yolo26-spacemit-demo' && .deps/custom_int8_engine/venv-stage11-onnx/bin/python - <<'PY'
+import onnx, numpy as np
+from onnx import numpy_helper
+p='.deps/models/yolo26/int8_rt204_forensics/manual_ort/manual_e2e_rep_conv_matmul_qdq.onnx'
+m=onnx.load(p)
+init={i.name:numpy_helper.to_array(i) for i in m.graph.initializer}
+print('model', p)
+print('nodes /model.2 exact:')
+for idx,n in enumerate(m.graph.node):
+    if n.name.startswith('/model.2/'):
+        attrs={a.name: onnx.helper.get_attribute_value(a) for a in n.attribute}
+        print(idx, n.op_type, n.name)
+        print('  inputs', list(n.input))
+        print('  outputs', list(n.output))
+        if attrs: print('  attrs', attrs)
+print('--- selected initializer summaries ---')
+need=[
+'/model.2/Split_output_1_scale','/model.2/Split_output_1_zero_point',
+'/model.2/m.0/cv1/conv/Conv_output_0_scale','/model.2/m.0/cv1/conv/Conv_output_0_zero_point',
+'/model.2/m.0/cv1/act/Mul_output_0_scale','/model.2/m.0/cv1/act/Mul_output_0_zero_point',
+'/model.2/m.0/cv2/conv/Conv_output_0_scale','/model.2/m.0/cv2/conv/Conv_output_0_zero_point',
+'model.2.m.0.cv2.conv.weight_quantized','model.2.m.0.cv2.conv.weight_scale','model.2.m.0.cv2.conv.weight_zero_point','model.2.m.0.cv2.conv.bias_quantized',
+]
+for key in need:
+    v=init.get(key)
+    if v is None:
+        print('MISSING', key)
+        continue
+    flat=v.reshape(-1)
+    print(key, 'dtype', v.dtype, 'shape', v.shape, 'min', flat.min() if flat.size else None, 'max', flat.max() if flat.size else None, 'first', flat[:16].tolist())
+PY
+[exit] 0
+[cmd] pwd=/data :: cd '/data/banana-yolo26-spacemit-demo' && set -euo pipefail; if [ -f /data/build_scripts/01-env.sh ]; then source /data/build_scripts/01-env.sh; fi; CC=${CC:-riscv64-unknown-linux-gnu-gcc}; command -v "/opt/riscv/bin/riscv64-unknown-linux-gnu-gcc"; "/opt/riscv/bin/riscv64-unknown-linux-gnu-gcc" --version; ARCH_FLAGS=${K1_ARCH_FLAGS:-'-march=rv64gcv_zvfh -mabi=lp64d'}; echo ARCH_FLAGS=""; echo | "/opt/riscv/bin/riscv64-unknown-linux-gnu-gcc"  -dM -E - | { rg -n '__riscv_vector|__riscv_zvfh|__riscv_zfh' || true; }; SYSROOT_OVERLAY=${K1_SYSROOT_OVERLAY:-/data/sysroots/k1x-gtk3-overlay}; test -d ""; echo SYSROOT_OVERLAY=""; TARGET="${BANANA_SSH_TARGET:-${BANANA_SSH:-svt@banana}}"; echo BOARD_TARGET=""
+[exit] 1
+[cmd] pwd=/data :: cd '/data/banana-yolo26-spacemit-demo' && cmake -S custom_int8_engine -B .deps/custom_int8_engine/build-host-native-stage11 -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_CXX_COMPILER=/usr/bin/g++
+[exit] 0
+[cmd] pwd=/data :: cd '/data/banana-yolo26-spacemit-demo' && cmake --build .deps/custom_int8_engine/build-host-native-stage11 -j"8"
+[exit] 0
+[cmd] pwd=/data :: cd '/data/banana-yolo26-spacemit-demo' && ctest --test-dir .deps/custom_int8_engine/build-host-native-stage11 --output-on-failure
+[exit] 0
+[cmd] pwd=/data :: cd '/data/banana-yolo26-spacemit-demo' && source /data/build_scripts/01-env.sh && cmake -S custom_int8_engine -B .deps/custom_int8_engine/build-riscv-stage11 -DCMAKE_BUILD_TYPE=Release -DY26_K1X_ENABLE_IME=ON -DCMAKE_CXX_COMPILER=${CXX:-riscv64-unknown-linux-gnu-g++} -DCMAKE_CXX_FLAGS="${K1_ARCH_FLAGS:-'-march=rv64gcv_zvfh -mabi=lp64d'}" -DCMAKE_SYSTEM_NAME=Linux -DCMAKE_SYSTEM_PROCESSOR=riscv64
+[exit] 0
+[cmd] pwd=/data :: cd '/data/banana-yolo26-spacemit-demo' && cmake --build .deps/custom_int8_engine/build-riscv-stage11 -j"8"
+[exit] 0
+[cmd] pwd=/data :: cd '/data/banana-yolo26-spacemit-demo' && source /data/build_scripts/01-env.sh && TARGET=${BANANA_SSH_TARGET:-${BANANA_SSH:-svt@banana}} && BOARD_DIR=/home/svt/yolo26-custom-int8-stage11/2026-07-04_19-42-26 && ssh "" "mkdir -p ''" && sha256sum .deps/custom_int8_engine/build-riscv-stage11/tests/test_stage10_rvv_rounding_control .deps/custom_int8_engine/build-riscv-stage11/tests/test_stage10_backbone_expansion_runner .deps/custom_int8_engine/build-riscv-stage11/bench_stage10_backbone_expansion > '/data/ncnn-logs/ai-team/2026-07-04_19-42-26/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE11-BRANCH-BLOCK-EXPANSION-001/run_logs/stage10_replay_binaries.sha256' && scp .deps/custom_int8_engine/build-riscv-stage11/tests/test_stage10_rvv_rounding_control .deps/custom_int8_engine/build-riscv-stage11/tests/test_stage10_backbone_expansion_runner .deps/custom_int8_engine/build-riscv-stage11/bench_stage10_backbone_expansion ":/" && printf 'TARGET=%s\nBOARD_DIR=%s\n' "" "" > '/data/ncnn-logs/ai-team/2026-07-04_19-42-26/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE11-BRANCH-BLOCK-EXPANSION-001/run_logs/board_stage11_env.txt'
+[exit] 255
+[cmd] pwd=/data :: source '/data/ncnn-logs/ai-team/2026-07-04_19-42-26/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE11-BRANCH-BLOCK-EXPANSION-001/run_logs/board_stage11_env.txt' && for cpu in 0 1 2 3; do echo CPU= RNE; ssh "" "cd '' && taskset -c  ./test_stage10_rvv_rounding_control"; echo CPU= STAGE10; ssh "" "cd '' && taskset -c  ./test_stage10_backbone_expansion_runner"; done
+[exit] 1
+[cmd] pwd=/data :: source '/data/ncnn-logs/ai-team/2026-07-04_19-42-26/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE11-BRANCH-BLOCK-EXPANSION-001/run_logs/board_stage11_env.txt' && ssh "" "cd '' && taskset -c 0 ./bench_stage10_backbone_expansion 1"
+[exit] 1
+[cmd] pwd=/data :: cd "$REPO" && source /data/build_scripts/01-env.sh && TARGET="${BANANA_SSH_TARGET:-${BANANA_SSH:-}}" && if [ -z "$TARGET" ]; then TARGET=svt@banana; fi && BOARD_DIR=/home/svt/yolo26-custom-int8-stage11/"$RUN_TS" && ssh "$TARGET" "mkdir -p $BOARD_DIR" && sha256sum .deps/custom_int8_engine/build-riscv-stage11/tests/test_stage10_rvv_rounding_control .deps/custom_int8_engine/build-riscv-stage11/tests/test_stage10_backbone_expansion_runner .deps/custom_int8_engine/build-riscv-stage11/bench_stage10_backbone_expansion > "$LOG_DIR/run_logs/stage10_replay_binaries.sha256" && scp .deps/custom_int8_engine/build-riscv-stage11/tests/test_stage10_rvv_rounding_control .deps/custom_int8_engine/build-riscv-stage11/tests/test_stage10_backbone_expansion_runner .deps/custom_int8_engine/build-riscv-stage11/bench_stage10_backbone_expansion "$TARGET:$BOARD_DIR/" && printf "TARGET=%s\nBOARD_DIR=%s\n" "$TARGET" "$BOARD_DIR" > "$LOG_DIR/run_logs/board_stage11_env.txt"
+[exit] 0
+[cmd] pwd=/data :: source "$LOG_DIR/run_logs/board_stage11_env.txt" && for cpu in 0 1 2 3; do echo CPU=$cpu RNE; ssh "$TARGET" "cd $BOARD_DIR && taskset -c $cpu ./test_stage10_rvv_rounding_control"; echo CPU=$cpu STAGE10; ssh "$TARGET" "cd $BOARD_DIR && taskset -c $cpu ./test_stage10_backbone_expansion_runner"; done
+[exit] 0
+[cmd] pwd=/data :: source "$LOG_DIR/run_logs/board_stage11_env.txt" && ssh "$TARGET" "cd $BOARD_DIR && taskset -c 0 ./bench_stage10_backbone_expansion 1"
+[exit] 0
+[cmd] pwd=/data :: cd '/data/banana-yolo26-spacemit-demo' && wc -l -c custom_int8_engine/tests/stage7_backbone_subset_fixture.h custom_int8_engine/tests/stage10_backbone_expansion_fixture.h && rg -n 'branch0|expected_branch0|expected_conv2_act|expected_split' custom_int8_engine/tests/stage10_backbone_expansion_fixture.h | head -80
+[exit] 0
+[cmd] pwd=/data :: cd '/data/banana-yolo26-spacemit-demo' && rg -n 'stage10|stage9|y26_k1x_custom_int8_engine|add_executable|add_test' custom_int8_engine/CMakeLists.txt custom_int8_engine/tests/CMakeLists.txt | tail -120
+[exit] 0
+[cmd] pwd=/data :: cd '/data/banana-yolo26-spacemit-demo' && sed -n '1,360p' custom_int8_engine/tools/extract_stage10_backbone_oracle.py
+[exit] 0
+[cmd] pwd=/data :: cd '/data/banana-yolo26-spacemit-demo' && sed -n '1,260p' custom_int8_engine/tests/stage10_backbone_expansion_fixture.h
+[exit] 0
+[cmd] pwd=/data :: cd '/data/banana-yolo26-spacemit-demo' && sed -n '1,220p' custom_int8_engine/CMakeLists.txt && printf '\n--- tests ---\n' && sed -n '1,80p' custom_int8_engine/tests/CMakeLists.txt
+[exit] 0
+[cmd] pwd=/data/banana-yolo26-spacemit-demo :: apply_patch add custom_int8_engine/include/y26_k1x_branch_block_runner.h
+[exit] 0
+[cmd] pwd=/data/banana-yolo26-spacemit-demo :: apply_patch add custom_int8_engine/src/branch_block_runner.cpp
+[exit] 0
+[cmd] pwd=/data/banana-yolo26-spacemit-demo :: apply_patch add custom_int8_engine/tools/extract_stage11_branch_block_oracle.py
+[exit] 0
+[cmd] pwd=/data :: cd '/data/banana-yolo26-spacemit-demo' && chmod +x custom_int8_engine/tools/extract_stage11_branch_block_oracle.py
+[exit] 0
+[cmd] pwd=/data :: cd '/data/banana-yolo26-spacemit-demo' && .deps/custom_int8_engine/venv-stage11-onnx/bin/python custom_int8_engine/tools/extract_stage11_branch_block_oracle.py --model .deps/models/yolo26/int8_rt204_forensics/manual_ort/manual_e2e_rep_conv_matmul_qdq.onnx --stage10-fixture custom_int8_engine/tests/stage10_backbone_expansion_fixture.h --out-header custom_int8_engine/tests/stage11_branch_block_fixture.h --out-report '/data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE11-BRANCH-BLOCK-EXPANSION-001/block_oracle_report.md' --out-lut-onnx '/data/ncnn-logs/ai-team/2026-07-04_19-42-26/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE11-BRANCH-BLOCK-EXPANSION-001/run_logs/stage11_branch0_to_act_lut.onnx'
+[exit] 0
+[cmd] pwd=/data :: cd '/data/banana-yolo26-spacemit-demo' && wc -l -c custom_int8_engine/tests/stage11_branch_block_fixture.h '/data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE11-BRANCH-BLOCK-EXPANSION-001/block_oracle_report.md' && sed -n '1,220p' '/data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE11-BRANCH-BLOCK-EXPANSION-001/block_oracle_report.md'
+[exit] 0
+[cmd] pwd=/data :: cd '/data/banana-yolo26-spacemit-demo' && sed -n '1,90p' custom_int8_engine/tests/stage7_backbone_subset_fixture.h && sed -n '1,140p' custom_int8_engine/tests/test_stage10_backbone_expansion_runner.cpp
+[exit] 0
+[cmd] pwd=/data/banana-yolo26-spacemit-demo :: apply_patch add custom_int8_engine/tests/test_stage11_branch_block_runner.cpp
+[exit] 0
+[cmd] pwd=/data/banana-yolo26-spacemit-demo :: apply_patch add custom_int8_engine/tools/bench_stage11_branch_block.cpp
+[exit] 0
+[cmd] pwd=/data :: cd '/data/banana-yolo26-spacemit-demo' && sed -n '12,32p' custom_int8_engine/CMakeLists.txt && sed -n '140,185p' custom_int8_engine/CMakeLists.txt
+[exit] 0
+[cmd] pwd=/data/banana-yolo26-spacemit-demo :: apply_patch update CMakeLists for Stage11 targets
+[exit] 0
+[cmd] pwd=/data :: cd '/data/banana-yolo26-spacemit-demo' && cmake -S custom_int8_engine -B .deps/custom_int8_engine/build-host-native-stage11 -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_CXX_COMPILER=/usr/bin/g++
+[exit] 0
+[cmd] pwd=/data :: cd '/data/banana-yolo26-spacemit-demo' && cmake --build .deps/custom_int8_engine/build-host-native-stage11 -j"8"
+[exit] 0
+[cmd] pwd=/data :: cd '/data/banana-yolo26-spacemit-demo' && ctest --test-dir .deps/custom_int8_engine/build-host-native-stage11 --output-on-failure
+[exit] 0
+[cmd] pwd=/data :: cd "$REPO" && source /data/build_scripts/01-env.sh && cmake -S custom_int8_engine -B .deps/custom_int8_engine/build-riscv-stage11 -DCMAKE_BUILD_TYPE=Release -DY26_K1X_ENABLE_IME=ON -DCMAKE_CXX_COMPILER=${CXX:-riscv64-unknown-linux-gnu-g++} -DCMAKE_CXX_FLAGS="${K1_ARCH_FLAGS:--march=rv64gcv_zvfh -mabi=lp64d}" -DCMAKE_SYSTEM_NAME=Linux -DCMAKE_SYSTEM_PROCESSOR=riscv64
+[exit] 0
+[cmd] pwd=/data :: cd "$REPO" && cmake --build .deps/custom_int8_engine/build-riscv-stage11 -j"$(nproc)"
+[exit] 0
+[cmd] pwd=/data :: cd '/data/banana-yolo26-spacemit-demo' && source /data/build_scripts/01-env.sh && TARGET="${BANANA_SSH_TARGET:-${BANANA_SSH:-}}" && if [ -z "" ]; then TARGET=svt@banana; fi && BOARD_DIR=/home/svt/yolo26-custom-int8-stage11/2026-07-04_19-42-26 && ssh "" "mkdir -p ''" && sha256sum .deps/custom_int8_engine/build-riscv-stage11/tests/test_stage10_rvv_rounding_control .deps/custom_int8_engine/build-riscv-stage11/tests/test_stage10_backbone_expansion_runner .deps/custom_int8_engine/build-riscv-stage11/tests/test_stage11_branch_block_runner .deps/custom_int8_engine/build-riscv-stage11/bench_stage10_backbone_expansion .deps/custom_int8_engine/build-riscv-stage11/bench_stage11_branch_block > '/data/ncnn-logs/ai-team/2026-07-04_19-42-26/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE11-BRANCH-BLOCK-EXPANSION-001/run_logs/stage11_binaries.sha256' && scp .deps/custom_int8_engine/build-riscv-stage11/tests/test_stage10_rvv_rounding_control .deps/custom_int8_engine/build-riscv-stage11/tests/test_stage10_backbone_expansion_runner .deps/custom_int8_engine/build-riscv-stage11/tests/test_stage11_branch_block_runner .deps/custom_int8_engine/build-riscv-stage11/bench_stage10_backbone_expansion .deps/custom_int8_engine/build-riscv-stage11/bench_stage11_branch_block ":/" && printf 'TARGET=%s\nBOARD_DIR=%s\n' "" "" > '/data/ncnn-logs/ai-team/2026-07-04_19-42-26/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE11-BRANCH-BLOCK-EXPANSION-001/run_logs/board_stage11_env.txt'
+[exit] 255
+[cmd] pwd=/data :: source '/data/ncnn-logs/ai-team/2026-07-04_19-42-26/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE11-BRANCH-BLOCK-EXPANSION-001/run_logs/board_stage11_env.txt' && for cpu in 0 1 2 3; do echo CPU= RNE; ssh "" "cd '' && taskset -c  ./test_stage10_rvv_rounding_control"; echo CPU= STAGE10; ssh "" "cd '' && taskset -c  ./test_stage10_backbone_expansion_runner"; echo CPU= STAGE11; ssh "" "cd '' && taskset -c  ./test_stage11_branch_block_runner"; done
+[exit] 255
+[cmd] pwd=/data :: source '/data/ncnn-logs/ai-team/2026-07-04_19-42-26/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE11-BRANCH-BLOCK-EXPANSION-001/run_logs/board_stage11_env.txt' && ssh "" "cd '' && taskset -c 0 ./bench_stage10_backbone_expansion 1 && taskset -c 0 ./bench_stage11_branch_block 1"
+[exit] 255
+[cmd] pwd=/data :: cd "$REPO" && source /data/build_scripts/01-env.sh && TARGET="${BANANA_SSH_TARGET:-${BANANA_SSH:-}}" && if [ -z "$TARGET" ]; then TARGET=svt@banana; fi && BOARD_DIR=/home/svt/yolo26-custom-int8-stage11/"$RUN_TS" && ssh "$TARGET" "mkdir -p $BOARD_DIR" && sha256sum .deps/custom_int8_engine/build-riscv-stage11/tests/test_stage10_rvv_rounding_control .deps/custom_int8_engine/build-riscv-stage11/tests/test_stage10_backbone_expansion_runner .deps/custom_int8_engine/build-riscv-stage11/tests/test_stage11_branch_block_runner .deps/custom_int8_engine/build-riscv-stage11/bench_stage10_backbone_expansion .deps/custom_int8_engine/build-riscv-stage11/bench_stage11_branch_block > "$LOG_DIR/run_logs/stage11_binaries.sha256" && scp .deps/custom_int8_engine/build-riscv-stage11/tests/test_stage10_rvv_rounding_control .deps/custom_int8_engine/build-riscv-stage11/tests/test_stage10_backbone_expansion_runner .deps/custom_int8_engine/build-riscv-stage11/tests/test_stage11_branch_block_runner .deps/custom_int8_engine/build-riscv-stage11/bench_stage10_backbone_expansion .deps/custom_int8_engine/build-riscv-stage11/bench_stage11_branch_block "$TARGET:$BOARD_DIR/" && printf "TARGET=%s\nBOARD_DIR=%s\n" "$TARGET" "$BOARD_DIR" > "$LOG_DIR/run_logs/board_stage11_env.txt"
+[exit] 0
+[cmd] pwd=/data :: source "$LOG_DIR/run_logs/board_stage11_env.txt" && for cpu in 0 1 2 3; do echo CPU=$cpu RNE; ssh "$TARGET" "cd $BOARD_DIR && taskset -c $cpu ./test_stage10_rvv_rounding_control"; echo CPU=$cpu STAGE10; ssh "$TARGET" "cd $BOARD_DIR && taskset -c $cpu ./test_stage10_backbone_expansion_runner"; echo CPU=$cpu STAGE11; ssh "$TARGET" "cd $BOARD_DIR && taskset -c $cpu ./test_stage11_branch_block_runner"; done
+[exit] 0
+[cmd] pwd=/data :: source "$LOG_DIR/run_logs/board_stage11_env.txt" && ssh "$TARGET" "cd $BOARD_DIR && taskset -c 0 ./bench_stage10_backbone_expansion 1 && taskset -c 0 ./bench_stage11_branch_block 1"
+[exit] 0
+[cmd] pwd=/data/banana-yolo26-spacemit-demo :: apply_patch add Stage11 reports and stage12 prompt
+[exit] 0
+[cmd] pwd=/data :: cp "$REPO_STAGE_DIR"/*.md "$LOG_DIR/artifacts/"
+[exit] 0
+[cmd] pwd=/data :: cd '/data/banana-yolo26-spacemit-demo' && git diff --check
+[exit] 0
+[cmd] pwd=/data :: cd '/data/banana-yolo26-spacemit-demo' && git diff --cached --check || true
+[exit] 0
+[cmd] pwd=/data :: cd '/data/banana-yolo26-spacemit-demo' && find custom_int8_engine stages -type l -print
+[exit] 0
+[cmd] pwd=/data :: cd '/data/banana-yolo26-spacemit-demo' && rg -n --hidden -S '(BEGIN (RSA|OPENSSH|EC|DSA) PRIVATE KEY|password=|token=|client_secret|oauth|ssh-rsa|ghp_|glpat-|AKIA)' custom_int8_engine stages scripts docs --glob '!**/commands.txt' || true
+[exit] 0
+[cmd] pwd=/data :: cd '/data/banana-yolo26-spacemit-demo' && git status --short --branch
+[exit] 0
+[cmd] pwd=/data/banana-yolo26-spacemit-demo :: apply_patch add Stage11 source_hygiene_report.md
+[exit] 0
+[cmd] pwd=/data :: cp source_hygiene_report.md to LOG_DIR artifacts
+[exit] 0
+[cmd] pwd=/data :: cd '/data/banana-yolo26-spacemit-demo' && git diff --check
+[exit] 0
+[cmd] pwd=/data :: cd '/data/banana-yolo26-spacemit-demo' && find custom_int8_engine stages -type l -print
+[exit] 0
+[cmd] pwd=/data :: cd '/data/banana-yolo26-spacemit-demo' && git status --short --branch
+[exit] 0
+[cmd] pwd=/data :: cd '/data/banana-yolo26-spacemit-demo' && rg -n --hidden -S '(BEGIN (RSA|OPENSSH|EC|DSA) PRIVATE KEY|password=|token=|client_secret|oauth|ssh-rsa|ghp_|glpat-|AKIA)' custom_int8_engine stages scripts docs --glob '!**/commands.txt' || true
+[exit] 0
+[cmd] pwd=/data :: cd '/data/banana-yolo26-spacemit-demo' && git add custom_int8_engine stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE10-BACKBONE-EXPANSION-POST-ACTIVATION-GATE-001/STAGE10_FINAL_REPORT.md stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE11-BRANCH-BLOCK-EXPANSION-001
+[exit] 0
+[cmd] pwd=/data :: cd '/data/banana-yolo26-spacemit-demo' && git commit -m 'Expand YOLO26 custom INT8 branch block subset'
+[exit] 0
+[cmd] pwd=/data :: cd '/data/banana-yolo26-spacemit-demo' && git rev-parse HEAD
+[exit] 0
+[cmd] pwd=/data :: cd '/data/banana-yolo26-spacemit-demo' && git status --short --branch
+[exit] 0
+[cmd] pwd=/data/banana-yolo26-spacemit-demo :: git add stage11 commands.txt after commit logging
+[exit] 0
+[cmd] pwd=/data/banana-yolo26-spacemit-demo :: git commit --amend --no-edit to include final tracked command log
+[exit] 0
+[note] later result-packet export commands are recorded in LOG_DIR commands.txt to preserve clean committed repo state
