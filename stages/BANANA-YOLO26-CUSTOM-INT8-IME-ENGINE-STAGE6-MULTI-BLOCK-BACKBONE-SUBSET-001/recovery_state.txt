@@ -1,0 +1,2 @@
+branch=yolo26-custom-int8-engine
+head=fcbcd0fa72e3649d85ec2281bf8dce8dc92e78da

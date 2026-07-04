@@ -1,0 +1,821 @@
+{
+  "model": "/data/banana-yolo26-spacemit-demo/.deps/models/yolo26/int8_rt204_forensics/manual_ort/manual_e2e_rep_conv_matmul_qdq.onnx",
+  "model_sha256": "30a94e4738606673b5e0a73499cbc977167f046f8fa8637d6040ce744f429c0c",
+  "nodes": [
+    {
+      "attrs": {},
+      "inputs": [
+        "images",
+        "images_scale",
+        "images_zero_point"
+      ],
+      "name": "images_QuantizeLinear",
+      "op_type": "QuantizeLinear",
+      "outputs": [
+        "images_QuantizeLinear_Output"
+      ]
+    },
+    {
+      "attrs": {},
+      "inputs": [
+        "images_QuantizeLinear_Output",
+        "images_scale",
+        "images_zero_point"
+      ],
+      "name": "images_DequantizeLinear",
+      "op_type": "DequantizeLinear",
+      "outputs": [
+        "images_DequantizeLinear_Output"
+      ]
+    },
+    {
+      "attrs": {
+        "dilations": [
+          1,
+          1
+        ],
+        "group": 1,
+        "kernel_shape": [
+          3,
+          3
+        ],
+        "pads": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "strides": [
+          2,
+          2
+        ]
+      },
+      "inputs": [
+        "images_DequantizeLinear_Output",
+        "model.0.conv.weight_DequantizeLinear_Output",
+        "model.0.conv.bias"
+      ],
+      "name": "/model.0/conv/Conv",
+      "op_type": "Conv",
+      "outputs": [
+        "/model.0/conv/Conv_output_0"
+      ]
+    },
+    {
+      "attrs": {},
+      "inputs": [
+        "/model.0/conv/Conv_output_0",
+        "/model.0/conv/Conv_output_0_scale",
+        "/model.0/conv/Conv_output_0_zero_point"
+      ],
+      "name": "/model.0/conv/Conv_output_0_QuantizeLinear",
+      "op_type": "QuantizeLinear",
+      "outputs": [
+        "/model.0/conv/Conv_output_0_QuantizeLinear_Output"
+      ]
+    },
+    {
+      "attrs": {},
+      "inputs": [
+        "/model.0/conv/Conv_output_0_QuantizeLinear_Output",
+        "/model.0/conv/Conv_output_0_scale",
+        "/model.0/conv/Conv_output_0_zero_point"
+      ],
+      "name": "/model.0/conv/Conv_output_0_DequantizeLinear",
+      "op_type": "DequantizeLinear",
+      "outputs": [
+        "/model.0/conv/Conv_output_0_DequantizeLinear_Output"
+      ]
+    },
+    {
+      "attrs": {},
+      "inputs": [
+        "/model.0/conv/Conv_output_0_DequantizeLinear_Output"
+      ],
+      "name": "/model.0/act/Sigmoid",
+      "op_type": "Sigmoid",
+      "outputs": [
+        "/model.0/act/Sigmoid_output_0"
+      ]
+    },
+    {
+      "attrs": {},
+      "inputs": [
+        "/model.0/conv/Conv_output_0_DequantizeLinear_Output",
+        "/model.0/act/Sigmoid_output_0"
+      ],
+      "name": "/model.0/act/Mul",
+      "op_type": "Mul",
+      "outputs": [
+        "/model.0/act/Mul_output_0"
+      ]
+    },
+    {
+      "attrs": {},
+      "inputs": [
+        "/model.0/act/Mul_output_0",
+        "/model.0/act/Mul_output_0_scale",
+        "/model.0/act/Mul_output_0_zero_point"
+      ],
+      "name": "/model.0/act/Mul_output_0_QuantizeLinear",
+      "op_type": "QuantizeLinear",
+      "outputs": [
+        "/model.0/act/Mul_output_0_QuantizeLinear_Output"
+      ]
+    },
+    {
+      "attrs": {},
+      "inputs": [
+        "/model.0/act/Mul_output_0_QuantizeLinear_Output",
+        "/model.0/act/Mul_output_0_scale",
+        "/model.0/act/Mul_output_0_zero_point"
+      ],
+      "name": "/model.0/act/Mul_output_0_DequantizeLinear",
+      "op_type": "DequantizeLinear",
+      "outputs": [
+        "/model.0/act/Mul_output_0_DequantizeLinear_Output"
+      ]
+    },
+    {
+      "attrs": {
+        "dilations": [
+          1,
+          1
+        ],
+        "group": 1,
+        "kernel_shape": [
+          3,
+          3
+        ],
+        "pads": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "strides": [
+          2,
+          2
+        ]
+      },
+      "inputs": [
+        "/model.0/act/Mul_output_0_DequantizeLinear_Output",
+        "model.1.conv.weight_DequantizeLinear_Output",
+        "model.1.conv.bias"
+      ],
+      "name": "/model.1/conv/Conv",
+      "op_type": "Conv",
+      "outputs": [
+        "/model.1/conv/Conv_output_0"
+      ]
+    },
+    {
+      "attrs": {},
+      "inputs": [
+        "/model.1/conv/Conv_output_0",
+        "/model.1/conv/Conv_output_0_scale",
+        "/model.1/conv/Conv_output_0_zero_point"
+      ],
+      "name": "/model.1/conv/Conv_output_0_QuantizeLinear",
+      "op_type": "QuantizeLinear",
+      "outputs": [
+        "/model.1/conv/Conv_output_0_QuantizeLinear_Output"
+      ]
+    },
+    {
+      "attrs": {},
+      "inputs": [
+        "/model.1/conv/Conv_output_0_QuantizeLinear_Output",
+        "/model.1/conv/Conv_output_0_scale",
+        "/model.1/conv/Conv_output_0_zero_point"
+      ],
+      "name": "/model.1/conv/Conv_output_0_DequantizeLinear",
+      "op_type": "DequantizeLinear",
+      "outputs": [
+        "/model.1/conv/Conv_output_0_DequantizeLinear_Output"
+      ]
+    }
+  ],
+  "opset": [
+    [
+      "",
+      18
+    ]
+  ],
+  "producer": [
+    "onnx.quantize",
+    "0.1.0"
+  ],
+  "quant": {
+    "act0_output": {
+      "scale": {
+        "dtype": "float32",
+        "first": [
+          0.31116288900375366
+        ],
+        "max": 0.31116288900375366,
+        "min": 0.31116288900375366,
+        "name": "/model.0/act/Mul_output_0_scale",
+        "sha256": "fa3ffa20c15291938bf8db4f08db07dd2d8c60baf7a45cdfe9e13d27a746b0ab",
+        "shape": []
+      },
+      "zero_point": {
+        "dtype": "uint8",
+        "first": [
+          1
+        ],
+        "max": 1.0,
+        "min": 1.0,
+        "name": "/model.0/act/Mul_output_0_zero_point",
+        "sha256": "4bf5122f344554c53bde2ebb8cd2b7e3d1600ad631c385a5d7cce23c7785459a",
+        "shape": []
+      }
+    },
+    "conv0_bias": {
+      "scale": {
+        "dtype": "float32",
+        "first": [
+          0.0003334662178531289,
+          0.00015922322927508503,
+          0.0003676500346045941,
+          0.0007287898915819824,
+          0.00027358121587894857,
+          0.0001563564728712663,
+          0.0002605265472084284,
+          0.00030758726643398404
+        ],
+        "max": 0.0007287898915819824,
+        "min": 0.00012583972420543432,
+        "name": "model.0.conv.bias_quantized_scale",
+        "sha256": "a7b0fbb8c942c79c650a795a8ee3bb1a31722547aa66baf6b21583fba7a87687",
+        "shape": [
+          16
+        ]
+      },
+      "zero_point": {
+        "dtype": "int32",
+        "first": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "max": 0.0,
+        "min": 0.0,
+        "name": "model.0.conv.bias_quantized_zero_point",
+        "sha256": "f5a5fd42d16a20302798ef6ed309979b43003d2320d9f0e8ea9831a92759fb4b",
+        "shape": [
+          16
+        ]
+      }
+    },
+    "conv0_output": {
+      "scale": {
+        "dtype": "float32",
+        "first": [
+          0.6209684014320374
+        ],
+        "max": 0.6209684014320374,
+        "min": 0.6209684014320374,
+        "name": "/model.0/conv/Conv_output_0_scale",
+        "sha256": "8e94edc214919e2f5ec19fef7ed52a576c07b2ec5b004f08209cb70bdacefe94",
+        "shape": []
+      },
+      "zero_point": {
+        "dtype": "uint8",
+        "first": [
+          128
+        ],
+        "max": 128.0,
+        "min": 128.0,
+        "name": "/model.0/conv/Conv_output_0_zero_point",
+        "sha256": "76be8b528d0075f7aae98d6fa57a6d3c83ae480a8469e668d7b0af968995ac71",
+        "shape": []
+      }
+    },
+    "conv0_weight": {
+      "scale": {
+        "dtype": "float32",
+        "first": [
+          0.08503387868404388,
+          0.04060192033648491,
+          0.09375075250864029,
+          0.1858414113521576,
+          0.06976320594549179,
+          0.03987089917063713,
+          0.06643426418304443,
+          0.07843475043773651
+        ],
+        "max": 0.1858414113521576,
+        "min": 0.03208912909030914,
+        "name": "model.0.conv.weight_scale",
+        "sha256": "9063d4c6a836e9efb81753180db467c4c917dd6139e08fc612171f0d8b86bb83",
+        "shape": [
+          16
+        ]
+      },
+      "zero_point": {
+        "dtype": "int8",
+        "first": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "max": 0.0,
+        "min": 0.0,
+        "name": "model.0.conv.weight_zero_point",
+        "sha256": "374708fff7719dd5979ec875d56cd2286f6d3cf7ec317a3b25632aab28ec37bb",
+        "shape": [
+          16
+        ]
+      }
+    },
+    "conv1_bias": {
+      "scale": {
+        "dtype": "float32",
+        "first": [
+          0.0017577136168256402,
+          0.0036381653044372797,
+          0.003349768463522196,
+          0.0012321011163294315,
+          0.0024416078813374043,
+          0.0027224128134548664,
+          0.0017671631649136543,
+          0.0007229709881357849
+        ],
+        "max": 0.004131552297621965,
+        "min": 0.0007229709881357849,
+        "name": "model.1.conv.bias_quantized_scale",
+        "sha256": "bcc3625578e24bd7b35abe7c4931b48dcd9b7c9bcf433bfd75e5e47529ad28db",
+        "shape": [
+          32
+        ]
+      },
+      "zero_point": {
+        "dtype": "int32",
+        "first": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "max": 0.0,
+        "min": 0.0,
+        "name": "model.1.conv.bias_quantized_zero_point",
+        "sha256": "38723a2e5e8a17aa7950dc008209944e898f69a7bd10a23c839d341e935fd5ca",
+        "shape": [
+          32
+        ]
+      }
+    },
+    "conv1_output": {
+      "scale": {
+        "dtype": "float32",
+        "first": [
+          1.114243745803833
+        ],
+        "max": 1.114243745803833,
+        "min": 1.114243745803833,
+        "name": "/model.1/conv/Conv_output_0_scale",
+        "sha256": "615f2d9188f6c3d57b2f49ad7c2c3958d90e7733cf6dee95107b09a41f3be9ac",
+        "shape": []
+      },
+      "zero_point": {
+        "dtype": "uint8",
+        "first": [
+          122
+        ],
+        "max": 122.0,
+        "min": 122.0,
+        "name": "/model.1/conv/Conv_output_0_zero_point",
+        "sha256": "594e519ae499312b29433b7dd8a97ff068defcba9755b6d5d00e84c524d67b06",
+        "shape": []
+      }
+    },
+    "conv1_weight": {
+      "scale": {
+        "dtype": "float32",
+        "first": [
+          0.005648853722959757,
+          0.01169215701520443,
+          0.010765321552753448,
+          0.003959666006267071,
+          0.007846719585359097,
+          0.008749156259000301,
+          0.005679222289472818,
+          0.002323448657989502
+        ],
+        "max": 0.013277779333293438,
+        "min": 0.002323448657989502,
+        "name": "model.1.conv.weight_scale",
+        "sha256": "c6359124c47415371f979d4178852f7565ba381d428ed7f0d75d19e6bc19784c",
+        "shape": [
+          32
+        ]
+      },
+      "zero_point": {
+        "dtype": "int8",
+        "first": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "max": 0.0,
+        "min": 0.0,
+        "name": "model.1.conv.weight_zero_point",
+        "sha256": "66687aadf862bd776c8fc18b8e9f8e20089714856ee233b3902a591d0d5f2925",
+        "shape": [
+          32
+        ]
+      }
+    },
+    "images": {
+      "scale": {
+        "dtype": "float32",
+        "first": [
+          0.003921568859368563
+        ],
+        "max": 0.003921568859368563,
+        "min": 0.003921568859368563,
+        "name": "images_scale",
+        "sha256": "52c37b242f7ae8185a2b223b5b9d0b8772d97180a46b1d6a4d6c8b018c803d64",
+        "shape": []
+      },
+      "zero_point": {
+        "dtype": "uint8",
+        "first": [
+          0
+        ],
+        "max": 0.0,
+        "min": 0.0,
+        "name": "images_zero_point",
+        "sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+        "shape": []
+      }
+    }
+  },
+  "selected_subset": "candidate_C_block0_silu_model1_conv",
+  "tensors": [
+    {
+      "consumers": [
+        [
+          "images_QuantizeLinear",
+          "QuantizeLinear"
+        ]
+      ],
+      "name": "images",
+      "producer": null,
+      "value_info": {
+        "dtype": "FLOAT",
+        "shape": [
+          1,
+          3,
+          640,
+          640
+        ]
+      }
+    },
+    {
+      "consumers": [
+        [
+          "images_DequantizeLinear",
+          "DequantizeLinear"
+        ]
+      ],
+      "name": "images_QuantizeLinear_Output",
+      "producer": "images_QuantizeLinear",
+      "value_info": {
+        "dtype": "UINT8",
+        "shape": [
+          1,
+          3,
+          640,
+          640
+        ]
+      }
+    },
+    {
+      "consumers": [
+        [
+          "/model.0/conv/Conv",
+          "Conv"
+        ]
+      ],
+      "name": "images_DequantizeLinear_Output",
+      "producer": "images_DequantizeLinear",
+      "value_info": {
+        "dtype": "FLOAT",
+        "shape": [
+          1,
+          3,
+          640,
+          640
+        ]
+      }
+    },
+    {
+      "consumers": [
+        [
+          "/model.0/conv/Conv_output_0_QuantizeLinear",
+          "QuantizeLinear"
+        ]
+      ],
+      "name": "/model.0/conv/Conv_output_0",
+      "producer": "/model.0/conv/Conv",
+      "value_info": {
+        "dtype": "FLOAT",
+        "shape": [
+          1,
+          16,
+          320,
+          320
+        ]
+      }
+    },
+    {
+      "consumers": [
+        [
+          "/model.0/conv/Conv_output_0_DequantizeLinear",
+          "DequantizeLinear"
+        ]
+      ],
+      "name": "/model.0/conv/Conv_output_0_QuantizeLinear_Output",
+      "producer": "/model.0/conv/Conv_output_0_QuantizeLinear",
+      "value_info": {
+        "dtype": "UINT8",
+        "shape": [
+          1,
+          16,
+          320,
+          320
+        ]
+      }
+    },
+    {
+      "consumers": [
+        [
+          "/model.0/act/Sigmoid",
+          "Sigmoid"
+        ],
+        [
+          "/model.0/act/Mul",
+          "Mul"
+        ]
+      ],
+      "name": "/model.0/conv/Conv_output_0_DequantizeLinear_Output",
+      "producer": "/model.0/conv/Conv_output_0_DequantizeLinear",
+      "value_info": {
+        "dtype": "FLOAT",
+        "shape": [
+          1,
+          16,
+          320,
+          320
+        ]
+      }
+    },
+    {
+      "consumers": [
+        [
+          "/model.0/act/Mul",
+          "Mul"
+        ]
+      ],
+      "name": "/model.0/act/Sigmoid_output_0",
+      "producer": "/model.0/act/Sigmoid",
+      "value_info": {
+        "dtype": "FLOAT",
+        "shape": [
+          1,
+          16,
+          320,
+          320
+        ]
+      }
+    },
+    {
+      "consumers": [
+        [
+          "/model.0/act/Mul_output_0_QuantizeLinear",
+          "QuantizeLinear"
+        ]
+      ],
+      "name": "/model.0/act/Mul_output_0",
+      "producer": "/model.0/act/Mul",
+      "value_info": {
+        "dtype": "FLOAT",
+        "shape": [
+          1,
+          16,
+          320,
+          320
+        ]
+      }
+    },
+    {
+      "consumers": [
+        [
+          "/model.0/act/Mul_output_0_DequantizeLinear",
+          "DequantizeLinear"
+        ]
+      ],
+      "name": "/model.0/act/Mul_output_0_QuantizeLinear_Output",
+      "producer": "/model.0/act/Mul_output_0_QuantizeLinear",
+      "value_info": {
+        "dtype": "UINT8",
+        "shape": [
+          1,
+          16,
+          320,
+          320
+        ]
+      }
+    },
+    {
+      "consumers": [
+        [
+          "/model.1/conv/Conv",
+          "Conv"
+        ]
+      ],
+      "name": "/model.0/act/Mul_output_0_DequantizeLinear_Output",
+      "producer": "/model.0/act/Mul_output_0_DequantizeLinear",
+      "value_info": {
+        "dtype": "FLOAT",
+        "shape": [
+          1,
+          16,
+          320,
+          320
+        ]
+      }
+    },
+    {
+      "consumers": [
+        [
+          "/model.1/conv/Conv_output_0_QuantizeLinear",
+          "QuantizeLinear"
+        ]
+      ],
+      "name": "/model.1/conv/Conv_output_0",
+      "producer": "/model.1/conv/Conv",
+      "value_info": {
+        "dtype": "FLOAT",
+        "shape": [
+          1,
+          32,
+          160,
+          160
+        ]
+      }
+    },
+    {
+      "consumers": [
+        [
+          "/model.1/conv/Conv_output_0_DequantizeLinear",
+          "DequantizeLinear"
+        ]
+      ],
+      "name": "/model.1/conv/Conv_output_0_QuantizeLinear_Output",
+      "producer": "/model.1/conv/Conv_output_0_QuantizeLinear",
+      "value_info": {
+        "dtype": "UINT8",
+        "shape": [
+          1,
+          32,
+          160,
+          160
+        ]
+      }
+    },
+    {
+      "consumers": [
+        [
+          "/model.1/act/Sigmoid",
+          "Sigmoid"
+        ],
+        [
+          "/model.1/act/Mul",
+          "Mul"
+        ]
+      ],
+      "name": "/model.1/conv/Conv_output_0_DequantizeLinear_Output",
+      "producer": "/model.1/conv/Conv_output_0_DequantizeLinear",
+      "value_info": {
+        "dtype": "FLOAT",
+        "shape": [
+          1,
+          32,
+          160,
+          160
+        ]
+      }
+    }
+  ],
+  "weights": {
+    "conv0": {
+      "dtype": "int8",
+      "first": [
+        -31,
+        -5,
+        36,
+        -80,
+        -7,
+        86,
+        -48,
+        -6
+      ],
+      "max": 127.0,
+      "min": -127.0,
+      "name": "model.0.conv.weight_quantized",
+      "sha256": "bc8aa1ac01ec959e0429f66eace98d582737d3b1ef9d782db9eef6a808b9d27a",
+      "shape": [
+        16,
+        3,
+        3,
+        3
+      ]
+    },
+    "conv0_bias": {
+      "dtype": "int32",
+      "first": [
+        5215,
+        11620,
+        4774,
+        892,
+        13938,
+        9166,
+        12104,
+        5796
+      ],
+      "max": 105943.0,
+      "min": -61730.0,
+      "name": "model.0.conv.bias_quantized",
+      "sha256": "0f6104194a1fb8b3dda5520eb2a8ce4e14b24d1ba96f2f878421d1f2b5b87c37",
+      "shape": [
+        16
+      ]
+    },
+    "conv1": {
+      "dtype": "int8",
+      "first": [
+        -1,
+        -27,
+        11,
+        27,
+        108,
+        12,
+        -26,
+        -92
+      ],
+      "max": 127.0,
+      "min": -127.0,
+      "name": "model.1.conv.weight_quantized",
+      "sha256": "001aab59015dc1c8373fd23662107a01033d4136c7c6935a12ef458b1bb8006d",
+      "shape": [
+        32,
+        16,
+        3,
+        3
+      ]
+    },
+    "conv1_bias": {
+      "dtype": "int32",
+      "first": [
+        233,
+        -679,
+        1047,
+        8,
+        -1091,
+        225,
+        -924,
+        -1215
+      ],
+      "max": 27520.0,
+      "min": -3957.0,
+      "name": "model.1.conv.bias_quantized",
+      "sha256": "21a387f9371cf6ec118a50f2a1cae991d54a990ef9eb2d4837eea784ca9b8ee1",
+      "shape": [
+        32
+      ]
+    }
+  }
+}
