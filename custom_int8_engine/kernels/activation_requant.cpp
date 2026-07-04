@@ -302,7 +302,7 @@ int requant_lut_rvv_f32_impl(const Y26ActivationRequantParams& params,
             vfloat32m4_t vscale = __riscv_vle32_v_f32m4(acc_scales + channel, vl);
             vf = __riscv_vfmul_vv_f32m4(vf, vscale, vl);
             vf = __riscv_vfdiv_vf_f32m4(vf, params.conv_output_scale, vl);
-            vint32m4_t vcode = __riscv_vfcvt_x_f_v_i32m4(vf, vl);
+            vint32m4_t vcode = __riscv_vfcvt_x_f_v_i32m4_rm(vf, __RISCV_FRM_RNE, vl);
             vcode = __riscv_vadd_vx_i32m4(vcode, params.conv_output_zero_point_u8, vl);
             vcode = __riscv_vmax_vx_i32m4(vcode, 0, vl);
             vcode = __riscv_vmin_vx_i32m4(vcode, 255, vl);

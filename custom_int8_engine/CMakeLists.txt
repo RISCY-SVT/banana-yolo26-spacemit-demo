@@ -22,6 +22,7 @@ add_library(y26_k1x_custom_int8_engine
     kernels/vmadot_4x4x8_scalar.cpp
     kernels/vmadot_stub.cpp
     src/backbone_subset_runner.cpp
+    src/backbone_stage10_runner.cpp
     src/engine_stub.cpp
     src/block_runner.cpp
     src/multiblock_runner.cpp
@@ -144,6 +145,16 @@ if(Y26_K1X_BUILD_TOOLS)
     target_compile_options(bench_stage9_activation_fusion PRIVATE -Wall -Wextra -Wpedantic)
     if(Y26_K1X_ENABLE_IME)
         target_compile_definitions(bench_stage9_activation_fusion PRIVATE Y26_K1X_ENABLE_IME_ASM=1)
+    endif()
+
+    add_executable(bench_stage10_backbone_expansion
+        tools/bench_stage10_backbone_expansion.cpp
+    )
+    target_link_libraries(bench_stage10_backbone_expansion PRIVATE y26_k1x_custom_int8_engine)
+    target_include_directories(bench_stage10_backbone_expansion PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/tests")
+    target_compile_options(bench_stage10_backbone_expansion PRIVATE -Wall -Wextra -Wpedantic)
+    if(Y26_K1X_ENABLE_IME)
+        target_compile_definitions(bench_stage10_backbone_expansion PRIVATE Y26_K1X_ENABLE_IME_ASM=1)
     endif()
 endif()
 
