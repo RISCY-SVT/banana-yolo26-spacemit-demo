@@ -1,0 +1,463 @@
+# Stage 12 command log
+stage_id: BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE12-C2F-RESIDUAL-CONCAT-COMPLETION-001
+run_ts: 2026-07-04_22-37-43
+log_dir: /data/ncnn-logs/ai-team/2026-07-04_22-37-43/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE12-C2F-RESIDUAL-CONCAT-COMPLETION-001
+repo_stage_dir: /data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE12-C2F-RESIDUAL-CONCAT-COMPLETION-001
+task_run_dir: /data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE12-C2F-RESIDUAL-CONCAT-COMPLETION-001
+note: skill SKILL.md reads occurred before this stage command log was initialized
+
+## 2026-07-04T22:37:43+02:00 [bridge_layout]
+cwd: /data
+cmd: /data/lab/scripts/check-bridge-layout.sh
+exit_code: 0
+
+## 2026-07-04T22:37:47+02:00 [init_shared_log]
+cwd: /data
+cmd: /data/lab/scripts/init-shared-log-run.sh contcodex BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE12-C2F-RESIDUAL-CONCAT-COMPLETION-001 stage12-c2f-completion
+exit_code: 0
+no_exchange_task_packet: /exchange/tasks/inbox/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE12-C2F-RESIDUAL-CONCAT-COMPLETION-001
+
+## 2026-07-04T22:37:47+02:00 [stage_preflight_pwd]
+cwd: /data
+cmd: pwd
+exit_code: 0
+
+## 2026-07-04T22:37:47+02:00 [git_status_short]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: git status --short
+exit_code: 0
+
+## 2026-07-04T22:37:47+02:00 [git_branch]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: git branch --show-current
+exit_code: 0
+
+## 2026-07-04T22:37:47+02:00 [git_head]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: git rev-parse HEAD
+exit_code: 0
+
+## 2026-07-04T22:37:47+02:00 [git_log5]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: git log --oneline -5
+exit_code: 0
+
+## 2026-07-04T22:37:47+02:00 [git_remote]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: git remote -v
+exit_code: 0
+
+## 2026-07-04T22:37:47+02:00 [date]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: date -Iseconds
+exit_code: 0
+
+## 2026-07-04T22:37:47+02:00 [hostname]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: hostname
+exit_code: 0
+
+## 2026-07-04T22:38:11+02:00 [check_stage11_reports]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: test -f stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE11-BRANCH-BLOCK-EXPANSION-001/STAGE11_FINAL_REPORT.md
+exit_code: 0
+
+## 2026-07-04T22:38:11+02:00 [check_stage11_result_packet]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: test -d /exchange/results/outbox/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE11-BRANCH-BLOCK-EXPANSION-001
+exit_code: 0
+
+## 2026-07-04T22:38:11+02:00 [check_stage10_traceability]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: rg -n end_head:\ 56a612bfcede03d626811cf6e4be29f13bfbdb2c\|pending-local-commit-see-final-response\|see-final-response-after-local-commit stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE10-BACKBONE-EXPANSION-POST-ACTIVATION-GATE-001/STAGE10_FINAL_REPORT.md
+exit_code: 1
+
+## 2026-07-04T22:38:31+02:00 [check_stage11_reports]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: test -f stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE11-BRANCH-BLOCK-EXPANSION-001/STAGE11_FINAL_REPORT.md
+exit_code: 0
+
+## 2026-07-04T22:38:31+02:00 [check_stage11_result_packet]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: test -d /exchange/results/outbox/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE11-BRANCH-BLOCK-EXPANSION-001
+exit_code: 0
+
+## 2026-07-04T22:38:31+02:00 [check_stage10_traceability]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: rg -n end_head:\ 56a612bfcede03d626811cf6e4be29f13bfbdb2c\|pending-local-commit-see-final-response\|see-final-response-after-local-commit stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE10-BACKBONE-EXPANSION-POST-ACTIVATION-GATE-001/STAGE10_FINAL_REPORT.md
+exit_code: 1
+
+## 2026-07-04T22:38:31+02:00 [check_stage11_placeholders]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: rg -n pending-local-commit-see-final-response\|see-final-response-after-local-commit\|end_head: stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE11-BRANCH-BLOCK-EXPANSION-001/STAGE11_FINAL_REPORT.md stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE11-BRANCH-BLOCK-EXPANSION-001/STAGE11_SUMMARY_RU.md
+exit_code: 0
+
+## 2026-07-04T22:38:31+02:00 [read_stage11_final]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: sed -n 1\,220p stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE11-BRANCH-BLOCK-EXPANSION-001/STAGE11_FINAL_REPORT.md
+exit_code: 0
+
+## 2026-07-04T22:38:31+02:00 [read_stage11_selection]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: sed -n 1\,220p stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE11-BRANCH-BLOCK-EXPANSION-001/branch_block_selection.md
+exit_code: 0
+
+## 2026-07-04T22:38:31+02:00 [read_stage11_residual]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: sed -n 1\,220p stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE11-BRANCH-BLOCK-EXPANSION-001/residual_add_contract_report.md
+exit_code: 0
+
+## 2026-07-04T22:38:31+02:00 [read_stage11_concat]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: sed -n 1\,220p stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE11-BRANCH-BLOCK-EXPANSION-001/concat_contract_plan.md
+exit_code: 0
+
+## 2026-07-04T22:38:48+02:00 [apply_patch_stage11_traceability_fix]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: apply_patch stage11 end_head traceability fix and add stage11_traceability_fix_report.md
+exit_code: 0
+
+## 2026-07-04T22:39:02+02:00 [rg_stage11_cross_commands]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: rg -n build-riscv-stage11\|K1X\|toolchain\|CMAKE_TOOLCHAIN\|riscv-stage stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE11-BRANCH-BLOCK-EXPANSION-001/commands.txt
+exit_code: 0
+
+## 2026-07-04T22:39:02+02:00 [cmake_host_stage12_pre]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: cmake -S custom_int8_engine -B .deps/custom_int8_engine/build-host-native-stage12 -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_CXX_COMPILER=/usr/bin/g++ -DY26_K1X_ENABLE_IME=OFF
+exit_code: 0
+
+## 2026-07-04T22:39:04+02:00 [build_host_stage12_pre]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: cmake --build .deps/custom_int8_engine/build-host-native-stage12 -j8
+exit_code: 0
+
+## 2026-07-04T22:39:24+02:00 [ctest_host_stage12_pre]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: ctest --test-dir .deps/custom_int8_engine/build-host-native-stage12 --output-on-failure
+exit_code: 0
+
+## 2026-07-04T22:39:41+02:00 [k1x_env_compiler]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: bash -lc source\ /data/build_scripts/01-env.sh\ \&\&\ CC=\$\{CC:-riscv64-unknown-linux-gnu-gcc\}\ \&\&\ command\ -v\ \"\$CC\"\ \&\&\ \"\$CC\"\ --version\ \&\&\ ARCH_FLAGS=\$\{K1_ARCH_FLAGS:-\"-march=rv64gcv_zvfh\ -mabi=lp64d\"\}\ \&\&\ echo\ \"ARCH_FLAGS=\$ARCH_FLAGS\"\ \&\&\ echo\ \|\ \"\$CC\"\ \$ARCH_FLAGS\ -dM\ -E\ -\ \|\ rg\ -n\ \"__riscv_vector\|__riscv_zvfh\|__riscv_zfh\"\ \|\|\ true\ \&\&\ SYSROOT_OVERLAY=\$\{K1_SYSROOT_OVERLAY:-/data/sysroots/k1x-gtk3-overlay\}\ \&\&\ test\ -d\ \"\$SYSROOT_OVERLAY\"\ \&\&\ echo\ \"SYSROOT_OVERLAY=\$SYSROOT_OVERLAY\"\ \&\&\ TARGET=\"\$\{BANANA_SSH_TARGET:-\$\{BANANA_SSH:-\}\}\"\ \&\&\ if\ \[\ -n\ \"\$TARGET\"\ \]\;\ then\ echo\ \"BOARD_TARGET=\$TARGET\"\;\ else\ echo\ \"WARN:\ missing\ BANANA_SSH_TARGET/BANANA_SSH\"\;\ fi
+exit_code: 0
+
+## 2026-07-04T22:39:41+02:00 [cmake_riscv_stage12_pre]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: bash -lc cd\ /data/banana-yolo26-spacemit-demo\ \&\&\ source\ /data/build_scripts/01-env.sh\ \&\&\ cmake\ -S\ custom_int8_engine\ -B\ .deps/custom_int8_engine/build-riscv-stage12\ -DCMAKE_BUILD_TYPE=Release\ -DY26_K1X_ENABLE_IME=ON\ -DCMAKE_CXX_COMPILER=\$\{CXX:-riscv64-unknown-linux-gnu-g++\}\ -DCMAKE_CXX_FLAGS=\"\$\{K1_ARCH_FLAGS:--march=rv64gcv_zvfh\ -mabi=lp64d\}\"\ -DCMAKE_SYSTEM_NAME=Linux\ -DCMAKE_SYSTEM_PROCESSOR=riscv64
+exit_code: 0
+
+## 2026-07-04T22:39:43+02:00 [build_riscv_stage12_pre]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: cmake --build .deps/custom_int8_engine/build-riscv-stage12 -j8
+exit_code: 0
+
+## 2026-07-04T22:40:49+02:00 [deploy_stage11_replay_binaries]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: bash -lc set\ -euo\ pipefail\;\ cd\ /data/banana-yolo26-spacemit-demo\;\ source\ /data/build_scripts/01-env.sh\;\ TARGET=\"\$\{BANANA_SSH_TARGET:-\$\{BANANA_SSH:-svt@banana\}\}\"\;\ BOARD_DIR=\"/home/svt/yolo26-custom-int8-stage12/2026-07-04_22-37-43/preflight\"\;\ ssh\ \"\$TARGET\"\ \"mkdir\ -p\ \$BOARD_DIR\"\;\ sha256sum\ .deps/custom_int8_engine/build-riscv-stage12/tests/test_stage10_rvv_rounding_control\ .deps/custom_int8_engine/build-riscv-stage12/tests/test_stage11_branch_block_runner\ .deps/custom_int8_engine/build-riscv-stage12/bench_stage11_branch_block\ \>\ /data/ncnn-logs/ai-team/2026-07-04_22-37-43/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE12-C2F-RESIDUAL-CONCAT-COMPLETION-001/run_logs/stage11_replay_binaries.sha256\;\ scp\ .deps/custom_int8_engine/build-riscv-stage12/tests/test_stage10_rvv_rounding_control\ .deps/custom_int8_engine/build-riscv-stage12/tests/test_stage11_branch_block_runner\ .deps/custom_int8_engine/build-riscv-stage12/bench_stage11_branch_block\ \"\$TARGET:\$BOARD_DIR/\"\;\ printf\ \"TARGET=%s\\nBOARD_DIR=%s\\n\"\ \"\$TARGET\"\ \"\$BOARD_DIR\"\ \>\ /data/ncnn-logs/ai-team/2026-07-04_22-37-43/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE12-C2F-RESIDUAL-CONCAT-COMPLETION-001/run_logs/board_stage12_env.txt
+exit_code: 0
+
+## 2026-07-04T22:40:51+02:00 [board_pre_stage10_rne_cpu0]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: bash -lc set\ -euo\ pipefail\;\ source\ /data/build_scripts/01-env.sh\;\ TARGET=\"\$\{BANANA_SSH_TARGET:-\$\{BANANA_SSH:-svt@banana\}\}\"\;\ BOARD_DIR=\"/home/svt/yolo26-custom-int8-stage12/2026-07-04_22-37-43/preflight\"\;\ ssh\ \"\$TARGET\"\ \"cd\ \$BOARD_DIR\ \&\&\ taskset\ -c\ 0\ ./test_stage10_rvv_rounding_control\"
+exit_code: 0
+
+## 2026-07-04T22:40:52+02:00 [board_pre_stage11_correctness_cpu0]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: bash -lc set\ -euo\ pipefail\;\ source\ /data/build_scripts/01-env.sh\;\ TARGET=\"\$\{BANANA_SSH_TARGET:-\$\{BANANA_SSH:-svt@banana\}\}\"\;\ BOARD_DIR=\"/home/svt/yolo26-custom-int8-stage12/2026-07-04_22-37-43/preflight\"\;\ ssh\ \"\$TARGET\"\ \"cd\ \$BOARD_DIR\ \&\&\ taskset\ -c\ 0\ ./test_stage11_branch_block_runner\"
+exit_code: 0
+
+## 2026-07-04T22:40:53+02:00 [board_pre_stage10_rne_cpu1]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: bash -lc set\ -euo\ pipefail\;\ source\ /data/build_scripts/01-env.sh\;\ TARGET=\"\$\{BANANA_SSH_TARGET:-\$\{BANANA_SSH:-svt@banana\}\}\"\;\ BOARD_DIR=\"/home/svt/yolo26-custom-int8-stage12/2026-07-04_22-37-43/preflight\"\;\ ssh\ \"\$TARGET\"\ \"cd\ \$BOARD_DIR\ \&\&\ taskset\ -c\ 1\ ./test_stage10_rvv_rounding_control\"
+exit_code: 0
+
+## 2026-07-04T22:40:54+02:00 [board_pre_stage11_correctness_cpu1]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: bash -lc set\ -euo\ pipefail\;\ source\ /data/build_scripts/01-env.sh\;\ TARGET=\"\$\{BANANA_SSH_TARGET:-\$\{BANANA_SSH:-svt@banana\}\}\"\;\ BOARD_DIR=\"/home/svt/yolo26-custom-int8-stage12/2026-07-04_22-37-43/preflight\"\;\ ssh\ \"\$TARGET\"\ \"cd\ \$BOARD_DIR\ \&\&\ taskset\ -c\ 1\ ./test_stage11_branch_block_runner\"
+exit_code: 0
+
+## 2026-07-04T22:40:55+02:00 [board_pre_stage10_rne_cpu2]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: bash -lc set\ -euo\ pipefail\;\ source\ /data/build_scripts/01-env.sh\;\ TARGET=\"\$\{BANANA_SSH_TARGET:-\$\{BANANA_SSH:-svt@banana\}\}\"\;\ BOARD_DIR=\"/home/svt/yolo26-custom-int8-stage12/2026-07-04_22-37-43/preflight\"\;\ ssh\ \"\$TARGET\"\ \"cd\ \$BOARD_DIR\ \&\&\ taskset\ -c\ 2\ ./test_stage10_rvv_rounding_control\"
+exit_code: 0
+
+## 2026-07-04T22:40:56+02:00 [board_pre_stage11_correctness_cpu2]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: bash -lc set\ -euo\ pipefail\;\ source\ /data/build_scripts/01-env.sh\;\ TARGET=\"\$\{BANANA_SSH_TARGET:-\$\{BANANA_SSH:-svt@banana\}\}\"\;\ BOARD_DIR=\"/home/svt/yolo26-custom-int8-stage12/2026-07-04_22-37-43/preflight\"\;\ ssh\ \"\$TARGET\"\ \"cd\ \$BOARD_DIR\ \&\&\ taskset\ -c\ 2\ ./test_stage11_branch_block_runner\"
+exit_code: 0
+
+## 2026-07-04T22:40:58+02:00 [board_pre_stage10_rne_cpu3]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: bash -lc set\ -euo\ pipefail\;\ source\ /data/build_scripts/01-env.sh\;\ TARGET=\"\$\{BANANA_SSH_TARGET:-\$\{BANANA_SSH:-svt@banana\}\}\"\;\ BOARD_DIR=\"/home/svt/yolo26-custom-int8-stage12/2026-07-04_22-37-43/preflight\"\;\ ssh\ \"\$TARGET\"\ \"cd\ \$BOARD_DIR\ \&\&\ taskset\ -c\ 3\ ./test_stage10_rvv_rounding_control\"
+exit_code: 0
+
+## 2026-07-04T22:40:59+02:00 [board_pre_stage11_correctness_cpu3]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: bash -lc set\ -euo\ pipefail\;\ source\ /data/build_scripts/01-env.sh\;\ TARGET=\"\$\{BANANA_SSH_TARGET:-\$\{BANANA_SSH:-svt@banana\}\}\"\;\ BOARD_DIR=\"/home/svt/yolo26-custom-int8-stage12/2026-07-04_22-37-43/preflight\"\;\ ssh\ \"\$TARGET\"\ \"cd\ \$BOARD_DIR\ \&\&\ taskset\ -c\ 3\ ./test_stage11_branch_block_runner\"
+exit_code: 0
+
+## 2026-07-04T22:41:00+02:00 [board_pre_stage11_bench_cpu0]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: bash -lc set\ -euo\ pipefail\;\ source\ /data/build_scripts/01-env.sh\;\ TARGET=\"\$\{BANANA_SSH_TARGET:-\$\{BANANA_SSH:-svt@banana\}\}\"\;\ BOARD_DIR=\"/home/svt/yolo26-custom-int8-stage12/2026-07-04_22-37-43/preflight\"\;\ ssh\ \"\$TARGET\"\ \"cd\ \$BOARD_DIR\ \&\&\ taskset\ -c\ 0\ ./bench_stage11_branch_block\ 3\"
+exit_code: 0
+
+## 2026-07-04T22:41:54+02:00 [create_stage12_venv]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: bash -lc cd\ /data/banana-yolo26-spacemit-demo\ \&\&\ if\ \[\ \!\ -x\ .deps/custom_int8_engine/venv-stage12-onnx/bin/python\ \]\;\ then\ python3\ -m\ venv\ .deps/custom_int8_engine/venv-stage12-onnx\;\ fi
+exit_code: 0
+
+## 2026-07-04T22:42:03+02:00 [install_stage12_onnx_deps]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: bash -lc $'cd /data/banana-yolo26-spacemit-demo && .deps/custom_int8_engine/venv-stage12-onnx/bin/python - <<"PY" || .deps/custom_int8_engine/venv-stage12-onnx/bin/pip install onnx numpy onnxruntime\nimport onnx, numpy, onnxruntime\nprint("deps ok", onnx.__version__, numpy.__version__, onnxruntime.__version__)\nPY'
+exit_code: 0
+
+## 2026-07-04T22:42:29+02:00 [stage12_python_versions]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: bash -lc $'cd /data/banana-yolo26-spacemit-demo && .deps/custom_int8_engine/venv-stage12-onnx/bin/python - <<"PY"\nimport sys, onnx, numpy, onnxruntime\nprint("python", sys.version)\nprint("onnx", onnx.__version__)\nprint("numpy", numpy.__version__)\nprint("onnxruntime", onnxruntime.__version__)\nPY'
+exit_code: 0
+
+## 2026-07-04T22:42:56+02:00 [onnx_stage12_contract_probe]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: bash -lc $'cd /data/banana-yolo26-spacemit-demo && .deps/custom_int8_engine/venv-stage12-onnx/bin/python - <<"PY"\nfrom pathlib import Path\nimport hashlib\nimport onnx\nfrom onnx import numpy_helper\nmodel_path=Path(".deps/models/yolo26/int8_rt204_forensics/manual_ort/manual_e2e_rep_conv_matmul_qdq.onnx")\nprint("model", model_path.resolve())\nprint("exists", model_path.exists(), "size", model_path.stat().st_size if model_path.exists() else None)\nh=hashlib.sha256(model_path.read_bytes()).hexdigest(); print("sha256", h)\nmodel=onnx.load(model_path)\nprint("ir_version", model.ir_version, "opset", [(o.domain,o.version) for o in model.opset_import])\ninit={t.name:numpy_helper.to_array(t) for t in model.graph.initializer}\n# shape map\nshapes={}\nfor vi in list(model.graph.input)+list(model.graph.output)+list(model.graph.value_info):\n    tt=vi.type.tensor_type\n    if tt.HasField("shape"):\n        dims=[]\n        for d in tt.shape.dim:\n            if d.HasField("dim_value"): dims.append(d.dim_value)\n            elif d.HasField("dim_param"): dims.append(d.dim_param)\n            else: dims.append("?")\n        shapes[vi.name]=dims\n# producer/consumer\nprod={}; cons={}\nfor i,n in enumerate(model.graph.node):\n    for o in n.output: prod[o]=(i,n.name,n.op_type)\n    for inp in n.input: cons.setdefault(inp,[]).append((i,n.name,n.op_type))\nfor i,n in enumerate(model.graph.node):\n    if n.name.startswith("/model.2") or any("/model.2" in s for s in list(n.input)+list(n.output)):\n        if 260 <= i <= 305:\n            print(f"NODE {i} {n.name} {n.op_type}")\n            print("  inputs", list(n.input))\n            print("  outputs", list(n.output))\n            for inp in n.input:\n                print("    input", inp, "shape", shapes.get(inp), "prod", prod.get(inp), "init", inp in init)\n                if inp in init:\n                    arr=init[inp]; print("      init", arr.dtype, arr.shape, arr.reshape(-1)[:8].tolist())\n            for out in n.output:\n                print("    output", out, "shape", shapes.get(out), "cons", cons.get(out))\nprint("\\nSelected initializers:")\nfor name in [\n"/model.2/m.0/cv2/conv/Conv_output_0_scale", "/model.2/m.0/cv2/conv/Conv_output_0_zero_point",\n"/model.2/m.0/cv2/act/Mul_output_0_scale", "/model.2/m.0/cv2/act/Mul_output_0_zero_point",\n"/model.2/Concat_output_0_scale", "/model.2/Concat_output_0_zero_point",\n"/model.2/cv2/conv/Conv_output_0_scale", "/model.2/cv2/conv/Conv_output_0_zero_point",\n"model.2.cv2.conv.weight_scale", "model.2.cv2.conv.weight_zero_point", "model.2.cv2.conv.bias_quantized", "model.2.cv2.conv.weight_quantized"]:\n    arr=init.get(name)\n    if arr is None:\n        print(name, "MISSING")\n    else:\n        flat=arr.reshape(-1)\n        print(name, "dtype", arr.dtype, "shape", arr.shape, "first", flat[:12].tolist(), "min", flat.min().item() if flat.size else None, "max", flat.max().item() if flat.size else None)\nPY'
+exit_code: 0
+
+## 2026-07-04T22:47:07+02:00 [apply_patch_stage12_oracle_tool]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: apply_patch add custom_int8_engine/tools/extract_stage12_c2f_oracle.py
+exit_code: 0
+
+## 2026-07-04T22:47:07+02:00 [chmod_stage12_oracle_tool]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: chmod +x custom_int8_engine/tools/extract_stage12_c2f_oracle.py
+exit_code: 0
+
+## 2026-07-04T22:47:21+02:00 [generate_stage12_fixture]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: .deps/custom_int8_engine/venv-stage12-onnx/bin/python custom_int8_engine/tools/extract_stage12_c2f_oracle.py --model .deps/models/yolo26/int8_rt204_forensics/manual_ort/manual_e2e_rep_conv_matmul_qdq.onnx --stage7-fixture custom_int8_engine/tests/stage7_backbone_subset_fixture.h --stage11-fixture custom_int8_engine/tests/stage11_branch_block_fixture.h --out-header custom_int8_engine/tests/stage12_c2f_block_fixture.h --out-report /data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE12-C2F-RESIDUAL-CONCAT-COMPLETION-001/block_oracle_report.md --out-merge-onnx /data/ncnn-logs/ai-team/2026-07-04_22-37-43/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE12-C2F-RESIDUAL-CONCAT-COMPLETION-001/run_logs/stage12_merge_oracle.onnx
+exit_code: 0
+
+## 2026-07-04T22:47:22+02:00 [inspect_stage12_fixture]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: rg -n candidate_G\|concat_mismatches\|model2_cv2\|Expected custom_int8_engine/tests/stage12_c2f_block_fixture.h /data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE12-C2F-RESIDUAL-CONCAT-COMPLETION-001/block_oracle_report.md
+exit_code: 0
+
+## 2026-07-04T22:50:28+02:00 [apply_patch_stage12_runner]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: apply_patch add y26_k1x_c2f_block_runner.h and c2f_block_runner.cpp
+exit_code: 0
+
+## 2026-07-04T22:53:04+02:00 [apply_patch_stage12_test_bench_cmake]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: apply_patch add test_stage12_c2f_block_runner.cpp, bench_stage12_c2f_block.cpp, and CMake registration
+exit_code: 0
+
+## 2026-07-04T22:53:17+02:00 [cmake_host_stage12_post]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: cmake -S custom_int8_engine -B .deps/custom_int8_engine/build-host-native-stage12 -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_CXX_COMPILER=/usr/bin/g++ -DY26_K1X_ENABLE_IME=OFF
+exit_code: 0
+
+## 2026-07-04T22:53:18+02:00 [build_host_stage12_post]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: cmake --build .deps/custom_int8_engine/build-host-native-stage12 -j8
+exit_code: 0
+
+## 2026-07-04T22:53:28+02:00 [ctest_host_stage12_post]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: ctest --test-dir .deps/custom_int8_engine/build-host-native-stage12 --output-on-failure
+exit_code: 8
+
+## 2026-07-04T22:53:55+02:00 [apply_patch_stage12_host_a2_guard]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: apply_patch guard Stage12 A2 scalar fixture test with __riscv_vector
+exit_code: 0
+
+## 2026-07-04T22:53:55+02:00 [build_host_stage12_post2]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: cmake --build .deps/custom_int8_engine/build-host-native-stage12 -j8
+exit_code: 0
+
+## 2026-07-04T22:53:59+02:00 [ctest_host_stage12_post2]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: ctest --test-dir .deps/custom_int8_engine/build-host-native-stage12 --output-on-failure
+exit_code: 0
+
+## 2026-07-04T22:54:14+02:00 [cmake_riscv_stage12_post]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: bash -lc cd\ /data/banana-yolo26-spacemit-demo\ \&\&\ source\ /data/build_scripts/01-env.sh\ \&\&\ cmake\ -S\ custom_int8_engine\ -B\ .deps/custom_int8_engine/build-riscv-stage12\ -DCMAKE_BUILD_TYPE=Release\ -DY26_K1X_ENABLE_IME=ON\ -DCMAKE_CXX_COMPILER=\$\{CXX:-riscv64-unknown-linux-gnu-g++\}\ -DCMAKE_CXX_FLAGS=\"\$\{K1_ARCH_FLAGS:--march=rv64gcv_zvfh\ -mabi=lp64d\}\"\ -DCMAKE_SYSTEM_NAME=Linux\ -DCMAKE_SYSTEM_PROCESSOR=riscv64
+exit_code: 0
+
+## 2026-07-04T22:54:15+02:00 [build_riscv_stage12_post]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: cmake --build .deps/custom_int8_engine/build-riscv-stage12 -j8
+exit_code: 0
+
+## 2026-07-04T22:54:53+02:00 [deploy_stage12_binaries]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: bash -lc set\ -euo\ pipefail\;\ cd\ /data/banana-yolo26-spacemit-demo\;\ source\ /data/build_scripts/01-env.sh\;\ TARGET=\"\$\{BANANA_SSH_TARGET:-\$\{BANANA_SSH:-svt@banana\}\}\"\;\ BOARD_DIR=\"/home/svt/yolo26-custom-int8-stage12/2026-07-04_22-37-43/final\"\;\ ssh\ \"\$TARGET\"\ \"mkdir\ -p\ \$BOARD_DIR\"\;\ sha256sum\ .deps/custom_int8_engine/build-riscv-stage12/tests/test_stage10_rvv_rounding_control\ .deps/custom_int8_engine/build-riscv-stage12/tests/test_stage11_branch_block_runner\ .deps/custom_int8_engine/build-riscv-stage12/tests/test_stage12_c2f_block_runner\ .deps/custom_int8_engine/build-riscv-stage12/bench_stage11_branch_block\ .deps/custom_int8_engine/build-riscv-stage12/bench_stage12_c2f_block\ \>\ /data/ncnn-logs/ai-team/2026-07-04_22-37-43/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE12-C2F-RESIDUAL-CONCAT-COMPLETION-001/run_logs/stage12_binaries.sha256\;\ scp\ .deps/custom_int8_engine/build-riscv-stage12/tests/test_stage10_rvv_rounding_control\ .deps/custom_int8_engine/build-riscv-stage12/tests/test_stage11_branch_block_runner\ .deps/custom_int8_engine/build-riscv-stage12/tests/test_stage12_c2f_block_runner\ .deps/custom_int8_engine/build-riscv-stage12/bench_stage11_branch_block\ .deps/custom_int8_engine/build-riscv-stage12/bench_stage12_c2f_block\ \"\$TARGET:\$BOARD_DIR/\"\;\ printf\ \"TARGET=%s\\nBOARD_DIR=%s\\n\"\ \"\$TARGET\"\ \"\$BOARD_DIR\"\ \>\ /data/ncnn-logs/ai-team/2026-07-04_22-37-43/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE12-C2F-RESIDUAL-CONCAT-COMPLETION-001/run_logs/board_stage12_final_env.txt
+exit_code: 0
+
+## 2026-07-04T22:54:55+02:00 [board_stage12_rne_cpu0]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: bash -lc set\ -euo\ pipefail\;\ source\ /data/build_scripts/01-env.sh\;\ TARGET=\"\$\{BANANA_SSH_TARGET:-\$\{BANANA_SSH:-svt@banana\}\}\"\;\ BOARD_DIR=\"/home/svt/yolo26-custom-int8-stage12/2026-07-04_22-37-43/final\"\;\ ssh\ \"\$TARGET\"\ \"cd\ \$BOARD_DIR\ \&\&\ taskset\ -c\ 0\ ./test_stage10_rvv_rounding_control\"
+exit_code: 0
+
+## 2026-07-04T22:54:57+02:00 [board_stage12_stage11_replay_cpu0]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: bash -lc set\ -euo\ pipefail\;\ source\ /data/build_scripts/01-env.sh\;\ TARGET=\"\$\{BANANA_SSH_TARGET:-\$\{BANANA_SSH:-svt@banana\}\}\"\;\ BOARD_DIR=\"/home/svt/yolo26-custom-int8-stage12/2026-07-04_22-37-43/final\"\;\ ssh\ \"\$TARGET\"\ \"cd\ \$BOARD_DIR\ \&\&\ taskset\ -c\ 0\ ./test_stage11_branch_block_runner\"
+exit_code: 0
+
+## 2026-07-04T22:54:58+02:00 [board_stage12_correctness_cpu0]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: bash -lc set\ -euo\ pipefail\;\ source\ /data/build_scripts/01-env.sh\;\ TARGET=\"\$\{BANANA_SSH_TARGET:-\$\{BANANA_SSH:-svt@banana\}\}\"\;\ BOARD_DIR=\"/home/svt/yolo26-custom-int8-stage12/2026-07-04_22-37-43/final\"\;\ ssh\ \"\$TARGET\"\ \"cd\ \$BOARD_DIR\ \&\&\ taskset\ -c\ 0\ ./test_stage12_c2f_block_runner\"
+exit_code: 0
+
+## 2026-07-04T22:54:59+02:00 [board_stage12_rne_cpu1]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: bash -lc set\ -euo\ pipefail\;\ source\ /data/build_scripts/01-env.sh\;\ TARGET=\"\$\{BANANA_SSH_TARGET:-\$\{BANANA_SSH:-svt@banana\}\}\"\;\ BOARD_DIR=\"/home/svt/yolo26-custom-int8-stage12/2026-07-04_22-37-43/final\"\;\ ssh\ \"\$TARGET\"\ \"cd\ \$BOARD_DIR\ \&\&\ taskset\ -c\ 1\ ./test_stage10_rvv_rounding_control\"
+exit_code: 0
+
+## 2026-07-04T22:55:00+02:00 [board_stage12_stage11_replay_cpu1]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: bash -lc set\ -euo\ pipefail\;\ source\ /data/build_scripts/01-env.sh\;\ TARGET=\"\$\{BANANA_SSH_TARGET:-\$\{BANANA_SSH:-svt@banana\}\}\"\;\ BOARD_DIR=\"/home/svt/yolo26-custom-int8-stage12/2026-07-04_22-37-43/final\"\;\ ssh\ \"\$TARGET\"\ \"cd\ \$BOARD_DIR\ \&\&\ taskset\ -c\ 1\ ./test_stage11_branch_block_runner\"
+exit_code: 0
+
+## 2026-07-04T22:55:01+02:00 [board_stage12_correctness_cpu1]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: bash -lc set\ -euo\ pipefail\;\ source\ /data/build_scripts/01-env.sh\;\ TARGET=\"\$\{BANANA_SSH_TARGET:-\$\{BANANA_SSH:-svt@banana\}\}\"\;\ BOARD_DIR=\"/home/svt/yolo26-custom-int8-stage12/2026-07-04_22-37-43/final\"\;\ ssh\ \"\$TARGET\"\ \"cd\ \$BOARD_DIR\ \&\&\ taskset\ -c\ 1\ ./test_stage12_c2f_block_runner\"
+exit_code: 0
+
+## 2026-07-04T22:55:02+02:00 [board_stage12_rne_cpu2]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: bash -lc set\ -euo\ pipefail\;\ source\ /data/build_scripts/01-env.sh\;\ TARGET=\"\$\{BANANA_SSH_TARGET:-\$\{BANANA_SSH:-svt@banana\}\}\"\;\ BOARD_DIR=\"/home/svt/yolo26-custom-int8-stage12/2026-07-04_22-37-43/final\"\;\ ssh\ \"\$TARGET\"\ \"cd\ \$BOARD_DIR\ \&\&\ taskset\ -c\ 2\ ./test_stage10_rvv_rounding_control\"
+exit_code: 0
+
+## 2026-07-04T22:55:04+02:00 [board_stage12_stage11_replay_cpu2]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: bash -lc set\ -euo\ pipefail\;\ source\ /data/build_scripts/01-env.sh\;\ TARGET=\"\$\{BANANA_SSH_TARGET:-\$\{BANANA_SSH:-svt@banana\}\}\"\;\ BOARD_DIR=\"/home/svt/yolo26-custom-int8-stage12/2026-07-04_22-37-43/final\"\;\ ssh\ \"\$TARGET\"\ \"cd\ \$BOARD_DIR\ \&\&\ taskset\ -c\ 2\ ./test_stage11_branch_block_runner\"
+exit_code: 0
+
+## 2026-07-04T22:55:05+02:00 [board_stage12_correctness_cpu2]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: bash -lc set\ -euo\ pipefail\;\ source\ /data/build_scripts/01-env.sh\;\ TARGET=\"\$\{BANANA_SSH_TARGET:-\$\{BANANA_SSH:-svt@banana\}\}\"\;\ BOARD_DIR=\"/home/svt/yolo26-custom-int8-stage12/2026-07-04_22-37-43/final\"\;\ ssh\ \"\$TARGET\"\ \"cd\ \$BOARD_DIR\ \&\&\ taskset\ -c\ 2\ ./test_stage12_c2f_block_runner\"
+exit_code: 0
+
+## 2026-07-04T22:55:06+02:00 [board_stage12_rne_cpu3]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: bash -lc set\ -euo\ pipefail\;\ source\ /data/build_scripts/01-env.sh\;\ TARGET=\"\$\{BANANA_SSH_TARGET:-\$\{BANANA_SSH:-svt@banana\}\}\"\;\ BOARD_DIR=\"/home/svt/yolo26-custom-int8-stage12/2026-07-04_22-37-43/final\"\;\ ssh\ \"\$TARGET\"\ \"cd\ \$BOARD_DIR\ \&\&\ taskset\ -c\ 3\ ./test_stage10_rvv_rounding_control\"
+exit_code: 0
+
+## 2026-07-04T22:55:07+02:00 [board_stage12_stage11_replay_cpu3]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: bash -lc set\ -euo\ pipefail\;\ source\ /data/build_scripts/01-env.sh\;\ TARGET=\"\$\{BANANA_SSH_TARGET:-\$\{BANANA_SSH:-svt@banana\}\}\"\;\ BOARD_DIR=\"/home/svt/yolo26-custom-int8-stage12/2026-07-04_22-37-43/final\"\;\ ssh\ \"\$TARGET\"\ \"cd\ \$BOARD_DIR\ \&\&\ taskset\ -c\ 3\ ./test_stage11_branch_block_runner\"
+exit_code: 0
+
+## 2026-07-04T22:55:08+02:00 [board_stage12_correctness_cpu3]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: bash -lc set\ -euo\ pipefail\;\ source\ /data/build_scripts/01-env.sh\;\ TARGET=\"\$\{BANANA_SSH_TARGET:-\$\{BANANA_SSH:-svt@banana\}\}\"\;\ BOARD_DIR=\"/home/svt/yolo26-custom-int8-stage12/2026-07-04_22-37-43/final\"\;\ ssh\ \"\$TARGET\"\ \"cd\ \$BOARD_DIR\ \&\&\ taskset\ -c\ 3\ ./test_stage12_c2f_block_runner\"
+exit_code: 0
+
+## 2026-07-04T22:55:09+02:00 [board_stage11_replay_bench_cpu0]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: bash -lc set\ -euo\ pipefail\;\ source\ /data/build_scripts/01-env.sh\;\ TARGET=\"\$\{BANANA_SSH_TARGET:-\$\{BANANA_SSH:-svt@banana\}\}\"\;\ BOARD_DIR=\"/home/svt/yolo26-custom-int8-stage12/2026-07-04_22-37-43/final\"\;\ ssh\ \"\$TARGET\"\ \"cd\ \$BOARD_DIR\ \&\&\ taskset\ -c\ 0\ ./bench_stage11_branch_block\ 3\"
+exit_code: 0
+
+## 2026-07-04T22:55:17+02:00 [board_stage12_bench_cpu0]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: bash -lc set\ -euo\ pipefail\;\ source\ /data/build_scripts/01-env.sh\;\ TARGET=\"\$\{BANANA_SSH_TARGET:-\$\{BANANA_SSH:-svt@banana\}\}\"\;\ BOARD_DIR=\"/home/svt/yolo26-custom-int8-stage12/2026-07-04_22-37-43/final\"\;\ ssh\ \"\$TARGET\"\ \"cd\ \$BOARD_DIR\ \&\&\ taskset\ -c\ 0\ ./bench_stage12_c2f_block\ 3\"
+exit_code: 0
+
+## 2026-07-04T22:58:20+02:00 [apply_patch_stage12_reports]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: apply_patch add Stage12 required reports and stage13 prompt
+exit_code: 0
+
+## 2026-07-04T22:58:20+02:00 [git_diff_check]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: git diff --check
+exit_code: 0
+
+## 2026-07-04T22:58:20+02:00 [git_diff_cached_check]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: bash -lc cd\ /data/banana-yolo26-spacemit-demo\ \&\&\ git\ diff\ --cached\ --check\ \|\|\ true
+exit_code: 0
+
+## 2026-07-04T22:58:21+02:00 [symlink_scan]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: find custom_int8_engine stages -type l -print
+exit_code: 0
+
+## 2026-07-04T22:58:21+02:00 [secret_scan]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: bash -lc cd\ /data/banana-yolo26-spacemit-demo\ \&\&\ rg\ -n\ --hidden\ -S\ \"\(BEGIN\ \(RSA\|OPENSSH\|EC\|DSA\)\ PRIVATE\ KEY\|password=\|token=\|client_secret\|oauth\|ssh-rsa\|ghp_\|glpat-\|AKIA\)\"\ custom_int8_engine\ stages\ scripts\ docs\ --glob\ \"\!\*\*/commands.txt\"\ \|\|\ true
+exit_code: 0
+
+## 2026-07-04T22:58:21+02:00 [git_status_before_commit]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: git status --short --branch
+exit_code: 0
+
+## 2026-07-04T22:58:21+02:00 [git_diff_stat]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: git diff --stat
+exit_code: 0
+
+## 2026-07-04T22:59:16+02:00 [apply_patch_stage12_source_hygiene_report]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: apply_patch add source_hygiene_report.md
+exit_code: 0
+
+## 2026-07-04T22:59:16+02:00 [copy_stage12_reports_to_log]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: bash -lc set\ -euo\ pipefail\;\ REPO_STAGE_DIR=\"/data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE12-C2F-RESIDUAL-CONCAT-COMPLETION-001\"\;\ LOG_DIR=\"/data/ncnn-logs/ai-team/2026-07-04_22-37-43/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE12-C2F-RESIDUAL-CONCAT-COMPLETION-001\"\;\ cp\ \"\$REPO_STAGE_DIR\"/\{STAGE12_FINAL_REPORT.md\,STAGE12_SUMMARY_RU.md\,stage11_baseline_replay_report.md\,stage11_traceability_fix_report.md\,add_contract_report.md\,add_quantization_domain.tsv\,add_implementation_report.md\,concat_contract_report.md\,concat_layout_plan.md\,concat_implementation_report.md\,post_concat_qdq_report.md\,model2_cv2_conv_report.md\,block_oracle_report.md\,block_correctness_report.md\,block_microbench_report.md\,component_timing_report.md\,fp32_requant_property_report.md\,rounding_mode_regression_report.md\,conv_ime_roofline_stage12.md\,source_hygiene_report.md\,stage13_prompt.md\,commands.txt\}\ \"\$LOG_DIR/artifacts/\"
+exit_code: 0
+
+## 2026-07-04T22:59:17+02:00 [copy_task_artifacts]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: bash -lc set\ -euo\ pipefail\;\ TASK_RUN_DIR=\"/data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE12-C2F-RESIDUAL-CONCAT-COMPLETION-001\"\;\ REPO_STAGE_DIR=\"/data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE12-C2F-RESIDUAL-CONCAT-COMPLETION-001\"\;\ mkdir\ -p\ \"\$TASK_RUN_DIR/artifacts\"\;\ cp\ \"\$REPO_STAGE_DIR\"/\{STAGE12_FINAL_REPORT.md\,STAGE12_SUMMARY_RU.md\,block_microbench_report.md\,block_correctness_report.md\,component_timing_report.md\,block_oracle_report.md\,source_hygiene_report.md\,stage13_prompt.md\}\ \"\$TASK_RUN_DIR/artifacts/\"
+exit_code: 0
+
+## 2026-07-04T22:59:17+02:00 [scan_export_candidates]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: /data/lab/scripts/scan-export-candidates.sh /data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE12-C2F-RESIDUAL-CONCAT-COMPLETION-001/artifacts
+exit_code: 0
+
+## 2026-07-04T22:59:36+02:00 [git_status_pre_add]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: git status --short --branch
+exit_code: 0
+
+## 2026-07-04T22:59:36+02:00 [git_add_stage12]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: git add custom_int8_engine/CMakeLists.txt custom_int8_engine/include/y26_k1x_c2f_block_runner.h custom_int8_engine/src/c2f_block_runner.cpp custom_int8_engine/tests/CMakeLists.txt custom_int8_engine/tests/stage12_c2f_block_fixture.h custom_int8_engine/tests/test_stage12_c2f_block_runner.cpp custom_int8_engine/tools/bench_stage12_c2f_block.cpp custom_int8_engine/tools/extract_stage12_c2f_oracle.py stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE11-BRANCH-BLOCK-EXPANSION-001/STAGE11_FINAL_REPORT.md stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE12-C2F-RESIDUAL-CONCAT-COMPLETION-001
+exit_code: 0
+
+## 2026-07-04T22:59:36+02:00 [git_diff_cached_check_final]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: git diff --cached --check
+exit_code: 0
+
+## 2026-07-04T22:59:36+02:00 [git_status_pre_commit]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: git status --short --branch
+exit_code: 0
+
+## 2026-07-04T22:59:37+02:00 [git_commit_stage12]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: git commit -m Complete\ YOLO26\ C2f\ residual\ concat\ block
+exit_code: 0
+
+## 2026-07-04T22:59:37+02:00 [git_head_after_commit]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: git rev-parse HEAD
+exit_code: 0
+
+## 2026-07-04T22:59:37+02:00 [git_status_after_commit]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: git status --short --branch
+exit_code: 0
+
+## 2026-07-04T23:00:53+02:00 [git_amend_stage12_commands_final]
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: git add stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE12-C2F-RESIDUAL-CONCAT-COMPLETION-001/commands.txt && git commit --amend --no-edit && git rev-parse HEAD
+exit_code: 0

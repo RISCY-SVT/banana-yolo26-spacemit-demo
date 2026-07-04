@@ -24,6 +24,7 @@ add_library(y26_k1x_custom_int8_engine
     src/branch_block_runner.cpp
     src/backbone_subset_runner.cpp
     src/backbone_stage10_runner.cpp
+    src/c2f_block_runner.cpp
     src/engine_stub.cpp
     src/block_runner.cpp
     src/multiblock_runner.cpp
@@ -166,6 +167,16 @@ if(Y26_K1X_BUILD_TOOLS)
     target_compile_options(bench_stage11_branch_block PRIVATE -Wall -Wextra -Wpedantic)
     if(Y26_K1X_ENABLE_IME)
         target_compile_definitions(bench_stage11_branch_block PRIVATE Y26_K1X_ENABLE_IME_ASM=1)
+    endif()
+
+    add_executable(bench_stage12_c2f_block
+        tools/bench_stage12_c2f_block.cpp
+    )
+    target_link_libraries(bench_stage12_c2f_block PRIVATE y26_k1x_custom_int8_engine)
+    target_include_directories(bench_stage12_c2f_block PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/tests")
+    target_compile_options(bench_stage12_c2f_block PRIVATE -Wall -Wextra -Wpedantic)
+    if(Y26_K1X_ENABLE_IME)
+        target_compile_definitions(bench_stage12_c2f_block PRIVATE Y26_K1X_ENABLE_IME_ASM=1)
     endif()
 endif()
 

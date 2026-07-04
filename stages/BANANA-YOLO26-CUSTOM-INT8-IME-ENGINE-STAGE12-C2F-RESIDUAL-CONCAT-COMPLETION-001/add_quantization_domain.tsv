@@ -1,0 +1,4 @@
+tensor_name	producer	consumer	shape	domain	scale	zero_point	signed_storage	integer_add_candidate	float_fallback_required	caveat
+/model.2/Split_output_1_DequantizeLinear_Output	/model.2/Split_output_1_DequantizeLinear	/model.2/m.0/Add	[1,16,160,160]	float_from_qdq	0.18348428606987	2	no	no	yes	Q/DQ output is float, not int storage.
+/model.2/m.0/cv2/act/Mul_output_0	/model.2/m.0/cv2/act/Mul	/model.2/m.0/Add	[1,16,160,160]	float_silu	n/a	n/a	no	no	yes	No activation-output Q/DQ before Add.
+/model.2/m.0/Add_output_0	/model.2/m.0/Add	/model.2/Concat	[1,16,160,160]	float	n/a	n/a	no	no	yes	Quantization appears only after Concat.
