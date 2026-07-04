@@ -1,0 +1,234 @@
+# 2026-07-04T08:03:02+02:00 cwd=/data
+mkdir -p "/data/ncnn-logs/ai-team/2026-07-04_08-03-01/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE7-BACKBONE-SUBSET-EXPANSION-001" "/data/ncnn-logs/ai-team/2026-07-04_08-03-01/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE7-BACKBONE-SUBSET-EXPANSION-001/artifacts" "/data/ncnn-logs/ai-team/2026-07-04_08-03-01/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE7-BACKBONE-SUBSET-EXPANSION-001/run_logs" "/data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE7-BACKBONE-SUBSET-EXPANSION-001" "/data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE7-BACKBONE-SUBSET-EXPANSION-001" "/data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE7-BACKBONE-SUBSET-EXPANSION-001/artifacts"; initialize command logs and metadata files
+# retroactive: sed -n '1,240p' /data/.codex/skills/lab_bridge_packet_workflow/SKILL.md
+# retroactive: sed -n '1,240p' /data/.codex/skills/k1x_env_sanity/SKILL.md
+# retroactive: sed -n '1,240p' /data/.codex/skills/k1x_git_hygiene/SKILL.md
+# 2026-07-04T08:03:24+02:00 cwd=/data
+/data/lab/scripts/check-bridge-layout.sh
+# 2026-07-04T08:03:28+02:00 cwd=/data
+/data/lab/scripts/init-shared-log-run.sh contcodex BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE7-BACKBONE-SUBSET-EXPANSION-001 stage7-backbone-subset-expansion
+# 2026-07-04T08:03:29+02:00 cwd=/data
+/data/lab/scripts/import-task-packet.sh BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE7-BACKBONE-SUBSET-EXPANSION-001
+# 2026-07-04T08:03:29+02:00 cwd=/data
+cd /data/banana-yolo26-spacemit-demo && pwd && git status --short --branch && git branch --show-current && git rev-parse HEAD && git log --oneline -n 12 && git remote -v
+# 2026-07-04T08:03:52+02:00 cwd=/data
+create /tmp/stage7_env.sh logging helper and fix shared-log-dir path extraction
+# 2026-07-04T08:04:10+02:00 cwd=/data/banana-yolo26-spacemit-demo
+sed -n '1,220p' stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE5-FIRST-BLOCK-INTEGRATION-001/STAGE5_FINAL_REPORT.md; printf '\n--- stage5 selection ---\n'; sed -n '1,220p' stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE5-FIRST-BLOCK-INTEGRATION-001/first_block_selection.md; printf '\n--- stage5 microbench ---\n'; sed -n '1,220p' stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE5-FIRST-BLOCK-INTEGRATION-001/block_microbench_report.md; printf '\n--- stage6 final ---\n'; sed -n '1,260p' stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE6-MULTI-BLOCK-BACKBONE-SUBSET-001/STAGE6_FINAL_REPORT.md; printf '\n--- stage6 selection ---\n'; sed -n '1,260p' stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE6-MULTI-BLOCK-BACKBONE-SUBSET-001/multiblock_subset_selection.md; printf '\n--- stage6 correctness ---\n'; sed -n '1,220p' stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE6-MULTI-BLOCK-BACKBONE-SUBSET-001/block_correctness_report.md; printf '\n--- stage6 microbench ---\n'; sed -n '1,240p' stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE6-MULTI-BLOCK-BACKBONE-SUBSET-001/block_microbench_report.md
+# 2026-07-04T08:04:10+02:00 cwd=/data/banana-yolo26-spacemit-demo
+sed -n '1,260p' custom_int8_engine/include/y26_k1x_multiblock_runner.h; printf '\n--- block runner header ---\n'; sed -n '1,260p' custom_int8_engine/include/y26_k1x_block_runner.h; printf '\n--- conv kernels header ---\n'; sed -n '1,280p' custom_int8_engine/include/y26_k1x_conv_kernels.h; printf '\n--- multiblock source part1 ---\n'; sed -n '1,320p' custom_int8_engine/src/multiblock_runner.cpp; printf '\n--- multiblock source part2 ---\n'; sed -n '321,760p' custom_int8_engine/src/multiblock_runner.cpp; printf '\n--- stage6 test ---\n'; sed -n '1,260p' custom_int8_engine/tests/test_stage6_multiblock_runner.cpp; printf '\n--- cmake ---\n'; sed -n '1,260p' custom_int8_engine/CMakeLists.txt; printf '\n--- tests cmake ---\n'; sed -n '1,260p' custom_int8_engine/tests/CMakeLists.txt
+# 2026-07-04T08:04:23+02:00 cwd=/data/banana-yolo26-spacemit-demo
+nl -ba custom_int8_engine/include/y26_k1x_multiblock_runner.h | sed -n '1,240p'; printf '\n--- src 1 ---\n'; nl -ba custom_int8_engine/src/multiblock_runner.cpp | sed -n '1,260p'; printf '\n--- src 2 ---\n'; nl -ba custom_int8_engine/src/multiblock_runner.cpp | sed -n '261,560p'; printf '\n--- src 3 ---\n'; nl -ba custom_int8_engine/src/multiblock_runner.cpp | sed -n '561,900p'; printf '\n--- bench stage6 ---\n'; nl -ba custom_int8_engine/tools/bench_stage6_multiblock.cpp | sed -n '1,320p'; printf '\n--- fixture header head ---\n'; nl -ba custom_int8_engine/tests/stage6_multiblock_fixture.h | sed -n '1,220p'
+# 2026-07-04T08:04:24+02:00 cwd=/data/banana-yolo26-spacemit-demo
+rg -n 'stage6|Y26Stage6|multiblock|bench_stage6|stage6_multiblock' custom_int8_engine -g '!*.o'
+# 2026-07-04T08:04:46+02:00 cwd=/data/banana-yolo26-spacemit-demo
+nl -ba custom_int8_engine/tools/extract_stage6_multiblock_oracle.py | sed -n '1,260p'; printf '\n--- middle ---\n'; nl -ba custom_int8_engine/tools/extract_stage6_multiblock_oracle.py | sed -n '261,620p'
+# 2026-07-04T08:05:02+02:00 cwd=/data/banana-yolo26-spacemit-demo
+set -euo pipefail; if [ ! -x .deps/custom_int8_engine/venv-stage7-onnx/bin/python ]; then python3 -m venv .deps/custom_int8_engine/venv-stage7-onnx; fi; .deps/custom_int8_engine/venv-stage7-onnx/bin/python -m pip install --upgrade pip >/tmp/stage7_pip_upgrade.log; .deps/custom_int8_engine/venv-stage7-onnx/bin/python - <<'PY' || .deps/custom_int8_engine/venv-stage7-onnx/bin/python -m pip install onnx numpy onnxruntime
+import onnx, numpy, onnxruntime
+print('packages-present')
+PY
+.deps/custom_int8_engine/venv-stage7-onnx/bin/python - <<'PY'
+import sys, onnx, numpy, onnxruntime
+print('python', sys.version)
+print('onnx', onnx.__version__)
+print('numpy', numpy.__version__)
+print('onnxruntime', onnxruntime.__version__)
+PY
+# 2026-07-04T08:06:03+02:00 cwd=/data/banana-yolo26-spacemit-demo
+.deps/custom_int8_engine/venv-stage7-onnx/bin/python - <<'PY'
+from pathlib import Path
+import onnx, hashlib
+from onnx import helper, numpy_helper, shape_inference
+model_path=Path('.deps/models/yolo26/int8_rt204_forensics/manual_ort/manual_e2e_rep_conv_matmul_qdq.onnx')
+print('model_exists', model_path.exists())
+print('model_realpath', model_path.resolve())
+print('model_size', model_path.stat().st_size if model_path.exists() else 0)
+print('model_sha256', hashlib.sha256(model_path.read_bytes()).hexdigest() if model_path.exists() else 'missing')
+model=onnx.load(str(model_path), load_external_data=True)
+print('opset', [(o.domain,o.version) for o in model.opset_import])
+print('producer', model.producer_name, model.producer_version)
+inferred=shape_inference.infer_shapes(model)
+values={v.name:v for v in list(inferred.graph.input)+list(inferred.graph.output)+list(inferred.graph.value_info)}
+producers={}
+consumers={}
+for n in inferred.graph.node:
+    for o in n.output: producers[o]=n
+    for i in n.input: consumers.setdefault(i,[]).append(n)
+nodes={n.name:n for n in inferred.graph.node}
+inits={t.name:numpy_helper.to_array(t) for t in inferred.graph.initializer}
+def shape(name):
+    v=values.get(name)
+    if not v: return []
+    return [d.dim_value if d.HasField('dim_value') else (d.dim_param if d.HasField('dim_param') else '?') for d in v.type.tensor_type.shape.dim]
+def attrs(n): return {a.name: helper.get_attribute_value(a) for a in n.attribute}
+def fmt(n):
+    return {'name':n.name,'op':n.op_type,'inputs':list(n.input),'outputs':list(n.output),'attrs':attrs(n)}
+for name in ['/model.0/conv/Conv','/model.1/conv/Conv','/model.2/cv1/conv/Conv','/model.2/Split']:
+    print('\nNODE', name, fmt(nodes[name]) if name in nodes else 'MISSING')
+    if name in nodes:
+        for o in nodes[name].output: print(' output_shape', o, shape(o), 'consumers', [(c.name,c.op_type) for c in consumers.get(o,[])])
+        for i in nodes[name].input: print(' input_shape', i, shape(i), 'producer', (producers[i].name, producers[i].op_type) if i in producers else 'initializer/input')
+print('\nCHAIN FROM model1 conv output:')
+cur=nodes['/model.1/conv/Conv'].output[0]
+for step in range(12):
+    cs=consumers.get(cur,[])
+    print(step, 'tensor', cur, 'shape', shape(cur), 'consumers', [(c.name,c.op_type) for c in cs])
+    if len(cs)!=1: break
+    n=cs[0]
+    print(' node', fmt(n))
+    if not n.output: break
+    cur=n.output[0]
+print('\nQuant tensors around model1 and model2:')
+interesting=[]
+for n in inferred.graph.node:
+    if n.name in ['/model.1/conv/Conv','/model.2/cv1/conv/Conv'] or '/model.1/act' in n.name or '/model.2/cv1' in n.name:
+        interesting.append(n)
+for n in interesting:
+    print(n.name, n.op_type)
+    for inp in n.input:
+        if inp in inits:
+            arr=inits[inp]
+            flat=arr.reshape(-1) if arr.shape else [arr.item()]
+            print('  init', inp, 'shape', arr.shape, 'dtype', arr.dtype, 'min', float(arr.min()), 'max', float(arr.max()), 'first', list(flat[:8]))
+PY
+# 2026-07-04T08:07:04+02:00 cwd=/data/banana-yolo26-spacemit-demo
+python3 - <<'PY'
+from pathlib import Path
+repo=Path('/data/banana-yolo26-spacemit-demo')
+stage=repo/'stages'/'BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE7-BACKBONE-SUBSET-EXPANSION-001'
+logs=stage/'log_dir.txt'
+log_dir=Path(logs.read_text().strip())
+model=repo/'.deps/models/yolo26/int8_rt204_forensics/manual_ort/manual_e2e_rep_conv_matmul_qdq.onnx'
+(stage/'multiblock_subset_selection.md').write_text('''# Multiblock Subset Selection\n\nselected_subset: \n\n## Boundary\n\n1. \n2. \n3. \n4. \n5. \n6. \n7. \n8. \n9. \n10. \n11. \n12. \n13. \n14. \n15. \n16. \n17. \n\nPreferred output boundary: corrected int32 output of .\n\n## Why This Boundary Is Safe\n\nGraph inspection in  shows a linear, quantized handoff from  through Q/DQ and SiLU ( + ) to .  appears after , so Stage 7 stops before branch/Split expansion.\n\n## Deferred\n\n-  output Q/DQ and activation.\n-  and branch/Concat handling.\n- Graph-wide scheduler and full engine integration.\n- Dedicated activation/requant optimization.\n''')
+(stage/'activation_requant_boundary_plan.md').write_text('''# Activation Requant Boundary Plan\n\nStage 7 includes two activation/requant fallback buckets:\n\n- :  corrected int32 -> Conv0 Q/DQ -> SiLU -> Act0 Q -> signed storage for .\n- :  corrected int32 -> Conv1 Q/DQ -> SiLU -> Act1 Q -> signed storage for .\n\nImplementation policy:\n\n- scalar float fallback for SiLU and dequant/requant in Stage 7;\n- exact /nearest-even quantization to match Stage 6 policy and ONNX CPU oracle;\n- clamp to ;\n- store Conv input as signed int8 using ;\n- measure each activation/requant bucket separately;\n- do not make this a full activation optimization stage.\n\nIf activation/requant remains dominant after expansion, recommend .\n''')
+(stage/'zero_point_scale_flow_report.md').write_text('''# Zero Point And Scale Flow Report\n\nInput model: \n\nRecovered from Stage 6 and Stage 7 graph inspection:\n\n| Boundary | Scale | Zero point | Storage for IME | Notes |\n|---|---:|---:|---:|---|\n|  |  |  |  signed int8 | model input Q/DQ |\n|  output |  |  | activation fallback input | per-tensor output Q |\n|  output |  |  |  signed int8 | feeds  |\n|  output |  |  | activation fallback input | per-tensor output Q |\n|  output |  |  |  signed int8 | feeds  |\n|  output |  |  | output boundary deferred | Stage 7 compares corrected int32/dequant |\n\nWeights for selected Conv nodes use signed int8 with zero-point 0 per Stage 6/7 extraction. Raw IME kernels compute ; zero-point correction is applied via the existing selected-node correction path before activation/requant or output comparison.\n\nNo full-graph requant policy is claimed in Stage 7.\n''')
+(stage/'tensor_contract_report.md').write_text('''# Tensor Contract Report\n\nSelected subset: \n\n| Tensor | Shape | Dtype/domain | Producer | Consumer | Scale/ZP | Layout | Lifetime |\n|---|---|---|---|---|---|---|---|\n|  |  model, cropped fixture  | float/Q/DQ | model input |  |  | NCHW model, NHWC signed fixture | input |\n| Conv0 input signed | fixture  |  storage | Stage 7 fixture | Conv0 runner | storage ZP  | NHWC | hot |\n|  corrected | fixture  |  | Conv0 | Act0 fallback | output Q scale/ZP  | NHWC | workspace |\n| Act0 signed handoff | fixture  |  storage | Act0 fallback | Conv1 runner | act scale/ZP , storage ZP  | NHWC | workspace |\n|  corrected | fixture  |  | Conv1 | Act1 fallback | output Q scale/ZP  | NHWC | workspace |\n| Act1 signed handoff | fixture  |  storage | Act1 fallback | Conv2 runner | act scale/ZP , storage ZP  | NHWC | workspace |\n|  corrected | fixture  |  | Conv2 | Stage 7 output | output Q scale/ZP  | NHWC | output |\n\nWorkspace needed: persistent prepacked weights for Conv0/Conv1/Conv2, three reusable Conv workspaces, corrected int32 buffers for Conv0/Conv1, signed activation handoff buffers for Conv1/Conv2, and raw int32 buffers for all Conv nodes.\n''')
+(stage/'stage6_baseline_replay_report.md').write_text('''# Stage 6 Baseline Replay Report\n\nRecovered baseline from repo-local Stage 6 reports before Stage 7 implementation:\n\n- Stage 6 commit: \n- selected subset: \n- board scalar total: \n- board IME total: \n- speedup: \n- Conv0 IME component: \n- activation/requant fallback: \n- Conv1 IME component: \n- Stage 5 Conv0 replay IME: \n\nStage 7 will also run  on the board as a replay smoke and record raw stdout under the Stage 7 log root when board access is available.\n''')
+PY
+cp /data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE7-BACKBONE-SUBSET-EXPANSION-001/multiblock_subset_selection.md /data/ncnn-logs/ai-team/2026-07-04_08-03-01/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE7-BACKBONE-SUBSET-EXPANSION-001/artifacts/
+cp /data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE7-BACKBONE-SUBSET-EXPANSION-001/activation_requant_boundary_plan.md /data/ncnn-logs/ai-team/2026-07-04_08-03-01/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE7-BACKBONE-SUBSET-EXPANSION-001/artifacts/
+cp /data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE7-BACKBONE-SUBSET-EXPANSION-001/zero_point_scale_flow_report.md /data/ncnn-logs/ai-team/2026-07-04_08-03-01/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE7-BACKBONE-SUBSET-EXPANSION-001/artifacts/
+cp /data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE7-BACKBONE-SUBSET-EXPANSION-001/tensor_contract_report.md /data/ncnn-logs/ai-team/2026-07-04_08-03-01/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE7-BACKBONE-SUBSET-EXPANSION-001/artifacts/
+cp /data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE7-BACKBONE-SUBSET-EXPANSION-001/stage6_baseline_replay_report.md /data/ncnn-logs/ai-team/2026-07-04_08-03-01/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE7-BACKBONE-SUBSET-EXPANSION-001/artifacts/
+
+# 2026-07-04T08:07:56+02:00 cwd=/data/banana-yolo26-spacemit-demo
+overwrite pre-coding Stage 7 reports with literal-safe Python writer
+# 2026-07-04T08:08:15+02:00 cwd=/data/banana-yolo26-spacemit-demo
+rg -n 'apply_u8_as_s8_correction|prepacked_conv_weights|conv2d_i8s8s32_nhwc_ime_prepacked' custom_int8_engine/include custom_int8_engine/kernels custom_int8_engine/src; printf '\n--- correction implementation ---\n'; nl -ba custom_int8_engine/kernels/conv_mmt4d_prepack.cpp | sed -n '1,320p'; printf '\n--- conv kernels header ---\n'; nl -ba custom_int8_engine/include/y26_k1x_conv_kernels.h | sed -n '1,260p'
+# 2026-07-04T08:11:19+02:00 cwd=/data/banana-yolo26-spacemit-demo
+apply_patch add custom_int8_engine/tools/extract_stage7_backbone_subset_oracle.py
+# 2026-07-04T08:11:32+02:00 cwd=/data/banana-yolo26-spacemit-demo
+set -euo pipefail; chmod +x custom_int8_engine/tools/extract_stage7_backbone_subset_oracle.py; .deps/custom_int8_engine/venv-stage7-onnx/bin/python custom_int8_engine/tools/extract_stage7_backbone_subset_oracle.py --model .deps/models/yolo26/int8_rt204_forensics/manual_ort/manual_e2e_rep_conv_matmul_qdq.onnx --dump-dir .deps/custom_int8_engine/stage7_oracle/2026-07-04_08-03-01 --fixture-header-out custom_int8_engine/tests/stage7_backbone_subset_fixture.h --metadata-out stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE7-BACKBONE-SUBSET-EXPANSION-001/stage7_oracle_metadata.json; sha256sum custom_int8_engine/tests/stage7_backbone_subset_fixture.h stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE7-BACKBONE-SUBSET-EXPANSION-001/stage7_oracle_metadata.json; python3 - <<'PY'
+import json
+from pathlib import Path
+m=json.loads(Path('stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE7-BACKBONE-SUBSET-EXPANSION-001/stage7_oracle_metadata.json').read_text())
+print('subset', m['subset_id'])
+for c in m['cases']:
+    print(c['label'], 'conv2_shape', c['conv2_output_shape'], 'conv2_diff', c['conv2_dequant_max_abs_diff_vs_ort_roi'], 'conv2_sha', c['expected_conv2_i32_sha256'])
+print('act1_scale', m['quantization']['act1_output_scale'], 'act1_zp', m['quantization']['act1_output_zero_point_u8'])
+print('conv2_out_scale', m['quantization']['conv2_output_scale'], 'conv2_zp', m['quantization']['conv2_output_zero_point_u8'])
+PY
+# 2026-07-04T08:11:47+02:00 cwd=/data/banana-yolo26-spacemit-demo
+nl -ba custom_int8_engine/CMakeLists.txt | sed -n '1,180p'; printf '\n--- tests ---\n'; nl -ba custom_int8_engine/tests/CMakeLists.txt | sed -n '1,100p'; printf '\n--- stage7 fixture head ---\n'; nl -ba custom_int8_engine/tests/stage7_backbone_subset_fixture.h | sed -n '1,120p'
+# 2026-07-04T08:16:58+02:00 cwd=/data/banana-yolo26-spacemit-demo
+apply_patch add include/y26_k1x_backbone_subset_runner.h
+# 2026-07-04T08:16:58+02:00 cwd=/data/banana-yolo26-spacemit-demo
+apply_patch add src/backbone_subset_runner.cpp
+# 2026-07-04T08:16:58+02:00 cwd=/data/banana-yolo26-spacemit-demo
+apply_patch add tests/test_stage7_backbone_subset_runner.cpp
+# 2026-07-04T08:16:58+02:00 cwd=/data/banana-yolo26-spacemit-demo
+apply_patch add tools/bench_stage7_backbone_subset.cpp
+# 2026-07-04T08:16:58+02:00 cwd=/data/banana-yolo26-spacemit-demo
+apply_patch update custom_int8_engine/CMakeLists.txt and tests/CMakeLists.txt for Stage 7
+# 2026-07-04T08:17:06+02:00 cwd=/data/banana-yolo26-spacemit-demo
+cmake -S custom_int8_engine -B .deps/custom_int8_engine/build-host-native-stage7 -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_CXX_COMPILER=/usr/bin/g++ -DY26_K1X_ENABLE_IME=OFF
+# 2026-07-04T08:17:08+02:00 cwd=/data/banana-yolo26-spacemit-demo
+cmake --build .deps/custom_int8_engine/build-host-native-stage7 -j8
+# 2026-07-04T08:17:26+02:00 cwd=/data/banana-yolo26-spacemit-demo
+ctest --test-dir .deps/custom_int8_engine/build-host-native-stage7 --output-on-failure
+# 2026-07-04T08:17:49+02:00 cwd=/data/banana-yolo26-spacemit-demo
+set -euo pipefail
+source /data/build_scripts/01-env.sh
+CC=${CC:-riscv64-unknown-linux-gnu-gcc}
+command -v "$CC"
+"$CC" --version
+ARCH_FLAGS=${K1_ARCH_FLAGS:-"-march=rv64gcv_zvfh -mabi=lp64d"}
+echo "ARCH_FLAGS=$ARCH_FLAGS"
+echo | "$CC" $ARCH_FLAGS -dM -E - | { rg -n "__riscv_vector|__riscv_zvfh|__riscv_zfh" || true; }
+SYSROOT_OVERLAY=${K1_SYSROOT_OVERLAY:-/data/sysroots/k1x-gtk3-overlay}
+test -d "$SYSROOT_OVERLAY"
+echo "SYSROOT_OVERLAY=$SYSROOT_OVERLAY"
+TARGET="${BANANA_SSH_TARGET:-${BANANA_SSH:-}}"
+if [ -n "$TARGET" ]; then echo "BOARD_TARGET=$TARGET"; else echo WARN_missing_board_target; fi
+# 2026-07-04T08:17:59+02:00 cwd=/data/banana-yolo26-spacemit-demo
+set -euo pipefail
+source /data/build_scripts/01-env.sh
+cmake -S custom_int8_engine -B .deps/custom_int8_engine/build-riscv-stage7 \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DY26_K1X_ENABLE_IME=ON \
+  -DCMAKE_CXX_COMPILER=${CXX:-riscv64-unknown-linux-gnu-g++} \
+  -DCMAKE_CXX_FLAGS="${K1_ARCH_FLAGS:-'-march=rv64gcv_zvfh -mabi=lp64d'}" \
+  -DCMAKE_SYSTEM_NAME=Linux \
+  -DCMAKE_SYSTEM_PROCESSOR=riscv64
+cmake --build .deps/custom_int8_engine/build-riscv-stage7 -j$(nproc)
+file .deps/custom_int8_engine/build-riscv-stage7/tests/test_stage7_backbone_subset_runner .deps/custom_int8_engine/build-riscv-stage7/bench_stage7_backbone_subset
+# 2026-07-04T08:18:45+02:00 cwd=/data/banana-yolo26-spacemit-demo
+set -euo pipefail
+source /data/build_scripts/01-env.sh
+TARGET="${BANANA_SSH_TARGET:-${BANANA_SSH:-svt@banana}}"
+REMOTE="/home/svt/yolo26-custom-int8-stage7/2026-07-04_08-03-01"
+echo "TARGET=$TARGET"
+echo "REMOTE=$REMOTE"
+sha256sum .deps/custom_int8_engine/build-riscv-stage7/tests/test_stage7_backbone_subset_runner           .deps/custom_int8_engine/build-riscv-stage7/tests/test_ime_runtime_probe           .deps/custom_int8_engine/build-riscv-stage7/tests/test_vmadot_4x4x8_board_probe           .deps/custom_int8_engine/build-riscv-stage7/bench_stage6_multiblock           .deps/custom_int8_engine/build-riscv-stage7/bench_stage7_backbone_subset
+ssh "$TARGET" "mkdir -p $REMOTE"
+scp .deps/custom_int8_engine/build-riscv-stage7/tests/test_stage7_backbone_subset_runner     .deps/custom_int8_engine/build-riscv-stage7/tests/test_ime_runtime_probe     .deps/custom_int8_engine/build-riscv-stage7/tests/test_vmadot_4x4x8_board_probe     .deps/custom_int8_engine/build-riscv-stage7/bench_stage6_multiblock     .deps/custom_int8_engine/build-riscv-stage7/bench_stage7_backbone_subset     "$TARGET:$REMOTE/"
+ssh "$TARGET" "cd $REMOTE && uname -a && cat /sys/devices/system/cpu/online && taskset -c 0 ./test_ime_runtime_probe && taskset -c 0 ./test_vmadot_4x4x8_board_probe && for cpu in 0 1 2 3; do echo STAGE7_TEST_CPU=$cpu; taskset -c $cpu ./test_stage7_backbone_subset_runner; done; echo STAGE6_REPLAY_BENCH_CPU0; taskset -c 0 ./bench_stage6_multiblock 1; echo STAGE7_BENCH_CPU0; taskset -c 0 ./bench_stage7_backbone_subset 1"
+# 2026-07-04T08:19:27+02:00 cwd=/data/banana-yolo26-spacemit-demo
+create /tmp/stage7_board_run.sh with literal remote loop and rerun board Stage 7 tests
+# 2026-07-04T08:19:48+02:00 cwd=/data/banana-yolo26-spacemit-demo
+create literal /tmp/stage7_board_run.sh template with RUN_TS substitution
+# 2026-07-04T08:19:48+02:00 cwd=/data/banana-yolo26-spacemit-demo
+/tmp/stage7_board_run.sh
+# 2026-07-04T08:20:29+02:00 cwd=/data/banana-yolo26-spacemit-demo
+git status --short --branch; git diff --stat
+# 2026-07-04T08:21:53+02:00 cwd=/data/banana-yolo26-spacemit-demo
+write Stage 7 reports and task-run summaries from oracle/board evidence
+# 2026-07-04T08:22:10+02:00 cwd=/data/banana-yolo26-spacemit-demo
+set -euo pipefail
+git diff --check
+git diff --cached --check || true
+git status --short --branch
+find custom_int8_engine stages -type l -print
+{
+  git diff --name-only
+  git ls-files --others --exclude-standard custom_int8_engine stages
+} | sort -u | rg -v '(^|/)commands\.txt$|stage7_oracle_metadata\.json$' > /tmp/stage7_changed_files.txt
+printf 'changed_file_count=%s\n' "$(wc -l < /tmp/stage7_changed_files.txt)"
+if [ -s /tmp/stage7_changed_files.txt ]; then
+  xargs -a /tmp/stage7_changed_files.txt rg -n "BEGIN (RSA|OPENSSH|PRIVATE)|PRIVATE KEY|AKIA|SECRET|TOKEN|PASSWORD|\.git-credentials|/home/svt/.codex|/data/.codex|/control/state/secrets" || true
+fi
+printf '\nlarge changed files over 1 MiB:\n'
+while IFS= read -r f; do
+  [ -f "$f" ] || continue
+  size=$(stat -c %s "$f")
+  if [ "$size" -gt 1048576 ]; then printf '%s %s\n' "$size" "$f"; fi
+done < /tmp/stage7_changed_files.txt
+# 2026-07-04T08:22:34+02:00 cwd=/data/banana-yolo26-spacemit-demo
+write Stage 7 source_hygiene_report and mirror command logs to task artifacts
+# 2026-07-04T08:22:43+02:00 cwd=/data/banana-yolo26-spacemit-demo
+/data/lab/scripts/scan-export-candidates.sh /data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE7-BACKBONE-SUBSET-EXPANSION-001/artifacts
+# 2026-07-04T08:23:29+02:00 cwd=/data/banana-yolo26-spacemit-demo
+git diff --check && git diff --cached --check || true && git status --short --branch && find custom_int8_engine stages -type l -print
+# 2026-07-04T08:23:30+02:00 cwd=/data/banana-yolo26-spacemit-demo
+refresh task-run command logs before export
+# 2026-07-04T08:23:30+02:00 cwd=/data/banana-yolo26-spacemit-demo
+/data/lab/scripts/export-result-packet.sh BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE7-BACKBONE-SUBSET-EXPANSION-001
+# 2026-07-04T08:23:59+02:00 cwd=/data/banana-yolo26-spacemit-demo
+write result_packet.txt for Stage 7 repo/task artifacts
+# 2026-07-04T08:23:59+02:00 cwd=/data/banana-yolo26-spacemit-demo
+git add Stage 7 source, fixtures, reports, and commands
+# 2026-07-04T08:23:59+02:00 cwd=/data/banana-yolo26-spacemit-demo
+git status --short --branch before Stage 7 commit
+# 2026-07-04T08:23:59+02:00 cwd=/data/banana-yolo26-spacemit-demo
+git commit -m "Expand custom INT8 backbone subset to model2 cv1"
