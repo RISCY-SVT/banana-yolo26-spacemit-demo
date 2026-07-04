@@ -114,6 +114,7 @@ Y26Stage7BackboneSubsetConfig stage7_full_shape_config(
         fixture.act0_output_zero_point_u8,
         fixture.act1_output_scale,
         fixture.act1_output_zero_point_u8,
+        Y26_ACTIVATION_MODE_SCALAR_FLOAT_REFERENCE,
     };
 }
 

@@ -11,6 +11,7 @@ option(Y26_K1X_ENABLE_IME "Build the guarded Stage 1 smt.vmadot IME path" OFF)
 option(Y26_K1X_BUILD_TOOLS "Build custom INT8 engine helper tools" ON)
 
 add_library(y26_k1x_custom_int8_engine
+    kernels/activation_requant.cpp
     kernels/conv1x1_i8s8s32_ime.cpp
     kernels/conv1x1_i8s8s32_scalar.cpp
     kernels/conv3x3_i8s8s32_ime.cpp
@@ -123,6 +124,16 @@ if(Y26_K1X_BUILD_TOOLS)
     target_compile_options(bench_stage7_backbone_subset PRIVATE -Wall -Wextra -Wpedantic)
     if(Y26_K1X_ENABLE_IME)
         target_compile_definitions(bench_stage7_backbone_subset PRIVATE Y26_K1X_ENABLE_IME_ASM=1)
+    endif()
+
+    add_executable(bench_stage8_activation_requant
+        tools/bench_stage8_activation_requant.cpp
+    )
+    target_link_libraries(bench_stage8_activation_requant PRIVATE y26_k1x_custom_int8_engine)
+    target_include_directories(bench_stage8_activation_requant PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/tests")
+    target_compile_options(bench_stage8_activation_requant PRIVATE -Wall -Wextra -Wpedantic)
+    if(Y26_K1X_ENABLE_IME)
+        target_compile_definitions(bench_stage8_activation_requant PRIVATE Y26_K1X_ENABLE_IME_ASM=1)
     endif()
 endif()
 

@@ -78,11 +78,24 @@ bool handoff_valid(const Y26Stage7ConvNodeConfig& producer,
            consumer.input_storage_zero_point_s8 == act_zero_point - 128;
 }
 
+bool activation_mode_valid(int mode) {
+    return mode == Y26_ACTIVATION_MODE_SCALAR_FLOAT_REFERENCE ||
+           mode == Y26_ACTIVATION_MODE_FIXED_REQUANT_ONLY ||
+           mode == Y26_ACTIVATION_MODE_INT8_LUT ||
+           mode == Y26_ACTIVATION_MODE_FUSED_LUT_PACK;
+}
+
+int normalized_activation_mode(const Y26Stage7BackboneSubsetConfig& cfg) {
+    return activation_mode_valid(cfg.activation_mode) ? cfg.activation_mode
+                                                      : Y26_ACTIVATION_MODE_SCALAR_FLOAT_REFERENCE;
+}
+
 bool config_valid(const Y26Stage7BackboneSubsetConfig* cfg) {
     return cfg != nullptr && conv_config_valid(cfg->conv0) && conv_config_valid(cfg->conv1) &&
            conv_config_valid(cfg->conv2) &&
            handoff_valid(cfg->conv0, cfg->conv1, cfg->act0_output_scale, cfg->act0_output_zero_point_u8) &&
-           handoff_valid(cfg->conv1, cfg->conv2, cfg->act1_output_scale, cfg->act1_output_zero_point_u8);
+           handoff_valid(cfg->conv1, cfg->conv2, cfg->act1_output_scale, cfg->act1_output_zero_point_u8) &&
+           activation_mode_valid(normalized_activation_mode(*cfg));
 }
 
 std::int8_t weight_at(const Y26Stage7ConvNodeConfig& cfg, int oc, int kh, int kw, int ic) {
@@ -107,6 +120,10 @@ std::int32_t* allocate_i32(std::size_t count) {
 
 std::int8_t* allocate_i8(std::size_t count) {
     return static_cast<std::int8_t*>(allocate_aligned(count));
+}
+
+Y26FixedRequantParams* allocate_fixed_requant(std::size_t count) {
+    return static_cast<Y26FixedRequantParams*>(allocate_aligned(count * sizeof(Y26FixedRequantParams)));
 }
 
 double elapsed_us(Clock::time_point begin, Clock::time_point end) {
@@ -168,42 +185,44 @@ int apply_correction(const Y26Stage7ConvNodeConfig& cfg,
                                                      cfg.activation_zero_point_u8);
 }
 
-std::uint8_t quantize_u8_nearest_even(float value, float scale, int zero_point) {
-    const double scaled = static_cast<double>(value) / static_cast<double>(scale);
-    const long rounded = static_cast<long>(std::nearbyint(scaled)) + static_cast<long>(zero_point);
-    const long clamped = std::max<long>(0, std::min<long>(255, rounded));
-    return static_cast<std::uint8_t>(clamped);
+Y26ActivationRequantParams activation_params_for(const Y26Stage7ConvNodeConfig& producer,
+                                                 float act_output_scale,
+                                                 int act_output_zero_point_u8) {
+    return Y26ActivationRequantParams{
+        output_count_for_kernel(producer.params, producer.kernel_h, producer.kernel_w),
+        producer.params.output_c,
+        producer.input_scale,
+        producer.weight_scales,
+        producer.output_scale,
+        producer.output_zero_point_u8,
+        act_output_scale,
+        act_output_zero_point_u8,
+    };
 }
 
 int apply_activation_requant(const Y26Stage7ConvNodeConfig& producer,
                              float act_output_scale,
                              int act_output_zero_point_u8,
                              const std::int32_t* producer_i32,
-                             std::int8_t* consumer_input_s8) {
-    if (producer_i32 == nullptr || consumer_input_s8 == nullptr || act_output_scale <= 0.0f ||
-        act_output_zero_point_u8 < 0 || act_output_zero_point_u8 > 255) {
-        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+                             std::int8_t* consumer_input_s8,
+                             int activation_mode,
+                             const std::int8_t* lut_256_s8,
+                             const Y26FixedRequantParams* fixed_requant_params,
+                             Y26ActivationSubbucketTimingUs* subbucket_timing) {
+    if (subbucket_timing != nullptr) {
+        *subbucket_timing = Y26ActivationSubbucketTimingUs {};
     }
-    const int output_m = output_h_for_kernel(producer.params, producer.kernel_h) *
-                         output_w_for_kernel(producer.params, producer.kernel_w);
-    const int channels = producer.params.output_c;
-    for (int m = 0; m < output_m; ++m) {
-        for (int oc = 0; oc < channels; ++oc) {
-            const float acc_scale = producer.input_scale * producer.weight_scales[oc];
-            const float conv_float = static_cast<float>(producer_i32[m * channels + oc]) * acc_scale;
-            const std::uint8_t conv_q =
-                quantize_u8_nearest_even(conv_float, producer.output_scale, producer.output_zero_point_u8);
-            const float conv_dq =
-                static_cast<float>(static_cast<int>(conv_q) - producer.output_zero_point_u8) *
-                producer.output_scale;
-            const float sigmoid = 1.0f / (1.0f + std::exp(-conv_dq));
-            const float activated = conv_dq * sigmoid;
-            const std::uint8_t act_q = quantize_u8_nearest_even(
-                activated, act_output_scale, act_output_zero_point_u8);
-            consumer_input_s8[m * channels + oc] = static_cast<std::int8_t>(static_cast<int>(act_q) - 128);
-        }
+    const Y26ActivationRequantParams params =
+        activation_params_for(producer, act_output_scale, act_output_zero_point_u8);
+    if (activation_mode == Y26_ACTIVATION_MODE_INT8_LUT ||
+        activation_mode == Y26_ACTIVATION_MODE_FUSED_LUT_PACK) {
+        return y26_activation_requant_silu_int8_lut(&params, producer_i32, lut_256_s8, consumer_input_s8);
     }
-    return Y26_CONV_STATUS_SUCCESS;
+    if (activation_mode == Y26_ACTIVATION_MODE_FIXED_REQUANT_ONLY) {
+        return y26_activation_requant_silu_fixed_requant_only(
+            &params, fixed_requant_params, producer_i32, consumer_input_s8);
+    }
+    return y26_activation_requant_silu_scalar_float(&params, producer_i32, consumer_input_s8);
 }
 
 int validate_run_args(const Y26Stage7BackboneSubsetConfig* cfg,
@@ -215,7 +234,8 @@ int validate_run_args(const Y26Stage7BackboneSubsetConfig* cfg,
         ws->conv2_weights == nullptr || ws->conv0_workspace == nullptr || ws->conv1_workspace == nullptr ||
         ws->conv2_workspace == nullptr || ws->conv0_raw_i32 == nullptr || ws->conv0_i32 == nullptr ||
         ws->conv1_input_s8 == nullptr || ws->conv1_raw_i32 == nullptr || ws->conv1_i32 == nullptr ||
-        ws->conv2_input_s8 == nullptr || ws->conv2_raw_i32 == nullptr) {
+        ws->conv2_input_s8 == nullptr || ws->conv2_raw_i32 == nullptr ||
+        ws->conv0_fixed_requant == nullptr || ws->conv1_fixed_requant == nullptr) {
         return Y26_CONV_STATUS_INVALID_ARGUMENT;
     }
     return Y26_CONV_STATUS_SUCCESS;
@@ -249,6 +269,8 @@ extern "C" void y26_stage7_backbone_subset_release(Y26Stage7BackboneSubsetWorksp
     free_aligned(ws->conv1_i32);
     free_aligned(ws->conv2_input_s8);
     free_aligned(ws->conv2_raw_i32);
+    free_aligned(ws->conv0_fixed_requant);
+    free_aligned(ws->conv1_fixed_requant);
     std::memset(ws, 0, sizeof(*ws));
 }
 
@@ -275,11 +297,35 @@ extern "C" int y26_stage7_backbone_subset_prepare(const Y26Stage7BackboneSubsetC
         ws->conv1_i32 = allocate_i32(conv1_count);
         ws->conv2_input_s8 = allocate_i8(conv1_count);
         ws->conv2_raw_i32 = allocate_i32(conv2_count);
+        ws->conv0_fixed_requant = allocate_fixed_requant(static_cast<std::size_t>(cfg->conv0.params.output_c));
+        ws->conv1_fixed_requant = allocate_fixed_requant(static_cast<std::size_t>(cfg->conv1.params.output_c));
         if (ws->conv0_weights == nullptr || ws->conv1_weights == nullptr || ws->conv2_weights == nullptr ||
             ws->conv0_workspace == nullptr || ws->conv1_workspace == nullptr || ws->conv2_workspace == nullptr ||
             ws->conv0_raw_i32 == nullptr || ws->conv0_i32 == nullptr || ws->conv1_input_s8 == nullptr ||
             ws->conv1_raw_i32 == nullptr || ws->conv1_i32 == nullptr || ws->conv2_input_s8 == nullptr ||
-            ws->conv2_raw_i32 == nullptr) {
+            ws->conv2_raw_i32 == nullptr || ws->conv0_fixed_requant == nullptr ||
+            ws->conv1_fixed_requant == nullptr) {
+            y26_stage7_backbone_subset_release(ws);
+            return Y26_CONV_STATUS_INVALID_ARGUMENT;
+        }
+        const Y26ActivationRequantParams act0_params =
+            activation_params_for(cfg->conv0, cfg->act0_output_scale, cfg->act0_output_zero_point_u8);
+        const Y26ActivationRequantParams act1_params =
+            activation_params_for(cfg->conv1, cfg->act1_output_scale, cfg->act1_output_zero_point_u8);
+        if (y26_build_silu_u8_to_s8_lut(cfg->conv0.output_scale,
+                                        cfg->conv0.output_zero_point_u8,
+                                        cfg->act0_output_scale,
+                                        cfg->act0_output_zero_point_u8,
+                                        ws->act0_lut_s8) != Y26_CONV_STATUS_SUCCESS ||
+            y26_build_silu_u8_to_s8_lut(cfg->conv1.output_scale,
+                                        cfg->conv1.output_zero_point_u8,
+                                        cfg->act1_output_scale,
+                                        cfg->act1_output_zero_point_u8,
+                                        ws->act1_lut_s8) != Y26_CONV_STATUS_SUCCESS ||
+            y26_build_fixed_requant_params_per_channel(&act0_params, ws->conv0_fixed_requant) !=
+                Y26_CONV_STATUS_SUCCESS ||
+            y26_build_fixed_requant_params_per_channel(&act1_params, ws->conv1_fixed_requant) !=
+                Y26_CONV_STATUS_SUCCESS) {
             y26_stage7_backbone_subset_release(ws);
             return Y26_CONV_STATUS_INVALID_ARGUMENT;
         }
@@ -296,7 +342,10 @@ extern "C" int y26_stage7_backbone_subset_prepare(const Y26Stage7BackboneSubsetC
                               y26_conv_workspace_bytes(ws->conv2_workspace) +
                               conv0_count * sizeof(std::int32_t) * 2 + conv0_count +
                               conv1_count * sizeof(std::int32_t) * 2 + conv1_count +
-                              conv2_count * sizeof(std::int32_t);
+                              conv2_count * sizeof(std::int32_t) +
+                              static_cast<std::size_t>(cfg->conv0.params.output_c) * sizeof(Y26FixedRequantParams) +
+                              static_cast<std::size_t>(cfg->conv1.params.output_c) * sizeof(Y26FixedRequantParams) +
+                              sizeof(ws->act0_lut_s8) + sizeof(ws->act1_lut_s8);
         std::memset(ws->conv0_raw_i32, 0, conv0_count * sizeof(std::int32_t));
         std::memset(ws->conv0_i32, 0, conv0_count * sizeof(std::int32_t));
         std::memset(ws->conv1_input_s8, 0, conv0_count);
@@ -335,6 +384,7 @@ extern "C" int y26_stage7_backbone_subset_run_scalar(const Y26Stage7BackboneSubs
     if (status != Y26_CONV_STATUS_SUCCESS) {
         return status;
     }
+    const int activation_mode = normalized_activation_mode(*cfg);
 
     auto begin = Clock::now();
     status = scalar_raw_dot(cfg->conv0, input_nhwc_s8, ws->conv0_raw_i32);
@@ -350,8 +400,15 @@ extern "C" int y26_stage7_backbone_subset_run_scalar(const Y26Stage7BackboneSubs
     }
 
     begin = Clock::now();
-    status = apply_activation_requant(
-        cfg->conv0, cfg->act0_output_scale, cfg->act0_output_zero_point_u8, ws->conv0_i32, ws->conv1_input_s8);
+    status = apply_activation_requant(cfg->conv0,
+                                      cfg->act0_output_scale,
+                                      cfg->act0_output_zero_point_u8,
+                                      ws->conv0_i32,
+                                      ws->conv1_input_s8,
+                                      activation_mode,
+                                      ws->act0_lut_s8,
+                                      ws->conv0_fixed_requant,
+                                      timing != nullptr ? &timing->act0_subbucket_us : nullptr);
     end = Clock::now();
     if (timing != nullptr) {
         timing->act0_requant_us = elapsed_us(begin, end);
@@ -374,8 +431,15 @@ extern "C" int y26_stage7_backbone_subset_run_scalar(const Y26Stage7BackboneSubs
     }
 
     begin = Clock::now();
-    status = apply_activation_requant(
-        cfg->conv1, cfg->act1_output_scale, cfg->act1_output_zero_point_u8, ws->conv1_i32, ws->conv2_input_s8);
+    status = apply_activation_requant(cfg->conv1,
+                                      cfg->act1_output_scale,
+                                      cfg->act1_output_zero_point_u8,
+                                      ws->conv1_i32,
+                                      ws->conv2_input_s8,
+                                      activation_mode,
+                                      ws->act1_lut_s8,
+                                      ws->conv1_fixed_requant,
+                                      timing != nullptr ? &timing->act1_subbucket_us : nullptr);
     end = Clock::now();
     if (timing != nullptr) {
         timing->act1_requant_us = elapsed_us(begin, end);
@@ -408,6 +472,7 @@ extern "C" int y26_stage7_backbone_subset_run_ime_cluster0_hotpath(const Y26Stag
     if (status != Y26_CONV_STATUS_SUCCESS) {
         return status;
     }
+    const int activation_mode = normalized_activation_mode(*cfg);
 
     auto begin = Clock::now();
     status = y26_conv2d_i8s8s32_nhwc_ime_prepacked_v1(input_nhwc_s8,
@@ -428,8 +493,15 @@ extern "C" int y26_stage7_backbone_subset_run_ime_cluster0_hotpath(const Y26Stag
     }
 
     begin = Clock::now();
-    status = apply_activation_requant(
-        cfg->conv0, cfg->act0_output_scale, cfg->act0_output_zero_point_u8, ws->conv0_i32, ws->conv1_input_s8);
+    status = apply_activation_requant(cfg->conv0,
+                                      cfg->act0_output_scale,
+                                      cfg->act0_output_zero_point_u8,
+                                      ws->conv0_i32,
+                                      ws->conv1_input_s8,
+                                      activation_mode,
+                                      ws->act0_lut_s8,
+                                      ws->conv0_fixed_requant,
+                                      timing != nullptr ? &timing->act0_subbucket_us : nullptr);
     end = Clock::now();
     if (timing != nullptr) {
         timing->act0_requant_us = elapsed_us(begin, end);
@@ -457,8 +529,15 @@ extern "C" int y26_stage7_backbone_subset_run_ime_cluster0_hotpath(const Y26Stag
     }
 
     begin = Clock::now();
-    status = apply_activation_requant(
-        cfg->conv1, cfg->act1_output_scale, cfg->act1_output_zero_point_u8, ws->conv1_i32, ws->conv2_input_s8);
+    status = apply_activation_requant(cfg->conv1,
+                                      cfg->act1_output_scale,
+                                      cfg->act1_output_zero_point_u8,
+                                      ws->conv1_i32,
+                                      ws->conv2_input_s8,
+                                      activation_mode,
+                                      ws->act1_lut_s8,
+                                      ws->conv1_fixed_requant,
+                                      timing != nullptr ? &timing->act1_subbucket_us : nullptr);
     end = Clock::now();
     if (timing != nullptr) {
         timing->act1_requant_us = elapsed_us(begin, end);

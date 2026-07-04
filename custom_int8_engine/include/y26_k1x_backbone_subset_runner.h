@@ -1,5 +1,6 @@
 #pragma once
 
+#include "y26_k1x_activation.h"
 #include "y26_k1x_conv_kernels.h"
 
 #include <cstddef>
@@ -34,6 +35,7 @@ struct Y26Stage7BackboneSubsetConfig {
     int act0_output_zero_point_u8;
     float act1_output_scale;
     int act1_output_zero_point_u8;
+    int activation_mode;
 };
 
 struct Y26Stage7TimingUs {
@@ -43,6 +45,8 @@ struct Y26Stage7TimingUs {
     double act1_requant_us;
     double conv2_us;
     double total_us;
+    Y26ActivationSubbucketTimingUs act0_subbucket_us;
+    Y26ActivationSubbucketTimingUs act1_subbucket_us;
 };
 
 struct Y26Stage7BackboneSubsetWorkspace {
@@ -59,6 +63,10 @@ struct Y26Stage7BackboneSubsetWorkspace {
     std::int32_t* conv1_i32;
     std::int8_t* conv2_input_s8;
     std::int32_t* conv2_raw_i32;
+    Y26FixedRequantParams* conv0_fixed_requant;
+    Y26FixedRequantParams* conv1_fixed_requant;
+    std::int8_t act0_lut_s8[256];
+    std::int8_t act1_lut_s8[256];
     std::size_t conv0_output_count;
     std::size_t conv1_input_count;
     std::size_t conv1_output_count;

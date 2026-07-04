@@ -5,7 +5,7 @@ stage_id: `BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE7-BACKBONE-SUBSET-EXPANSION
 repo: `/data/banana-yolo26-spacemit-demo`
 branch: `yolo26-custom-int8-engine`
 start_head: `246d6011865d5cd246e8a701c501c14f1193a060`
-end_head: `pending-local-commit-see-final-response`
+end_head: `889b6717f1df74459c715342167588ca8b9d9100`
 pushed: false
 full_engine_implemented: false
 ncnn_source_mutated: false

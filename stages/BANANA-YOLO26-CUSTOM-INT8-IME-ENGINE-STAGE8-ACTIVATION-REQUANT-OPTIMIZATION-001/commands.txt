@@ -1,0 +1,282 @@
+stage_id: BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001
+run_ts: 2026-07-04_10-26-52
+log_dir: /data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001
+repo_stage_dir: /data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001
+task_run_dir: /data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001
+
+# Pre-log skill reads performed before stage command capture
+cat /data/.codex/skills/lab_bridge_packet_workflow/SKILL.md # exit=0
+cat /data/.codex/skills/k1x_env_sanity/SKILL.md # exit=0
+cat /data/.codex/skills/k1x_git_hygiene/SKILL.md # exit=0
+
+# Stage commands
+date +%Y-%m-%d_%H-%M-%S # exit=0 output=2026-07-04_10-26-52
+mkdir -p "$LOG_DIR/artifacts" "$LOG_DIR/run_logs" "$REPO_STAGE_DIR" "$TASK_RUN_DIR/artifacts" # exit=0
+
+$ /data/lab/scripts/check-bridge-layout.sh
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/bridge_layout.log
+
+$ /data/lab/scripts/init-shared-log-run.sh contcodex BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001 stage8-activation-requant-optimization
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/init_shared_log.log
+
+$ test -d /exchange/tasks/inbox/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001
+# exit=1 caveat=task-packet-not-found
+
+$ bash -lc cd /data/banana-yolo26-spacemit-demo && pwd
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/pwd.log
+
+$ bash -lc cd /data/banana-yolo26-spacemit-demo && git branch --show-current
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/git_branch.log
+
+$ bash -lc cd /data/banana-yolo26-spacemit-demo && git rev-parse HEAD
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/git_head.log
+
+$ bash -lc cd /data/banana-yolo26-spacemit-demo && git status --short
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/git_status.log
+
+$ bash -lc cd /data/banana-yolo26-spacemit-demo && git log --oneline -n 12
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/git_log.log
+
+$ bash -lc cd /data/banana-yolo26-spacemit-demo && ls -l stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE7-BACKBONE-SUBSET-EXPANSION-001/STAGE7_FINAL_REPORT.md stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE7-BACKBONE-SUBSET-EXPANSION-001/STAGE7_SUMMARY_RU.md stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE7-BACKBONE-SUBSET-EXPANSION-001/block_microbench_report.md custom_int8_engine/include/y26_k1x_backbone_subset_runner.h custom_int8_engine/src/backbone_subset_runner.cpp
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/verify_stage7_reports.log
+
+$ bash -lc cd /data/banana-yolo26-spacemit-demo && rg -n "pending-local-commit-see-final-response|889b6717|2026-07-04_08-03-01|2026-07-04_06-03-29" stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE7-BACKBONE-SUBSET-EXPANSION-001 || true
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/traceability_scan.log
+
+$ sed -n '1,80p' stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE7-BACKBONE-SUBSET-EXPANSION-001/STAGE7_FINAL_REPORT.md
+# exit=0 note=pre-patch read
+$ sed -n '1,80p' stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE7-BACKBONE-SUBSET-EXPANSION-001/STAGE7_SUMMARY_RU.md
+# exit=0 note=pre-patch read
+$ rg -n "pending-local-commit-see-final-response|end_head" stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE7-BACKBONE-SUBSET-EXPANSION-001
+# exit=0 note=pre-patch scan
+$ apply_patch STAGE7_FINAL_REPORT.md end_head traceability fix
+# exit=0
+
+$ cmake -S /data/banana-yolo26-spacemit-demo/custom_int8_engine -B /data/banana-yolo26-spacemit-demo/.deps/custom_int8_engine/build-host-native-stage8 -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_CXX_COMPILER=/usr/bin/g++ -DY26_K1X_ENABLE_IME=OFF
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/host_stage8_cmake.log
+
+$ cmake --build /data/banana-yolo26-spacemit-demo/.deps/custom_int8_engine/build-host-native-stage8 -j8
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/host_stage8_build.log
+
+$ ctest --test-dir /data/banana-yolo26-spacemit-demo/.deps/custom_int8_engine/build-host-native-stage8 --output-on-failure
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/host_stage8_ctest.log
+
+$ bash -lc set -euo pipefail; source /data/build_scripts/01-env.sh; CC=${CC:-riscv64-unknown-linux-gnu-gcc}; command -v "$CC"; "$CC" --version; ARCH_FLAGS=${K1_ARCH_FLAGS:-"-march=rv64gcv_zvfh -mabi=lp64d"}; echo "ARCH_FLAGS=$ARCH_FLAGS"; echo | "$CC" $ARCH_FLAGS -dM -E - | { rg -n "__riscv_vector|__riscv_zvfh|__riscv_zfh" || true; }; SYSROOT_OVERLAY=${K1_SYSROOT_OVERLAY:-/data/sysroots/k1x-gtk3-overlay}; [ -d "$SYSROOT_OVERLAY" ]; echo "SYSROOT_OVERLAY=$SYSROOT_OVERLAY"; TARGET="${BANANA_SSH_TARGET:-${BANANA_SSH:-}}"; echo "BOARD_TARGET=$TARGET"; [ -n "$TARGET" ]
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/k1x_env_sanity.log
+
+$ bash -lc set -euo pipefail; cd /data/banana-yolo26-spacemit-demo; source /data/build_scripts/01-env.sh; cmake -S custom_int8_engine -B .deps/custom_int8_engine/build-riscv-stage8 -DCMAKE_BUILD_TYPE=Release -DY26_K1X_ENABLE_IME=ON -DCMAKE_CXX_COMPILER=${CXX:-riscv64-unknown-linux-gnu-g++} -DCMAKE_CXX_FLAGS="${K1_ARCH_FLAGS:-"'-march=rv64gcv_zvfh -mabi=lp64d'"}" -DCMAKE_SYSTEM_NAME=Linux -DCMAKE_SYSTEM_PROCESSOR=riscv64
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/cross_stage8_cmake.log
+
+$ bash -lc set -euo pipefail; cd /data/banana-yolo26-spacemit-demo; source /data/build_scripts/01-env.sh; cmake --build .deps/custom_int8_engine/build-riscv-stage8 -j$(nproc)
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/cross_stage8_build.log
+
+$ bash -lc cd /data/banana-yolo26-spacemit-demo && file .deps/custom_int8_engine/build-riscv-stage8/tests/test_stage7_backbone_subset_runner .deps/custom_int8_engine/build-riscv-stage8/bench_stage7_backbone_subset
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/cross_stage8_file.log
+
+$ ssh [dev] glibc: ldd (Ubuntu GLIBC 2.39-0ubuntu8.7) 2.39
+[dev] node : /usr/bin/node  v24.15.0 | npm: 11.17.0
+[dev] codex: /home/svt/.npm-global/bin/codex
+[dev] claude: /home/svt/.npm-global/bin/claude
+[dev] riscv default: /opt/riscv -> /opt/SpacemiT
+svt@banana mkdir -p '/home/svt/yolo26-custom-int8-stage8/2026-07-04_10-26-52' && uname -a && cat /sys/devices/system/cpu/online
+# exit=255 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/board_mkdir.log
+
+$ ssh svt@banana mkdir -p '/home/svt/yolo26-custom-int8-stage8/2026-07-04_10-26-52' && uname -a && cat /sys/devices/system/cpu/online
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/board_mkdir_retry.log
+
+$ scp /data/banana-yolo26-spacemit-demo/.deps/custom_int8_engine/build-riscv-stage8/tests/test_stage7_backbone_subset_runner /data/banana-yolo26-spacemit-demo/.deps/custom_int8_engine/build-riscv-stage8/bench_stage7_backbone_subset svt@banana:/home/svt/yolo26-custom-int8-stage8/2026-07-04_10-26-52/
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/board_deploy_retry.log
+
+$ ssh svt@banana cd '/home/svt/yolo26-custom-int8-stage8/2026-07-04_10-26-52' && taskset -c 0 ./test_stage7_backbone_subset_runner
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/board_stage7_cpu0_correctness_retry.log
+
+$ ssh svt@banana cd '/home/svt/yolo26-custom-int8-stage8/2026-07-04_10-26-52' && taskset -c 0 ./bench_stage7_backbone_subset 1
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/board_stage7_cpu0_bench_retry.log
+
+$ cmake -S /data/banana-yolo26-spacemit-demo/custom_int8_engine -B /data/banana-yolo26-spacemit-demo/.deps/custom_int8_engine/build-host-native-stage8 -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_CXX_COMPILER=/usr/bin/g++ -DY26_K1X_ENABLE_IME=OFF
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/host_stage8_cmake_after_activation.log
+
+$ cmake --build /data/banana-yolo26-spacemit-demo/.deps/custom_int8_engine/build-host-native-stage8 -j8
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/host_stage8_build_after_activation.log
+
+$ ctest --test-dir /data/banana-yolo26-spacemit-demo/.deps/custom_int8_engine/build-host-native-stage8 --output-on-failure
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/host_stage8_ctest_after_activation.log
+
+$ cmake --build /data/banana-yolo26-spacemit-demo/.deps/custom_int8_engine/build-host-native-stage8 -j8
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/host_stage8_build_warning_cleanup.log
+
+$ ctest --test-dir /data/banana-yolo26-spacemit-demo/.deps/custom_int8_engine/build-host-native-stage8 --output-on-failure
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/host_stage8_ctest_warning_cleanup.log
+
+$ /data/banana-yolo26-spacemit-demo/.deps/custom_int8_engine/build-host-native-stage8/bench_stage8_activation_requant 1 3
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/host_stage8_activation_bench_smoke.log
+
+$ bash -lc set -euo pipefail; cd /data/banana-yolo26-spacemit-demo; source /data/build_scripts/01-env.sh; cmake -S custom_int8_engine -B .deps/custom_int8_engine/build-riscv-stage8 -DCMAKE_BUILD_TYPE=Release -DY26_K1X_ENABLE_IME=ON -DCMAKE_CXX_COMPILER=${CXX:-riscv64-unknown-linux-gnu-g++} -DCMAKE_CXX_FLAGS="${K1_ARCH_FLAGS:-"'-march=rv64gcv_zvfh -mabi=lp64d'"}" -DCMAKE_SYSTEM_NAME=Linux -DCMAKE_SYSTEM_PROCESSOR=riscv64
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/cross_stage8_cmake_after_activation.log
+
+$ bash -lc set -euo pipefail; cd /data/banana-yolo26-spacemit-demo; source /data/build_scripts/01-env.sh; cmake --build .deps/custom_int8_engine/build-riscv-stage8 -j$(nproc)
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/cross_stage8_build_after_activation.log
+
+$ bash -lc cd /data/banana-yolo26-spacemit-demo && file .deps/custom_int8_engine/build-riscv-stage8/tests/test_stage8_activation_requant .deps/custom_int8_engine/build-riscv-stage8/bench_stage8_activation_requant
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/cross_stage8_file_after_activation.log
+
+$ cmake --build /data/banana-yolo26-spacemit-demo/.deps/custom_int8_engine/build-host-native-stage8 -j8
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/host_stage8_build_ime_lut_test.log
+
+$ ctest --test-dir /data/banana-yolo26-spacemit-demo/.deps/custom_int8_engine/build-host-native-stage8 --output-on-failure
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/host_stage8_ctest_ime_lut_test.log
+
+$ bash -lc set -euo pipefail; cd /data/banana-yolo26-spacemit-demo; source /data/build_scripts/01-env.sh; cmake --build .deps/custom_int8_engine/build-riscv-stage8 -j$(nproc)
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/cross_stage8_build_ime_lut_test.log
+
+$ scp /data/banana-yolo26-spacemit-demo/.deps/custom_int8_engine/build-riscv-stage8/tests/test_stage8_activation_requant /data/banana-yolo26-spacemit-demo/.deps/custom_int8_engine/build-riscv-stage8/tests/test_stage7_backbone_subset_runner /data/banana-yolo26-spacemit-demo/.deps/custom_int8_engine/build-riscv-stage8/bench_stage8_activation_requant /data/banana-yolo26-spacemit-demo/.deps/custom_int8_engine/build-riscv-stage8/bench_stage7_backbone_subset svt@banana:/home/svt/yolo26-custom-int8-stage8/2026-07-04_10-26-52/
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/board_deploy_stage8.log
+
+$ ssh svt@banana cd '/home/svt/yolo26-custom-int8-stage8/2026-07-04_10-26-52' && taskset -c 0 ./test_stage8_activation_requant
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/board_stage8_cpu0_correctness.log
+
+$ ssh svt@banana cd '/home/svt/yolo26-custom-int8-stage8/2026-07-04_10-26-52' && taskset -c 1 ./test_stage8_activation_requant
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/board_stage8_cpu1_correctness.log
+
+$ ssh svt@banana cd '/home/svt/yolo26-custom-int8-stage8/2026-07-04_10-26-52' && taskset -c 2 ./test_stage8_activation_requant
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/board_stage8_cpu2_correctness.log
+
+$ ssh svt@banana cd '/home/svt/yolo26-custom-int8-stage8/2026-07-04_10-26-52' && taskset -c 3 ./test_stage8_activation_requant
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/board_stage8_cpu3_correctness.log
+
+$ ssh svt@banana cd '/home/svt/yolo26-custom-int8-stage8/2026-07-04_10-26-52' && taskset -c 0 ./bench_stage8_activation_requant 1 3
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/board_stage8_cpu0_bench.log
+
+$ ssh svt@banana cd '/home/svt/yolo26-custom-int8-stage8/2026-07-04_10-26-52' && taskset -c 0 ./bench_stage7_backbone_subset 1
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/board_stage8_cpu0_stage7_bench_replay.log
+
+$ bash -lc cd /data/banana-yolo26-spacemit-demo && git diff --check
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/git_diff_check.log
+
+$ bash -lc cd /data/banana-yolo26-spacemit-demo && git diff --cached --check || true
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/git_diff_cached_check.log
+
+$ bash -lc cd /data/banana-yolo26-spacemit-demo && find custom_int8_engine stages -type l -print
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/symlink_scan.log
+
+$ bash -lc cd /data/banana-yolo26-spacemit-demo && git status --short --branch
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/git_status_short_branch.log
+
+$ bash -lc cd /data/banana-yolo26-spacemit-demo && paths=(custom_int8_engine stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001); rg -n "BEGIN (RSA|OPENSSH|PRIVATE)|PRIVATE KEY|AKIA|SECRET|TOKEN|PASSWORD" "${paths[@]}" --glob "!commands.txt" --glob "!*run_logs*" || true
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/secret_like_scan.log
+
+$ bash -lc cd /data/banana-yolo26-spacemit-demo && { git diff --name-only; git ls-files --others --exclude-standard; } | sort -u | while IFS= read -r p; do [ -f "$p" ] || continue; size=$(stat -c %s "$p"); if [ "$size" -gt 1048576 ]; then printf "%s %s\n" "$size" "$p"; fi; done
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/large_changed_files_scan.log
+
+$ bash -lc
+set -euo pipefail
+STAGE_ID="BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001"
+REPO="/data/banana-yolo26-spacemit-demo"
+REPO_STAGE_DIR="$REPO/stages/$STAGE_ID"
+LOG_DIR="/data/ncnn-logs/ai-team/2026-07-04_10-26-52/$STAGE_ID"
+TASK_RUN_DIR="/data/lab/task-runs/$STAGE_ID"
+mkdir -p "$TASK_RUN_DIR/artifacts" "$LOG_DIR/artifacts"
+cp "$REPO_STAGE_DIR"/*.md "$TASK_RUN_DIR/artifacts/"
+cp "$REPO_STAGE_DIR"/*.md "$LOG_DIR/artifacts/"
+cp "$REPO_STAGE_DIR/commands.txt" "$TASK_RUN_DIR/artifacts/commands.txt"
+cp "$REPO_STAGE_DIR/commands.txt" "$LOG_DIR/artifacts/commands.txt"
+printf "%s\n" "$LOG_DIR" > "$TASK_RUN_DIR/shared-log-dir.txt"
+cp "$REPO_STAGE_DIR/shared-log-dir.txt" "$TASK_RUN_DIR/shared-coordination-log-dir.txt" 2>/dev/null || true
+cat > "$TASK_RUN_DIR/raw-evidence-paths.txt" <<EOF
+$LOG_DIR/run_logs
+$REPO/.deps/custom_int8_engine/build-host-native-stage8
+$REPO/.deps/custom_int8_engine/build-riscv-stage8
+/home/svt/yolo26-custom-int8-stage8/2026-07-04_10-26-52 on svt@banana
+EOF
+cat > "$TASK_RUN_DIR/result-summary.md" <<EOF
+classification: stage8-activation-improved-but-still-dominates
+stage_id: $STAGE_ID
+repo: $REPO
+branch: yolo26-custom-int8-engine
+start_head: 889b6717f1df74459c715342167588ca8b9d9100
+pushed: false
+full_engine_implemented: false
+ncnn_source_mutated: false
+production_claim_made: false
+selected_subset: candidate_D_block0_silu_model1_silu_model2_cv1_conv
+stage7_baseline_rechecked: pass
+requant_semantics: pass
+lut_exhaustive_oracle: pass
+activation_mode_selected: int8_lut
+host_tests: pass
+board_tests: pass
+activation_total_before_us: 465901
+activation_total_after_us: 192568
+selected_subset_total_before_us: 620735
+selected_subset_total_after_us: 350092
+activation_share_after: 55.0052%
+microbench_done: yes
+stage9_prompt_created: true
+log_dir: $LOG_DIR
+next_recommended_step: BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE9-ACTIVATION-FUSION-AND-PACK-HANDOFF-001 after review/approval
+EOF
+cp "$REPO_STAGE_DIR/STAGE8_FINAL_REPORT.md" "$TASK_RUN_DIR/final-report.md"
+
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/prepare_result_packet.log
+
+$ /data/lab/scripts/scan-export-candidates.sh /data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/artifacts
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/scan_result_artifacts.log
+
+$ /data/lab/scripts/export-result-packet.sh BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001
+# exit=1 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/export_result_packet.log
+
+$ bash -lc
+set -euo pipefail
+STAGE_ID="BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001"
+REPO_STAGE_DIR="/data/banana-yolo26-spacemit-demo/stages/$STAGE_ID"
+TASK_RUN_DIR="/data/lab/task-runs/$STAGE_ID"
+SHARED="$(cat "$REPO_STAGE_DIR/shared-log-dir.txt")"
+printf "%s\n" "$SHARED" > "$TASK_RUN_DIR/shared-log-dir.txt"
+printf "%s\n" "$SHARED" > "$TASK_RUN_DIR/shared-coordination-log-dir.txt"
+
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/fix_shared_log_pointer.log
+
+$ /data/lab/scripts/export-result-packet.sh BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001
+# exit=1 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/export_result_packet_retry.log
+
+$ bash -lc
+set -euo pipefail
+STAGE_ID="BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001"
+TASK_RUN_DIR="/data/lab/task-runs/$STAGE_ID"
+cat > "$TASK_RUN_DIR/raw-evidence-paths.txt" <<EOF
+/data/ncnn-logs/ai-team/2026-07-04_10-26-52/$STAGE_ID/run_logs
+/data/banana-yolo26-spacemit-demo/.deps/custom_int8_engine/build-host-native-stage8
+/data/banana-yolo26-spacemit-demo/.deps/custom_int8_engine/build-riscv-stage8
+EOF
+
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/fix_raw_evidence_paths.log
+
+$ /data/lab/scripts/export-result-packet.sh BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/export_result_packet_second_retry.log
+
+$ bash -lc cd /data/banana-yolo26-spacemit-demo && git diff --stat && git status --short --branch
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/git_diff_stat_precommit.log
+
+$ bash -lc cd /data/banana-yolo26-spacemit-demo && git add custom_int8_engine/CMakeLists.txt custom_int8_engine/include/y26_k1x_backbone_subset_runner.h custom_int8_engine/include/y26_k1x_activation.h custom_int8_engine/kernels/activation_requant.cpp custom_int8_engine/src/backbone_subset_runner.cpp custom_int8_engine/tests/CMakeLists.txt custom_int8_engine/tests/test_requant_fixed_point.cpp custom_int8_engine/tests/test_stage7_backbone_subset_runner.cpp custom_int8_engine/tests/test_stage8_activation_requant.cpp custom_int8_engine/tools/bench_stage7_backbone_subset.cpp custom_int8_engine/tools/bench_stage8_activation_requant.cpp stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE7-BACKBONE-SUBSET-EXPANSION-001/STAGE7_FINAL_REPORT.md stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/git_add_stage8.log
+
+$ bash -lc cd /data/banana-yolo26-spacemit-demo && git diff --cached --check
+# exit=2 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/git_diff_cached_check_precommit.log
+
+$ bash -lc cd /data/banana-yolo26-spacemit-demo && perl -pi -e "s/[ \t]+$//" stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/commands.txt
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/strip_stage8_commands_trailing_ws.log
+
+$ bash -lc cd /data/banana-yolo26-spacemit-demo && git add stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/commands.txt
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/git_add_stage8_commands_cleanup.log
+
+$ bash -lc cd /data/banana-yolo26-spacemit-demo && git diff --cached --check
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/git_diff_cached_check_precommit_retry.log
+
+$ bash -lc cd /data/banana-yolo26-spacemit-demo && git status --short --branch
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/git_status_staged_precommit_retry.log
+
+$ bash -lc cd /data/banana-yolo26-spacemit-demo && git commit -m "Optimize YOLO26 Stage 7 activation requant path"
+# exit=0 log=/data/ncnn-logs/ai-team/2026-07-04_10-26-52/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/run_logs/git_commit_stage8_retry.log
+
+$ git add stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE8-ACTIVATION-REQUANT-OPTIMIZATION-001/commands.txt && git commit --amend --no-edit && git status --short --branch
+# exit=0 note=final tracked command-log amend; no further tracked command logging after this point

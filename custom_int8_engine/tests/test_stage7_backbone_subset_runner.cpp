@@ -76,7 +76,8 @@ Y26Stage7BackboneSubsetConfig config_from_fixture(
                                          fixture.act0_output_scale,
                                          fixture.act0_output_zero_point_u8,
                                          fixture.act1_output_scale,
-                                         fixture.act1_output_zero_point_u8};
+                                         fixture.act1_output_zero_point_u8,
+                                         Y26_ACTIVATION_MODE_SCALAR_FLOAT_REFERENCE};
 }
 
 std::size_t mismatches_i32(const std::int32_t* actual, const std::int32_t* expected, std::size_t count) {
