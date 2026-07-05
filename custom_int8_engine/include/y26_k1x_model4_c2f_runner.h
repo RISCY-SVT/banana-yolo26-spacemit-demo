@@ -1,0 +1,93 @@
+#pragma once
+
+#include "y26_k1x_model4_branch_runner.h"
+
+#include <cstddef>
+#include <cstdint>
+
+extern "C" {
+
+enum Y26Stage16MergeMode {
+    Y26_STAGE16_MERGE_MODE_A0_MATERIALIZED_FLOAT = 0,
+    Y26_STAGE16_MERGE_MODE_A2_FUSED_QDQ_NHWC = 2,
+};
+
+struct Y26Stage16Model4C2fConfig {
+    const char* subset_id;
+    Y26Stage15Model4BranchConfig stage15;
+    Y26Stage7ConvNodeConfig branch1;
+    Y26Stage7ConvNodeConfig model4_cv2;
+    float concat_output_scale;
+    int concat_output_zero_point_u8;
+    int activation_mode;
+    int merge_mode;
+};
+
+struct Y26Stage16TimingUs {
+    double conv_us;
+    double activation_requant_us;
+    double split_us;
+    double merge_us;
+    double add_us;
+    double concat_us;
+    double post_qdq_us;
+    double pack_layout_us;
+    double correction_us;
+    double copy_us;
+    double branch1_conv_us;
+    double branch1_correction_us;
+    double branch1_activation_us;
+    double model4_cv2_conv_us;
+    double model4_cv2_correction_us;
+    double total_us;
+    double activation_share_pct;
+    double conv_share_pct;
+    double merge_share_pct;
+    double pack_layout_share_pct;
+    Y26Stage15TimingUs stage15_timing_us;
+};
+
+struct Y26Stage16Model4C2fWorkspace {
+    Y26Stage15Model4BranchWorkspace stage15_ws;
+    Y26PrepackedConvWeights* branch1_weights;
+    Y26PrepackedConvWeights* model4_cv2_weights;
+    Y26ConvWorkspace* branch1_workspace;
+    Y26ConvWorkspace* model4_cv2_workspace;
+    std::int32_t* stage15_output_i32;
+    std::int32_t* branch1_raw_i32;
+    std::int32_t* branch1_i32;
+    float* branch1_act_f32;
+    std::int8_t* concat_s8;
+    std::int32_t* model4_cv2_raw_i32;
+    std::size_t stage15_output_count;
+    std::size_t branch1_output_count;
+    std::size_t concat_count;
+    std::size_t model4_cv2_output_count;
+    std::size_t prepacked_bytes;
+    std::size_t workspace_bytes;
+    int prepared;
+};
+
+int y26_stage16_model4_c2f_prepare(const Y26Stage16Model4C2fConfig* cfg,
+                                   Y26Stage16Model4C2fWorkspace* ws);
+
+void y26_stage16_model4_c2f_release(Y26Stage16Model4C2fWorkspace* ws);
+
+std::size_t y26_stage16_model4_c2f_output_count(const Y26Stage16Model4C2fConfig* cfg);
+
+int y26_stage16_model4_c2f_run_scalar(const Y26Stage16Model4C2fConfig* cfg,
+                                      Y26Stage16Model4C2fWorkspace* ws,
+                                      const std::int8_t* input_nhwc_s8,
+                                      std::int32_t* output_i32_nhwc,
+                                      Y26Stage16TimingUs* timing);
+
+int y26_stage16_model4_c2f_run_ime_cluster0_hotpath(const Y26Stage16Model4C2fConfig* cfg,
+                                                    Y26Stage16Model4C2fWorkspace* ws,
+                                                    const std::int8_t* input_nhwc_s8,
+                                                    std::int32_t* output_i32_nhwc,
+                                                    Y26Stage16TimingUs* timing);
+
+const std::int8_t* y26_stage16_model4_c2f_concat_s8(const Y26Stage16Model4C2fWorkspace* ws);
+const std::int32_t* y26_stage16_model4_c2f_branch1_i32(const Y26Stage16Model4C2fWorkspace* ws);
+
+}

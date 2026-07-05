@@ -83,5 +83,6 @@ int y26_stage15_model4_branch_run_ime_cluster0_hotpath(const Y26Stage15Model4Bra
 
 const std::int8_t* y26_stage15_model4_branch_split1_input_s8(const Y26Stage15Model4BranchWorkspace* ws);
 const std::int8_t* y26_stage15_model4_branch_branch0_act_s8(const Y26Stage15Model4BranchWorkspace* ws);
+const std::int32_t* y26_stage15_model4_branch_model4_cv1_i32(const Y26Stage15Model4BranchWorkspace* ws);
 
 }

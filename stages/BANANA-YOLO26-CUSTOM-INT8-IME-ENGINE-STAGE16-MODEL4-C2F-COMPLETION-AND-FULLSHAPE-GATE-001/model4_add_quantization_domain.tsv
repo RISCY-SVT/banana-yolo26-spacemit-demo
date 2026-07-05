@@ -1,0 +1,4 @@
+node	input	domain	scale	zero_point	accepted_stage16_path	notes
+/model.4/m.0/Add	/model.4/Split_output_1_DequantizeLinear_Output	float-domain Q/DQ output	0.022661056369543076	12	float fallback	No integer shortcut accepted.
+/model.4/m.0/Add	/model.4/m.0/cv2/act/Mul_output_0	float-domain SiLU output	n/a	n/a	float fallback	No intermediate Q/DQ before Add in accepted ONNX graph.
+/model.4/m.0/Add	/model.4/m.0/Add_output_0	float-domain output	n/a	n/a	float fallback	Compared through post-Concat Q/DQ and /model.4/cv2 Conv oracle.

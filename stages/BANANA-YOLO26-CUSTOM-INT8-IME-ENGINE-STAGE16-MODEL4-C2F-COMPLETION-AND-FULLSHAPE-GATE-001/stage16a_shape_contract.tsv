@@ -1,0 +1,5 @@
+tensor_name	shape	dtype	layout	scale	zero_point	signedness	role
+/model.4/cv1/conv/Conv_output_0	[1,64,80,80]	int32 accumulator before Q/DQ handoff	NCHW source / NHWC runner	0.06883347779512405	163	uint8 code then signed storage after shift	Stage16A input boundary
+/model.4/Split_output_1	[1,32,80,80]	float then Q/DQ	NCHW source / NHWC runner	0.022661056369543076	12	uint8 code / signed storage	branch-entry split output
+/model.4/m.0/cv1/conv/Conv_output_0	[1,16,80,80]	corrected int32	NCHW source / NHWC runner	0.04368172585964203	128	uint8 code after requant, signed storage after activation	Stage15 branch Conv output
+/model.4/m.0/cv1/act/Mul_output_0	[1,16,80,80]	uint8 code / int8 storage	NCHW source / NHWC runner	0.022688010707497597	12	uint8 code / signed storage	Stage15 branch activation output

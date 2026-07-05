@@ -1,0 +1,6 @@
+candidate	shape_class	correctness_status	total_us	conv_us	activation_requant_us	merge_us	post_qdq_us	pack_layout_us	mismatches	selected	notes
+A0_materialized_float_merge	compact	pass	197.493	128.992	29.098	23.001	13.6673	0.416667	0	yes	Float Add/Concat, post-Concat QDQ, /model.4/cv2 Conv.
+A1_fused_add_concat_scalar_qdq	compact	not_attempted	n/a	n/a	n/a	n/a	n/a	n/a	n/a	no	Deferred because compact A0 passed and Stage16 priority was full-shape gate.
+A2_fused_qdq_nhwc_or_existing_stage13_style	compact	not_attempted	n/a	n/a	n/a	n/a	n/a	n/a	n/a	no	Potential future dataflow repair if model4 full-shape C2f becomes merge-dominated.
+A3_view_or_span_concat_sidecar	compact	not_attempted	n/a	n/a	n/a	n/a	n/a	n/a	n/a	no	Sidecar deferred.
+A4_int8_to_int8_or_lut_add_sidecar	compact	not_attempted	n/a	n/a	n/a	n/a	n/a	n/a	n/a	no	Diagnostic only; no integer shortcut accepted.

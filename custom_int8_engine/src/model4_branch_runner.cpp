@@ -552,3 +552,8 @@ extern "C" const std::int8_t* y26_stage15_model4_branch_branch0_act_s8(
     const Y26Stage15Model4BranchWorkspace* ws) {
     return ws != nullptr ? ws->branch0_act_s8 : nullptr;
 }
+
+extern "C" const std::int32_t* y26_stage15_model4_branch_model4_cv1_i32(
+    const Y26Stage15Model4BranchWorkspace* ws) {
+    return ws != nullptr ? ws->model4_cv1_i32 : nullptr;
+}
