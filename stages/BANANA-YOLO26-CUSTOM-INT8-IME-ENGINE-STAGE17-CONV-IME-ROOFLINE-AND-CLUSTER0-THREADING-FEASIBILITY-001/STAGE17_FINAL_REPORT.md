@@ -5,7 +5,7 @@ stage_id: `BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CL
 repo: `/data/banana-yolo26-spacemit-demo`
 branch: `yolo26-custom-int8-engine`
 start_head: `3ca94995a7b18276dac9ac7c660061cd93377994`
-end_head: `pending-local-commit-see-final-response`
+end_head: `92e7d8763295cc514b09d0db32ed2795b092dc44`
 pushed: false
 full_engine_implemented: false
 graph_scheduler_implemented: false
