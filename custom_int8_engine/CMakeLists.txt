@@ -178,6 +178,16 @@ if(Y26_K1X_BUILD_TOOLS)
     if(Y26_K1X_ENABLE_IME)
         target_compile_definitions(bench_stage12_c2f_block PRIVATE Y26_K1X_ENABLE_IME_ASM=1)
     endif()
+
+    add_executable(bench_stage13_merge_dataflow
+        tools/bench_stage13_merge_dataflow.cpp
+    )
+    target_link_libraries(bench_stage13_merge_dataflow PRIVATE y26_k1x_custom_int8_engine)
+    target_include_directories(bench_stage13_merge_dataflow PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/tests")
+    target_compile_options(bench_stage13_merge_dataflow PRIVATE -Wall -Wextra -Wpedantic)
+    if(Y26_K1X_ENABLE_IME)
+        target_compile_definitions(bench_stage13_merge_dataflow PRIVATE Y26_K1X_ENABLE_IME_ASM=1)
+    endif()
 endif()
 
 if(Y26_K1X_ENABLE_TESTS)

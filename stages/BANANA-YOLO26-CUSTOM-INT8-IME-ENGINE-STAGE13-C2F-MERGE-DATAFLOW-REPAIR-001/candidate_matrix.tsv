@@ -1,0 +1,5 @@
+candidate	correctness_status	total_us	conv_us	activation_requant_us	split_copy_us	add_compute_us	concat_materialize_us	post_concat_qdq_us	pack_for_model2_cv2_us	layout_copy_us	correction_us	model2_cv2_conv_us	merge_total_us	merge_share_pct	pack_layout_share_pct	mismatches	notes
+scalar_reference_A0_materialized_float_merge	pass	1762550	1203810	324890	130623	3988.61	8223.96	87468.5	0	0	3380.51	175369	230304	13.0837	0.0680628	0	scalar reference path
+A0_materialized_float_merge	pass	580557	271623	88133.2	128304	2472.94	4347.74	82552.8	0	0	3344.83	48435	217677	37.643	0.140289	0	Stage 12 materialized float merge with repaired buckets
+A1_fused_add_concat	pass	506310	270687	87989.6	57374	0	4444.1	82698.8	0	0	3441.14	48521	144517	28.6724	0.161052	0	Standalone Add buffer removed
+A2_fused_qdq_nhwc	pass	502570	271459	88080.7	56452.7	0	0	83421.1	0	0	3373.44	48480.9	139874	27.9607	0.162724	0	Standalone Add and Concat buffers removed; cached Split1 QDQ reused

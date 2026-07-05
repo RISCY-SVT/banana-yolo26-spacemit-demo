@@ -7,6 +7,12 @@
 
 extern "C" {
 
+enum Y26Stage12MergeMode {
+    Y26_STAGE12_MERGE_MODE_A0_MATERIALIZED_FLOAT = 0,
+    Y26_STAGE13_MERGE_MODE_A1_FUSED_ADD_CONCAT = 1,
+    Y26_STAGE13_MERGE_MODE_A2_FUSED_QDQ_NHWC = 2,
+};
+
 struct Y26Stage12C2fBlockConfig {
     const char* subset_id;
     Y26Stage11BranchBlockConfig stage11;
@@ -16,6 +22,7 @@ struct Y26Stage12C2fBlockConfig {
     float concat_output_scale;
     int concat_output_zero_point_u8;
     int activation_mode;
+    int merge_mode;
 };
 
 struct Y26Stage12TimingUs {
@@ -33,6 +40,15 @@ struct Y26Stage12TimingUs {
     double conv_share_pct;
     double add_concat_share_pct;
     double pack_layout_share_pct;
+    double split_copy_us;
+    double add_compute_us;
+    double concat_materialize_us;
+    double pack_for_model2_cv2_us;
+    double layout_copy_us;
+    double other_us;
+    double merge_total_us;
+    double merge_share_pct;
+    int merge_mode;
     Y26Stage11TimingUs stage11_timing_us;
 };
 

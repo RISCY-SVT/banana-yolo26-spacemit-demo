@@ -207,7 +207,8 @@ Y26Stage7ConvNodeConfig full_model2_cv2_config(
 
 Y26Stage12C2fBlockConfig full_stage12_config(
     const y26_stage12_c2f_block_fixture::C2fBlockFixture& fixture,
-    int activation_mode) {
+    int activation_mode,
+    int merge_mode) {
     return Y26Stage12C2fBlockConfig{fixture.subset_id,
                                     full_stage11_config(*fixture.stage11_fixture, activation_mode),
                                     full_model2_cv2_config(fixture),
@@ -216,7 +217,53 @@ Y26Stage12C2fBlockConfig full_stage12_config(
                                     fixture.concat_output_scale,
                                     fixture.concat_output_zero_point_u8,
                                     activation_mode,
-                                    Y26_STAGE12_MERGE_MODE_A0_MATERIALIZED_FLOAT};
+                                    merge_mode};
+}
+
+void accumulate_timing(Y26Stage12TimingUs& dst, const Y26Stage12TimingUs& src) {
+    dst.conv_us += src.conv_us;
+    dst.activation_requant_us += src.activation_requant_us;
+    dst.split_us += src.split_us;
+    dst.add_us += src.add_us;
+    dst.concat_us += src.concat_us;
+    dst.post_concat_qdq_us += src.post_concat_qdq_us;
+    dst.pack_layout_us += src.pack_layout_us;
+    dst.correction_us += src.correction_us;
+    dst.model2_cv2_conv_us += src.model2_cv2_conv_us;
+    dst.total_us += src.total_us;
+    dst.split_copy_us += src.split_copy_us;
+    dst.add_compute_us += src.add_compute_us;
+    dst.concat_materialize_us += src.concat_materialize_us;
+    dst.pack_for_model2_cv2_us += src.pack_for_model2_cv2_us;
+    dst.layout_copy_us += src.layout_copy_us;
+    dst.other_us += src.other_us;
+    dst.merge_total_us += src.merge_total_us;
+}
+
+void divide_timing(Y26Stage12TimingUs& timing, double denom) {
+    timing.conv_us /= denom;
+    timing.activation_requant_us /= denom;
+    timing.split_us /= denom;
+    timing.add_us /= denom;
+    timing.concat_us /= denom;
+    timing.post_concat_qdq_us /= denom;
+    timing.pack_layout_us /= denom;
+    timing.correction_us /= denom;
+    timing.model2_cv2_conv_us /= denom;
+    timing.total_us /= denom;
+    timing.split_copy_us /= denom;
+    timing.add_compute_us /= denom;
+    timing.concat_materialize_us /= denom;
+    timing.pack_for_model2_cv2_us /= denom;
+    timing.layout_copy_us /= denom;
+    timing.other_us /= denom;
+    timing.merge_total_us /= denom;
+    timing.activation_share_pct = timing.total_us > 0.0 ? 100.0 * timing.activation_requant_us / timing.total_us : 0.0;
+    timing.conv_share_pct = timing.total_us > 0.0 ? 100.0 * timing.conv_us / timing.total_us : 0.0;
+    const double add_concat = timing.add_compute_us + timing.concat_materialize_us + timing.post_concat_qdq_us;
+    timing.add_concat_share_pct = timing.total_us > 0.0 ? 100.0 * add_concat / timing.total_us : 0.0;
+    timing.pack_layout_share_pct = timing.total_us > 0.0 ? 100.0 * timing.pack_layout_us / timing.total_us : 0.0;
+    timing.merge_share_pct = timing.total_us > 0.0 ? 100.0 * timing.merge_total_us / timing.total_us : 0.0;
 }
 
 BenchResult run_stage12(const Y26Stage12C2fBlockConfig& cfg,
@@ -238,58 +285,43 @@ BenchResult run_stage12(const Y26Stage12C2fBlockConfig& cfg,
         status = use_ime ? y26_stage12_c2f_block_run_ime_cluster0_hotpath(&cfg, &ws, input.data(), output.data(), &timing)
                          : y26_stage12_c2f_block_run_scalar(&cfg, &ws, input.data(), output.data(), &timing);
         checksum += checksum_i32(output);
-        timing_sum.conv_us += timing.conv_us;
-        timing_sum.activation_requant_us += timing.activation_requant_us;
-        timing_sum.split_us += timing.split_us;
-        timing_sum.add_us += timing.add_us;
-        timing_sum.concat_us += timing.concat_us;
-        timing_sum.post_concat_qdq_us += timing.post_concat_qdq_us;
-        timing_sum.pack_layout_us += timing.pack_layout_us;
-        timing_sum.correction_us += timing.correction_us;
-        timing_sum.model2_cv2_conv_us += timing.model2_cv2_conv_us;
-        timing_sum.total_us += timing.total_us;
+        accumulate_timing(timing_sum, timing);
         if (status != Y26_CONV_STATUS_SUCCESS) {
             break;
         }
     }
     const auto end = Clock::now();
     const double denom = static_cast<double>(std::max(1, iterations));
-    timing_sum.conv_us /= denom;
-    timing_sum.activation_requant_us /= denom;
-    timing_sum.split_us /= denom;
-    timing_sum.add_us /= denom;
-    timing_sum.concat_us /= denom;
-    timing_sum.post_concat_qdq_us /= denom;
-    timing_sum.pack_layout_us /= denom;
-    timing_sum.correction_us /= denom;
-    timing_sum.model2_cv2_conv_us /= denom;
-    timing_sum.total_us /= denom;
-    timing_sum.activation_share_pct = timing_sum.total_us > 0.0 ? 100.0 * timing_sum.activation_requant_us / timing_sum.total_us : 0.0;
-    timing_sum.conv_share_pct = timing_sum.total_us > 0.0 ? 100.0 * timing_sum.conv_us / timing_sum.total_us : 0.0;
-    const double add_concat = timing_sum.add_us + timing_sum.concat_us + timing_sum.post_concat_qdq_us;
-    timing_sum.add_concat_share_pct = timing_sum.total_us > 0.0 ? 100.0 * add_concat / timing_sum.total_us : 0.0;
-    timing_sum.pack_layout_share_pct = timing_sum.total_us > 0.0 ? 100.0 * timing_sum.pack_layout_us / timing_sum.total_us : 0.0;
+    divide_timing(timing_sum, denom);
     const std::size_t mismatches = expected.empty() ? 0 : mismatches_i32(output, expected);
     y26_stage12_c2f_block_release(&ws);
     return {elapsed_us(begin, end) / denom, timing_sum, checksum, status, mismatches};
 }
 
-void print_stage12(const char* label, const BenchResult& result) {
-    std::cout << label << " total_us=" << result.mean_us << " status=" << result.status
-              << " mismatches=" << result.mismatches << " checksum=" << result.checksum
+void print_stage13(const char* label, const BenchResult& result) {
+    const char* correctness = result.status == Y26_CONV_STATUS_SUCCESS && result.mismatches == 0 ? "pass" : "fail";
+    std::cout << "candidate=" << label
+              << " correctness_status=" << correctness
+              << " total_us=" << result.mean_us
+              << " status=" << result.status
+              << " mismatches=" << result.mismatches
+              << " checksum=" << result.checksum
               << " conv_us=" << result.timing.conv_us
               << " activation_requant_us=" << result.timing.activation_requant_us
-              << " split_us=" << result.timing.split_us
-              << " add_us=" << result.timing.add_us
-              << " concat_us=" << result.timing.concat_us
+              << " split_copy_us=" << result.timing.split_copy_us
+              << " add_compute_us=" << result.timing.add_compute_us
+              << " concat_materialize_us=" << result.timing.concat_materialize_us
               << " post_concat_qdq_us=" << result.timing.post_concat_qdq_us
-              << " pack_layout_us=" << result.timing.pack_layout_us
+              << " pack_for_model2_cv2_us=" << result.timing.pack_for_model2_cv2_us
+              << " layout_copy_us=" << result.timing.layout_copy_us
               << " correction_us=" << result.timing.correction_us
               << " model2_cv2_conv_us=" << result.timing.model2_cv2_conv_us
+              << " merge_total_us=" << result.timing.merge_total_us
+              << " merge_share_pct=" << result.timing.merge_share_pct
+              << " pack_layout_us=" << result.timing.pack_layout_us
+              << " pack_layout_share_pct=" << result.timing.pack_layout_share_pct
               << " activation_share_pct=" << result.timing.activation_share_pct
               << " conv_share_pct=" << result.timing.conv_share_pct
-              << " add_concat_share_pct=" << result.timing.add_concat_share_pct
-              << " pack_layout_share_pct=" << result.timing.pack_layout_share_pct
               << "\n";
 }
 
@@ -300,8 +332,8 @@ int main(int argc, char** argv) {
     const auto& fixture = y26_stage12_c2f_block_fixture::kSyntheticSeededFixture;
     const std::vector<std::int8_t> input = make_input(Y26Conv2DParams{640, 640, 3, 16, 2, 2, 1, 1}, 0);
 
-    Y26Stage12C2fBlockConfig scalar_cfg = full_stage12_config(fixture, Y26_ACTIVATION_MODE_INT8_LUT);
-    BenchResult scalar = run_stage12(scalar_cfg, input, {}, 1, false);
+    Y26Stage12C2fBlockConfig scalar_cfg = full_stage12_config(
+        fixture, Y26_ACTIVATION_MODE_INT8_LUT, Y26_STAGE12_MERGE_MODE_A0_MATERIALIZED_FLOAT);
     std::vector<std::int32_t> expected(y26_stage12_c2f_block_output_count(&scalar_cfg), 0);
     {
         Y26Stage12C2fBlockWorkspace ws {};
@@ -311,17 +343,28 @@ int main(int argc, char** argv) {
         y26_stage12_c2f_block_release(&ws);
     }
 
-    Y26Stage12C2fBlockConfig a2_cfg =
-        full_stage12_config(fixture, Y26_ACTIVATION_MODE_STAGE9_RVV_F32_LUT);
-    BenchResult scalar_a2 = run_stage12(a2_cfg, input, expected, iterations, false);
-    BenchResult ime_a2 = run_stage12(a2_cfg, input, expected, iterations, true);
+    Y26Stage12C2fBlockConfig a0_cfg = full_stage12_config(
+        fixture, Y26_ACTIVATION_MODE_STAGE9_RVV_F32_LUT, Y26_STAGE12_MERGE_MODE_A0_MATERIALIZED_FLOAT);
+    Y26Stage12C2fBlockConfig a1_cfg = full_stage12_config(
+        fixture, Y26_ACTIVATION_MODE_STAGE9_RVV_F32_LUT, Y26_STAGE13_MERGE_MODE_A1_FUSED_ADD_CONCAT);
+    Y26Stage12C2fBlockConfig a2_cfg = full_stage12_config(
+        fixture, Y26_ACTIVATION_MODE_STAGE9_RVV_F32_LUT, Y26_STAGE13_MERGE_MODE_A2_FUSED_QDQ_NHWC);
+
+    BenchResult scalar_reference = run_stage12(scalar_cfg, input, expected, 1, false);
+    BenchResult a0_ime = run_stage12(a0_cfg, input, expected, iterations, true);
+    BenchResult a1_ime = run_stage12(a1_cfg, input, expected, iterations, true);
+    BenchResult a2_ime = run_stage12(a2_cfg, input, expected, iterations, true);
 
     std::cout << "subset=candidate_G_model2_c2f_add_concat_cv2_conv iterations=" << iterations << "\n";
-    print_stage12("stage12_scalar_reference", scalar);
-    print_stage12("stage12_scalar_A2_rvv_f32_lut", scalar_a2);
-    print_stage12("stage12_IME_A2_rvv_f32_lut", ime_a2);
-    return (scalar.status == Y26_CONV_STATUS_SUCCESS && scalar_a2.status == Y26_CONV_STATUS_SUCCESS &&
-            ime_a2.status == Y26_CONV_STATUS_SUCCESS && scalar_a2.mismatches == 0 && ime_a2.mismatches == 0)
+    std::cout << "timing_bucket_contract=non_overlapping_stage13 split_copy/add_compute/concat_materialize/"
+                 "post_concat_qdq are merge-local; pack_layout excludes split_copy\n";
+    print_stage13("scalar_reference_A0_materialized_float_merge", scalar_reference);
+    print_stage13("A0_materialized_float_merge", a0_ime);
+    print_stage13("A1_fused_add_concat", a1_ime);
+    print_stage13("A2_fused_qdq_nhwc", a2_ime);
+    return (scalar_reference.status == Y26_CONV_STATUS_SUCCESS && a0_ime.status == Y26_CONV_STATUS_SUCCESS &&
+            a1_ime.status == Y26_CONV_STATUS_SUCCESS && a2_ime.status == Y26_CONV_STATUS_SUCCESS &&
+            a0_ime.mismatches == 0 && a1_ime.mismatches == 0 && a2_ime.mismatches == 0)
                ? 0
                : 1;
 }

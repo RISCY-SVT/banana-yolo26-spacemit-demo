@@ -75,12 +75,19 @@ bool activation_mode_valid(int mode) {
            mode == Y26_ACTIVATION_MODE_STAGE9_FUSED_CURRENT_LAYOUT;
 }
 
+bool merge_mode_valid(int mode) {
+    return mode == Y26_STAGE12_MERGE_MODE_A0_MATERIALIZED_FLOAT ||
+           mode == Y26_STAGE13_MERGE_MODE_A1_FUSED_ADD_CONCAT ||
+           mode == Y26_STAGE13_MERGE_MODE_A2_FUSED_QDQ_NHWC;
+}
+
 bool config_valid(const Y26Stage12C2fBlockConfig* cfg) {
     if (cfg == nullptr || y26_stage11_branch_block_output_count(&cfg->stage11) == 0 ||
         !conv_config_valid(cfg->model2_cv2) || cfg->split1_output_scale <= 0.0f ||
         cfg->split1_output_zero_point_u8 < 0 || cfg->split1_output_zero_point_u8 > 255 ||
         cfg->concat_output_scale <= 0.0f || cfg->concat_output_zero_point_u8 < 0 ||
-        cfg->concat_output_zero_point_u8 > 255 || !activation_mode_valid(cfg->activation_mode)) {
+        cfg->concat_output_zero_point_u8 > 255 || !activation_mode_valid(cfg->activation_mode) ||
+        !merge_mode_valid(cfg->merge_mode)) {
         return false;
     }
     const Y26Stage10BackboneExpansionConfig& stage10 = cfg->stage11.stage10;
@@ -239,6 +246,30 @@ void materialize_split_floats(const Y26Stage12C2fBlockConfig& cfg, Y26Stage12C2f
     }
 }
 
+void materialize_split_floats_reuse_split1_qdq(const Y26Stage12C2fBlockConfig& cfg,
+                                               Y26Stage12C2fBlockWorkspace& ws) {
+    const Y26Stage10BackboneExpansionConfig& stage10 = cfg.stage11.stage10;
+    const Y26Stage7ConvNodeConfig& producer = stage10.stage9.conv2;
+    const int channels = producer.params.output_c;
+    const int split0_channels = stage10.split_output1_channel_offset;
+    const int split1_channels = stage10.split_output1_channels;
+    const std::size_t pixels =
+        y26_stage7_backbone_subset_conv2_output_count(&stage10.stage9) / static_cast<std::size_t>(channels);
+    const std::int32_t* src = ws.stage11_ws.stage10_ws.conv2_i32;
+    const std::int8_t* split1_s8 = ws.stage11_ws.stage10_ws.split_output1_s8;
+    for (std::size_t pixel = 0; pixel < pixels; ++pixel) {
+        for (int c = 0; c < split0_channels; ++c) {
+            ws.split0_f32[pixel * split0_channels + c] =
+                accumulator_to_silu_float(producer, src[pixel * channels + c], c);
+        }
+        for (int c = 0; c < split1_channels; ++c) {
+            const int code = static_cast<int>(split1_s8[pixel * split1_channels + c]) + 128;
+            ws.split1_f32[pixel * split1_channels + c] =
+                (code - cfg.split1_output_zero_point_u8) * cfg.split1_output_scale;
+        }
+    }
+}
+
 void materialize_branch1_activation_float(const Y26Stage12C2fBlockConfig& cfg, Y26Stage12C2fBlockWorkspace& ws) {
     const Y26Stage7ConvNodeConfig& branch1 = cfg.stage11.branch1;
     const int channels = branch1.params.output_c;
@@ -274,9 +305,53 @@ void materialize_concat(const Y26Stage12C2fBlockWorkspace& ws, int split0_channe
     }
 }
 
+void materialize_concat_fused_add(const Y26Stage12C2fBlockWorkspace& ws,
+                                  int split0_channels,
+                                  int split1_channels) {
+    const std::size_t pixels = ws.add_count / static_cast<std::size_t>(split1_channels);
+    const int concat_channels = split0_channels + split1_channels + split1_channels;
+    for (std::size_t pixel = 0; pixel < pixels; ++pixel) {
+        float* dst = ws.concat_f32 + pixel * concat_channels;
+        const float* split0 = ws.split0_f32 + pixel * split0_channels;
+        const float* split1 = ws.split1_f32 + pixel * split1_channels;
+        const float* branch1 = ws.branch1_act_f32 + pixel * split1_channels;
+        std::memcpy(dst, split0, static_cast<std::size_t>(split0_channels) * sizeof(float));
+        std::memcpy(dst + split0_channels, split1, static_cast<std::size_t>(split1_channels) * sizeof(float));
+        for (int c = 0; c < split1_channels; ++c) {
+            dst[split0_channels + split1_channels + c] = split1[c] + branch1[c];
+        }
+    }
+}
+
 void quantize_concat(const Y26Stage12C2fBlockConfig& cfg, Y26Stage12C2fBlockWorkspace& ws) {
     for (std::size_t i = 0; i < ws.concat_count; ++i) {
         ws.concat_s8[i] = quantize_concat_s8(ws.concat_f32[i], cfg.concat_output_scale, cfg.concat_output_zero_point_u8);
+    }
+}
+
+void quantize_concat_fused(const Y26Stage12C2fBlockConfig& cfg,
+                           Y26Stage12C2fBlockWorkspace& ws,
+                           int split0_channels,
+                           int split1_channels) {
+    const std::size_t pixels = ws.add_count / static_cast<std::size_t>(split1_channels);
+    const int concat_channels = split0_channels + split1_channels + split1_channels;
+    for (std::size_t pixel = 0; pixel < pixels; ++pixel) {
+        std::int8_t* dst = ws.concat_s8 + pixel * concat_channels;
+        const float* split0 = ws.split0_f32 + pixel * split0_channels;
+        const float* split1 = ws.split1_f32 + pixel * split1_channels;
+        const float* branch1 = ws.branch1_act_f32 + pixel * split1_channels;
+        for (int c = 0; c < split0_channels; ++c) {
+            dst[c] = quantize_concat_s8(split0[c], cfg.concat_output_scale, cfg.concat_output_zero_point_u8);
+        }
+        for (int c = 0; c < split1_channels; ++c) {
+            dst[split0_channels + c] =
+                quantize_concat_s8(split1[c], cfg.concat_output_scale, cfg.concat_output_zero_point_u8);
+        }
+        for (int c = 0; c < split1_channels; ++c) {
+            const float add_value = split1[c] + branch1[c];
+            dst[split0_channels + split1_channels + c] =
+                quantize_concat_s8(add_value, cfg.concat_output_scale, cfg.concat_output_zero_point_u8);
+        }
     }
 }
 
@@ -336,14 +411,19 @@ void accumulate_stage11_timing(Y26Stage12TimingUs& dst, const Y26Stage11TimingUs
 
 void finalize_timing(Y26Stage12TimingUs& timing) {
     timing.conv_us += timing.model2_cv2_conv_us;
-    timing.activation_requant_us += 0.0;
-    timing.pack_layout_us += timing.split_us;
-    const double add_concat = timing.add_us + timing.concat_us + timing.post_concat_qdq_us;
+    timing.split_us += timing.split_copy_us;
+    timing.add_us = timing.add_compute_us;
+    timing.concat_us = timing.concat_materialize_us;
+    timing.pack_layout_us += timing.pack_for_model2_cv2_us + timing.layout_copy_us;
+    timing.merge_total_us = timing.split_copy_us + timing.add_compute_us + timing.concat_materialize_us +
+                            timing.post_concat_qdq_us + timing.layout_copy_us;
+    const double add_concat = timing.add_compute_us + timing.concat_materialize_us + timing.post_concat_qdq_us;
     if (timing.total_us > 0.0) {
         timing.activation_share_pct = 100.0 * timing.activation_requant_us / timing.total_us;
         timing.conv_share_pct = 100.0 * timing.conv_us / timing.total_us;
         timing.add_concat_share_pct = 100.0 * add_concat / timing.total_us;
         timing.pack_layout_share_pct = 100.0 * timing.pack_layout_us / timing.total_us;
+        timing.merge_share_pct = 100.0 * timing.merge_total_us / timing.total_us;
     }
 }
 
@@ -356,25 +436,48 @@ int run_after_stage11(const Y26Stage12C2fBlockConfig& cfg,
     const int split1_channels = cfg.stage11.stage10.split_output1_channels;
 
     const auto split_begin = Clock::now();
-    materialize_split_floats(cfg, ws);
+    if (cfg.merge_mode == Y26_STAGE12_MERGE_MODE_A0_MATERIALIZED_FLOAT) {
+        materialize_split_floats(cfg, ws);
+    } else {
+        materialize_split_floats_reuse_split1_qdq(cfg, ws);
+    }
     const auto split_end = Clock::now();
     materialize_branch1_activation_float(cfg, ws);
     const auto branch_act_end = Clock::now();
-    materialize_add(ws);
-    const auto add_end = Clock::now();
-    materialize_concat(ws, split0_channels, split1_channels);
-    const auto concat_end = Clock::now();
-    quantize_concat(cfg, ws);
-    const auto qdq_end = Clock::now();
+    auto add_end = branch_act_end;
+    auto concat_end = branch_act_end;
+    auto qdq_end = branch_act_end;
+    if (cfg.merge_mode == Y26_STAGE12_MERGE_MODE_A0_MATERIALIZED_FLOAT) {
+        materialize_add(ws);
+        add_end = Clock::now();
+        materialize_concat(ws, split0_channels, split1_channels);
+        concat_end = Clock::now();
+        quantize_concat(cfg, ws);
+        qdq_end = Clock::now();
+    } else if (cfg.merge_mode == Y26_STAGE13_MERGE_MODE_A1_FUSED_ADD_CONCAT) {
+        materialize_concat_fused_add(ws, split0_channels, split1_channels);
+        concat_end = Clock::now();
+        quantize_concat(cfg, ws);
+        qdq_end = Clock::now();
+    } else {
+        quantize_concat_fused(cfg, ws, split0_channels, split1_channels);
+        qdq_end = Clock::now();
+    }
 
     int status = use_ime ? run_model2_cv2_ime(cfg, ws, output_i32_nhwc, timing)
                          : run_model2_cv2_scalar(cfg, ws, output_i32_nhwc, timing);
     if (timing != nullptr) {
-        timing->split_us += elapsed_us(split_begin, split_end);
+        timing->merge_mode = cfg.merge_mode;
+        timing->split_copy_us += elapsed_us(split_begin, split_end);
         timing->activation_requant_us += elapsed_us(split_end, branch_act_end);
-        timing->add_us = elapsed_us(branch_act_end, add_end);
-        timing->concat_us = elapsed_us(add_end, concat_end);
-        timing->post_concat_qdq_us = elapsed_us(concat_end, qdq_end);
+        timing->add_compute_us = cfg.merge_mode == Y26_STAGE12_MERGE_MODE_A0_MATERIALIZED_FLOAT
+                                     ? elapsed_us(branch_act_end, add_end)
+                                     : 0.0;
+        timing->concat_materialize_us =
+            cfg.merge_mode == Y26_STAGE13_MERGE_MODE_A2_FUSED_QDQ_NHWC ? 0.0 : elapsed_us(add_end, concat_end);
+        timing->post_concat_qdq_us =
+            cfg.merge_mode == Y26_STAGE13_MERGE_MODE_A2_FUSED_QDQ_NHWC ? elapsed_us(branch_act_end, qdq_end)
+                                                                       : elapsed_us(concat_end, qdq_end);
     }
     return status;
 }
