@@ -1,0 +1,209 @@
+# Commands manually recorded after log initialization
+# cwd=/data
+sed -n '1,220p' /data/.codex/skills/lab_bridge_packet_workflow/SKILL.md # exit=0
+sed -n '1,220p' /data/.codex/skills/k1x_git_hygiene/SKILL.md # exit=0
+STAGE_ID=BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001
+RUN_TS=2026-07-05_17-39-22
+LOG_DIR=/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001
+STAGE_DIR=/data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001
+TASK_RUN_DIR=/data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001
+[2026-07-05T17:39:39+02:00] cwd=/data /data/lab/scripts/check-bridge-layout.sh
+[2026-07-05T17:39:43+02:00] exit=0 cmd=/data/lab/scripts/check-bridge-layout.sh
+[2026-07-05T17:39:43+02:00] cwd=/data date -Iseconds
+[2026-07-05T17:39:43+02:00] exit=0 cmd=date -Iseconds
+[2026-07-05T17:39:43+02:00] cwd=/data hostname
+[2026-07-05T17:39:44+02:00] exit=0 cmd=hostname
+[2026-07-05T17:39:44+02:00] cwd=/data/banana-yolo26-spacemit-demo pwd
+[2026-07-05T17:39:44+02:00] exit=0 cmd=pwd
+[2026-07-05T17:39:44+02:00] cwd=/data/banana-yolo26-spacemit-demo git status --short
+[2026-07-05T17:39:45+02:00] exit=0 cmd=git status --short
+[2026-07-05T17:39:45+02:00] cwd=/data/banana-yolo26-spacemit-demo git branch --show-current
+[2026-07-05T17:39:45+02:00] exit=0 cmd=git branch --show-current
+[2026-07-05T17:39:45+02:00] cwd=/data/banana-yolo26-spacemit-demo git rev-parse HEAD
+[2026-07-05T17:39:46+02:00] exit=0 cmd=git rev-parse HEAD
+[2026-07-05T17:39:46+02:00] cwd=/data/banana-yolo26-spacemit-demo git remote -v
+[2026-07-05T17:39:46+02:00] exit=0 cmd=git remote -v
+[2026-07-05T17:39:46+02:00] cwd=/data/banana-yolo26-spacemit-demo git log --oneline -5
+[2026-07-05T17:39:47+02:00] exit=0 cmd=git log --oneline -5
+[2026-07-05T17:39:47+02:00] cwd=/data/banana-yolo26-spacemit-demo test -d stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE16-MODEL4-C2F-COMPLETION-AND-FULLSHAPE-GATE-001
+[2026-07-05T17:39:47+02:00] exit=0 cmd=test -d stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE16-MODEL4-C2F-COMPLETION-AND-FULLSHAPE-GATE-001
+[2026-07-05T17:39:47+02:00] cwd=/data/banana-yolo26-spacemit-demo test -f stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE16-MODEL4-C2F-COMPLETION-AND-FULLSHAPE-GATE-001/STAGE16_FINAL_REPORT.md
+[2026-07-05T17:39:48+02:00] exit=0 cmd=test -f stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE16-MODEL4-C2F-COMPLETION-AND-FULLSHAPE-GATE-001/STAGE16_FINAL_REPORT.md
+[2026-07-05T17:44:48+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=cmake -S custom_int8_engine -B .deps/custom_int8_engine/build-host-native-stage17 -DCMAKE_BUILD_TYPE=Debug -DY26_K1X_ENABLE_IME=OFF -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_CXX_COMPILER=/usr/bin/g++
+[2026-07-05T17:44:50+02:00] exit=0 log=/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs/host_cmake_stage17.log cmd=cmake -S custom_int8_engine -B .deps/custom_int8_engine/build-host-native-stage17 -DCMAKE_BUILD_TYPE=Debug -DY26_K1X_ENABLE_IME=OFF -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_CXX_COMPILER=/usr/bin/g++
+[2026-07-05T17:44:50+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=cmake --build .deps/custom_int8_engine/build-host-native-stage17 --target bench_stage17_roofline_threading -j8
+[2026-07-05T17:45:02+02:00] exit=0 log=/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs/host_build_stage17_target.log cmd=cmake --build .deps/custom_int8_engine/build-host-native-stage17 --target bench_stage17_roofline_threading -j8
+[2026-07-05T17:45:14+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=.deps/custom_int8_engine/build-host-native-stage17/bench_stage17_roofline_threading 0 1 1
+[2026-07-05T17:45:15+02:00] exit=0 log=/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs/host_smoke_bench_stage17.log cmd=.deps/custom_int8_engine/build-host-native-stage17/bench_stage17_roofline_threading 0 1 1
+[2026-07-05T17:45:28+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=cmake --build .deps/custom_int8_engine/build-host-native-stage17 -j8
+[2026-07-05T17:45:48+02:00] exit=0 log=/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs/host_build_stage17_all.log cmd=cmake --build .deps/custom_int8_engine/build-host-native-stage17 -j8
+[2026-07-05T17:45:48+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=ctest --test-dir .deps/custom_int8_engine/build-host-native-stage17 --output-on-failure
+[2026-07-05T17:45:49+02:00] exit=0 log=/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs/host_ctest_stage17.log cmd=ctest --test-dir .deps/custom_int8_engine/build-host-native-stage17 --output-on-failure
+[2026-07-05T17:45:49+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=bash -lc cd /data/banana-yolo26-spacemit-demo && source /data/build_scripts/01-env.sh; cmake -S custom_int8_engine -B .deps/custom_int8_engine/build-riscv-stage17 -DCMAKE_BUILD_TYPE=Release -DY26_K1X_ENABLE_IME=ON -DCMAKE_CXX_COMPILER=${CXX:-riscv64-unknown-linux-gnu-g++} -DCMAKE_CXX_FLAGS="${K1_ARCH_FLAGS:--march=rv64gcv_zvfh -mabi=lp64d}" -DCMAKE_SYSTEM_NAME=Linux -DCMAKE_SYSTEM_PROCESSOR=riscv64
+[2026-07-05T17:45:52+02:00] exit=0 log=/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs/cross_cmake_stage17.log cmd=bash -lc cd /data/banana-yolo26-spacemit-demo && source /data/build_scripts/01-env.sh; cmake -S custom_int8_engine -B .deps/custom_int8_engine/build-riscv-stage17 -DCMAKE_BUILD_TYPE=Release -DY26_K1X_ENABLE_IME=ON -DCMAKE_CXX_COMPILER=${CXX:-riscv64-unknown-linux-gnu-g++} -DCMAKE_CXX_FLAGS="${K1_ARCH_FLAGS:--march=rv64gcv_zvfh -mabi=lp64d}" -DCMAKE_SYSTEM_NAME=Linux -DCMAKE_SYSTEM_PROCESSOR=riscv64
+[2026-07-05T17:45:52+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=cmake --build .deps/custom_int8_engine/build-riscv-stage17 -j8
+[2026-07-05T17:46:29+02:00] exit=0 log=/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs/cross_build_stage17.log cmd=cmake --build .deps/custom_int8_engine/build-riscv-stage17 -j8
+[2026-07-05T17:46:57+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=cmake --build .deps/custom_int8_engine/build-host-native-stage17 --target bench_stage17_roofline_threading -j8
+[2026-07-05T17:47:02+02:00] exit=0 log=/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs/host_rebuild_stage17_target.log cmd=cmake --build .deps/custom_int8_engine/build-host-native-stage17 --target bench_stage17_roofline_threading -j8
+[2026-07-05T17:47:02+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=cmake --build .deps/custom_int8_engine/build-riscv-stage17 --target bench_stage17_roofline_threading -j8
+[2026-07-05T17:47:09+02:00] exit=0 log=/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs/cross_rebuild_stage17_target.log cmd=cmake --build .deps/custom_int8_engine/build-riscv-stage17 --target bench_stage17_roofline_threading -j8
+[2026-07-05T17:47:30+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=sha256sum .deps/custom_int8_engine/build-riscv-stage17/bench_stage17_roofline_threading .deps/custom_int8_engine/build-riscv-stage17/bench_stage16_fullshape_gate .deps/custom_int8_engine/build-riscv-stage17/tests/test_stage10_rvv_rounding_control .deps/custom_int8_engine/build-riscv-stage17/tests/test_stage16_model4_c2f_runner
+[2026-07-05T17:47:30+02:00] exit=0 log=/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs/cross_sha_stage17.log cmd=sha256sum .deps/custom_int8_engine/build-riscv-stage17/bench_stage17_roofline_threading .deps/custom_int8_engine/build-riscv-stage17/bench_stage16_fullshape_gate .deps/custom_int8_engine/build-riscv-stage17/tests/test_stage10_rvv_rounding_control .deps/custom_int8_engine/build-riscv-stage17/tests/test_stage16_model4_c2f_runner
+[2026-07-05T17:47:30+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=ssh svt@banana mkdir -p '/home/svt/yolo26-custom-int8-stage17/2026-07-05_17-39-22'
+[2026-07-05T17:47:31+02:00] exit=0 log=/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs/board_mkdir_stage17.log cmd=ssh svt@banana mkdir -p '/home/svt/yolo26-custom-int8-stage17/2026-07-05_17-39-22'
+[2026-07-05T17:47:31+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=scp .deps/custom_int8_engine/build-riscv-stage17/bench_stage17_roofline_threading .deps/custom_int8_engine/build-riscv-stage17/bench_stage16_fullshape_gate .deps/custom_int8_engine/build-riscv-stage17/tests/test_stage10_rvv_rounding_control .deps/custom_int8_engine/build-riscv-stage17/tests/test_stage16_model4_c2f_runner svt@banana:/home/svt/yolo26-custom-int8-stage17/2026-07-05_17-39-22/
+[2026-07-05T17:47:31+02:00] exit=0 log=/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs/board_copy_stage17.log cmd=scp .deps/custom_int8_engine/build-riscv-stage17/bench_stage17_roofline_threading .deps/custom_int8_engine/build-riscv-stage17/bench_stage16_fullshape_gate .deps/custom_int8_engine/build-riscv-stage17/tests/test_stage10_rvv_rounding_control .deps/custom_int8_engine/build-riscv-stage17/tests/test_stage16_model4_c2f_runner svt@banana:/home/svt/yolo26-custom-int8-stage17/2026-07-05_17-39-22/
+[2026-07-05T17:47:44+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=ssh svt@banana cd '/home/svt/yolo26-custom-int8-stage17/2026-07-05_17-39-22' && taskset -c 0 ./test_stage10_rvv_rounding_control
+[2026-07-05T17:47:45+02:00] exit=0 log=/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs/board_cpu0_rounding.log cmd=ssh svt@banana cd '/home/svt/yolo26-custom-int8-stage17/2026-07-05_17-39-22' && taskset -c 0 ./test_stage10_rvv_rounding_control
+[2026-07-05T17:47:45+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=ssh svt@banana cd '/home/svt/yolo26-custom-int8-stage17/2026-07-05_17-39-22' && taskset -c 0 ./test_stage16_model4_c2f_runner
+[2026-07-05T17:47:45+02:00] exit=0 log=/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs/board_cpu0_stage16_compact.log cmd=ssh svt@banana cd '/home/svt/yolo26-custom-int8-stage17/2026-07-05_17-39-22' && taskset -c 0 ./test_stage16_model4_c2f_runner
+[2026-07-05T17:47:45+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=ssh svt@banana cd '/home/svt/yolo26-custom-int8-stage17/2026-07-05_17-39-22' && taskset -c 1 ./test_stage10_rvv_rounding_control
+[2026-07-05T17:47:46+02:00] exit=0 log=/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs/board_cpu1_rounding.log cmd=ssh svt@banana cd '/home/svt/yolo26-custom-int8-stage17/2026-07-05_17-39-22' && taskset -c 1 ./test_stage10_rvv_rounding_control
+[2026-07-05T17:47:46+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=ssh svt@banana cd '/home/svt/yolo26-custom-int8-stage17/2026-07-05_17-39-22' && taskset -c 1 ./test_stage16_model4_c2f_runner
+[2026-07-05T17:47:47+02:00] exit=0 log=/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs/board_cpu1_stage16_compact.log cmd=ssh svt@banana cd '/home/svt/yolo26-custom-int8-stage17/2026-07-05_17-39-22' && taskset -c 1 ./test_stage16_model4_c2f_runner
+[2026-07-05T17:47:47+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=ssh svt@banana cd '/home/svt/yolo26-custom-int8-stage17/2026-07-05_17-39-22' && taskset -c 2 ./test_stage10_rvv_rounding_control
+[2026-07-05T17:47:47+02:00] exit=0 log=/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs/board_cpu2_rounding.log cmd=ssh svt@banana cd '/home/svt/yolo26-custom-int8-stage17/2026-07-05_17-39-22' && taskset -c 2 ./test_stage10_rvv_rounding_control
+[2026-07-05T17:47:47+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=ssh svt@banana cd '/home/svt/yolo26-custom-int8-stage17/2026-07-05_17-39-22' && taskset -c 2 ./test_stage16_model4_c2f_runner
+[2026-07-05T17:47:48+02:00] exit=0 log=/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs/board_cpu2_stage16_compact.log cmd=ssh svt@banana cd '/home/svt/yolo26-custom-int8-stage17/2026-07-05_17-39-22' && taskset -c 2 ./test_stage16_model4_c2f_runner
+[2026-07-05T17:47:48+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=ssh svt@banana cd '/home/svt/yolo26-custom-int8-stage17/2026-07-05_17-39-22' && taskset -c 3 ./test_stage10_rvv_rounding_control
+[2026-07-05T17:47:49+02:00] exit=0 log=/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs/board_cpu3_rounding.log cmd=ssh svt@banana cd '/home/svt/yolo26-custom-int8-stage17/2026-07-05_17-39-22' && taskset -c 3 ./test_stage10_rvv_rounding_control
+[2026-07-05T17:47:49+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=ssh svt@banana cd '/home/svt/yolo26-custom-int8-stage17/2026-07-05_17-39-22' && taskset -c 3 ./test_stage16_model4_c2f_runner
+[2026-07-05T17:47:50+02:00] exit=0 log=/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs/board_cpu3_stage16_compact.log cmd=ssh svt@banana cd '/home/svt/yolo26-custom-int8-stage17/2026-07-05_17-39-22' && taskset -c 3 ./test_stage16_model4_c2f_runner
+[2026-07-05T17:48:04+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=ssh svt@banana cd '/home/svt/yolo26-custom-int8-stage17/2026-07-05_17-39-22' && taskset -c 0 ./bench_stage16_fullshape_gate 1
+[2026-07-05T17:48:05+02:00] exit=0 log=/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs/board_cpu0_stage16a_oneshot.log cmd=ssh svt@banana cd '/home/svt/yolo26-custom-int8-stage17/2026-07-05_17-39-22' && taskset -c 0 ./bench_stage16_fullshape_gate 1
+[2026-07-05T17:48:05+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=ssh svt@banana cd '/home/svt/yolo26-custom-int8-stage17/2026-07-05_17-39-22' && taskset -c 0-3 ./bench_stage17_roofline_threading 10 100 5
+[2026-07-05T17:49:22+02:00] exit=1 log=/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs/board_cpu0_3_stage17_stable.log cmd=ssh svt@banana cd '/home/svt/yolo26-custom-int8-stage17/2026-07-05_17-39-22' && taskset -c 0-3 ./bench_stage17_roofline_threading 10 100 5
+[2026-07-05T17:50:43+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=cmake --build .deps/custom_int8_engine/build-host-native-stage17 --target bench_stage17_roofline_threading -j8
+[2026-07-05T17:50:48+02:00] exit=0 log=/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs/host_rebuild_stage17_threadfix.log cmd=cmake --build .deps/custom_int8_engine/build-host-native-stage17 --target bench_stage17_roofline_threading -j8
+[2026-07-05T17:50:48+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=cmake --build .deps/custom_int8_engine/build-riscv-stage17 --target bench_stage17_roofline_threading -j8
+[2026-07-05T17:50:55+02:00] exit=0 log=/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs/cross_rebuild_stage17_threadfix.log cmd=cmake --build .deps/custom_int8_engine/build-riscv-stage17 --target bench_stage17_roofline_threading -j8
+[2026-07-05T17:50:55+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=scp .deps/custom_int8_engine/build-riscv-stage17/bench_stage17_roofline_threading svt@banana:/home/svt/yolo26-custom-int8-stage17/2026-07-05_17-39-22/
+[2026-07-05T17:50:56+02:00] exit=0 log=/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs/board_copy_stage17_threadfix.log cmd=scp .deps/custom_int8_engine/build-riscv-stage17/bench_stage17_roofline_threading svt@banana:/home/svt/yolo26-custom-int8-stage17/2026-07-05_17-39-22/
+[2026-07-05T17:51:07+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=ssh svt@banana cd '/home/svt/yolo26-custom-int8-stage17/2026-07-05_17-39-22' && taskset -c 0-3 ./bench_stage17_roofline_threading 0 1 1
+[2026-07-05T17:51:08+02:00] exit=0 log=/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs/board_cpu0_3_stage17_thread_smoke.log cmd=ssh svt@banana cd '/home/svt/yolo26-custom-int8-stage17/2026-07-05_17-39-22' && taskset -c 0-3 ./bench_stage17_roofline_threading 0 1 1
+[2026-07-05T17:51:19+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=ssh svt@banana cd '/home/svt/yolo26-custom-int8-stage17/2026-07-05_17-39-22' && taskset -c 0-3 ./bench_stage17_roofline_threading 10 100 5
+[2026-07-05T17:52:48+02:00] exit=0 log=/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs/board_cpu0_3_stage17_stable_final.log cmd=ssh svt@banana cd '/home/svt/yolo26-custom-int8-stage17/2026-07-05_17-39-22' && taskset -c 0-3 ./bench_stage17_roofline_threading 10 100 5
+[2026-07-05T17:55:23+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=git diff --check
+[2026-07-05T17:55:23+02:00] exit=0 log=/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs/git_diff_check.log cmd=git diff --check
+[2026-07-05T17:55:23+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=cmake --build .deps/custom_int8_engine/build-host-native-stage17 -j8
+[2026-07-05T17:55:25+02:00] exit=0 log=/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs/host_build_stage17_final.log cmd=cmake --build .deps/custom_int8_engine/build-host-native-stage17 -j8
+[2026-07-05T17:55:25+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=ctest --test-dir .deps/custom_int8_engine/build-host-native-stage17 --output-on-failure
+[2026-07-05T17:55:25+02:00] exit=0 log=/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs/host_ctest_stage17_final.log cmd=ctest --test-dir .deps/custom_int8_engine/build-host-native-stage17 --output-on-failure
+[2026-07-05T17:55:25+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=cmake --build .deps/custom_int8_engine/build-riscv-stage17 -j8
+[2026-07-05T17:55:28+02:00] exit=0 log=/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs/cross_build_stage17_final.log cmd=cmake --build .deps/custom_int8_engine/build-riscv-stage17 -j8
+[2026-07-05T17:55:28+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=find custom_int8_engine stages -type l -print
+[2026-07-05T17:55:28+02:00] exit=0 log=/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs/symlink_scan_stage17.log cmd=find custom_int8_engine stages -type l -print
+[2026-07-05T17:55:28+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=git status --short
+[2026-07-05T17:55:28+02:00] exit=0 log=/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs/git_status_mid.log cmd=git status --short
+[2026-07-05T17:55:53+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=bash -lc git status --porcelain | sed 's/^...//' | sort
+[2026-07-05T17:55:54+02:00] exit=0 log=/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs/changed_files_stage17.log cmd=bash -lc git status --porcelain | sed 's/^...//' | sort
+[2026-07-05T17:55:54+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=bash -lc files=(); while IFS= read -r p; do [ -f "$p" ] || continue; case "$p" in */commands.txt) continue ;; esac; files+=("$p"); done < <(git status --porcelain | sed 's/^...//' | sort); if [ ${#files[@]} -gt 0 ]; then rg -n --hidden -S '(BEGIN (RSA|OPENSSH|EC|DSA) PRIVATE KEY|password=|token=|client_secret|oauth|ssh-rsa|ghp_|glpat-|AKIA|Authorization:)' "${files[@]}" || true; fi
+[2026-07-05T17:55:54+02:00] exit=0 log=/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs/secret_scan_changed_stage17.log cmd=bash -lc files=(); while IFS= read -r p; do [ -f "$p" ] || continue; case "$p" in */commands.txt) continue ;; esac; files+=("$p"); done < <(git status --porcelain | sed 's/^...//' | sort); if [ ${#files[@]} -gt 0 ]; then rg -n --hidden -S '(BEGIN (RSA|OPENSSH|EC|DSA) PRIVATE KEY|password=|token=|client_secret|oauth|ssh-rsa|ghp_|glpat-|AKIA|Authorization:)' "${files[@]}" || true; fi
+[2026-07-05T17:55:54+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=bash -lc python3 - <<'PY'
+import subprocess, sys
+raw = subprocess.check_output(['git','status','--porcelain','-z'])
+items = raw.split(b'\0')
+paths=[]
+for item in items:
+    if not item: continue
+    path=item[3:]
+    if b' -> ' in path:
+        path=path.split(b' -> ',1)[1]
+    paths.append(path)
+bad=[]
+for p in paths:
+    if any(c < 32 or c == 92 or c >= 127 for c in p):
+        bad.append(p)
+if bad:
+    print('bad_paths:')
+    for p in bad:
+        print(repr(p))
+    sys.exit(1)
+print(f'scanned_paths={len(paths)} bad_paths=0')
+PY
+[2026-07-05T17:55:55+02:00] exit=0 log=/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs/changed_path_ascii_scan_stage17.log cmd=bash -lc python3 - <<'PY'
+import subprocess, sys
+raw = subprocess.check_output(['git','status','--porcelain','-z'])
+items = raw.split(b'\0')
+paths=[]
+for item in items:
+    if not item: continue
+    path=item[3:]
+    if b' -> ' in path:
+        path=path.split(b' -> ',1)[1]
+    paths.append(path)
+bad=[]
+for p in paths:
+    if any(c < 32 or c == 92 or c >= 127 for c in p):
+        bad.append(p)
+if bad:
+    print('bad_paths:')
+    for p in bad:
+        print(repr(p))
+    sys.exit(1)
+print(f'scanned_paths={len(paths)} bad_paths=0')
+PY
+[2026-07-05T17:55:55+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=bash -lc git status --porcelain | sed 's/^...//' | while IFS= read -r p; do [ -f "$p" ] && wc -c "$p"; done | sort -n | tail -n 30
+[2026-07-05T17:55:55+02:00] exit=0 log=/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs/large_file_scan_stage17.log cmd=bash -lc git status --porcelain | sed 's/^...//' | while IFS= read -r p; do [ -f "$p" ] && wc -c "$p"; done | sort -n | tail -n 30
+[2026-07-05T17:56:11+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=bash -lc find '/data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001' -type f -printf '%P %s bytes\n' | sort
+[2026-07-05T17:56:11+02:00] exit=0 log=/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs/stage17_file_list.log cmd=bash -lc find '/data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001' -type f -printf '%P %s bytes\n' | sort
+[2026-07-05T17:56:11+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=bash -lc find '/data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001' -type f ! -name commands.txt -print0 | xargs -0 -r rg -n --hidden -S '(BEGIN (RSA|OPENSSH|EC|DSA) PRIVATE KEY|password=|token=|client_secret|oauth|ssh-rsa|ghp_|glpat-|AKIA|Authorization:)' || true
+[2026-07-05T17:56:12+02:00] exit=0 log=/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs/secret_scan_stage17_files.log cmd=bash -lc find '/data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001' -type f ! -name commands.txt -print0 | xargs -0 -r rg -n --hidden -S '(BEGIN (RSA|OPENSSH|EC|DSA) PRIVATE KEY|password=|token=|client_secret|oauth|ssh-rsa|ghp_|glpat-|AKIA|Authorization:)' || true
+[2026-07-05T17:56:12+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=bash -lc python3 - <<'PY'
+from pathlib import Path
+root=Path('/data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001')
+bad=[]
+for p in root.rglob('*'):
+    b=str(p).encode('utf-8')
+    if any(c < 32 or c == 92 or c >= 127 for c in b):
+        bad.append(str(p))
+if bad:
+    print('bad_paths:')
+    print('\n'.join(bad))
+    raise SystemExit(1)
+print('stage17_paths_scanned bad_paths=0')
+PY
+[2026-07-05T17:56:12+02:00] exit=0 log=/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs/stage17_path_ascii_scan.log cmd=bash -lc python3 - <<'PY'
+from pathlib import Path
+root=Path('/data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001')
+bad=[]
+for p in root.rglob('*'):
+    b=str(p).encode('utf-8')
+    if any(c < 32 or c == 92 or c >= 127 for c in b):
+        bad.append(str(p))
+if bad:
+    print('bad_paths:')
+    print('\n'.join(bad))
+    raise SystemExit(1)
+print('stage17_paths_scanned bad_paths=0')
+PY
+[2026-07-05T17:56:44+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=bash -lc cp '/data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001'/*.md '/data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001'/*.tsv '/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/artifacts/'
+[2026-07-05T17:56:45+02:00] exit=0 log=/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs/copy_stage17_reports_to_log.log cmd=bash -lc cp '/data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001'/*.md '/data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001'/*.tsv '/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/artifacts/'
+[2026-07-05T17:56:45+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=bash -lc mkdir -p '/data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/artifacts'; cp '/data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001'/*.md '/data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001'/*.tsv '/data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/artifacts/'; cp '/data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/STAGE17_FINAL_REPORT.md' '/data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/final-report.md'; cp '/data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/STAGE17_SUMMARY_RU.md' '/data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/result-summary.md'; printf '%s\n' '/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001' > '/data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/shared-log-dir.txt'; printf '%s\n%s\n%s\n' '/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs' '/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/artifacts' '/data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001' > '/data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/raw-evidence-paths.txt'
+[2026-07-05T17:56:46+02:00] exit=0 log=/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs/prepare_task_run_stage17.log cmd=bash -lc mkdir -p '/data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/artifacts'; cp '/data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001'/*.md '/data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001'/*.tsv '/data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/artifacts/'; cp '/data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/STAGE17_FINAL_REPORT.md' '/data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/final-report.md'; cp '/data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/STAGE17_SUMMARY_RU.md' '/data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/result-summary.md'; printf '%s\n' '/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001' > '/data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/shared-log-dir.txt'; printf '%s\n%s\n%s\n' '/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs' '/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/artifacts' '/data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001' > '/data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/raw-evidence-paths.txt'
+[2026-07-05T17:56:46+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=/data/lab/scripts/scan-export-candidates.sh /data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/artifacts
+[2026-07-05T17:56:48+02:00] exit=0 log=/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs/scan_export_artifacts_stage17.log cmd=/data/lab/scripts/scan-export-candidates.sh /data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/artifacts
+[2026-07-05T17:56:48+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=/data/lab/scripts/export-result-packet.sh BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001
+[2026-07-05T17:56:50+02:00] exit=1 log=/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs/export_result_packet_stage17.log cmd=/data/lab/scripts/export-result-packet.sh BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001
+[2026-07-05T17:57:08+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=/data/lab/scripts/init-shared-log-run.sh contcodex BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001 stage17-roofline-threading
+[2026-07-05T17:57:08+02:00] exit=0 log=/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs/init_shared_log_stage17.log cmd=/data/lab/scripts/init-shared-log-run.sh contcodex BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001 stage17-roofline-threading
+[2026-07-05T17:57:08+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=/data/lab/scripts/scan-export-candidates.sh /data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/artifacts
+[2026-07-05T17:57:10+02:00] exit=0 log=/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs/scan_export_artifacts_stage17_retry.log cmd=/data/lab/scripts/scan-export-candidates.sh /data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/artifacts
+[2026-07-05T17:57:10+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=/data/lab/scripts/export-result-packet.sh BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001
+[2026-07-05T17:57:13+02:00] exit=0 log=/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs/export_result_packet_stage17_retry.log cmd=/data/lab/scripts/export-result-packet.sh BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001
+[2026-07-05T17:57:36+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=git diff --check
+[2026-07-05T17:57:36+02:00] exit=0 log=/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs/git_diff_check_final.log cmd=git diff --check
+[2026-07-05T17:57:36+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=git add custom_int8_engine/CMakeLists.txt custom_int8_engine/tools/bench_stage17_roofline_threading.cpp stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE16-MODEL4-C2F-COMPLETION-AND-FULLSHAPE-GATE-001/STAGE16_FINAL_REPORT.md stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE16-MODEL4-C2F-COMPLETION-AND-FULLSHAPE-GATE-001/STAGE16_SUMMARY_RU.md /data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001
+[2026-07-05T17:57:36+02:00] exit=0 log=/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs/git_add_stage17.log cmd=git add custom_int8_engine/CMakeLists.txt custom_int8_engine/tools/bench_stage17_roofline_threading.cpp stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE16-MODEL4-C2F-COMPLETION-AND-FULLSHAPE-GATE-001/STAGE16_FINAL_REPORT.md stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE16-MODEL4-C2F-COMPLETION-AND-FULLSHAPE-GATE-001/STAGE16_SUMMARY_RU.md /data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001
+[2026-07-05T17:57:36+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=git diff --cached --check
+[2026-07-05T17:57:36+02:00] exit=0 log=/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs/git_diff_cached_check.log cmd=git diff --cached --check
+[2026-07-05T17:57:36+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=git status --short
+[2026-07-05T17:57:36+02:00] exit=0 log=/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs/git_status_before_commit.log cmd=git status --short
+[2026-07-05T17:57:36+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=git commit -m Measure YOLO26 custom INT8 Conv IME roofline and cluster0 threading feasibility
+[2026-07-05T17:57:37+02:00] exit=0 log=/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs/git_commit_stage17.log cmd=git commit -m Measure YOLO26 custom INT8 Conv IME roofline and cluster0 threading feasibility
+[2026-07-05T17:57:37+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=git rev-parse HEAD
+[2026-07-05T17:57:37+02:00] exit=0 log=/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs/git_head_after_commit.log cmd=git rev-parse HEAD
+[2026-07-05T17:57:37+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=git status --short
+[2026-07-05T17:57:37+02:00] exit=0 log=/data/ncnn-logs/ai-team/2026-07-05_17-39-22/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/run_logs/git_status_after_commit.log cmd=git status --short
+[2026-07-05T17:57:58+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=git add /data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE17-CONV-IME-ROOFLINE-AND-CLUSTER0-THREADING-FEASIBILITY-001/commands.txt && git commit --amend --no-edit
+[2026-07-05T17:57:58+02:00] note=final commands.txt amend; later final status/export commands are kept in external logs only to preserve clean repo

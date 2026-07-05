@@ -1,0 +1,6 @@
+candidate	status	correctness_status	timing_status	notes
+current_MMT4D_baseline	measured	pass	measured	Stage17 stable replay and threading matrix use current smt.vmadot MMT4D path
+small_K_blocking_variation	not_attempted_by_scope	n/a	n/a	Deferred because threading feasibility was strongly positive
+output_channel_blocking_variation	not_attempted_by_scope	n/a	n/a	Deferred
+1x1_loop_order_candidate	not_attempted_by_scope	n/a	n/a	No Stage17 implementation
+3x3_pack_im2col_variation	not_attempted_by_scope	n/a	n/a	No Stage17 implementation

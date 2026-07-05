@@ -1,0 +1,5 @@
+partition	thread_count	cpus	correctness_status	mismatches	checksum	mean_us	stddev_us	min_us	max_us	cv_pct	speedup_vs_1thread	feasibility
+spatial_row_split	1	0	pass	0	1324192976	20550.030600	4.898223	20543.622480	20556.310680	0.023836	1.000000	baseline
+spatial_row_split	2	0-1	pass	0	1324192976	10750.271882	9.551604	10739.523660	10758.273150	0.088850	1.911582	weak_positive_or_better
+spatial_row_split	3	0-2	pass	0	1324192976	7258.029130	9.618641	7248.499060	7268.927750	0.132524	2.831351	positive
+spatial_row_split	4	0-3	pass	0	1324192976	5583.807628	11.380425	5575.669290	5603.237660	0.203811	3.680290	strong_positive

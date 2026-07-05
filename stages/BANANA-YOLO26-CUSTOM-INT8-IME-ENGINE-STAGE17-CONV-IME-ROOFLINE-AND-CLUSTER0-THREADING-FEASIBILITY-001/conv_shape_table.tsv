@@ -1,0 +1,4 @@
+node_name	shape_class	input_shape	output_shape	kernel	stride	padding	Cin	Cout	Hout	Wout	MAC_count	weight_bytes	activation_read_bytes	output_write_bytes	notes
+/model.4/m.0/cv1/conv/Conv	full_shape_model4_branch_entry	1x80x80x32	1x80x80x16	3x3	1	1	32	16	80	80	29491200	4608	204800	409600	measured
+/model.4/cv1/conv/Conv	upstream_full_shape_metadata_only	1x80x80x64	1x80x80x64	1x1	1	0	64	64	80	80	26214400	4096	409600	1638400	metadata only in Stage17
+/model.4/m.0/cv2/conv/Conv	compact_only_metadata_not_compared	1x80x80x16	1x80x80x32	3x3	1	1	16	32	80	80	29491200	4608	102400	819200	metadata only; full-shape timing not run

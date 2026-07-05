@@ -1,0 +1,4 @@
+node_name	shape_class	scalar_us	ime_single_thread_us	ime_compute_us	pack_or_im2col_us	requant_or_correction_us	effective_GMAC_per_s	effective_TOPS	percent_of_2TOPS	bottleneck_class
+/model.4/m.0/cv1/conv/Conv	full_shape_model4_branch_entry	50738.654554	20458.001284	20458.001284	not_separable	216.976304	1.441548	0.001442	0.072077	structural_low_K_or_packing
+/model.4/cv1/conv/Conv	upstream_full_shape_metadata_only	n/a	n/a	n/a	n/a	n/a	n/a	n/a	n/a	unclear
+/model.4/m.0/cv2/conv/Conv	compact_only_metadata_not_compared	n/a	n/a	n/a	n/a	n/a	n/a	n/a	n/a	structural_low_K_or_packing
