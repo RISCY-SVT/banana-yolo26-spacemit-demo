@@ -5,7 +5,7 @@ stage_id: `BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE14-NEXT-C2F-BLOCK-EXPANSION
 repo: `/data/banana-yolo26-spacemit-demo`
 branch: `yolo26-custom-int8-engine`
 start_head: `9219f897a47d76e8b06031d29dcc18c498cf48a0`
-end_head: `pending-local-commit-see-final-response`
+end_head: `5cc09059f83eaef6af8c9a6aee3eab1e4edd46e7`
 pushed: false
 full_engine_implemented: false
 ncnn_source_mutated: false
