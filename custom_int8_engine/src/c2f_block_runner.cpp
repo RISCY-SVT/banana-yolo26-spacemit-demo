@@ -9,6 +9,10 @@
 #include <limits>
 #include <new>
 
+#if defined(__riscv_vector)
+#include <riscv_vector.h>
+#endif
+
 namespace {
 
 using Clock = std::chrono::steady_clock;
@@ -167,9 +171,70 @@ float qdq_float(float value, float scale, int zero_point_u8) {
     return (static_cast<int>(code) - zero_point_u8) * scale;
 }
 
-std::int8_t quantize_concat_s8(float value, float scale, int zero_point_u8) {
+[[maybe_unused]] std::int8_t quantize_concat_s8(float value, float scale, int zero_point_u8) {
     const std::uint8_t code = y26_quantize_u8_nearest_even_f32(value, scale, zero_point_u8);
     return signed_storage_from_u8(code);
+}
+
+void quantize_concat_segment(const float* src,
+                             std::int8_t* dst,
+                             std::size_t count,
+                             float scale,
+                             int zero_point_u8) {
+#if defined(__riscv_vector)
+    alignas(64) std::int32_t code_tmp[256] {};
+    std::size_t offset = 0;
+    while (offset < count) {
+        const std::size_t vl = __riscv_vsetvl_e32m4(count - offset);
+        vfloat32m4_t value = __riscv_vle32_v_f32m4(src + offset, vl);
+        value = __riscv_vfdiv_vf_f32m4(value, scale, vl);
+        vint32m4_t code = __riscv_vfcvt_x_f_v_i32m4_rm(value, __RISCV_FRM_RNE, vl);
+        code = __riscv_vadd_vx_i32m4(code, zero_point_u8, vl);
+        code = __riscv_vmax_vx_i32m4(code, 0, vl);
+        code = __riscv_vmin_vx_i32m4(code, 255, vl);
+        __riscv_vse32_v_i32m4(code_tmp, code, vl);
+        for (std::size_t i = 0; i < vl; ++i) {
+            dst[offset + i] = signed_storage_from_u8(static_cast<std::uint8_t>(code_tmp[i]));
+        }
+        offset += vl;
+    }
+#else
+    for (std::size_t i = 0; i < count; ++i) {
+        dst[i] = quantize_concat_s8(src[i], scale, zero_point_u8);
+    }
+#endif
+}
+
+void quantize_concat_add_segment(const float* lhs,
+                                 const float* rhs,
+                                 std::int8_t* dst,
+                                 std::size_t count,
+                                 float scale,
+                                 int zero_point_u8) {
+#if defined(__riscv_vector)
+    alignas(64) std::int32_t code_tmp[256] {};
+    std::size_t offset = 0;
+    while (offset < count) {
+        const std::size_t vl = __riscv_vsetvl_e32m4(count - offset);
+        vfloat32m4_t value = __riscv_vle32_v_f32m4(lhs + offset, vl);
+        vfloat32m4_t rhs_value = __riscv_vle32_v_f32m4(rhs + offset, vl);
+        value = __riscv_vfadd_vv_f32m4(value, rhs_value, vl);
+        value = __riscv_vfdiv_vf_f32m4(value, scale, vl);
+        vint32m4_t code = __riscv_vfcvt_x_f_v_i32m4_rm(value, __RISCV_FRM_RNE, vl);
+        code = __riscv_vadd_vx_i32m4(code, zero_point_u8, vl);
+        code = __riscv_vmax_vx_i32m4(code, 0, vl);
+        code = __riscv_vmin_vx_i32m4(code, 255, vl);
+        __riscv_vse32_v_i32m4(code_tmp, code, vl);
+        for (std::size_t i = 0; i < vl; ++i) {
+            dst[offset + i] = signed_storage_from_u8(static_cast<std::uint8_t>(code_tmp[i]));
+        }
+        offset += vl;
+    }
+#else
+    for (std::size_t i = 0; i < count; ++i) {
+        dst[i] = quantize_concat_s8(lhs[i] + rhs[i], scale, zero_point_u8);
+    }
+#endif
 }
 
 std::int8_t weight_at(const Y26Stage7ConvNodeConfig& cfg, int oc, int kh, int kw, int ic) {
@@ -324,9 +389,8 @@ void materialize_concat_fused_add(const Y26Stage12C2fBlockWorkspace& ws,
 }
 
 void quantize_concat(const Y26Stage12C2fBlockConfig& cfg, Y26Stage12C2fBlockWorkspace& ws) {
-    for (std::size_t i = 0; i < ws.concat_count; ++i) {
-        ws.concat_s8[i] = quantize_concat_s8(ws.concat_f32[i], cfg.concat_output_scale, cfg.concat_output_zero_point_u8);
-    }
+    quantize_concat_segment(
+        ws.concat_f32, ws.concat_s8, ws.concat_count, cfg.concat_output_scale, cfg.concat_output_zero_point_u8);
 }
 
 void quantize_concat_fused(const Y26Stage12C2fBlockConfig& cfg,
@@ -340,18 +404,22 @@ void quantize_concat_fused(const Y26Stage12C2fBlockConfig& cfg,
         const float* split0 = ws.split0_f32 + pixel * split0_channels;
         const float* split1 = ws.split1_f32 + pixel * split1_channels;
         const float* branch1 = ws.branch1_act_f32 + pixel * split1_channels;
-        for (int c = 0; c < split0_channels; ++c) {
-            dst[c] = quantize_concat_s8(split0[c], cfg.concat_output_scale, cfg.concat_output_zero_point_u8);
-        }
-        for (int c = 0; c < split1_channels; ++c) {
-            dst[split0_channels + c] =
-                quantize_concat_s8(split1[c], cfg.concat_output_scale, cfg.concat_output_zero_point_u8);
-        }
-        for (int c = 0; c < split1_channels; ++c) {
-            const float add_value = split1[c] + branch1[c];
-            dst[split0_channels + split1_channels + c] =
-                quantize_concat_s8(add_value, cfg.concat_output_scale, cfg.concat_output_zero_point_u8);
-        }
+        quantize_concat_segment(split0,
+                                dst,
+                                static_cast<std::size_t>(split0_channels),
+                                cfg.concat_output_scale,
+                                cfg.concat_output_zero_point_u8);
+        quantize_concat_segment(split1,
+                                dst + split0_channels,
+                                static_cast<std::size_t>(split1_channels),
+                                cfg.concat_output_scale,
+                                cfg.concat_output_zero_point_u8);
+        quantize_concat_add_segment(split1,
+                                    branch1,
+                                    dst + split0_channels + split1_channels,
+                                    static_cast<std::size_t>(split1_channels),
+                                    cfg.concat_output_scale,
+                                    cfg.concat_output_zero_point_u8);
     }
 }
 

@@ -1,0 +1,6 @@
+candidate_name	total_us	merge_total_us	split_copy_us	post_concat_qdq_us	pack_layout_us	conv_us	activation_us	mismatches	accepted_as_stage14_default	reason
+A0_stage13_replay_materialized_float_merge	503224	141522	126922	7847.65	808.919	269974	88580.2	0	no	baseline replay only; preserves separate float merge buffers
+A1_split0_cache_or_direct_span_fused_add_concat	433682	69763.9	56841.8	8514.81	785.237	271920	88882.4	0	no	fastest replay in this run but keeps a materialized concat segment and was not needed for H3 expansion
+A2_post_concat_qdq_rvv	436117	75406.4	56974.6	18431.8	804.626	269552	88069.9	0	yes	preserves Stage13 selected A2 dataflow, removes materialized concat buffer, and uses explicit RNE RVV QDQ on RISC-V
+A3_concat_view_pack_sidecar	n/a	n/a	n/a	n/a	n/a	n/a	n/a	n/a	no	not attempted; no Stage14 pack/layout bottleneck
+A4_remove_unused_prepare_buffers	n/a	n/a	n/a	n/a	n/a	n/a	n/a	n/a	no	not attempted; prepare-path cleanup was not required for correctness or timing

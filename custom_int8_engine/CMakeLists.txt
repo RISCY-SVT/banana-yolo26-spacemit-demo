@@ -30,6 +30,7 @@ add_library(y26_k1x_custom_int8_engine
     src/multiblock_runner.cpp
     src/model_format.cpp
     src/quant_metadata.cpp
+    src/next_c2f_runner.cpp
 )
 
 target_include_directories(y26_k1x_custom_int8_engine
@@ -187,6 +188,16 @@ if(Y26_K1X_BUILD_TOOLS)
     target_compile_options(bench_stage13_merge_dataflow PRIVATE -Wall -Wextra -Wpedantic)
     if(Y26_K1X_ENABLE_IME)
         target_compile_definitions(bench_stage13_merge_dataflow PRIVATE Y26_K1X_ENABLE_IME_ASM=1)
+    endif()
+
+    add_executable(bench_stage14_next_c2f
+        tools/bench_stage14_next_c2f.cpp
+    )
+    target_link_libraries(bench_stage14_next_c2f PRIVATE y26_k1x_custom_int8_engine)
+    target_include_directories(bench_stage14_next_c2f PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/tests")
+    target_compile_options(bench_stage14_next_c2f PRIVATE -Wall -Wextra -Wpedantic)
+    if(Y26_K1X_ENABLE_IME)
+        target_compile_definitions(bench_stage14_next_c2f PRIVATE Y26_K1X_ENABLE_IME_ASM=1)
     endif()
 endif()
 

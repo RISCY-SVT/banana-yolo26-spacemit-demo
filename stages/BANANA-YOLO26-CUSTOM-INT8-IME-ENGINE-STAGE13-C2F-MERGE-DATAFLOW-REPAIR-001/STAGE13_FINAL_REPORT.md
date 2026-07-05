@@ -5,7 +5,7 @@ stage_id: `BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE13-C2F-MERGE-DATAFLOW-REPAI
 repo: `/data/banana-yolo26-spacemit-demo`
 branch: `yolo26-custom-int8-engine`
 start_head: `cae5301afc10a1ff2138335932d4939e3db64fc2`
-end_head: `pending-local-commit-see-final-response`
+end_head: `9219f897a47d76e8b06031d29dcc18c498cf48a0`
 pushed: false
 full_engine_implemented: false
 ncnn_source_mutated: false
