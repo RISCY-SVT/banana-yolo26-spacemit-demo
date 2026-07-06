@@ -77,7 +77,8 @@ bool activation_mode_valid(int mode) {
 
 bool merge_mode_valid(int mode) {
     return mode == Y26_STAGE16_MERGE_MODE_A0_MATERIALIZED_FLOAT ||
-           mode == Y26_STAGE16_MERGE_MODE_A2_FUSED_QDQ_NHWC;
+           mode == Y26_STAGE16_MERGE_MODE_A2_FUSED_QDQ_NHWC ||
+           mode == Y26_STAGE16_MERGE_MODE_C2_SPLIT0_CONCAT_LUT;
 }
 
 bool config_valid(const Y26Stage16Model4C2fConfig* cfg) {
@@ -173,6 +174,38 @@ float dequant_signed_storage(std::int8_t value, float scale, int zero_point_u8) 
 std::int8_t quantize_concat_s8(float value, float scale, int zero_point_u8) {
     const std::uint8_t code = y26_quantize_u8_nearest_even_f32(value, scale, zero_point_u8);
     return signed_storage_from_u8(code);
+}
+
+Y26ActivationRequantParams activation_params(const Y26Stage7ConvNodeConfig& producer,
+                                             std::size_t output_count,
+                                             float act_output_scale,
+                                             int act_output_zero_point_u8) {
+    return Y26ActivationRequantParams{output_count,
+                                      producer.params.output_c,
+                                      producer.input_scale,
+                                      producer.weight_scales,
+                                      producer.output_scale,
+                                      producer.output_zero_point_u8,
+                                      act_output_scale,
+                                      act_output_zero_point_u8};
+}
+
+int apply_activation_lut_mode(int activation_mode,
+                              const Y26ActivationRequantParams& params,
+                              const std::int8_t* lut_s8,
+                              const std::int32_t* producer_i32,
+                              std::int8_t* consumer_input_s8) {
+    switch (activation_mode) {
+        case Y26_ACTIVATION_MODE_STAGE9_RVV_F32_LUT:
+            return y26_activation_requant_silu_int8_lut_rvv_f32(&params, producer_i32, lut_s8, consumer_input_s8);
+        case Y26_ACTIVATION_MODE_STAGE9_SCALAR_UNROLLED_LUT:
+        case Y26_ACTIVATION_MODE_STAGE9_FUSED_CURRENT_LAYOUT:
+            return y26_activation_requant_silu_int8_lut_scalar_unrolled(
+                &params, producer_i32, lut_s8, consumer_input_s8);
+        case Y26_ACTIVATION_MODE_INT8_LUT:
+        default:
+            return y26_activation_requant_silu_int8_lut(&params, producer_i32, lut_s8, consumer_input_s8);
+    }
 }
 
 std::int8_t weight_at(const Y26Stage7ConvNodeConfig& cfg, int oc, int kh, int kw, int ic) {
@@ -315,13 +348,21 @@ int build_concat_qdq_nhwc(const Y26Stage16Model4C2fConfig& cfg,
     if (model4_cv1_i32 == nullptr || split1_s8 == nullptr) {
         return Y26_CONV_STATUS_INVALID_ARGUMENT;
     }
+    const bool use_split0_concat_lut = cfg.merge_mode == Y26_STAGE16_MERGE_MODE_C2_SPLIT0_CONCAT_LUT;
+    if (use_split0_concat_lut && ws.split0_concat_s8 == nullptr) {
+        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    }
 
     const auto begin = Clock::now();
     for (int m = 0; m < spatial; ++m) {
         std::int8_t* dst = ws.concat_s8 + m * split_c * 3;
         for (int c = 0; c < split_c; ++c) {
-            const float value = accumulator_to_silu_float(model4_cv1, model4_cv1_i32[m * split_c * 2 + c], c);
-            dst[c] = quantize_concat_s8(value, cfg.concat_output_scale, cfg.concat_output_zero_point_u8);
+            if (use_split0_concat_lut) {
+                dst[c] = ws.split0_concat_s8[m * split_c * 2 + c];
+            } else {
+                const float value = accumulator_to_silu_float(model4_cv1, model4_cv1_i32[m * split_c * 2 + c], c);
+                dst[c] = quantize_concat_s8(value, cfg.concat_output_scale, cfg.concat_output_zero_point_u8);
+            }
         }
         for (int c = 0; c < split_c; ++c) {
             const float split1_value =
@@ -351,6 +392,34 @@ int build_concat_qdq_nhwc(const Y26Stage16Model4C2fConfig& cfg,
         timing->merge_us += qdq_us;
     }
     return Y26_CONV_STATUS_SUCCESS;
+}
+
+int build_split0_concat_lut_activation(const Y26Stage16Model4C2fConfig& cfg,
+                                       Y26Stage16Model4C2fWorkspace& ws,
+                                       Y26Stage16TimingUs* timing) {
+    if (cfg.merge_mode != Y26_STAGE16_MERGE_MODE_C2_SPLIT0_CONCAT_LUT) {
+        return Y26_CONV_STATUS_SUCCESS;
+    }
+    const std::int32_t* model4_cv1_i32 = y26_stage15_model4_branch_model4_cv1_i32(&ws.stage15_ws);
+    if (model4_cv1_i32 == nullptr || ws.split0_concat_s8 == nullptr) {
+        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    }
+    const auto begin = Clock::now();
+    const Y26Stage7ConvNodeConfig& model4_cv1 = cfg.stage15.stage14.model4_cv1;
+    const Y26ActivationRequantParams concat_params = activation_params(model4_cv1,
+                                                                       ws.stage15_ws.model4_cv1_output_count,
+                                                                       cfg.concat_output_scale,
+                                                                       cfg.concat_output_zero_point_u8);
+    const int status = apply_activation_lut_mode(cfg.activation_mode,
+                                                 concat_params,
+                                                 ws.model4_cv1_to_concat_lut_s8,
+                                                 model4_cv1_i32,
+                                                 ws.split0_concat_s8);
+    const auto end = Clock::now();
+    if (timing != nullptr) {
+        timing->activation_requant_us += elapsed_us(begin, end);
+    }
+    return status;
 }
 
 void build_branch1_activation_float(const Y26Stage16Model4C2fConfig& cfg,
@@ -391,6 +460,11 @@ int run_after_stage15(const Y26Stage16Model4C2fConfig& cfg,
     const auto branch1_act_begin = Clock::now();
     build_branch1_activation_float(cfg, ws);
     const auto branch1_act_end = Clock::now();
+
+    status = build_split0_concat_lut_activation(cfg, ws, timing);
+    if (status != Y26_CONV_STATUS_SUCCESS) {
+        return status;
+    }
 
     status = build_concat_qdq_nhwc(cfg, ws, timing);
     if (status != Y26_CONV_STATUS_SUCCESS) {
@@ -467,13 +541,23 @@ extern "C" int y26_stage16_model4_c2f_prepare(const Y26Stage16Model4C2fConfig* c
     ws->branch1_raw_i32 = allocate_i32(ws->branch1_output_count);
     ws->branch1_i32 = allocate_i32(ws->branch1_output_count);
     ws->branch1_act_f32 = allocate_f32(ws->branch1_output_count);
+    ws->split0_concat_s8 = allocate_i8(ws->stage15_ws.model4_cv1_output_count);
     ws->concat_s8 = allocate_i8(ws->concat_count);
     ws->model4_cv2_raw_i32 = allocate_i32(ws->model4_cv2_output_count);
 
     if (ws->branch1_weights == nullptr || ws->model4_cv2_weights == nullptr || ws->branch1_workspace == nullptr ||
         ws->model4_cv2_workspace == nullptr || ws->stage15_output_i32 == nullptr || ws->branch1_raw_i32 == nullptr ||
-        ws->branch1_i32 == nullptr || ws->branch1_act_f32 == nullptr || ws->concat_s8 == nullptr ||
-        ws->model4_cv2_raw_i32 == nullptr) {
+        ws->branch1_i32 == nullptr || ws->branch1_act_f32 == nullptr || ws->split0_concat_s8 == nullptr ||
+        ws->concat_s8 == nullptr || ws->model4_cv2_raw_i32 == nullptr) {
+        y26_stage16_model4_c2f_release(ws);
+        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    }
+    const Y26Stage7ConvNodeConfig& model4_cv1 = cfg->stage15.stage14.model4_cv1;
+    if (y26_build_silu_u8_to_s8_lut(model4_cv1.output_scale,
+                                    model4_cv1.output_zero_point_u8,
+                                    cfg->concat_output_scale,
+                                    cfg->concat_output_zero_point_u8,
+                                    ws->model4_cv1_to_concat_lut_s8) != Y26_CONV_STATUS_SUCCESS) {
         y26_stage16_model4_c2f_release(ws);
         return Y26_CONV_STATUS_INVALID_ARGUMENT;
     }
@@ -507,6 +591,7 @@ extern "C" void y26_stage16_model4_c2f_release(Y26Stage16Model4C2fWorkspace* ws)
     free_aligned(ws->branch1_raw_i32);
     free_aligned(ws->branch1_i32);
     free_aligned(ws->branch1_act_f32);
+    free_aligned(ws->split0_concat_s8);
     free_aligned(ws->concat_s8);
     free_aligned(ws->model4_cv2_raw_i32);
     std::memset(ws, 0, sizeof(*ws));
