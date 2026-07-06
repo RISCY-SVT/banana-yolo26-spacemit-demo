@@ -1,5 +1,6 @@
 #include "y26_k1x_threaded_conv.h"
 
+#include "y26_k1x_activation.h"
 #include "y26_k1x_vmadot.h"
 
 #include <algorithm>
@@ -26,6 +27,11 @@ namespace {
 using Clock = std::chrono::steady_clock;
 
 constexpr int kMaxCluster0Threads = 4;
+
+enum ThreadTaskKind {
+    kThreadTaskConv = 0,
+    kThreadTaskActivationRvvF32 = 1,
+};
 
 int output_dim(int input, int kernel, int stride, int pad) {
     return (input + 2 * pad - kernel) / stride + 1;
@@ -113,6 +119,11 @@ struct Y26ThreadedConvWorkspace {
     std::condition_variable ready_cv;
     const std::int8_t* current_input = nullptr;
     std::int32_t* current_output = nullptr;
+    int task_kind = kThreadTaskConv;
+    Y26ActivationRequantParams activation_params {};
+    const std::int32_t* activation_input_i32 = nullptr;
+    const std::int8_t* activation_lut_s8 = nullptr;
+    std::int8_t* activation_output_s8 = nullptr;
     bool stop = false;
     bool workers_started = false;
 };
@@ -195,6 +206,31 @@ int run_worker_once(ThreadWorker& worker,
     return status;
 }
 
+int run_worker_activation_once(ThreadWorker& worker,
+                               const Y26ActivationRequantParams& params,
+                               const std::int32_t* input_i32,
+                               const std::int8_t* lut_s8,
+                               std::int8_t* output_s8) {
+    const int output_w = worker.plan.output_rows_written > 0 ? worker.root_cfg.params.input_w : 0;
+    const int channels = params.channels;
+    if (worker.plan.output_rows_written == 0) {
+        worker.total_us = 0.0;
+        worker.correction_us = 0.0;
+        return Y26_CONV_STATUS_SUCCESS;
+    }
+    const std::size_t row_values = static_cast<std::size_t>(output_w) * static_cast<std::size_t>(channels);
+    Y26ActivationRequantParams local_params = params;
+    local_params.element_count = static_cast<std::size_t>(worker.plan.output_rows_written) * row_values;
+    const std::size_t offset = static_cast<std::size_t>(worker.plan.row_begin) * row_values;
+    const auto begin = Clock::now();
+    const int status = y26_activation_requant_silu_int8_lut_rvv_f32(
+        &local_params, input_i32 + offset, lut_s8, output_s8 + offset);
+    const auto end = Clock::now();
+    worker.total_us = elapsed_us(begin, end);
+    worker.correction_us = 0.0;
+    return status;
+}
+
 void worker_loop(Y26ThreadedConvWorkspace* workspace, std::size_t worker_index) {
     ThreadWorker& worker = workspace->workers[worker_index];
     worker.affinity_set = pin_current_thread_to_cpu(worker.plan.cpu) ? 1 : 0;
@@ -206,7 +242,15 @@ void worker_loop(Y26ThreadedConvWorkspace* workspace, std::size_t worker_index) 
         if (workspace->stop) {
             break;
         }
-        worker.status = run_worker_once(worker, workspace->current_input, workspace->current_output);
+        if (workspace->task_kind == kThreadTaskActivationRvvF32) {
+            worker.status = run_worker_activation_once(worker,
+                                                       workspace->activation_params,
+                                                       workspace->activation_input_i32,
+                                                       workspace->activation_lut_s8,
+                                                       workspace->activation_output_s8);
+        } else {
+            worker.status = run_worker_once(worker, workspace->current_input, workspace->current_output);
+        }
         workspace->done_barrier->arrive_and_wait();
     }
 }
@@ -340,6 +384,7 @@ extern "C" int y26_threaded_conv_run_ime_cluster0(const Y26ThreadedConvWorkspace
     }
     workspace->current_input = input_nhwc_s8;
     workspace->current_output = corrected_output_nhwc;
+    workspace->task_kind = kThreadTaskConv;
     for (ThreadWorker& worker : workspace->workers) {
         worker.status = Y26_CONV_STATUS_SUCCESS;
         worker.total_us = 0.0;
@@ -368,6 +413,60 @@ extern "C" int y26_threaded_conv_run_ime_cluster0(const Y26ThreadedConvWorkspace
         timing->worker_max_us = worker_max;
         timing->worker_min_us = worker_min;
         timing->correction_us = correction_max;
+    }
+    return status;
+}
+
+extern "C" int y26_threaded_conv_run_activation_rvv_f32_rows(
+    const Y26ThreadedConvWorkspace* const_workspace,
+    const Y26ActivationRequantParams* params,
+    const std::int32_t* producer_i32,
+    const std::int8_t* lut_256_s8,
+    std::int8_t* consumer_input_s8,
+    Y26ThreadedActivationTimingUs* timing) {
+    if (const_workspace == nullptr || params == nullptr || producer_i32 == nullptr || lut_256_s8 == nullptr ||
+        consumer_input_s8 == nullptr || params->channels <= 0) {
+        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    }
+    Y26ThreadedConvWorkspace* workspace = const_cast<Y26ThreadedConvWorkspace*>(const_workspace);
+    const std::size_t expected = static_cast<std::size_t>(workspace->plan.output_h) *
+                                 static_cast<std::size_t>(workspace->plan.output_w) *
+                                 static_cast<std::size_t>(params->channels);
+    if (params->element_count != expected) {
+        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    }
+    if (timing != nullptr) {
+        std::memset(timing, 0, sizeof(*timing));
+    }
+    workspace->task_kind = kThreadTaskActivationRvvF32;
+    workspace->activation_params = *params;
+    workspace->activation_input_i32 = producer_i32;
+    workspace->activation_lut_s8 = lut_256_s8;
+    workspace->activation_output_s8 = consumer_input_s8;
+    for (ThreadWorker& worker : workspace->workers) {
+        worker.status = Y26_CONV_STATUS_SUCCESS;
+        worker.total_us = 0.0;
+        worker.correction_us = 0.0;
+    }
+    const auto begin = Clock::now();
+    workspace->start_barrier->arrive_and_wait();
+    workspace->done_barrier->arrive_and_wait();
+    const auto end = Clock::now();
+
+    int status = Y26_CONV_STATUS_SUCCESS;
+    double worker_max = 0.0;
+    double worker_min = workspace->workers.empty() ? 0.0 : workspace->workers.front().total_us;
+    for (const ThreadWorker& worker : workspace->workers) {
+        if (worker.status != Y26_CONV_STATUS_SUCCESS && status == Y26_CONV_STATUS_SUCCESS) {
+            status = worker.status;
+        }
+        worker_max = std::max(worker_max, worker.total_us);
+        worker_min = std::min(worker_min, worker.total_us);
+    }
+    if (timing != nullptr) {
+        timing->total_us = elapsed_us(begin, end);
+        timing->worker_max_us = worker_max;
+        timing->worker_min_us = worker_min;
     }
     return status;
 }

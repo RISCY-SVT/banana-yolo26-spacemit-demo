@@ -39,6 +39,7 @@ struct Y26Stage16TimingUs {
     double branch1_activation_us;
     double model4_cv2_conv_us;
     double model4_cv2_correction_us;
+    double thread_overhead_us;
     double total_us;
     double activation_share_pct;
     double conv_share_pct;
@@ -71,6 +72,10 @@ struct Y26Stage16Model4C2fWorkspace {
 int y26_stage16_model4_c2f_prepare(const Y26Stage16Model4C2fConfig* cfg,
                                    Y26Stage16Model4C2fWorkspace* ws);
 
+int y26_stage16_model4_c2f_prepare_threaded_branch0(const Y26Stage16Model4C2fConfig* cfg,
+                                                    Y26Stage16Model4C2fWorkspace* ws,
+                                                    int thread_count);
+
 void y26_stage16_model4_c2f_release(Y26Stage16Model4C2fWorkspace* ws);
 
 std::size_t y26_stage16_model4_c2f_output_count(const Y26Stage16Model4C2fConfig* cfg);
@@ -86,6 +91,16 @@ int y26_stage16_model4_c2f_run_ime_cluster0_hotpath(const Y26Stage16Model4C2fCon
                                                     const std::int8_t* input_nhwc_s8,
                                                     std::int32_t* output_i32_nhwc,
                                                     Y26Stage16TimingUs* timing);
+
+int y26_stage16_model4_c2f_run_ime_threaded_branch0_cluster0_hotpath(const Y26Stage16Model4C2fConfig* cfg,
+                                                                     Y26Stage16Model4C2fWorkspace* ws,
+                                                                     const std::int8_t* input_nhwc_s8,
+                                                                     std::int32_t* output_i32_nhwc,
+                                                                     int thread_activation,
+                                                                     Y26Stage16TimingUs* timing);
+
+int y26_stage16_model4_c2f_threaded_worker_affinity_ok(const Y26Stage16Model4C2fWorkspace* ws);
+int y26_stage16_model4_c2f_threaded_thread_count(const Y26Stage16Model4C2fWorkspace* ws);
 
 const std::int8_t* y26_stage16_model4_c2f_concat_s8(const Y26Stage16Model4C2fWorkspace* ws);
 const std::int32_t* y26_stage16_model4_c2f_branch1_i32(const Y26Stage16Model4C2fWorkspace* ws);

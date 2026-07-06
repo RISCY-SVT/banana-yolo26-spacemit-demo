@@ -289,6 +289,7 @@ void accumulate_stage15_timing(Y26Stage16TimingUs& dst, const Y26Stage15TimingUs
     dst.post_qdq_us += src.post_qdq_us;
     dst.pack_layout_us += src.pack_layout_us;
     dst.correction_us += src.correction_us;
+    dst.thread_overhead_us += src.thread_overhead_us;
 }
 
 void finalize_timing(Y26Stage16TimingUs& timing) {
@@ -484,6 +485,15 @@ extern "C" int y26_stage16_model4_c2f_prepare(const Y26Stage16Model4C2fConfig* c
     return Y26_CONV_STATUS_SUCCESS;
 }
 
+extern "C" int y26_stage16_model4_c2f_prepare_threaded_branch0(const Y26Stage16Model4C2fConfig* cfg,
+                                                                Y26Stage16Model4C2fWorkspace* ws,
+                                                                int thread_count) {
+    if (!config_valid(cfg) || ws == nullptr || ws->prepared != 1) {
+        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    }
+    return y26_stage15_model4_branch_prepare_threaded_conv(&cfg->stage15, &ws->stage15_ws, thread_count);
+}
+
 extern "C" void y26_stage16_model4_c2f_release(Y26Stage16Model4C2fWorkspace* ws) {
     if (ws == nullptr) {
         return;
@@ -566,6 +576,45 @@ extern "C" int y26_stage16_model4_c2f_run_ime_cluster0_hotpath(const Y26Stage16M
         finalize_timing(*timing);
     }
     return status;
+}
+
+extern "C" int y26_stage16_model4_c2f_run_ime_threaded_branch0_cluster0_hotpath(
+    const Y26Stage16Model4C2fConfig* cfg,
+    Y26Stage16Model4C2fWorkspace* ws,
+    const std::int8_t* input_nhwc_s8,
+    std::int32_t* output_i32_nhwc,
+    int thread_activation,
+    Y26Stage16TimingUs* timing) {
+    if (!config_valid(cfg) || ws == nullptr || ws->prepared != 1 || input_nhwc_s8 == nullptr ||
+        output_i32_nhwc == nullptr) {
+        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    }
+    timing_reset(timing);
+    const auto begin = Clock::now();
+    Y26Stage15TimingUs stage15_timing {};
+    int status = y26_stage15_model4_branch_run_ime_threaded_conv_cluster0_hotpath(
+        &cfg->stage15, &ws->stage15_ws, input_nhwc_s8, ws->stage15_output_i32, thread_activation, &stage15_timing);
+    if (status != Y26_CONV_STATUS_SUCCESS) {
+        return status;
+    }
+    if (timing != nullptr) {
+        accumulate_stage15_timing(*timing, stage15_timing);
+    }
+    status = run_after_stage15(*cfg, *ws, output_i32_nhwc, timing, true);
+    const auto end = Clock::now();
+    if (timing != nullptr) {
+        timing->total_us = elapsed_us(begin, end);
+        finalize_timing(*timing);
+    }
+    return status;
+}
+
+extern "C" int y26_stage16_model4_c2f_threaded_worker_affinity_ok(const Y26Stage16Model4C2fWorkspace* ws) {
+    return ws != nullptr ? y26_stage15_model4_branch_threaded_worker_affinity_ok(&ws->stage15_ws) : 0;
+}
+
+extern "C" int y26_stage16_model4_c2f_threaded_thread_count(const Y26Stage16Model4C2fWorkspace* ws) {
+    return ws != nullptr ? y26_stage15_model4_branch_threaded_thread_count(&ws->stage15_ws) : 0;
 }
 
 extern "C" const std::int8_t* y26_stage16_model4_c2f_concat_s8(const Y26Stage16Model4C2fWorkspace* ws) {

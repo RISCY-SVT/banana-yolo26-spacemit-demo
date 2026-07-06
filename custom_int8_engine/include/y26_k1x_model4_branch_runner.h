@@ -7,6 +7,8 @@
 
 extern "C" {
 
+struct Y26ThreadedConvWorkspace;
+
 struct Y26Stage15Model4BranchConfig {
     const char* subset_id;
     Y26Stage14NextC2fConfig stage14;
@@ -31,6 +33,7 @@ struct Y26Stage15TimingUs {
     double branch0_conv_us;
     double branch0_correction_us;
     double branch0_activation_us;
+    double thread_overhead_us;
     double total_us;
     double conv_share_pct;
     double activation_share_pct;
@@ -44,6 +47,7 @@ struct Y26Stage15Model4BranchWorkspace {
     Y26Stage14NextC2fWorkspace stage14_ws;
     Y26PrepackedConvWeights* branch0_weights;
     Y26ConvWorkspace* branch0_workspace;
+    Y26ThreadedConvWorkspace* branch0_threaded_workspace;
     std::int32_t* model4_cv1_i32;
     std::int8_t* model4_cv1_act_s8;
     std::int8_t* split1_input_s8;
@@ -59,11 +63,16 @@ struct Y26Stage15Model4BranchWorkspace {
     std::size_t branch0_output_count;
     std::size_t prepacked_bytes;
     std::size_t workspace_bytes;
+    int branch0_thread_count;
     int prepared;
 };
 
 int y26_stage15_model4_branch_prepare(const Y26Stage15Model4BranchConfig* cfg,
                                       Y26Stage15Model4BranchWorkspace* ws);
+
+int y26_stage15_model4_branch_prepare_threaded_conv(const Y26Stage15Model4BranchConfig* cfg,
+                                                    Y26Stage15Model4BranchWorkspace* ws,
+                                                    int thread_count);
 
 void y26_stage15_model4_branch_release(Y26Stage15Model4BranchWorkspace* ws);
 
@@ -80,6 +89,16 @@ int y26_stage15_model4_branch_run_ime_cluster0_hotpath(const Y26Stage15Model4Bra
                                                        const std::int8_t* input_nhwc_s8,
                                                        std::int32_t* output_i32_nhwc,
                                                        Y26Stage15TimingUs* timing);
+
+int y26_stage15_model4_branch_run_ime_threaded_conv_cluster0_hotpath(const Y26Stage15Model4BranchConfig* cfg,
+                                                                     Y26Stage15Model4BranchWorkspace* ws,
+                                                                     const std::int8_t* input_nhwc_s8,
+                                                                     std::int32_t* output_i32_nhwc,
+                                                                     int thread_activation,
+                                                                     Y26Stage15TimingUs* timing);
+
+int y26_stage15_model4_branch_threaded_worker_affinity_ok(const Y26Stage15Model4BranchWorkspace* ws);
+int y26_stage15_model4_branch_threaded_thread_count(const Y26Stage15Model4BranchWorkspace* ws);
 
 const std::int8_t* y26_stage15_model4_branch_split1_input_s8(const Y26Stage15Model4BranchWorkspace* ws);
 const std::int8_t* y26_stage15_model4_branch_branch0_act_s8(const Y26Stage15Model4BranchWorkspace* ws);

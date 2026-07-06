@@ -1,5 +1,6 @@
 #pragma once
 
+#include "y26_k1x_activation.h"
 #include "y26_k1x_backbone_subset_runner.h"
 
 #include <cstddef>
@@ -49,6 +50,12 @@ struct Y26ThreadedConvTimingUs {
     double worker_min_us;
 };
 
+struct Y26ThreadedActivationTimingUs {
+    double total_us;
+    double worker_max_us;
+    double worker_min_us;
+};
+
 struct Y26ThreadedConvWorkspace;
 
 Y26ThreadedConvWorkspace* y26_threaded_conv_create_spatial_rows(const Y26Stage7ConvNodeConfig* cfg,
@@ -60,6 +67,13 @@ int y26_threaded_conv_run_ime_cluster0(const Y26ThreadedConvWorkspace* workspace
                                        const std::int8_t* input_nhwc_s8,
                                        std::int32_t* corrected_output_nhwc,
                                        Y26ThreadedConvTimingUs* timing);
+
+int y26_threaded_conv_run_activation_rvv_f32_rows(const Y26ThreadedConvWorkspace* workspace,
+                                                  const Y26ActivationRequantParams* params,
+                                                  const std::int32_t* producer_i32,
+                                                  const std::int8_t* lut_256_s8,
+                                                  std::int8_t* consumer_input_s8,
+                                                  Y26ThreadedActivationTimingUs* timing);
 
 int y26_threaded_conv_thread_count(const Y26ThreadedConvWorkspace* workspace);
 

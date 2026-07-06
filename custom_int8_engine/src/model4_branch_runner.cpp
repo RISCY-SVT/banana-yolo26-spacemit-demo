@@ -1,5 +1,7 @@
 #include "y26_k1x_model4_branch_runner.h"
 
+#include "y26_k1x_threaded_conv.h"
+
 #include <algorithm>
 #include <chrono>
 #include <cstddef>
@@ -271,6 +273,50 @@ int run_conv_ime(const Y26Stage7ConvNodeConfig& cfg,
     return status;
 }
 
+int run_conv_threaded(const Y26Stage15Model4BranchWorkspace& ws,
+                      const std::int8_t* input_s8,
+                      std::int32_t* output_i32,
+                      double* conv_us,
+                      double* correction_us,
+                      double* thread_overhead_us) {
+    Y26ThreadedConvTimingUs threaded_timing {};
+    const int status =
+        y26_threaded_conv_run_ime_cluster0(ws.branch0_threaded_workspace, input_s8, output_i32, &threaded_timing);
+    if (conv_us != nullptr) {
+        *conv_us = threaded_timing.total_us;
+    }
+    if (correction_us != nullptr) {
+        *correction_us = threaded_timing.correction_us;
+    }
+    if (thread_overhead_us != nullptr) {
+        *thread_overhead_us = std::max(0.0, threaded_timing.total_us - threaded_timing.worker_max_us);
+    }
+    return status;
+}
+
+int apply_activation_threaded(const Y26Stage15Model4BranchWorkspace& ws,
+                              const Y26ActivationRequantParams& params,
+                              const std::int8_t* lut_s8,
+                              const std::int32_t* producer_i32,
+                              std::int8_t* consumer_input_s8,
+                              double* activation_us,
+                              double* thread_overhead_us) {
+    Y26ThreadedActivationTimingUs activation_timing {};
+    const int status = y26_threaded_conv_run_activation_rvv_f32_rows(ws.branch0_threaded_workspace,
+                                                                     &params,
+                                                                     producer_i32,
+                                                                     lut_s8,
+                                                                     consumer_input_s8,
+                                                                     &activation_timing);
+    if (activation_us != nullptr) {
+        *activation_us = activation_timing.total_us;
+    }
+    if (thread_overhead_us != nullptr) {
+        *thread_overhead_us = std::max(0.0, activation_timing.total_us - activation_timing.worker_max_us);
+    }
+    return status;
+}
+
 void accumulate_stage14_timing(Y26Stage15TimingUs& dst, const Y26Stage14TimingUs& src) {
     dst.stage14_timing_us = src;
     dst.conv_us += src.conv_us;
@@ -309,17 +355,31 @@ int run_after_stage14(const Y26Stage15Model4BranchConfig& cfg,
                       Y26Stage15Model4BranchWorkspace& ws,
                       std::int32_t* output_i32_nhwc,
                       Y26Stage15TimingUs* timing,
-                      bool use_ime) {
+                      bool use_ime,
+                      bool use_threaded_conv,
+                      bool use_threaded_activation) {
+    if ((use_threaded_conv || use_threaded_activation) && ws.branch0_threaded_workspace == nullptr) {
+        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    }
     const Y26Stage7ConvNodeConfig& producer = cfg.stage14.model4_cv1;
     Y26ActivationRequantParams split_params = activation_params(
         producer, ws.model4_cv1_output_count, cfg.split1_output_scale, cfg.split1_output_zero_point_u8);
     const auto act0_begin = Clock::now();
-    int status = apply_activation_requant(cfg.activation_mode,
-                                          split_params,
-                                          ws.model4_cv1_fixed_requant,
-                                          ws.model4_cv1_to_split1_lut_s8,
-                                          ws.model4_cv1_i32,
-                                          ws.model4_cv1_act_s8);
+    double split_activation_thread_overhead_us = 0.0;
+    int status = use_threaded_activation
+                     ? apply_activation_threaded(ws,
+                                                 split_params,
+                                                 ws.model4_cv1_to_split1_lut_s8,
+                                                 ws.model4_cv1_i32,
+                                                 ws.model4_cv1_act_s8,
+                                                 nullptr,
+                                                 &split_activation_thread_overhead_us)
+                     : apply_activation_requant(cfg.activation_mode,
+                                                split_params,
+                                                ws.model4_cv1_fixed_requant,
+                                                ws.model4_cv1_to_split1_lut_s8,
+                                                ws.model4_cv1_i32,
+                                                ws.model4_cv1_act_s8);
     const auto act0_end = Clock::now();
     if (status != Y26_CONV_STATUS_SUCCESS) {
         return status;
@@ -334,21 +394,31 @@ int run_after_stage14(const Y26Stage15Model4BranchConfig& cfg,
 
     double branch0_conv_us = 0.0;
     double branch0_correction_us = 0.0;
-    status = use_ime ? run_conv_ime(cfg.branch0,
-                                    ws.branch0_weights,
-                                    ws.branch0_workspace,
-                                    ws.split1_input_s8,
-                                    ws.branch0_raw_i32,
-                                    ws.branch0_i32,
-                                    &branch0_conv_us,
-                                    &branch0_correction_us)
-                     : run_conv_scalar(cfg.branch0,
-                                       ws.branch0_weights,
-                                       ws.split1_input_s8,
-                                       ws.branch0_raw_i32,
-                                       ws.branch0_i32,
-                                       &branch0_conv_us,
-                                       &branch0_correction_us);
+    double branch0_thread_overhead_us = 0.0;
+    if (use_threaded_conv) {
+        status = run_conv_threaded(ws,
+                                   ws.split1_input_s8,
+                                   ws.branch0_i32,
+                                   &branch0_conv_us,
+                                   &branch0_correction_us,
+                                   &branch0_thread_overhead_us);
+    } else {
+        status = use_ime ? run_conv_ime(cfg.branch0,
+                                        ws.branch0_weights,
+                                        ws.branch0_workspace,
+                                        ws.split1_input_s8,
+                                        ws.branch0_raw_i32,
+                                        ws.branch0_i32,
+                                        &branch0_conv_us,
+                                        &branch0_correction_us)
+                         : run_conv_scalar(cfg.branch0,
+                                           ws.branch0_weights,
+                                           ws.split1_input_s8,
+                                           ws.branch0_raw_i32,
+                                           ws.branch0_i32,
+                                           &branch0_conv_us,
+                                           &branch0_correction_us);
+    }
     if (status != Y26_CONV_STATUS_SUCCESS) {
         return status;
     }
@@ -356,12 +426,21 @@ int run_after_stage14(const Y26Stage15Model4BranchConfig& cfg,
     Y26ActivationRequantParams branch0_act_params = activation_params(
         cfg.branch0, ws.branch0_output_count, cfg.branch0_act_output_scale, cfg.branch0_act_output_zero_point_u8);
     const auto act1_begin = Clock::now();
-    status = apply_activation_requant(cfg.activation_mode,
-                                      branch0_act_params,
-                                      ws.branch0_fixed_requant,
-                                      ws.branch0_act_lut_s8,
-                                      ws.branch0_i32,
-                                      ws.branch0_act_s8);
+    double branch_activation_thread_overhead_us = 0.0;
+    status = use_threaded_activation
+                 ? apply_activation_threaded(ws,
+                                             branch0_act_params,
+                                             ws.branch0_act_lut_s8,
+                                             ws.branch0_i32,
+                                             ws.branch0_act_s8,
+                                             nullptr,
+                                             &branch_activation_thread_overhead_us)
+                 : apply_activation_requant(cfg.activation_mode,
+                                            branch0_act_params,
+                                            ws.branch0_fixed_requant,
+                                            ws.branch0_act_lut_s8,
+                                            ws.branch0_i32,
+                                            ws.branch0_act_s8);
     const auto act1_end = Clock::now();
     if (status != Y26_CONV_STATUS_SUCCESS) {
         return status;
@@ -379,6 +458,8 @@ int run_after_stage14(const Y26Stage15Model4BranchConfig& cfg,
         timing->correction_us += branch0_correction_us;
         timing->branch0_correction_us += branch0_correction_us;
         timing->branch0_activation_us += branch_activation_us;
+        timing->thread_overhead_us += split_activation_thread_overhead_us + branch0_thread_overhead_us +
+                                      branch_activation_thread_overhead_us;
     }
     return Y26_CONV_STATUS_SUCCESS;
 }
@@ -459,11 +540,28 @@ extern "C" int y26_stage15_model4_branch_prepare(const Y26Stage15Model4BranchCon
     return Y26_CONV_STATUS_SUCCESS;
 }
 
+extern "C" int y26_stage15_model4_branch_prepare_threaded_conv(const Y26Stage15Model4BranchConfig* cfg,
+                                                                Y26Stage15Model4BranchWorkspace* ws,
+                                                                int thread_count) {
+    if (!config_valid(cfg) || ws == nullptr || ws->prepared != 1) {
+        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    }
+    y26_threaded_conv_destroy(ws->branch0_threaded_workspace);
+    ws->branch0_threaded_workspace = y26_threaded_conv_create_spatial_rows(&cfg->branch0, thread_count);
+    if (ws->branch0_threaded_workspace == nullptr) {
+        ws->branch0_thread_count = 0;
+        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    }
+    ws->branch0_thread_count = thread_count;
+    return Y26_CONV_STATUS_SUCCESS;
+}
+
 extern "C" void y26_stage15_model4_branch_release(Y26Stage15Model4BranchWorkspace* ws) {
     if (ws == nullptr) {
         return;
     }
     y26_stage14_next_c2f_release(&ws->stage14_ws);
+    y26_threaded_conv_destroy(ws->branch0_threaded_workspace);
     y26_prepacked_conv_weights_destroy(ws->branch0_weights);
     y26_conv_workspace_destroy(ws->branch0_workspace);
     free_aligned(ws->model4_cv1_i32);
@@ -505,7 +603,7 @@ extern "C" int y26_stage15_model4_branch_run_scalar(const Y26Stage15Model4Branch
     if (timing != nullptr) {
         accumulate_stage14_timing(*timing, stage14_timing);
     }
-    status = run_after_stage14(*cfg, *ws, output_i32_nhwc, timing, false);
+    status = run_after_stage14(*cfg, *ws, output_i32_nhwc, timing, false, false, false);
     const auto end = Clock::now();
     if (timing != nullptr) {
         timing->total_us = elapsed_us(begin, end);
@@ -534,13 +632,53 @@ extern "C" int y26_stage15_model4_branch_run_ime_cluster0_hotpath(const Y26Stage
     if (timing != nullptr) {
         accumulate_stage14_timing(*timing, stage14_timing);
     }
-    status = run_after_stage14(*cfg, *ws, output_i32_nhwc, timing, true);
+    status = run_after_stage14(*cfg, *ws, output_i32_nhwc, timing, true, false, false);
     const auto end = Clock::now();
     if (timing != nullptr) {
         timing->total_us = elapsed_us(begin, end);
         finalize_timing(*timing);
     }
     return status;
+}
+
+extern "C" int y26_stage15_model4_branch_run_ime_threaded_conv_cluster0_hotpath(
+    const Y26Stage15Model4BranchConfig* cfg,
+    Y26Stage15Model4BranchWorkspace* ws,
+    const std::int8_t* input_nhwc_s8,
+    std::int32_t* output_i32_nhwc,
+    int thread_activation,
+    Y26Stage15TimingUs* timing) {
+    if (!config_valid(cfg) || ws == nullptr || ws->prepared != 1 || ws->branch0_threaded_workspace == nullptr ||
+        input_nhwc_s8 == nullptr || output_i32_nhwc == nullptr) {
+        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    }
+    timing_reset(timing);
+    const auto begin = Clock::now();
+    Y26Stage14TimingUs stage14_timing {};
+    int status = y26_stage14_next_c2f_run_ime_cluster0_hotpath(
+        &cfg->stage14, &ws->stage14_ws, input_nhwc_s8, ws->model4_cv1_i32, &stage14_timing);
+    if (status != Y26_CONV_STATUS_SUCCESS) {
+        return status;
+    }
+    if (timing != nullptr) {
+        accumulate_stage14_timing(*timing, stage14_timing);
+    }
+    status = run_after_stage14(*cfg, *ws, output_i32_nhwc, timing, true, true, thread_activation != 0);
+    const auto end = Clock::now();
+    if (timing != nullptr) {
+        timing->total_us = elapsed_us(begin, end);
+        finalize_timing(*timing);
+    }
+    return status;
+}
+
+extern "C" int y26_stage15_model4_branch_threaded_worker_affinity_ok(
+    const Y26Stage15Model4BranchWorkspace* ws) {
+    return ws != nullptr ? y26_threaded_conv_worker_affinity_ok(ws->branch0_threaded_workspace) : 0;
+}
+
+extern "C" int y26_stage15_model4_branch_threaded_thread_count(const Y26Stage15Model4BranchWorkspace* ws) {
+    return ws != nullptr ? y26_threaded_conv_thread_count(ws->branch0_threaded_workspace) : 0;
 }
 
 extern "C" const std::int8_t* y26_stage15_model4_branch_split1_input_s8(
