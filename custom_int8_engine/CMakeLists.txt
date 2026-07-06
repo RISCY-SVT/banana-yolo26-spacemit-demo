@@ -269,6 +269,16 @@ if(Y26_K1X_BUILD_TOOLS)
     if(Y26_K1X_ENABLE_IME)
         target_compile_definitions(bench_stage19_threaded_c2f_integration PRIVATE Y26_K1X_ENABLE_IME_ASM=1)
     endif()
+
+    add_executable(bench_stage20_model4_fullshape_c2f
+        tools/bench_stage20_model4_fullshape_c2f.cpp
+    )
+    target_link_libraries(bench_stage20_model4_fullshape_c2f PRIVATE y26_k1x_custom_int8_engine Threads::Threads)
+    target_include_directories(bench_stage20_model4_fullshape_c2f PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/tests")
+    target_compile_options(bench_stage20_model4_fullshape_c2f PRIVATE -Wall -Wextra -Wpedantic)
+    if(Y26_K1X_ENABLE_IME)
+        target_compile_definitions(bench_stage20_model4_fullshape_c2f PRIVATE Y26_K1X_ENABLE_IME_ASM=1)
+    endif()
 endif()
 
 if(Y26_K1X_ENABLE_TESTS)

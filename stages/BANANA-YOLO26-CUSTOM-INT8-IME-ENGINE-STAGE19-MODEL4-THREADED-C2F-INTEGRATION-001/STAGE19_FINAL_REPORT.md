@@ -4,7 +4,7 @@ stage_id: `BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE19-MODEL4-THREADED-C2F-INTE
 repo: `/data/banana-yolo26-spacemit-demo`
 branch: `yolo26-custom-int8-engine`
 start_head: `6c4c8258fb10cf25476a8380870d624200855f9b`
-end_head: `pending-local-commit-see-final-response`
+end_head: `53ac15ad253ac70e594cc7e1ac6c117e92da85ca`
 pushed: `false`
 full_engine_implemented: `false`
 ncnn_source_mutated: `false`

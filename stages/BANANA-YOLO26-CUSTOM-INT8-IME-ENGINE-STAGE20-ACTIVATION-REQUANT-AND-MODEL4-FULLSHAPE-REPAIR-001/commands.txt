@@ -1,0 +1,72 @@
+# commands for BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE20-ACTIVATION-REQUANT-AND-MODEL4-FULLSHAPE-REPAIR-001
+RUN_TS=2026-07-06_08-16-48
+LOG_DIR=/data/ncnn-logs/ai-team/2026-07-06_08-16-48/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE20-ACTIVATION-REQUANT-AND-MODEL4-FULLSHAPE-REPAIR-001
+STAGE_DIR=/data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE20-ACTIVATION-REQUANT-AND-MODEL4-FULLSHAPE-REPAIR-001
+TASK_RUN_DIR=/data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE20-ACTIVATION-REQUANT-AND-MODEL4-FULLSHAPE-REPAIR-001
+2026-07-06T08:16:48+02:00 mkdir -p '/data/ncnn-logs/ai-team/2026-07-06_08-16-48/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE20-ACTIVATION-REQUANT-AND-MODEL4-FULLSHAPE-REPAIR-001' '/data/ncnn-logs/ai-team/2026-07-06_08-16-48/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE20-ACTIVATION-REQUANT-AND-MODEL4-FULLSHAPE-REPAIR-001/artifacts' '/data/ncnn-logs/ai-team/2026-07-06_08-16-48/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE20-ACTIVATION-REQUANT-AND-MODEL4-FULLSHAPE-REPAIR-001/run_logs' '/data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE20-ACTIVATION-REQUANT-AND-MODEL4-FULLSHAPE-REPAIR-001' '/data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE20-ACTIVATION-REQUANT-AND-MODEL4-FULLSHAPE-REPAIR-001' '/data/lab/task-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE20-ACTIVATION-REQUANT-AND-MODEL4-FULLSHAPE-REPAIR-001/artifacts'
+2026-07-06T08:16:52+02:00 /data/lab/scripts/check-bridge-layout.sh # exit=0
+2026-07-06T08:17:07+02:00 cd /data/banana-yolo26-spacemit-demo && date -Iseconds && hostname && pwd && git status --short && git branch --show-current && git rev-parse HEAD && git log --oneline -5 && git remote -v
+2026-07-06T08:17:07+02:00 test -d stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE19-MODEL4-THREADED-C2F-INTEGRATION-001
+2026-07-06T08:17:07+02:00 test -d /exchange/results/outbox/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE19-MODEL4-THREADED-C2F-INTEGRATION-001
+2026-07-06T08:17:07+02:00 git -C /data/ncnn status --short # cross-track note only
+2026-07-06T08:17:47+02:00 apply_patch Stage19 end_head traceability fix and create stage19_traceability_fix_report.md # exit=0
+2026-07-06T08:18:00+02:00 cmake -S custom_int8_engine -B .deps/custom_int8_engine/build-host-native-stage20 -DCMAKE_BUILD_TYPE=Debug -DY26_K1X_ENABLE_IME=OFF -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_CXX_COMPILER=/usr/bin/g++
+2026-07-06T08:18:02+02:00 cmake --build .deps/custom_int8_engine/build-host-native-stage20 -j8
+2026-07-06T08:18:35+02:00 ctest --test-dir .deps/custom_int8_engine/build-host-native-stage20 --output-on-failure
+2026-07-06T08:18:59+02:00 bash -lc 'source /data/build_scripts/01-env.sh; cmake -S custom_int8_engine -B .deps/custom_int8_engine/build-riscv-stage20 -DCMAKE_BUILD_TYPE=Release -DY26_K1X_ENABLE_IME=ON -DCMAKE_CXX_COMPILER=/opt/riscv/bin/riscv64-unknown-linux-gnu-g++ -DCMAKE_CXX_FLAGS=-march=rv64gcv_zvfh -mabi=lp64d -DCMAKE_SYSTEM_NAME=Linux -DCMAKE_SYSTEM_PROCESSOR=riscv64'
+2026-07-06T08:19:02+02:00 cmake --build .deps/custom_int8_engine/build-riscv-stage20 -j8
+2026-07-06T08:20:37+02:00 python3 -m venv .deps/custom_int8_engine/venv-stage20-onnx
+2026-07-06T08:20:44+02:00 .deps/custom_int8_engine/venv-stage20-onnx/bin/python - <<'PY' import importlib.util for onnx/numpy/onnxruntime
+2026-07-06T08:20:56+02:00 .deps/custom_int8_engine/venv-stage20-onnx/bin/python -m pip install onnx numpy onnxruntime
+2026-07-06T08:21:22+02:00 .deps/custom_int8_engine/venv-stage20-onnx/bin/python - <<'PY' print package versions
+2026-07-06T08:21:42+02:00 .deps/custom_int8_engine/venv-stage20-onnx/bin/python graph inventory for .deps/models/yolo26/int8_rt204_forensics/manual_ort/manual_e2e_rep_conv_matmul_qdq.onnx /model.4
+2026-07-06T08:22:31+02:00 .deps/custom_int8_engine/venv-stage20-onnx/bin/python ORT smoke with model4 boundary outputs
+2026-07-06T08:24:57+02:00 apply_patch add custom_int8_engine/tools/extract_fullshape_oracle.py # exit=0
+2026-07-06T08:24:57+02:00 .deps/custom_int8_engine/venv-stage20-onnx/bin/python custom_int8_engine/tools/extract_fullshape_oracle.py --model .deps/models/yolo26/int8_rt204_forensics/manual_ort/manual_e2e_rep_conv_matmul_qdq.onnx --out-dir .deps/custom_int8_engine/stage20_fullshape_oracles/model4_c2f_synthetic_seeded --input-mode synthetic_seeded --boundary-set model4_c2f --manifest /data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE20-ACTIVATION-REQUANT-AND-MODEL4-FULLSHAPE-REPAIR-001/fullshape_boundary_manifest.tsv --checksums /data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE20-ACTIVATION-REQUANT-AND-MODEL4-FULLSHAPE-REPAIR-001/fullshape_tensor_checksums.tsv --metadata-json /data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE20-ACTIVATION-REQUANT-AND-MODEL4-FULLSHAPE-REPAIR-001/fullshape_oracle_metadata.json
+2026-07-06T08:29:10+02:00 apply_patch add bench_stage20_model4_fullshape_c2f.cpp and CMake target # exit=0
+2026-07-06T08:29:10+02:00 cmake --build .deps/custom_int8_engine/build-host-native-stage20 --target bench_stage20_model4_fullshape_c2f -j8
+2026-07-06T08:29:33+02:00 cmake -S custom_int8_engine -B .deps/custom_int8_engine/build-host-native-stage20 -DCMAKE_BUILD_TYPE=Debug -DY26_K1X_ENABLE_IME=OFF -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_CXX_COMPILER=/usr/bin/g++ # reconfigure after Stage20 CMake target
+2026-07-06T08:29:34+02:00 cmake --build .deps/custom_int8_engine/build-host-native-stage20 --target bench_stage20_model4_fullshape_c2f -j8
+2026-07-06T08:30:07+02:00 apply_patch add missing chrono include # exit=0
+2026-07-06T08:30:07+02:00 cmake --build .deps/custom_int8_engine/build-host-native-stage20 --target bench_stage20_model4_fullshape_c2f -j8
+2026-07-06T08:30:11+02:00 .deps/custom_int8_engine/build-host-native-stage20/bench_stage20_model4_fullshape_c2f 0 1 1 # host smoke no IME build
+2026-07-06T08:30:28+02:00 bash -lc 'source /data/build_scripts/01-env.sh; cmake -S custom_int8_engine -B .deps/custom_int8_engine/build-riscv-stage20 -DCMAKE_BUILD_TYPE=Release -DY26_K1X_ENABLE_IME=ON -DCMAKE_CXX_COMPILER=/opt/riscv/bin/riscv64-unknown-linux-gnu-g++ -DCMAKE_CXX_FLAGS=-march=rv64gcv_zvfh -mabi=lp64d -DCMAKE_SYSTEM_NAME=Linux -DCMAKE_SYSTEM_PROCESSOR=riscv64' # reconfigure after Stage20 target
+2026-07-06T08:30:29+02:00 cmake --build .deps/custom_int8_engine/build-riscv-stage20 --target bench_stage20_model4_fullshape_c2f -j8
+2026-07-06T08:30:52+02:00 sha256sum .deps/custom_int8_engine/build-riscv-stage20/bench_stage20_model4_fullshape_c2f
+2026-07-06T08:30:52+02:00 ssh svt@banana mkdir -p /home/svt/yolo26-custom-int8-stage20/2026-07-06_08-16-48
+2026-07-06T08:30:53+02:00 scp .deps/custom_int8_engine/build-riscv-stage20/bench_stage20_model4_fullshape_c2f svt@banana:/home/svt/yolo26-custom-int8-stage20/2026-07-06_08-16-48/
+2026-07-06T08:30:54+02:00 ssh svt@banana cd /home/svt/yolo26-custom-int8-stage20/2026-07-06_08-16-48 && taskset -c 0-3 ./bench_stage20_model4_fullshape_c2f 0 1 1
+2026-07-06T08:31:12+02:00 ssh svt@banana cd /home/svt/yolo26-custom-int8-stage20/2026-07-06_08-16-48 && taskset -c 0-3 ./bench_stage20_model4_fullshape_c2f 10 100 5
+2026-07-06T08:38:50+02:00 apply_patch add C2_split0_concat_lut_4t repair candidate # exit=0
+2026-07-06T08:38:50+02:00 cmake --build .deps/custom_int8_engine/build-host-native-stage20 --target bench_stage20_model4_fullshape_c2f -j8
+2026-07-06T08:38:54+02:00 cmake --build .deps/custom_int8_engine/build-riscv-stage20 --target bench_stage20_model4_fullshape_c2f -j8
+2026-07-06T08:39:16+02:00 sha256sum .deps/custom_int8_engine/build-riscv-stage20/bench_stage20_model4_fullshape_c2f # after C2 candidate
+2026-07-06T08:39:16+02:00 scp .deps/custom_int8_engine/build-riscv-stage20/bench_stage20_model4_fullshape_c2f svt@banana:/home/svt/yolo26-custom-int8-stage20/2026-07-06_08-16-48/ # after C2 candidate
+2026-07-06T08:39:17+02:00 ssh svt@banana cd /home/svt/yolo26-custom-int8-stage20/2026-07-06_08-16-48 && taskset -c 0-3 ./bench_stage20_model4_fullshape_c2f 0 1 1 # C2 smoke
+2026-07-06T08:39:30+02:00 ssh svt@banana cd /home/svt/yolo26-custom-int8-stage20/2026-07-06_08-16-48 && taskset -c 0-3 ./bench_stage20_model4_fullshape_c2f 10 100 5 # stable with C2 repair
+2026-07-06T08:47:39+02:00 python3 parse board_stage20_fullshape_stable_c2.log into component/threading TSV
+2026-07-06T08:49:18+02:00 apply_patch add Stage20 reports and stage21_prompt # exit=0
+2026-07-06T08:49:18+02:00 cmake --build .deps/custom_int8_engine/build-host-native-stage20 -j8
+2026-07-06T08:49:20+02:00 ctest --test-dir .deps/custom_int8_engine/build-host-native-stage20 --output-on-failure
+2026-07-06T08:49:34+02:00 cmake --build .deps/custom_int8_engine/build-riscv-stage20 -j8 # final cross build
+2026-07-06T08:49:55+02:00 git diff --check
+2026-07-06T08:49:55+02:00 find custom_int8_engine stages -type l -print
+2026-07-06T08:49:55+02:00 git diff --name-only HEAD
+2026-07-06T08:49:55+02:00 secret-like scan over changed tracked/text files
+2026-07-06T08:49:56+02:00 changed path ASCII/control scan
+2026-07-06T08:50:50+02:00 git status --short before staging
+2026-07-06T08:50:50+02:00 git add custom_int8_engine/CMakeLists.txt custom_int8_engine/tools/bench_stage20_model4_fullshape_c2f.cpp custom_int8_engine/tools/extract_fullshape_oracle.py stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE19-MODEL4-THREADED-C2F-INTEGRATION-001/STAGE19_FINAL_REPORT.md stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE19-MODEL4-THREADED-C2F-INTEGRATION-001/STAGE19_SUMMARY_RU.md stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE20-ACTIVATION-REQUANT-AND-MODEL4-FULLSHAPE-REPAIR-001
+2026-07-06T08:50:51+02:00 git diff --cached --check
+2026-07-06T08:51:05+02:00 perl -pi -e 's/\r$//' Stage20 generated TSV files
+2026-07-06T08:51:05+02:00 git add Stage20 TSV after LF normalization
+2026-07-06T08:51:05+02:00 git diff --cached --check # after TSV LF normalization
+[2026-07-06T08:52:56+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=cd\ /data/banana-yolo26-spacemit-demo\ \&\&\ git\ status\ --short\ \&\&\ git\ diff\ --cached\ --check\ \|\|\ true\ \&\&\ nl\ -ba\ stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE20-ACTIVATION-REQUANT-AND-MODEL4-FULLSHAPE-REPAIR-001/fullshape_boundary_manifest.tsv\ \|\ sed\ -n\ \"1\,25p\"\ \&\&\ nl\ -ba\ stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE20-ACTIVATION-REQUANT-AND-MODEL4-FULLSHAPE-REPAIR-001/fullshape_tensor_checksums.tsv\ \|\ sed\ -n\ \"1\,25p\"
+[2026-07-06T08:53:13+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=cd /data/banana-yolo26-spacemit-demo && git status --short && git diff --cached --check || true && nl -ba stages/.../fullshape_boundary_manifest.tsv | sed -n 1,25p && nl -ba stages/.../fullshape_tensor_checksums.tsv | sed -n 1,25p
+[2026-07-06T08:53:31+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=Fill empty trailing TSV cells with n/a in fullshape_boundary_manifest.tsv and fullshape_tensor_checksums.tsv; git add fixed TSVs
+[2026-07-06T08:53:45+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=cd /data/banana-yolo26-spacemit-demo && git diff --check && git diff --cached --check && find custom_int8_engine stages -type l -print && git status --short
+[2026-07-06T08:53:45+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=cd /data/banana-yolo26-spacemit-demo && git diff --cached --name-only
+[2026-07-06T08:53:54+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=sed -n 1,220p stages/.../source_hygiene_report.md
+[2026-07-06T08:54:08+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=Run staged-file secret-like scan excluding commands.txt, staged path ASCII/control scan, and large staged file check
+[2026-07-06T08:54:24+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=apply_patch source_hygiene_report.md final hygiene status; git add source_hygiene_report.md commands.txt
+[2026-07-06T08:54:45+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=Prepare /data/lab/task-runs Stage20 artifacts before commit
+[2026-07-06T08:55:00+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=git add Stage20 commands.txt; git commit -m "Repair model4 fullshape merge dataflow for YOLO26 custom INT8 engine"

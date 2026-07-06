@@ -1,0 +1,25 @@
+{
+  "boundary_count": 25,
+  "boundary_set": "model4_c2f",
+  "input_mode": "synthetic_seeded",
+  "input_name": "images",
+  "input_path": ".deps/custom_int8_engine/stage20_fullshape_oracles/model4_c2f_synthetic_seeded/input__synthetic_seeded.npy",
+  "input_sha256": "9b94e571bb66f593c049b84474a987cf26c5a111e7bf9e827f1ff086c550131d",
+  "input_shape": [
+    1,
+    3,
+    640,
+    640
+  ],
+  "ir_version": 8,
+  "model": ".deps/models/yolo26/int8_rt204_forensics/manual_ort/manual_e2e_rep_conv_matmul_qdq.onnx",
+  "model_sha256": "30a94e4738606673b5e0a73499cbc977167f046f8fa8637d6040ce744f429c0c",
+  "opsets": [
+    {
+      "domain": "",
+      "version": 18
+    }
+  ],
+  "output_dir": ".deps/custom_int8_engine/stage20_fullshape_oracles/model4_c2f_synthetic_seeded",
+  "provider": "CPUExecutionProvider"
+}
