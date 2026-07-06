@@ -32,7 +32,12 @@ struct Y26Stage16TimingUs {
     double add_us;
     double concat_us;
     double post_qdq_us;
+    double output_quantize_us;
     double pack_layout_us;
+    double input_adapter_us;
+    double copy_layout_us;
+    double hash_checksum_compare_us;
+    double other_us;
     double correction_us;
     double copy_us;
     double branch1_conv_us;
@@ -62,6 +67,7 @@ struct Y26Stage16Model4C2fWorkspace {
     std::int8_t* split0_concat_s8;
     std::int8_t* concat_s8;
     std::int32_t* model4_cv2_raw_i32;
+    std::int32_t* model4_cv2_i32;
     std::int8_t model4_cv1_to_concat_lut_s8[256];
     std::size_t stage15_output_count;
     std::size_t branch1_output_count;
@@ -75,13 +81,21 @@ struct Y26Stage16Model4C2fWorkspace {
 int y26_stage16_model4_c2f_prepare(const Y26Stage16Model4C2fConfig* cfg,
                                    Y26Stage16Model4C2fWorkspace* ws);
 
+int y26_stage16_model4_c2f_prepare_cut(const Y26Stage16Model4C2fConfig* cfg,
+                                       Y26Stage16Model4C2fWorkspace* ws);
+
 int y26_stage16_model4_c2f_prepare_threaded_branch0(const Y26Stage16Model4C2fConfig* cfg,
                                                     Y26Stage16Model4C2fWorkspace* ws,
                                                     int thread_count);
 
+int y26_stage16_model4_c2f_prepare_cut_threaded_branch0(const Y26Stage16Model4C2fConfig* cfg,
+                                                        Y26Stage16Model4C2fWorkspace* ws,
+                                                        int thread_count);
+
 void y26_stage16_model4_c2f_release(Y26Stage16Model4C2fWorkspace* ws);
 
 std::size_t y26_stage16_model4_c2f_output_count(const Y26Stage16Model4C2fConfig* cfg);
+std::size_t y26_stage16_model4_c2f_cut_input_count(const Y26Stage16Model4C2fConfig* cfg);
 
 int y26_stage16_model4_c2f_run_scalar(const Y26Stage16Model4C2fConfig* cfg,
                                       Y26Stage16Model4C2fWorkspace* ws,
@@ -101,6 +115,15 @@ int y26_stage16_model4_c2f_run_ime_threaded_branch0_cluster0_hotpath(const Y26St
                                                                      std::int32_t* output_i32_nhwc,
                                                                      int thread_activation,
                                                                      Y26Stage16TimingUs* timing);
+
+int y26_stage16_model4_c2f_run_cut_u8_output(const Y26Stage16Model4C2fConfig* cfg,
+                                             Y26Stage16Model4C2fWorkspace* ws,
+                                             const std::uint8_t* model4_cv1_q_u8_nhwc,
+                                             std::uint8_t* output_q_u8_nhwc,
+                                             int use_ime,
+                                             int use_threaded_branch0,
+                                             int use_optimized_output_quantize,
+                                             Y26Stage16TimingUs* timing);
 
 int y26_stage16_model4_c2f_threaded_worker_affinity_ok(const Y26Stage16Model4C2fWorkspace* ws);
 int y26_stage16_model4_c2f_threaded_thread_count(const Y26Stage16Model4C2fWorkspace* ws);

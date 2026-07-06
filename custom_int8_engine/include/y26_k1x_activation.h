@@ -51,6 +51,15 @@ struct Y26Stage9ActivationTimingUs {
     double total_us;
 };
 
+struct Y26ConvOutputQuantizeParams {
+    std::size_t element_count;
+    int channels;
+    float input_scale;
+    const float* weight_scales;
+    float output_scale;
+    int output_zero_point_u8;
+};
+
 std::uint8_t y26_quantize_u8_nearest_even_f32(float value, float scale, int zero_point_u8);
 
 int y26_fixed_requant_params_from_multiplier(double multiplier,
@@ -137,5 +146,13 @@ int y26_activation_requant_silu_profile_scalar_float(const Y26ActivationRequantP
                                                      std::uint8_t* act_code_u8,
                                                      std::int8_t* consumer_input_s8,
                                                      Y26ActivationSubbucketTimingUs* timing);
+
+int y26_conv_output_quantize_i32_to_u8_scalar_unrolled(const Y26ConvOutputQuantizeParams* params,
+                                                       const std::int32_t* producer_i32,
+                                                       std::uint8_t* output_u8);
+
+int y26_conv_output_quantize_i32_to_u8_rvv_f32(const Y26ConvOutputQuantizeParams* params,
+                                               const std::int32_t* producer_i32,
+                                               std::uint8_t* output_u8);
 
 }

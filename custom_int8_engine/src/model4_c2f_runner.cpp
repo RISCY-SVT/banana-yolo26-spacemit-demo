@@ -1,5 +1,7 @@
 #include "y26_k1x_model4_c2f_runner.h"
 
+#include "y26_k1x_threaded_conv.h"
+
 #include <algorithm>
 #include <chrono>
 #include <cmath>
@@ -14,6 +16,59 @@ namespace {
 using Clock = std::chrono::steady_clock;
 
 constexpr std::size_t kStage16Alignment = 64;
+
+#if defined(__riscv)
+unsigned read_frm() {
+    unsigned frm = 0;
+    asm volatile("frrm %0" : "=r"(frm));
+    return frm & 7U;
+}
+
+void set_frm_rne() {
+    asm volatile("fsrmi 0" ::: "memory");
+}
+
+void set_frm_value(unsigned frm) {
+    switch (frm) {
+        case 0:
+            asm volatile("fsrmi 0" ::: "memory");
+            break;
+        case 1:
+            asm volatile("fsrmi 1" ::: "memory");
+            break;
+        case 2:
+            asm volatile("fsrmi 2" ::: "memory");
+            break;
+        case 3:
+            asm volatile("fsrmi 3" ::: "memory");
+            break;
+        case 4:
+            asm volatile("fsrmi 4" ::: "memory");
+            break;
+        default:
+            asm volatile("fsrmi 0" ::: "memory");
+            break;
+    }
+}
+
+class ScopedRiscvRne {
+public:
+    ScopedRiscvRne() : saved_(read_frm()) {
+        set_frm_rne();
+    }
+    ~ScopedRiscvRne() {
+        set_frm_value(saved_);
+    }
+
+private:
+    unsigned saved_;
+};
+#else
+class ScopedRiscvRne {
+public:
+    ScopedRiscvRne() = default;
+};
+#endif
 
 bool kernel_supported(int kernel_h, int kernel_w) {
     return (kernel_h == 1 && kernel_w == 1) || (kernel_h == 3 && kernel_w == 3);
@@ -107,6 +162,42 @@ bool config_valid(const Y26Stage16Model4C2fConfig* cfg) {
            cfg->branch1.params.output_c == split_channels && cfg->model4_cv2.kernel_h == 1 &&
            cfg->model4_cv2.kernel_w == 1 && cfg->model4_cv2.params.input_h == model4_cv1_h &&
            cfg->model4_cv2.params.input_w == model4_cv1_w &&
+           cfg->model4_cv2.params.input_c == split_channels * 3 &&
+           cfg->model4_cv2.activation_zero_point_u8 == cfg->concat_output_zero_point_u8 &&
+           cfg->model4_cv2.input_storage_zero_point_s8 == cfg->concat_output_zero_point_u8 - 128 &&
+           cfg->model4_cv2.input_scale == cfg->concat_output_scale;
+}
+
+bool cut_config_valid(const Y26Stage16Model4C2fConfig* cfg) {
+    if (cfg == nullptr || !conv_config_valid(cfg->stage15.stage14.model4_cv1) ||
+        !conv_config_valid(cfg->stage15.branch0) || !conv_config_valid(cfg->branch1) ||
+        !conv_config_valid(cfg->model4_cv2) || cfg->concat_output_scale <= 0.0f ||
+        cfg->concat_output_zero_point_u8 < 0 || cfg->concat_output_zero_point_u8 > 255 ||
+        !activation_mode_valid(cfg->activation_mode) ||
+        cfg->merge_mode != Y26_STAGE16_MERGE_MODE_C2_SPLIT0_CONCAT_LUT) {
+        return false;
+    }
+    const Y26Stage7ConvNodeConfig& model4_cv1 = cfg->stage15.stage14.model4_cv1;
+    const int model4_cv1_h = output_h_for_kernel(model4_cv1.params, model4_cv1.kernel_h);
+    const int model4_cv1_w = output_w_for_kernel(model4_cv1.params, model4_cv1.kernel_w);
+    const int split_channels = model4_cv1.params.output_c / 2;
+    if (model4_cv1.params.output_c % 2 != 0 || split_channels <= 0) {
+        return false;
+    }
+    const Y26Stage7ConvNodeConfig& branch0 = cfg->stage15.branch0;
+    return branch0.params.input_h == model4_cv1_h && branch0.params.input_w == model4_cv1_w &&
+           branch0.params.input_c == split_channels &&
+           branch0.activation_zero_point_u8 == cfg->stage15.split1_output_zero_point_u8 &&
+           branch0.input_storage_zero_point_s8 == cfg->stage15.split1_output_zero_point_u8 - 128 &&
+           branch0.input_scale == cfg->stage15.split1_output_scale &&
+           cfg->branch1.params.input_h == model4_cv1_h && cfg->branch1.params.input_w == model4_cv1_w &&
+           cfg->branch1.params.input_c == branch0.params.output_c &&
+           cfg->branch1.activation_zero_point_u8 == cfg->stage15.branch0_act_output_zero_point_u8 &&
+           cfg->branch1.input_storage_zero_point_s8 == cfg->stage15.branch0_act_output_zero_point_u8 - 128 &&
+           cfg->branch1.input_scale == cfg->stage15.branch0_act_output_scale &&
+           cfg->branch1.params.output_c == split_channels &&
+           cfg->model4_cv2.kernel_h == 1 && cfg->model4_cv2.kernel_w == 1 &&
+           cfg->model4_cv2.params.input_h == model4_cv1_h && cfg->model4_cv2.params.input_w == model4_cv1_w &&
            cfg->model4_cv2.params.input_c == split_channels * 3 &&
            cfg->model4_cv2.activation_zero_point_u8 == cfg->concat_output_zero_point_u8 &&
            cfg->model4_cv2.input_storage_zero_point_s8 == cfg->concat_output_zero_point_u8 - 128 &&
@@ -259,6 +350,16 @@ int apply_correction(const Y26Stage7ConvNodeConfig& cfg,
                                                      cfg.activation_zero_point_u8);
 }
 
+Y26ConvOutputQuantizeParams output_quantize_params(const Y26Stage7ConvNodeConfig& producer,
+                                                   std::size_t output_count) {
+    return Y26ConvOutputQuantizeParams{output_count,
+                                       producer.params.output_c,
+                                       producer.input_scale,
+                                       producer.weight_scales,
+                                       producer.output_scale,
+                                       producer.output_zero_point_u8};
+}
+
 int run_conv_scalar(const Y26Stage7ConvNodeConfig& cfg,
                     const Y26PrepackedConvWeights* weights,
                     const std::int8_t* input_s8,
@@ -313,6 +414,27 @@ int run_conv_ime(const Y26Stage7ConvNodeConfig& cfg,
     return status;
 }
 
+int run_conv_threaded(const Y26Stage15Model4BranchWorkspace& ws,
+                      const std::int8_t* input_s8,
+                      std::int32_t* output_i32,
+                      double* conv_us,
+                      double* correction_us,
+                      double* thread_overhead_us) {
+    Y26ThreadedConvTimingUs threaded {};
+    const int status = y26_threaded_conv_run_ime_cluster0(
+        ws.branch0_threaded_workspace, input_s8, output_i32, &threaded);
+    if (conv_us != nullptr) {
+        *conv_us = threaded.total_us;
+    }
+    if (correction_us != nullptr) {
+        *correction_us = threaded.correction_us;
+    }
+    if (thread_overhead_us != nullptr) {
+        *thread_overhead_us = std::max(0.0, threaded.total_us - threaded.worker_max_us);
+    }
+    return status;
+}
+
 void accumulate_stage15_timing(Y26Stage16TimingUs& dst, const Y26Stage15TimingUs& src) {
     dst.stage15_timing_us = src;
     dst.conv_us += src.conv_us;
@@ -345,10 +467,10 @@ int build_concat_qdq_nhwc(const Y26Stage16Model4C2fConfig& cfg,
     const int spatial = h * w;
     const std::int32_t* model4_cv1_i32 = y26_stage15_model4_branch_model4_cv1_i32(&ws.stage15_ws);
     const std::int8_t* split1_s8 = y26_stage15_model4_branch_split1_input_s8(&ws.stage15_ws);
-    if (model4_cv1_i32 == nullptr || split1_s8 == nullptr) {
+    const bool use_split0_concat_lut = cfg.merge_mode == Y26_STAGE16_MERGE_MODE_C2_SPLIT0_CONCAT_LUT;
+    if ((!use_split0_concat_lut && model4_cv1_i32 == nullptr) || split1_s8 == nullptr) {
         return Y26_CONV_STATUS_INVALID_ARGUMENT;
     }
-    const bool use_split0_concat_lut = cfg.merge_mode == Y26_STAGE16_MERGE_MODE_C2_SPLIT0_CONCAT_LUT;
     if (use_split0_concat_lut && ws.split0_concat_s8 == nullptr) {
         return Y26_CONV_STATUS_INVALID_ARGUMENT;
     }
@@ -435,7 +557,8 @@ int run_after_stage15(const Y26Stage16Model4C2fConfig& cfg,
                       Y26Stage16Model4C2fWorkspace& ws,
                       std::int32_t* output_i32_nhwc,
                       Y26Stage16TimingUs* timing,
-                      bool use_ime) {
+                      bool use_ime,
+                      bool split0_concat_prebuilt) {
     double branch1_conv_us = 0.0;
     double branch1_correction_us = 0.0;
     int status = use_ime ? run_conv_ime(cfg.branch1,
@@ -461,9 +584,11 @@ int run_after_stage15(const Y26Stage16Model4C2fConfig& cfg,
     build_branch1_activation_float(cfg, ws);
     const auto branch1_act_end = Clock::now();
 
-    status = build_split0_concat_lut_activation(cfg, ws, timing);
-    if (status != Y26_CONV_STATUS_SUCCESS) {
-        return status;
+    if (!split0_concat_prebuilt) {
+        status = build_split0_concat_lut_activation(cfg, ws, timing);
+        if (status != Y26_CONV_STATUS_SUCCESS) {
+            return status;
+        }
     }
 
     status = build_concat_qdq_nhwc(cfg, ws, timing);
@@ -499,6 +624,118 @@ int run_after_stage15(const Y26Stage16Model4C2fConfig& cfg,
         timing->model4_cv2_correction_us += model4_cv2_correction_us;
         timing->activation_requant_us += branch1_activation_us;
         timing->branch1_activation_us += branch1_activation_us;
+    }
+    return status;
+}
+
+int build_cut_split_inputs(const Y26Stage16Model4C2fConfig& cfg,
+                           Y26Stage16Model4C2fWorkspace& ws,
+                           const std::uint8_t* model4_cv1_q_u8_nhwc,
+                           Y26Stage16TimingUs* timing) {
+    if (model4_cv1_q_u8_nhwc == nullptr || ws.stage15_ws.split1_input_s8 == nullptr ||
+        ws.split0_concat_s8 == nullptr) {
+        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    }
+    const Y26Stage7ConvNodeConfig& model4_cv1 = cfg.stage15.stage14.model4_cv1;
+    const int h = output_h_for_kernel(model4_cv1.params, model4_cv1.kernel_h);
+    const int w = output_w_for_kernel(model4_cv1.params, model4_cv1.kernel_w);
+    const int split_c = model4_cv1.params.output_c / 2;
+    const int spatial = h * w;
+    const auto begin = Clock::now();
+    for (int m = 0; m < spatial; ++m) {
+        const std::uint8_t* src = model4_cv1_q_u8_nhwc + static_cast<std::size_t>(m) * model4_cv1.params.output_c;
+        for (int c = 0; c < split_c; ++c) {
+            ws.split0_concat_s8[static_cast<std::size_t>(m) * split_c * 2U + c] =
+                ws.model4_cv1_to_concat_lut_s8[src[c]];
+            ws.stage15_ws.split1_input_s8[static_cast<std::size_t>(m) * split_c + c] =
+                ws.stage15_ws.model4_cv1_to_split1_lut_s8[src[split_c + c]];
+        }
+    }
+    const auto end = Clock::now();
+    if (timing != nullptr) {
+        const double split_us = elapsed_us(begin, end);
+        timing->split_us += split_us;
+        timing->input_adapter_us += split_us;
+    }
+    return Y26_CONV_STATUS_SUCCESS;
+}
+
+int run_cut_branch0(const Y26Stage16Model4C2fConfig& cfg,
+                    Y26Stage16Model4C2fWorkspace& ws,
+                    bool use_ime,
+                    bool use_threaded_branch0,
+                    Y26Stage16TimingUs* timing) {
+    double branch0_conv_us = 0.0;
+    double branch0_correction_us = 0.0;
+    double thread_overhead_us = 0.0;
+    int status = Y26_CONV_STATUS_SUCCESS;
+    if (use_threaded_branch0) {
+        status = run_conv_threaded(ws.stage15_ws,
+                                   ws.stage15_ws.split1_input_s8,
+                                   ws.stage15_ws.branch0_i32,
+                                   &branch0_conv_us,
+                                   &branch0_correction_us,
+                                   &thread_overhead_us);
+    } else {
+        status = use_ime ? run_conv_ime(cfg.stage15.branch0,
+                                        ws.stage15_ws.branch0_weights,
+                                        ws.stage15_ws.branch0_workspace,
+                                        ws.stage15_ws.split1_input_s8,
+                                        ws.stage15_ws.branch0_raw_i32,
+                                        ws.stage15_ws.branch0_i32,
+                                        &branch0_conv_us,
+                                        &branch0_correction_us)
+                         : run_conv_scalar(cfg.stage15.branch0,
+                                           ws.stage15_ws.branch0_weights,
+                                           ws.stage15_ws.split1_input_s8,
+                                           ws.stage15_ws.branch0_raw_i32,
+                                           ws.stage15_ws.branch0_i32,
+                                           &branch0_conv_us,
+                                           &branch0_correction_us);
+    }
+    if (status != Y26_CONV_STATUS_SUCCESS) {
+        return status;
+    }
+    const auto act_begin = Clock::now();
+    Y26ActivationRequantParams params = activation_params(cfg.stage15.branch0,
+                                                          ws.stage15_ws.branch0_output_count,
+                                                          cfg.stage15.branch0_act_output_scale,
+                                                          cfg.stage15.branch0_act_output_zero_point_u8);
+    status = apply_activation_lut_mode(use_ime ? cfg.activation_mode : Y26_ACTIVATION_MODE_INT8_LUT,
+                                       params,
+                                       ws.stage15_ws.branch0_act_lut_s8,
+                                       ws.stage15_ws.branch0_i32,
+                                       ws.stage15_ws.branch0_act_s8);
+    const auto act_end = Clock::now();
+    if (timing != nullptr) {
+        const double activation_us = elapsed_us(act_begin, act_end);
+        timing->conv_us += branch0_conv_us;
+        timing->stage15_timing_us.branch0_conv_us += branch0_conv_us;
+        timing->correction_us += branch0_correction_us;
+        timing->stage15_timing_us.branch0_correction_us += branch0_correction_us;
+        timing->activation_requant_us += activation_us;
+        timing->stage15_timing_us.branch0_activation_us += activation_us;
+        timing->thread_overhead_us += thread_overhead_us;
+    }
+    return status;
+}
+
+int quantize_cut_output(const Y26Stage16Model4C2fConfig& cfg,
+                        const Y26Stage16Model4C2fWorkspace& ws,
+                        const std::int32_t* output_i32_nhwc,
+                        std::uint8_t* output_q_u8_nhwc,
+                        bool optimized,
+                        Y26Stage16TimingUs* timing) {
+    const auto begin = Clock::now();
+    const Y26ConvOutputQuantizeParams params =
+        output_quantize_params(cfg.model4_cv2, ws.model4_cv2_output_count);
+    const int status = optimized ? y26_conv_output_quantize_i32_to_u8_rvv_f32(
+                                       &params, output_i32_nhwc, output_q_u8_nhwc)
+                                 : y26_conv_output_quantize_i32_to_u8_scalar_unrolled(
+                                       &params, output_i32_nhwc, output_q_u8_nhwc);
+    const auto end = Clock::now();
+    if (timing != nullptr) {
+        timing->output_quantize_us += elapsed_us(begin, end);
     }
     return status;
 }
@@ -569,6 +806,110 @@ extern "C" int y26_stage16_model4_c2f_prepare(const Y26Stage16Model4C2fConfig* c
     return Y26_CONV_STATUS_SUCCESS;
 }
 
+extern "C" int y26_stage16_model4_c2f_prepare_cut(const Y26Stage16Model4C2fConfig* cfg,
+                                                   Y26Stage16Model4C2fWorkspace* ws) {
+    if (!cut_config_valid(cfg) || ws == nullptr) {
+        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    }
+    std::memset(ws, 0, sizeof(*ws));
+
+    ws->stage15_ws.branch0_weights =
+        y26_prepacked_conv_weights_create_mmt4d_s8(cfg->stage15.branch0.weights_ohwi_s8,
+                                                   &cfg->stage15.branch0.params,
+                                                   cfg->stage15.branch0.kernel_h,
+                                                   cfg->stage15.branch0.kernel_w,
+                                                   cfg->stage15.branch0.node_name,
+                                                   cfg->stage15.branch0.weight_scales);
+    ws->stage15_ws.branch0_workspace =
+        y26_conv_workspace_create(&cfg->stage15.branch0.params,
+                                  cfg->stage15.branch0.kernel_h,
+                                  cfg->stage15.branch0.kernel_w);
+    ws->branch1_weights = y26_prepacked_conv_weights_create_mmt4d_s8(cfg->branch1.weights_ohwi_s8,
+                                                                     &cfg->branch1.params,
+                                                                     cfg->branch1.kernel_h,
+                                                                     cfg->branch1.kernel_w,
+                                                                     cfg->branch1.node_name,
+                                                                     cfg->branch1.weight_scales);
+    ws->model4_cv2_weights = y26_prepacked_conv_weights_create_mmt4d_s8(cfg->model4_cv2.weights_ohwi_s8,
+                                                                        &cfg->model4_cv2.params,
+                                                                        cfg->model4_cv2.kernel_h,
+                                                                        cfg->model4_cv2.kernel_w,
+                                                                        cfg->model4_cv2.node_name,
+                                                                        cfg->model4_cv2.weight_scales);
+    ws->branch1_workspace =
+        y26_conv_workspace_create(&cfg->branch1.params, cfg->branch1.kernel_h, cfg->branch1.kernel_w);
+    ws->model4_cv2_workspace =
+        y26_conv_workspace_create(&cfg->model4_cv2.params, cfg->model4_cv2.kernel_h, cfg->model4_cv2.kernel_w);
+
+    const Y26Stage7ConvNodeConfig& model4_cv1 = cfg->stage15.stage14.model4_cv1;
+    const int model4_cv1_h = output_h_for_kernel(model4_cv1.params, model4_cv1.kernel_h);
+    const int model4_cv1_w = output_w_for_kernel(model4_cv1.params, model4_cv1.kernel_w);
+    const int split_c = model4_cv1.params.output_c / 2;
+    const std::size_t spatial = static_cast<std::size_t>(model4_cv1_h) * static_cast<std::size_t>(model4_cv1_w);
+
+    ws->stage15_ws.model4_cv1_output_count = spatial * static_cast<std::size_t>(model4_cv1.params.output_c);
+    ws->stage15_ws.split1_count = spatial * static_cast<std::size_t>(split_c);
+    ws->stage15_ws.branch0_output_count =
+        output_count_for_kernel(cfg->stage15.branch0.params, cfg->stage15.branch0.kernel_h, cfg->stage15.branch0.kernel_w);
+    ws->stage15_ws.split1_input_s8 = allocate_i8(ws->stage15_ws.split1_count);
+    ws->stage15_ws.branch0_raw_i32 = allocate_i32(ws->stage15_ws.branch0_output_count);
+    ws->stage15_ws.branch0_i32 = allocate_i32(ws->stage15_ws.branch0_output_count);
+    ws->stage15_ws.branch0_act_s8 = allocate_i8(ws->stage15_ws.branch0_output_count);
+
+    ws->stage15_output_count = ws->stage15_ws.branch0_output_count;
+    ws->branch1_output_count = output_count_for_kernel(cfg->branch1.params, cfg->branch1.kernel_h, cfg->branch1.kernel_w);
+    ws->concat_count = spatial * static_cast<std::size_t>(cfg->model4_cv2.params.input_c);
+    ws->model4_cv2_output_count = y26_stage16_model4_c2f_output_count(cfg);
+    ws->branch1_raw_i32 = allocate_i32(ws->branch1_output_count);
+    ws->branch1_i32 = allocate_i32(ws->branch1_output_count);
+    ws->branch1_act_f32 = allocate_f32(ws->branch1_output_count);
+    ws->split0_concat_s8 = allocate_i8(ws->stage15_ws.model4_cv1_output_count);
+    ws->concat_s8 = allocate_i8(ws->concat_count);
+    ws->model4_cv2_raw_i32 = allocate_i32(ws->model4_cv2_output_count);
+    ws->model4_cv2_i32 = allocate_i32(ws->model4_cv2_output_count);
+
+    if (ws->stage15_ws.branch0_weights == nullptr || ws->stage15_ws.branch0_workspace == nullptr ||
+        ws->branch1_weights == nullptr || ws->model4_cv2_weights == nullptr || ws->branch1_workspace == nullptr ||
+        ws->model4_cv2_workspace == nullptr || ws->stage15_ws.split1_input_s8 == nullptr ||
+        ws->stage15_ws.branch0_raw_i32 == nullptr || ws->stage15_ws.branch0_i32 == nullptr ||
+        ws->stage15_ws.branch0_act_s8 == nullptr || ws->branch1_raw_i32 == nullptr ||
+        ws->branch1_i32 == nullptr || ws->branch1_act_f32 == nullptr || ws->split0_concat_s8 == nullptr ||
+        ws->concat_s8 == nullptr || ws->model4_cv2_raw_i32 == nullptr || ws->model4_cv2_i32 == nullptr) {
+        y26_stage16_model4_c2f_release(ws);
+        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    }
+
+    if (y26_build_silu_u8_to_s8_lut(model4_cv1.output_scale,
+                                    model4_cv1.output_zero_point_u8,
+                                    cfg->stage15.split1_output_scale,
+                                    cfg->stage15.split1_output_zero_point_u8,
+                                    ws->stage15_ws.model4_cv1_to_split1_lut_s8) != Y26_CONV_STATUS_SUCCESS ||
+        y26_build_silu_u8_to_s8_lut(cfg->stage15.branch0.output_scale,
+                                    cfg->stage15.branch0.output_zero_point_u8,
+                                    cfg->stage15.branch0_act_output_scale,
+                                    cfg->stage15.branch0_act_output_zero_point_u8,
+                                    ws->stage15_ws.branch0_act_lut_s8) != Y26_CONV_STATUS_SUCCESS ||
+        y26_build_silu_u8_to_s8_lut(model4_cv1.output_scale,
+                                    model4_cv1.output_zero_point_u8,
+                                    cfg->concat_output_scale,
+                                    cfg->concat_output_zero_point_u8,
+                                    ws->model4_cv1_to_concat_lut_s8) != Y26_CONV_STATUS_SUCCESS) {
+        y26_stage16_model4_c2f_release(ws);
+        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    }
+
+    ws->stage15_ws.prepacked_bytes = y26_prepacked_conv_weights_total_bytes(ws->stage15_ws.branch0_weights);
+    ws->stage15_ws.workspace_bytes = y26_conv_workspace_bytes(ws->stage15_ws.branch0_workspace);
+    ws->stage15_ws.prepared = 1;
+    ws->prepacked_bytes = ws->stage15_ws.prepacked_bytes +
+                          y26_prepacked_conv_weights_total_bytes(ws->branch1_weights) +
+                          y26_prepacked_conv_weights_total_bytes(ws->model4_cv2_weights);
+    ws->workspace_bytes = ws->stage15_ws.workspace_bytes + y26_conv_workspace_bytes(ws->branch1_workspace) +
+                          y26_conv_workspace_bytes(ws->model4_cv2_workspace);
+    ws->prepared = 1;
+    return Y26_CONV_STATUS_SUCCESS;
+}
+
 extern "C" int y26_stage16_model4_c2f_prepare_threaded_branch0(const Y26Stage16Model4C2fConfig* cfg,
                                                                 Y26Stage16Model4C2fWorkspace* ws,
                                                                 int thread_count) {
@@ -576,6 +917,23 @@ extern "C" int y26_stage16_model4_c2f_prepare_threaded_branch0(const Y26Stage16M
         return Y26_CONV_STATUS_INVALID_ARGUMENT;
     }
     return y26_stage15_model4_branch_prepare_threaded_conv(&cfg->stage15, &ws->stage15_ws, thread_count);
+}
+
+extern "C" int y26_stage16_model4_c2f_prepare_cut_threaded_branch0(const Y26Stage16Model4C2fConfig* cfg,
+                                                                    Y26Stage16Model4C2fWorkspace* ws,
+                                                                    int thread_count) {
+    if (!cut_config_valid(cfg) || ws == nullptr || ws->prepared != 1) {
+        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    }
+    y26_threaded_conv_destroy(ws->stage15_ws.branch0_threaded_workspace);
+    ws->stage15_ws.branch0_threaded_workspace =
+        y26_threaded_conv_create_spatial_rows(&cfg->stage15.branch0, thread_count);
+    if (ws->stage15_ws.branch0_threaded_workspace == nullptr) {
+        ws->stage15_ws.branch0_thread_count = 0;
+        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    }
+    ws->stage15_ws.branch0_thread_count = thread_count;
+    return Y26_CONV_STATUS_SUCCESS;
 }
 
 extern "C" void y26_stage16_model4_c2f_release(Y26Stage16Model4C2fWorkspace* ws) {
@@ -594,6 +952,7 @@ extern "C" void y26_stage16_model4_c2f_release(Y26Stage16Model4C2fWorkspace* ws)
     free_aligned(ws->split0_concat_s8);
     free_aligned(ws->concat_s8);
     free_aligned(ws->model4_cv2_raw_i32);
+    free_aligned(ws->model4_cv2_i32);
     std::memset(ws, 0, sizeof(*ws));
 }
 
@@ -603,6 +962,16 @@ extern "C" std::size_t y26_stage16_model4_c2f_output_count(const Y26Stage16Model
         return 0;
     }
     return output_count_for_kernel(cfg->model4_cv2.params, cfg->model4_cv2.kernel_h, cfg->model4_cv2.kernel_w);
+}
+
+extern "C" std::size_t y26_stage16_model4_c2f_cut_input_count(const Y26Stage16Model4C2fConfig* cfg) {
+    if (cfg == nullptr || !conv_params_valid(cfg->stage15.stage14.model4_cv1.params) ||
+        !kernel_supported(cfg->stage15.stage14.model4_cv1.kernel_h, cfg->stage15.stage14.model4_cv1.kernel_w)) {
+        return 0;
+    }
+    return output_count_for_kernel(cfg->stage15.stage14.model4_cv1.params,
+                                   cfg->stage15.stage14.model4_cv1.kernel_h,
+                                   cfg->stage15.stage14.model4_cv1.kernel_w);
 }
 
 extern "C" int y26_stage16_model4_c2f_run_scalar(const Y26Stage16Model4C2fConfig* cfg,
@@ -625,7 +994,7 @@ extern "C" int y26_stage16_model4_c2f_run_scalar(const Y26Stage16Model4C2fConfig
     if (timing != nullptr) {
         accumulate_stage15_timing(*timing, stage15_timing);
     }
-    status = run_after_stage15(*cfg, *ws, output_i32_nhwc, timing, false);
+    status = run_after_stage15(*cfg, *ws, output_i32_nhwc, timing, false, false);
     const auto end = Clock::now();
     if (timing != nullptr) {
         timing->total_us = elapsed_us(begin, end);
@@ -654,7 +1023,7 @@ extern "C" int y26_stage16_model4_c2f_run_ime_cluster0_hotpath(const Y26Stage16M
     if (timing != nullptr) {
         accumulate_stage15_timing(*timing, stage15_timing);
     }
-    status = run_after_stage15(*cfg, *ws, output_i32_nhwc, timing, true);
+    status = run_after_stage15(*cfg, *ws, output_i32_nhwc, timing, true, false);
     const auto end = Clock::now();
     if (timing != nullptr) {
         timing->total_us = elapsed_us(begin, end);
@@ -685,7 +1054,51 @@ extern "C" int y26_stage16_model4_c2f_run_ime_threaded_branch0_cluster0_hotpath(
     if (timing != nullptr) {
         accumulate_stage15_timing(*timing, stage15_timing);
     }
-    status = run_after_stage15(*cfg, *ws, output_i32_nhwc, timing, true);
+    status = run_after_stage15(*cfg, *ws, output_i32_nhwc, timing, true, false);
+    const auto end = Clock::now();
+    if (timing != nullptr) {
+        timing->total_us = elapsed_us(begin, end);
+        finalize_timing(*timing);
+    }
+    return status;
+}
+
+extern "C" int y26_stage16_model4_c2f_run_cut_u8_output(const Y26Stage16Model4C2fConfig* cfg,
+                                                         Y26Stage16Model4C2fWorkspace* ws,
+                                                         const std::uint8_t* model4_cv1_q_u8_nhwc,
+                                                         std::uint8_t* output_q_u8_nhwc,
+                                                         int use_ime,
+                                                         int use_threaded_branch0,
+                                                         int use_optimized_output_quantize,
+                                                         Y26Stage16TimingUs* timing) {
+    if (!cut_config_valid(cfg) || ws == nullptr || ws->prepared != 1 || model4_cv1_q_u8_nhwc == nullptr ||
+        output_q_u8_nhwc == nullptr || ws->model4_cv2_i32 == nullptr) {
+        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    }
+    if (use_threaded_branch0 && ws->stage15_ws.branch0_threaded_workspace == nullptr) {
+        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    }
+    [[maybe_unused]] ScopedRiscvRne rne_guard;
+    timing_reset(timing);
+    const auto begin = Clock::now();
+    int status = build_cut_split_inputs(*cfg, *ws, model4_cv1_q_u8_nhwc, timing);
+    if (status != Y26_CONV_STATUS_SUCCESS) {
+        return status;
+    }
+    status = run_cut_branch0(*cfg, *ws, use_ime != 0, use_threaded_branch0 != 0, timing);
+    if (status != Y26_CONV_STATUS_SUCCESS) {
+        return status;
+    }
+    status = run_after_stage15(*cfg, *ws, ws->model4_cv2_i32, timing, use_ime != 0, true);
+    if (status != Y26_CONV_STATUS_SUCCESS) {
+        return status;
+    }
+    status = quantize_cut_output(*cfg,
+                                 *ws,
+                                 ws->model4_cv2_i32,
+                                 output_q_u8_nhwc,
+                                 use_optimized_output_quantize != 0,
+                                 timing);
     const auto end = Clock::now();
     if (timing != nullptr) {
         timing->total_us = elapsed_us(begin, end);

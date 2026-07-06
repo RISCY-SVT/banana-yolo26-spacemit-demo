@@ -5,7 +5,7 @@ stage_id: `BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE22-MODEL4-ONNX-CUT-ORACLE-A
 repo: `/data/banana-yolo26-spacemit-demo`
 branch: `yolo26-custom-int8-engine`
 start_head: `d8025985bff6373aaf7082a47ad532a18bd64134`
-end_head: `pending-local-commit-see-final-response`
+end_head: `8350c57bd015f044a51800dcd318cb43976e534a`
 pushed: `false`
 full_engine_implemented: `false`
 ncnn_source_mutated: `false`
@@ -57,7 +57,7 @@ host_ctest: pass
 cross_build: pass
 board_same_input_cut: pass
 rounding_regression: pass
-result_packet: pending-export
+result_packet: /exchange/results/outbox/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE22-MODEL4-ONNX-CUT-ORACLE-AND-NEXT-BLOCK-GATE-001
 ```
 
 ## Next

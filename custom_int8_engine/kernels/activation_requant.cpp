@@ -30,6 +30,15 @@ bool activation_params_valid(const Y26ActivationRequantParams* params) {
            params->act_output_zero_point_u8 <= 255;
 }
 
+bool conv_output_quantize_params_valid(const Y26ConvOutputQuantizeParams* params) {
+    return params != nullptr && params->element_count > 0 && params->channels > 0 &&
+           params->input_scale > 0.0f && params->weight_scales != nullptr &&
+           params->output_scale > 0.0f && params->output_zero_point_u8 >= 0 &&
+           params->output_zero_point_u8 <= 255 &&
+           params->element_count % static_cast<std::size_t>(params->channels) == 0 &&
+           params->channels <= 256;
+}
+
 float silu_f32(float value) {
     return value / (1.0f + std::exp(-value));
 }
@@ -129,6 +138,51 @@ bool stage9_channel_loop_supported(const Y26ActivationRequantParams& params) {
 void build_acc_scales(const Y26ActivationRequantParams& params, float* acc_scales) {
     for (int channel = 0; channel < params.channels; ++channel) {
         acc_scales[channel] = params.input_scale * params.weight_scales[channel];
+    }
+}
+
+void build_output_acc_scales(const Y26ConvOutputQuantizeParams& params, float* acc_scales) {
+    for (int channel = 0; channel < params.channels; ++channel) {
+        acc_scales[channel] = params.input_scale * params.weight_scales[channel];
+    }
+}
+
+void conv_output_quantize_scalar_unrolled_impl(const Y26ConvOutputQuantizeParams& params,
+                                               const std::int32_t* __restrict producer_i32,
+                                               std::uint8_t* __restrict output_u8) {
+    float acc_scales[256] {};
+    build_output_acc_scales(params, acc_scales);
+    const std::size_t pixels = params.element_count / static_cast<std::size_t>(params.channels);
+    const float output_scale = params.output_scale;
+    const int output_zp = params.output_zero_point_u8;
+    const std::int32_t* __restrict src = producer_i32;
+    std::uint8_t* __restrict dst = output_u8;
+    for (std::size_t pixel = 0; pixel < pixels; ++pixel) {
+        int channel = 0;
+        for (; channel + 8 <= params.channels; channel += 8) {
+            dst[channel + 0] =
+                requantize_accumulator_to_conv_code_float_scale(src[channel + 0], acc_scales[channel + 0], output_scale, output_zp);
+            dst[channel + 1] =
+                requantize_accumulator_to_conv_code_float_scale(src[channel + 1], acc_scales[channel + 1], output_scale, output_zp);
+            dst[channel + 2] =
+                requantize_accumulator_to_conv_code_float_scale(src[channel + 2], acc_scales[channel + 2], output_scale, output_zp);
+            dst[channel + 3] =
+                requantize_accumulator_to_conv_code_float_scale(src[channel + 3], acc_scales[channel + 3], output_scale, output_zp);
+            dst[channel + 4] =
+                requantize_accumulator_to_conv_code_float_scale(src[channel + 4], acc_scales[channel + 4], output_scale, output_zp);
+            dst[channel + 5] =
+                requantize_accumulator_to_conv_code_float_scale(src[channel + 5], acc_scales[channel + 5], output_scale, output_zp);
+            dst[channel + 6] =
+                requantize_accumulator_to_conv_code_float_scale(src[channel + 6], acc_scales[channel + 6], output_scale, output_zp);
+            dst[channel + 7] =
+                requantize_accumulator_to_conv_code_float_scale(src[channel + 7], acc_scales[channel + 7], output_scale, output_zp);
+        }
+        for (; channel < params.channels; ++channel) {
+            dst[channel] =
+                requantize_accumulator_to_conv_code_float_scale(src[channel], acc_scales[channel], output_scale, output_zp);
+        }
+        src += params.channels;
+        dst += params.channels;
     }
 }
 
@@ -327,6 +381,40 @@ int requant_lut_rvv_f32_impl(const Y26ActivationRequantParams& params,
         }
         for (int c = 0; c < params.channels; ++c) {
             dst[c] = lut_256_s8[static_cast<std::uint8_t>(code_tmp[c])];
+        }
+        src += params.channels;
+        dst += params.channels;
+    }
+    return Y26_CONV_STATUS_SUCCESS;
+}
+
+int conv_output_quantize_rvv_f32_impl(const Y26ConvOutputQuantizeParams& params,
+                                      const std::int32_t* producer_i32,
+                                      std::uint8_t* output_u8) {
+    float acc_scales[256] {};
+    alignas(64) std::int32_t code_tmp[256] {};
+    build_output_acc_scales(params, acc_scales);
+    const std::size_t pixels = params.element_count / static_cast<std::size_t>(params.channels);
+    const std::int32_t* src = producer_i32;
+    std::uint8_t* dst = output_u8;
+    for (std::size_t pixel = 0; pixel < pixels; ++pixel) {
+        int channel = 0;
+        while (channel < params.channels) {
+            const std::size_t vl = __riscv_vsetvl_e32m4(static_cast<std::size_t>(params.channels - channel));
+            vint32m4_t vacc = __riscv_vle32_v_i32m4(src + channel, vl);
+            vfloat32m4_t vf = __riscv_vfcvt_f_x_v_f32m4(vacc, vl);
+            vfloat32m4_t vscale = __riscv_vle32_v_f32m4(acc_scales + channel, vl);
+            vf = __riscv_vfmul_vv_f32m4(vf, vscale, vl);
+            vf = __riscv_vfdiv_vf_f32m4(vf, params.output_scale, vl);
+            vint32m4_t vcode = __riscv_vfcvt_x_f_v_i32m4_rm(vf, __RISCV_FRM_RNE, vl);
+            vcode = __riscv_vadd_vx_i32m4(vcode, params.output_zero_point_u8, vl);
+            vcode = __riscv_vmax_vx_i32m4(vcode, 0, vl);
+            vcode = __riscv_vmin_vx_i32m4(vcode, 255, vl);
+            __riscv_vse32_v_i32m4(code_tmp + channel, vcode, vl);
+            channel += static_cast<int>(vl);
+        }
+        for (int c = 0; c < params.channels; ++c) {
+            dst[c] = static_cast<std::uint8_t>(code_tmp[c]);
         }
         src += params.channels;
         dst += params.channels;
@@ -701,4 +789,28 @@ extern "C" int y26_activation_requant_silu_profile_scalar_float(const Y26Activat
     timing->layout_or_pack_handoff_us = 0.0;
     timing->combined_current_fallback_us = elapsed_us(total_begin, Clock::now());
     return Y26_CONV_STATUS_SUCCESS;
+}
+
+extern "C" int y26_conv_output_quantize_i32_to_u8_scalar_unrolled(const Y26ConvOutputQuantizeParams* params,
+                                                                   const std::int32_t* producer_i32,
+                                                                   std::uint8_t* output_u8) {
+    if (!conv_output_quantize_params_valid(params) || producer_i32 == nullptr || output_u8 == nullptr) {
+        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    }
+    conv_output_quantize_scalar_unrolled_impl(*params, producer_i32, output_u8);
+    return Y26_CONV_STATUS_SUCCESS;
+}
+
+extern "C" int y26_conv_output_quantize_i32_to_u8_rvv_f32(const Y26ConvOutputQuantizeParams* params,
+                                                           const std::int32_t* producer_i32,
+                                                           std::uint8_t* output_u8) {
+    if (!conv_output_quantize_params_valid(params) || producer_i32 == nullptr || output_u8 == nullptr) {
+        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    }
+#if defined(__riscv_vector)
+    return conv_output_quantize_rvv_f32_impl(*params, producer_i32, output_u8);
+#else
+    conv_output_quantize_scalar_unrolled_impl(*params, producer_i32, output_u8);
+    return Y26_CONV_STATUS_SUCCESS;
+#endif
 }
