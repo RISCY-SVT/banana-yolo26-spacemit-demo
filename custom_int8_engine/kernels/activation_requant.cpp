@@ -38,6 +38,22 @@ std::uint8_t clamp_u8(long value) {
     return static_cast<std::uint8_t>(std::max<long>(0, std::min<long>(255, value)));
 }
 
+long round_nearest_even_independent(double value) {
+    if (!std::isfinite(value)) {
+        return value < 0.0 ? std::numeric_limits<long>::min() : std::numeric_limits<long>::max();
+    }
+    const double floored = std::floor(value);
+    const double fraction = value - floored;
+    long base = static_cast<long>(floored);
+    if (fraction > 0.5) {
+        return base + 1;
+    }
+    if (fraction < 0.5) {
+        return base;
+    }
+    return (base & 1L) == 0 ? base : base + 1;
+}
+
 std::int8_t signed_storage_from_u8(std::uint8_t value) {
     return static_cast<std::int8_t>(static_cast<int>(value) - 128);
 }
@@ -100,7 +116,7 @@ std::uint8_t requantize_accumulator_to_conv_code_float_scale(std::int32_t accumu
                                                              int conv_output_zero_point_u8) {
     const float conv_float = static_cast<float>(accumulator) * acc_scale;
     const double scaled = static_cast<double>(conv_float) / static_cast<double>(conv_output_scale);
-    const long rounded = static_cast<long>(std::nearbyint(scaled)) + static_cast<long>(conv_output_zero_point_u8);
+    const long rounded = round_nearest_even_independent(scaled) + static_cast<long>(conv_output_zero_point_u8);
     return clamp_u8(rounded);
 }
 
@@ -326,7 +342,7 @@ extern "C" std::uint8_t y26_quantize_u8_nearest_even_f32(float value, float scal
         return 0;
     }
     const double scaled = static_cast<double>(value) / static_cast<double>(scale);
-    const long rounded = static_cast<long>(std::nearbyint(scaled)) + static_cast<long>(zero_point_u8);
+    const long rounded = round_nearest_even_independent(scaled) + static_cast<long>(zero_point_u8);
     return clamp_u8(rounded);
 }
 

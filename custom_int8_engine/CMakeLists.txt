@@ -289,6 +289,16 @@ if(Y26_K1X_BUILD_TOOLS)
     if(Y26_K1X_ENABLE_IME)
         target_compile_definitions(bench_stage21_model4_c2f_integrated PRIVATE Y26_K1X_ENABLE_IME_ASM=1)
     endif()
+
+    add_executable(bench_stage22_model4_onnx_cut
+        tools/bench_stage22_model4_onnx_cut.cpp
+    )
+    target_link_libraries(bench_stage22_model4_onnx_cut PRIVATE y26_k1x_custom_int8_engine Threads::Threads)
+    target_include_directories(bench_stage22_model4_onnx_cut PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/tests")
+    target_compile_options(bench_stage22_model4_onnx_cut PRIVATE -Wall -Wextra -Wpedantic)
+    if(Y26_K1X_ENABLE_IME)
+        target_compile_definitions(bench_stage22_model4_onnx_cut PRIVATE Y26_K1X_ENABLE_IME_ASM=1)
+    endif()
 endif()
 
 if(Y26_K1X_ENABLE_TESTS)

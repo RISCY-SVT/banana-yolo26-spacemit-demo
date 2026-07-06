@@ -5,7 +5,7 @@ stage_id: `BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE21-MODEL4-C2F-MERGE-REPAIR-
 repo: `/data/banana-yolo26-spacemit-demo`
 branch: `yolo26-custom-int8-engine`
 start_head: `6ea3f0737c2063de94a7b4beac976180c4375872`
-end_head: `pending-local-commit-see-result-packet-final-head-copy`
+end_head: `d8025985bff6373aaf7082a47ad532a18bd64134`
 pushed: `false`
 full_engine_implemented: `false`
 ncnn_source_mutated: `false`
