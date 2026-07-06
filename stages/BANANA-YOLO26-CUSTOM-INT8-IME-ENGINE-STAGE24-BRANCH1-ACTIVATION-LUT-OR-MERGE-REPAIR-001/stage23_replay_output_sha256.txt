@@ -1,0 +1,8 @@
+[dev] glibc: ldd (Ubuntu GLIBC 2.39-0ubuntu8.7) 2.39
+[dev] node : /usr/bin/node  v24.15.0 | npm: 11.17.0
+[dev] codex: /home/svt/.npm-global/bin/codex
+[dev] claude: /home/svt/.npm-global/bin/claude
+[dev] riscv default: /opt/riscv -> /opt/SpacemiT
+70adcf083e85ea95d5fb42e57ea26f51255944aaa442cde4d919f5ae551b3433  stage24_baseline_actual.bin
+70adcf083e85ea95d5fb42e57ea26f51255944aaa442cde4d919f5ae551b3433  stage24_split1_lut_actual.bin
+70adcf083e85ea95d5fb42e57ea26f51255944aaa442cde4d919f5ae551b3433  fixtures/model4_cv2_conv_q_u8_expected_nhwc.bin

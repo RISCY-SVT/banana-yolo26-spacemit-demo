@@ -1,0 +1,3 @@
+path	mean_total_us	stddev_total_us	cv_total_pct	input_adapter_us	conv_us	activation_requant_us	merge_us	output_quantize_us	other_us	attribution_pct	conv_share_pct	activation_share_pct	merge_share_pct	output_quantize_share_pct	mismatches	max_abs_diff	checksum
+stage23_replay_pre_repair	147624	113.47	0.0768645	2610.14	62114.7	32615.2	43334.4	6934.36	15.0449	99.9898	42.0763	22.0935	29.3546	4.69731	0	0	106597930
+stage24_B3_split1_lut	125229	147.027	0.117407	2596.1	62092.9	32622.7	20953.9	6947.4	15.7977	99.9874	49.5835	26.0505	16.7325	5.54777	0	0	106597930

@@ -28,6 +28,7 @@ struct Options {
     std::string fixture_dir;
     std::string mode = "scalar";
     std::string output_quantize = "scalar";
+    std::string merge_repair = "baseline";
     std::string dump_actual;
     Protocol protocol {};
     bool frm_sweep = false;
@@ -87,9 +88,10 @@ void set_frm(unsigned frm) {
 
 Y26Stage16Model4C2fConfig fullshape_config_from_fixture(
     const y26_stage16_model4_c2f_fixture::Model4C2fFixture& fixture,
-    int activation_mode) {
+    int activation_mode,
+    int merge_mode) {
     Y26Stage16Model4C2fConfig cfg =
-        stage16_config_from_fixture(fixture, activation_mode, Y26_STAGE16_MERGE_MODE_C2_SPLIT0_CONCAT_LUT);
+        stage16_config_from_fixture(fixture, activation_mode, merge_mode);
     cfg.stage15.stage14.model4_cv1.params.input_h = kFullH;
     cfg.stage15.stage14.model4_cv1.params.input_w = kFullW;
     cfg.stage15.branch0.params.input_h = kFullH;
@@ -316,6 +318,8 @@ Options parse_options(int argc, char** argv) {
             options.mode = require_value("--mode");
         } else if (arg == "--output-quantize") {
             options.output_quantize = require_value("--output-quantize");
+        } else if (arg == "--merge-repair") {
+            options.merge_repair = require_value("--merge-repair");
         } else if (arg == "--warmup") {
             options.protocol.warmup = std::max(0, std::atoi(require_value("--warmup").c_str()));
         } else if (arg == "--runs") {
@@ -380,14 +384,22 @@ int main(int argc, char** argv) {
     const Options options = parse_options(argc, argv);
     if (options.fixture_dir.empty()) {
         std::cerr << "usage: bench_stage23_model4_runner_cut --fixture-dir <dir>"
-                  << " [--mode scalar|ime|ime_threaded] [--output-quantize scalar|rvv]\n";
+                  << " [--mode scalar|ime|ime_threaded] [--output-quantize scalar|rvv]"
+                  << " [--merge-repair baseline|split1_lut]\n";
         return 2;
     }
+    if (options.merge_repair != "baseline" && options.merge_repair != "split1_lut") {
+        std::cerr << "unsupported --merge-repair " << options.merge_repair << "\n";
+        return 2;
+    }
+    const int merge_mode = options.merge_repair == "split1_lut"
+                               ? Y26_STAGE16_MERGE_MODE_STAGE24_B3_SPLIT1_LUT
+                               : Y26_STAGE16_MERGE_MODE_C2_SPLIT0_CONCAT_LUT;
     const bool use_threaded = options.mode == "ime_threaded";
     const bool use_ime = options.mode == "ime" || use_threaded;
     const int activation_mode = use_ime ? Y26_ACTIVATION_MODE_STAGE9_RVV_F32_LUT : Y26_ACTIVATION_MODE_INT8_LUT;
     const auto& fixture = y26_stage16_model4_c2f_fixture::kSyntheticSeededFixture;
-    Y26Stage16Model4C2fConfig cfg = fullshape_config_from_fixture(fixture, activation_mode);
+    Y26Stage16Model4C2fConfig cfg = fullshape_config_from_fixture(fixture, activation_mode, merge_mode);
     Y26Stage16Model4C2fWorkspace ws {};
     int status = y26_stage16_model4_c2f_prepare_cut(&cfg, &ws);
     if (status != Y26_CONV_STATUS_SUCCESS) {
@@ -423,6 +435,7 @@ int main(int argc, char** argv) {
     std::cout << "stage23_runner_cut"
               << " mode=" << options.mode
               << " output_quantize=" << options.output_quantize
+              << " merge_repair=" << options.merge_repair
               << " warmup=" << options.protocol.warmup
               << " runs=" << options.protocol.runs
               << " repeats=" << options.protocol.repeats

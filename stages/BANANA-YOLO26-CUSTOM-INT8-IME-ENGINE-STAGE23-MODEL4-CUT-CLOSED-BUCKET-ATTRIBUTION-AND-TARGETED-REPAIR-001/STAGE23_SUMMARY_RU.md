@@ -5,7 +5,7 @@ stage_id: `BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE23-MODEL4-CUT-CLOSED-BUCKET
 repo: `/data/banana-yolo26-spacemit-demo`
 branch: `yolo26-custom-int8-engine`
 start_head: `8350c57bd015f044a51800dcd318cb43976e534a`
-end_head: `pending-local-commit-see-final-response`
+end_head: `fce411e20eb649e7f7f0cfe65573848c0e8a1fd4`
 pushed: `false`
 full_engine_implemented: `false`
 ncnn_source_mutated: `false`
