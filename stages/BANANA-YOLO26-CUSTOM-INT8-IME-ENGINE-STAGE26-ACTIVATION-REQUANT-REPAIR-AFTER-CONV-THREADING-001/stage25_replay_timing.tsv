@@ -1,0 +1,4 @@
+path	mean_total_us	stddev_total_us	cv_total_pct	conv_us	activation_requant_us	branch0_activation_us	branch1_activation_us	merge_us	output_quantize_us	thread_overhead_us	mismatches	max_abs_diff	checksum	affinity_ok
+stage25_replay_pre_repair	89074.9	257.943	0.28958	26075.5	32781.3	n/a	n/a	20971.2	6574.1	4406.1	0	0	106597930	1
+stage25_replay_after_instrument	90086.8	322.306	0.357772	26547.1	32790.8	1253.91	31536.9	21101.5	7019.87	4647.67	0	0	106597930	1
+stage26_A3_branch1_add_lut	41573.9	537.575	1.29306	26762.0	3004.46	1260.4	1744.06	2156.81	7013.76	4846.87	0	0	106597930	1

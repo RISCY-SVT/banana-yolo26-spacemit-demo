@@ -1,0 +1,3 @@
+candidate	lane	merge_repair	mean_total_us	stddev_total_us	activation_requant_us	branch0_activation_us	branch1_activation_us	merge_us	conv_us	output_quantize_us	activation_speedup_vs_baseline	total_speedup_vs_baseline	mismatches	max_abs_diff	frm_sweep	accepted
+A0_stage25_C1_replay	baseline	split1_lut	90086.8	322.306	32790.8	1253.91	31536.9	21101.5	26547.1	7019.87	1.0000	1.0000	0	0	pass	no
+A3_branch1_add_lut	A3	branch1_add_lut	41573.9	537.575	3004.46	1260.4	1744.06	2156.81	26762.0	7013.76	10.9140	2.1664	0	0	pass	yes

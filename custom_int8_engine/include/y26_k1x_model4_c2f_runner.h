@@ -12,6 +12,7 @@ enum Y26Stage16MergeMode {
     Y26_STAGE16_MERGE_MODE_A2_FUSED_QDQ_NHWC = 2,
     Y26_STAGE16_MERGE_MODE_C2_SPLIT0_CONCAT_LUT = 20,
     Y26_STAGE16_MERGE_MODE_STAGE24_B3_SPLIT1_LUT = 24,
+    Y26_STAGE16_MERGE_MODE_STAGE26_BRANCH1_ADD_LUT = 26,
 };
 
 struct Y26Stage16Model4C2fConfig {
@@ -66,7 +67,9 @@ struct Y26Stage16Model4C2fWorkspace {
     std::int32_t* stage15_output_i32;
     std::int32_t* branch1_raw_i32;
     std::int32_t* branch1_i32;
+    std::uint8_t* branch1_conv_code_u8;
     float* branch1_act_f32;
+    std::int8_t* branch1_add_concat_lut_s8;
     std::int8_t* split0_concat_s8;
     std::int8_t* concat_s8;
     std::int32_t* model4_cv2_raw_i32;

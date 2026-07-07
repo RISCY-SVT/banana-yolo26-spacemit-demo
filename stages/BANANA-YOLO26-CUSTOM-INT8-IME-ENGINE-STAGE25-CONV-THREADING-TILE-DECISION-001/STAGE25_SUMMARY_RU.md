@@ -5,7 +5,7 @@ stage_id: `BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE25-CONV-THREADING-TILE-DECI
 repo: `/data/banana-yolo26-spacemit-demo`
 branch: `yolo26-custom-int8-engine`
 start_head: `e3bbacba79f2c58b10057735c514a280577223c2`
-end_head: `pending-local-commit-see-final-response`
+end_head: `b382bd71c4091cc3476d59f77cb35c2a0d246513`
 pushed: false
 full_engine_implemented: false
 ncnn_source_mutated: false

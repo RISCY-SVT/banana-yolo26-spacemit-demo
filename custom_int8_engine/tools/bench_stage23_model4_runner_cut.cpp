@@ -399,13 +399,16 @@ int main(int argc, char** argv) {
                   << " [--thread-model4-cv2 0|1|2|3|4]\n";
         return 2;
     }
-    if (options.merge_repair != "baseline" && options.merge_repair != "split1_lut") {
+    if (options.merge_repair != "baseline" && options.merge_repair != "split1_lut" &&
+        options.merge_repair != "branch1_add_lut") {
         std::cerr << "unsupported --merge-repair " << options.merge_repair << "\n";
         return 2;
     }
-    const int merge_mode = options.merge_repair == "split1_lut"
-                               ? Y26_STAGE16_MERGE_MODE_STAGE24_B3_SPLIT1_LUT
-                               : Y26_STAGE16_MERGE_MODE_C2_SPLIT0_CONCAT_LUT;
+    const int merge_mode = options.merge_repair == "branch1_add_lut"
+                               ? Y26_STAGE16_MERGE_MODE_STAGE26_BRANCH1_ADD_LUT
+                               : (options.merge_repair == "split1_lut"
+                                      ? Y26_STAGE16_MERGE_MODE_STAGE24_B3_SPLIT1_LUT
+                                      : Y26_STAGE16_MERGE_MODE_C2_SPLIT0_CONCAT_LUT);
     const bool use_threaded = options.mode == "ime_threaded";
     const bool use_ime = options.mode == "ime" || use_threaded;
     const int activation_mode = use_ime ? Y26_ACTIVATION_MODE_STAGE9_RVV_F32_LUT : Y26_ACTIVATION_MODE_INT8_LUT;
@@ -491,7 +494,9 @@ int main(int argc, char** argv) {
               << " mean_thread_overhead_us=" << t.thread_overhead_us
               << " mean_correction_us=" << t.correction_us
               << " mean_branch0_conv_us=" << t.stage15_timing_us.branch0_conv_us
+              << " mean_branch0_activation_us=" << t.stage15_timing_us.branch0_activation_us
               << " mean_branch1_conv_us=" << t.branch1_conv_us
+              << " mean_branch1_activation_us=" << t.branch1_activation_us
               << " mean_model4_cv2_conv_us=" << t.model4_cv2_conv_us
               << " mean_attributed_us=" << summary.mean_attributed_us
               << " mean_attribution_pct=" << summary.mean_attribution_pct
