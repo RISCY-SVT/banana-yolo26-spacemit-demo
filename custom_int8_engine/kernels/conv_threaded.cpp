@@ -49,10 +49,14 @@ bool supported_config(const Y26Stage7ConvNodeConfig* cfg, int thread_count) {
     if (cfg == nullptr || thread_count < 1 || thread_count > kMaxCluster0Threads) {
         return false;
     }
+    const bool supported_3x3 = cfg->kernel_h == 3 && cfg->kernel_w == 3 &&
+                               cfg->params.pad_h == 1 && cfg->params.pad_w == 1;
+    const bool supported_1x1 = cfg->kernel_h == 1 && cfg->kernel_w == 1 &&
+                               cfg->params.pad_h == 0 && cfg->params.pad_w == 0;
     if (cfg->params.input_h <= 0 || cfg->params.input_w <= 0 || cfg->params.input_c <= 0 ||
         cfg->params.output_c <= 0 || cfg->params.stride_h != 1 || cfg->params.stride_w != 1 ||
-        cfg->kernel_h != 3 || cfg->kernel_w != 3 || cfg->params.pad_h != 1 || cfg->params.pad_w != 1 ||
-        cfg->weights_ohwi_s8 == nullptr || cfg->bias_i32 == nullptr || cfg->weight_scales == nullptr) {
+        (!supported_3x3 && !supported_1x1) || cfg->weights_ohwi_s8 == nullptr ||
+        cfg->bias_i32 == nullptr || cfg->weight_scales == nullptr) {
         return false;
     }
     if (cfg->weight_scale_count < static_cast<std::size_t>(cfg->params.output_c) ||
@@ -272,11 +276,14 @@ bool configure_workers(Y26ThreadedConvWorkspace* workspace, const Y26Stage7ConvN
     for (int tid = 0; tid < thread_count; ++tid) {
         const int row_begin = (output_h * tid) / thread_count;
         const int row_end = (output_h * (tid + 1)) / thread_count;
+        const bool needs_halo = cfg.kernel_h > 1 || cfg.params.pad_h > 0;
         const bool top_chunk = row_begin == 0;
         const bool bottom_chunk = row_end == output_h;
-        const int input_row_begin = thread_count == 1 ? 0 : std::max(0, row_begin - 1);
-        const int input_row_end = thread_count == 1 ? cfg.params.input_h : std::min(cfg.params.input_h, row_end + 1);
-        const int symmetric_pad_h = top_chunk || bottom_chunk ? 1 : 0;
+        const int input_row_begin =
+            !needs_halo || thread_count == 1 ? row_begin : std::max(0, row_begin - 1);
+        const int input_row_end =
+            !needs_halo || thread_count == 1 ? row_end : std::min(cfg.params.input_h, row_end + 1);
+        const int symmetric_pad_h = needs_halo && (top_chunk || bottom_chunk) ? cfg.params.pad_h : 0;
 
         ThreadWorker worker {};
         worker.root_cfg = cfg;
@@ -285,7 +292,7 @@ bool configure_workers(Y26ThreadedConvWorkspace* workspace, const Y26Stage7ConvN
         worker.plan.row_end = row_end;
         worker.plan.input_row_begin = input_row_begin;
         worker.plan.input_row_end = input_row_end;
-        worker.plan.local_output_offset = (!top_chunk && bottom_chunk) ? 1 : 0;
+        worker.plan.local_output_offset = needs_halo && !top_chunk && bottom_chunk ? 1 : 0;
         worker.plan.output_rows_written = row_end - row_begin;
         worker.cfg = cfg;
         worker.cfg.params.input_h = input_row_end - input_row_begin;

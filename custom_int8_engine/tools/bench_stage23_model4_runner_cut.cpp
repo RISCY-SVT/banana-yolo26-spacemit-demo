@@ -32,6 +32,9 @@ struct Options {
     std::string dump_actual;
     Protocol protocol {};
     bool frm_sweep = false;
+    int thread_branch0 = 4;
+    int thread_branch1 = 0;
+    int thread_model4_cv2 = 0;
 };
 
 struct MetricStats {
@@ -330,6 +333,12 @@ Options parse_options(int argc, char** argv) {
             options.dump_actual = require_value("--dump-actual");
         } else if (arg == "--frm-sweep") {
             options.frm_sweep = true;
+        } else if (arg == "--thread-branch0") {
+            options.thread_branch0 = std::max(1, std::atoi(require_value("--thread-branch0").c_str()));
+        } else if (arg == "--thread-branch1") {
+            options.thread_branch1 = std::max(0, std::atoi(require_value("--thread-branch1").c_str()));
+        } else if (arg == "--thread-model4-cv2") {
+            options.thread_model4_cv2 = std::max(0, std::atoi(require_value("--thread-model4-cv2").c_str()));
         } else {
             std::cerr << "unknown argument: " << arg << "\n";
             std::exit(2);
@@ -385,7 +394,9 @@ int main(int argc, char** argv) {
     if (options.fixture_dir.empty()) {
         std::cerr << "usage: bench_stage23_model4_runner_cut --fixture-dir <dir>"
                   << " [--mode scalar|ime|ime_threaded] [--output-quantize scalar|rvv]"
-                  << " [--merge-repair baseline|split1_lut]\n";
+                  << " [--merge-repair baseline|split1_lut]"
+                  << " [--thread-branch0 1|2|3|4] [--thread-branch1 0|1|2|3|4]"
+                  << " [--thread-model4-cv2 0|1|2|3|4]\n";
         return 2;
     }
     if (options.merge_repair != "baseline" && options.merge_repair != "split1_lut") {
@@ -407,11 +418,27 @@ int main(int argc, char** argv) {
         return 1;
     }
     if (use_threaded) {
-        status = y26_stage16_model4_c2f_prepare_cut_threaded_branch0(&cfg, &ws, 4);
+        status = y26_stage16_model4_c2f_prepare_cut_threaded_branch0(&cfg, &ws, options.thread_branch0);
         if (status != Y26_CONV_STATUS_SUCCESS) {
             std::cerr << "prepare_cut_threaded_branch0 failed status=" << status << "\n";
             y26_stage16_model4_c2f_release(&ws);
             return 1;
+        }
+        if (options.thread_branch1 > 0) {
+            status = y26_stage16_model4_c2f_prepare_cut_threaded_branch1(&cfg, &ws, options.thread_branch1);
+            if (status != Y26_CONV_STATUS_SUCCESS) {
+                std::cerr << "prepare_cut_threaded_branch1 failed status=" << status << "\n";
+                y26_stage16_model4_c2f_release(&ws);
+                return 1;
+            }
+        }
+        if (options.thread_model4_cv2 > 0) {
+            status = y26_stage16_model4_c2f_prepare_cut_threaded_model4_cv2(&cfg, &ws, options.thread_model4_cv2);
+            if (status != Y26_CONV_STATUS_SUCCESS) {
+                std::cerr << "prepare_cut_threaded_model4_cv2 failed status=" << status << "\n";
+                y26_stage16_model4_c2f_release(&ws);
+                return 1;
+            }
         }
     }
 
@@ -439,6 +466,9 @@ int main(int argc, char** argv) {
               << " warmup=" << options.protocol.warmup
               << " runs=" << options.protocol.runs
               << " repeats=" << options.protocol.repeats
+              << " thread_branch0=" << (use_threaded ? options.thread_branch0 : 0)
+              << " thread_branch1=" << (use_threaded ? options.thread_branch1 : 0)
+              << " thread_model4_cv2=" << (use_threaded ? options.thread_model4_cv2 : 0)
               << " status=" << summary.status
               << " mismatches=" << summary.mismatches
               << " max_abs_diff=" << summary.max_abs_diff

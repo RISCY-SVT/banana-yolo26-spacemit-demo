@@ -660,7 +660,20 @@ int run_after_stage15(const Y26Stage16Model4C2fConfig& cfg,
                       bool split0_concat_prebuilt) {
     double branch1_conv_us = 0.0;
     double branch1_correction_us = 0.0;
-    int status = use_ime ? run_conv_ime(cfg.branch1,
+    int status = Y26_CONV_STATUS_SUCCESS;
+    if (use_ime && ws.branch1_threaded_workspace != nullptr) {
+        Y26ThreadedConvTimingUs threaded {};
+        status = y26_threaded_conv_run_ime_cluster0(ws.branch1_threaded_workspace,
+                                                    y26_stage15_model4_branch_branch0_act_s8(&ws.stage15_ws),
+                                                    ws.branch1_i32,
+                                                    &threaded);
+        branch1_conv_us = threaded.total_us;
+        branch1_correction_us = threaded.correction_us;
+        if (timing != nullptr) {
+            timing->thread_overhead_us += std::max(0.0, threaded.total_us - threaded.worker_max_us);
+        }
+    } else {
+        status = use_ime ? run_conv_ime(cfg.branch1,
                                         ws.branch1_weights,
                                         ws.branch1_workspace,
                                         y26_stage15_model4_branch_branch0_act_s8(&ws.stage15_ws),
@@ -675,6 +688,7 @@ int run_after_stage15(const Y26Stage16Model4C2fConfig& cfg,
                                            ws.branch1_i32,
                                            &branch1_conv_us,
                                            &branch1_correction_us);
+    }
     if (status != Y26_CONV_STATUS_SUCCESS) {
         return status;
     }
@@ -697,21 +711,34 @@ int run_after_stage15(const Y26Stage16Model4C2fConfig& cfg,
 
     double model4_cv2_conv_us = 0.0;
     double model4_cv2_correction_us = 0.0;
-    status = use_ime ? run_conv_ime(cfg.model4_cv2,
-                                    ws.model4_cv2_weights,
-                                    ws.model4_cv2_workspace,
-                                    ws.concat_s8,
-                                    ws.model4_cv2_raw_i32,
-                                    output_i32_nhwc,
-                                    &model4_cv2_conv_us,
-                                    &model4_cv2_correction_us)
-                     : run_conv_scalar(cfg.model4_cv2,
-                                       ws.model4_cv2_weights,
-                                       ws.concat_s8,
-                                       ws.model4_cv2_raw_i32,
-                                       output_i32_nhwc,
-                                       &model4_cv2_conv_us,
-                                       &model4_cv2_correction_us);
+    if (use_ime && ws.model4_cv2_threaded_workspace != nullptr) {
+        Y26ThreadedConvTimingUs threaded {};
+        status = y26_threaded_conv_run_ime_cluster0(ws.model4_cv2_threaded_workspace,
+                                                    ws.concat_s8,
+                                                    output_i32_nhwc,
+                                                    &threaded);
+        model4_cv2_conv_us = threaded.total_us;
+        model4_cv2_correction_us = threaded.correction_us;
+        if (timing != nullptr) {
+            timing->thread_overhead_us += std::max(0.0, threaded.total_us - threaded.worker_max_us);
+        }
+    } else {
+        status = use_ime ? run_conv_ime(cfg.model4_cv2,
+                                        ws.model4_cv2_weights,
+                                        ws.model4_cv2_workspace,
+                                        ws.concat_s8,
+                                        ws.model4_cv2_raw_i32,
+                                        output_i32_nhwc,
+                                        &model4_cv2_conv_us,
+                                        &model4_cv2_correction_us)
+                         : run_conv_scalar(cfg.model4_cv2,
+                                           ws.model4_cv2_weights,
+                                           ws.concat_s8,
+                                           ws.model4_cv2_raw_i32,
+                                           output_i32_nhwc,
+                                           &model4_cv2_conv_us,
+                                           &model4_cv2_correction_us);
+    }
 
     if (timing != nullptr) {
         const double branch1_activation_us = elapsed_us(branch1_act_begin, branch1_act_end);
@@ -1047,11 +1074,45 @@ extern "C" int y26_stage16_model4_c2f_prepare_cut_threaded_branch0(const Y26Stag
     return Y26_CONV_STATUS_SUCCESS;
 }
 
+extern "C" int y26_stage16_model4_c2f_prepare_cut_threaded_branch1(const Y26Stage16Model4C2fConfig* cfg,
+                                                                    Y26Stage16Model4C2fWorkspace* ws,
+                                                                    int thread_count) {
+    if (!cut_config_valid(cfg) || ws == nullptr || ws->prepared != 1) {
+        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    }
+    y26_threaded_conv_destroy(ws->branch1_threaded_workspace);
+    ws->branch1_threaded_workspace = y26_threaded_conv_create_spatial_rows(&cfg->branch1, thread_count);
+    if (ws->branch1_threaded_workspace == nullptr) {
+        ws->branch1_thread_count = 0;
+        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    }
+    ws->branch1_thread_count = thread_count;
+    return Y26_CONV_STATUS_SUCCESS;
+}
+
+extern "C" int y26_stage16_model4_c2f_prepare_cut_threaded_model4_cv2(const Y26Stage16Model4C2fConfig* cfg,
+                                                                       Y26Stage16Model4C2fWorkspace* ws,
+                                                                       int thread_count) {
+    if (!cut_config_valid(cfg) || ws == nullptr || ws->prepared != 1) {
+        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    }
+    y26_threaded_conv_destroy(ws->model4_cv2_threaded_workspace);
+    ws->model4_cv2_threaded_workspace = y26_threaded_conv_create_spatial_rows(&cfg->model4_cv2, thread_count);
+    if (ws->model4_cv2_threaded_workspace == nullptr) {
+        ws->model4_cv2_thread_count = 0;
+        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    }
+    ws->model4_cv2_thread_count = thread_count;
+    return Y26_CONV_STATUS_SUCCESS;
+}
+
 extern "C" void y26_stage16_model4_c2f_release(Y26Stage16Model4C2fWorkspace* ws) {
     if (ws == nullptr) {
         return;
     }
     y26_stage15_model4_branch_release(&ws->stage15_ws);
+    y26_threaded_conv_destroy(ws->branch1_threaded_workspace);
+    y26_threaded_conv_destroy(ws->model4_cv2_threaded_workspace);
     y26_prepacked_conv_weights_destroy(ws->branch1_weights);
     y26_prepacked_conv_weights_destroy(ws->model4_cv2_weights);
     y26_conv_workspace_destroy(ws->branch1_workspace);
@@ -1219,7 +1280,17 @@ extern "C" int y26_stage16_model4_c2f_run_cut_u8_output(const Y26Stage16Model4C2
 }
 
 extern "C" int y26_stage16_model4_c2f_threaded_worker_affinity_ok(const Y26Stage16Model4C2fWorkspace* ws) {
-    return ws != nullptr ? y26_stage15_model4_branch_threaded_worker_affinity_ok(&ws->stage15_ws) : 0;
+    if (ws == nullptr) {
+        return 0;
+    }
+    const int branch0_ok = y26_stage15_model4_branch_threaded_worker_affinity_ok(&ws->stage15_ws);
+    const int branch1_ok = ws->branch1_threaded_workspace == nullptr
+                               ? 1
+                               : y26_threaded_conv_worker_affinity_ok(ws->branch1_threaded_workspace);
+    const int model4_cv2_ok = ws->model4_cv2_threaded_workspace == nullptr
+                                  ? 1
+                                  : y26_threaded_conv_worker_affinity_ok(ws->model4_cv2_threaded_workspace);
+    return branch0_ok == 1 && branch1_ok == 1 && model4_cv2_ok == 1 ? 1 : 0;
 }
 
 extern "C" int y26_stage16_model4_c2f_threaded_thread_count(const Y26Stage16Model4C2fWorkspace* ws) {

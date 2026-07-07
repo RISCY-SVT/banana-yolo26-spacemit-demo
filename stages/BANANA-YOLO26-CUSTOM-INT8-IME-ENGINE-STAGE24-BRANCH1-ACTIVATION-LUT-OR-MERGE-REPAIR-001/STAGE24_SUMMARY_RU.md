@@ -5,7 +5,7 @@ stage_id: `BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE24-BRANCH1-ACTIVATION-LUT-O
 repo: `/data/banana-yolo26-spacemit-demo`
 branch: `yolo26-custom-int8-engine`
 start_head: `fce411e20eb649e7f7f0cfe65573848c0e8a1fd4`
-end_head: `pending-local-commit-see-final-response`
+end_head: `e3bbacba79f2c58b10057735c514a280577223c2`
 pushed: `false`
 full_engine_implemented: `false`
 ncnn_source_mutated: `false`

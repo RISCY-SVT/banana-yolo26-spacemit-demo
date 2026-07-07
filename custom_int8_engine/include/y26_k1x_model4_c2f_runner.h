@@ -61,6 +61,8 @@ struct Y26Stage16Model4C2fWorkspace {
     Y26PrepackedConvWeights* model4_cv2_weights;
     Y26ConvWorkspace* branch1_workspace;
     Y26ConvWorkspace* model4_cv2_workspace;
+    Y26ThreadedConvWorkspace* branch1_threaded_workspace;
+    Y26ThreadedConvWorkspace* model4_cv2_threaded_workspace;
     std::int32_t* stage15_output_i32;
     std::int32_t* branch1_raw_i32;
     std::int32_t* branch1_i32;
@@ -78,6 +80,8 @@ struct Y26Stage16Model4C2fWorkspace {
     std::size_t model4_cv2_output_count;
     std::size_t prepacked_bytes;
     std::size_t workspace_bytes;
+    int branch1_thread_count;
+    int model4_cv2_thread_count;
     int prepared;
 };
 
@@ -94,6 +98,14 @@ int y26_stage16_model4_c2f_prepare_threaded_branch0(const Y26Stage16Model4C2fCon
 int y26_stage16_model4_c2f_prepare_cut_threaded_branch0(const Y26Stage16Model4C2fConfig* cfg,
                                                         Y26Stage16Model4C2fWorkspace* ws,
                                                         int thread_count);
+
+int y26_stage16_model4_c2f_prepare_cut_threaded_branch1(const Y26Stage16Model4C2fConfig* cfg,
+                                                        Y26Stage16Model4C2fWorkspace* ws,
+                                                        int thread_count);
+
+int y26_stage16_model4_c2f_prepare_cut_threaded_model4_cv2(const Y26Stage16Model4C2fConfig* cfg,
+                                                           Y26Stage16Model4C2fWorkspace* ws,
+                                                           int thread_count);
 
 void y26_stage16_model4_c2f_release(Y26Stage16Model4C2fWorkspace* ws);
 

@@ -1,0 +1,4 @@
+node_name	input_shape	output_shape	kernel	stride	pad	Cin	Cout	K_dimension	MAC_count	current_stage24_replay_us	selected_c1_us	thread_count_selected	status
+/model.4/m.0/cv1/conv/Conv	1x80x80x32	1x80x80x16	3x3	1	1	32	16	288	29491200	6529.83	7830.04	4	already_threaded_stage18
+/model.4/m.0/cv2/conv/Conv	1x80x80x16	1x80x80x32	3x3	1	1	16	32	144	29491200	18189.1	6296.98	4	threaded_in_stage25
+/model.4/cv2/conv/Conv	1x80x80x96	1x80x80x128	1x1	1	0	96	128	96	78643200	37351.4	12037.1	4	threaded_in_stage25

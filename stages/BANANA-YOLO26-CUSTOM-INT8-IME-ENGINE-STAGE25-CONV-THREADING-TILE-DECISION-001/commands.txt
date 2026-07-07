@@ -1,0 +1,1692 @@
+# commands.txt
+# stage_id=BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE25-CONV-THREADING-TILE-DECISION-001
+# run_ts=2026-07-07_06-42-19
+# log_dir=/data/ncnn-logs/ai-team/2026-07-07_06-42-19/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE25-CONV-THREADING-TILE-DECISION-001
+[2026-07-07T06:42:19+02:00] cwd=/data cmd=/data/lab/scripts/check-bridge-layout.sh
+PASS directory exists: /control
+PASS directory exists: /exchange
+PASS directory exists: /data/lab
+PASS directory exists: /data/lab/manifests
+PASS directory exists: /data/lab/reports
+PASS directory exists: /data/lab/scripts
+PASS directory exists: /data/lab/task-runs
+PASS directory exists: /data/ncnn-logs/ai-team
+PASS directory exists: /exchange/tasks/inbox
+PASS directory exists: /exchange/tasks/archive
+PASS directory exists: /exchange/results/outbox
+PASS directory exists: /exchange/results/archive
+PASS directory exists: /exchange/templates
+PASS directory exists: /exchange/manifests
+PASS /control is not writable from the container
+PASS script executable: /data/lab/scripts/import-task-packet.sh
+PASS script executable: /data/lab/scripts/export-result-packet.sh
+PASS script executable: /data/lab/scripts/check-bridge-layout.sh
+PASS script executable: /data/lab/scripts/scan-export-candidates.sh
+PASS script executable: /data/lab/scripts/init-shared-log-run.sh
+PASS script executable: /data/lab/scripts/bridge-selftest.sh
+PASS file exists: /data/lab/manifests/lab-inventory.yaml
+PASS file exists: /data/lab/manifests/repos-index.yaml
+PASS file exists: /data/lab/manifests/logs-index.yaml
+PASS file exists: /data/lab/manifests/toolchains-index.yaml
+PASS file exists: /data/lab/manifests/sysroots-index.yaml
+PASS file exists: /data/lab/manifests/scripts-index.yaml
+PASS file exists: /data/lab/manifests/skills-index.yaml
+PASS file exists: /data/lab/manifests/sensitive-paths.yaml
+PASS file exists: /data/lab/reports/lab-overview.md
+PASS file exists: /data/lab/reports/existing-results-matrix.md
+PASS file exists: /data/lab/reports/existing-patches-index.md
+PASS file exists: /data/lab/reports/build-and-run-workflows.md
+PASS file exists: /data/lab/reports/w0-evidence-candidates.md
+PASS file exists: /data/lab/reports/w0-evidence-map.md
+PASS file exists: /data/lab/docs/LAB_LAYOUT.md
+PASS file exists: /data/lab/docs/BRIDGE_CONTRACT.md
+PASS file exists: /data/lab/docs/SENSITIVE_DATA_POLICY.md
+PASS file exists: /data/lab/docs/CONTAINER_OPERATOR_QUICKSTART.ru.md
+PASS file exists: /exchange/README.md
+PASS file exists: /exchange/templates/task-packet-template.md
+PASS file exists: /exchange/templates/result-packet-template.md
+PASS file exists: /exchange/templates/result-manifest-template.yaml
+PASS path contract present in /home/svt/.codex/AGENTS.md: /data/ncnn-logs/ai-team
+PASS path contract present in /data/.codex/skills/lab_bridge_packet_workflow/SKILL.md: /data/ncnn-logs/ai-team
+PASS path contract present in /data/ncnn/AGENTS.md: /data/ncnn-logs/ai-team
+PASS path contract present in /data/banana-yolo11-spacemit-demo/AGENTS.md: /data/ncnn-logs/ai-team
+PASS path contract present in /data/lab/docs/LAB_LAYOUT.md: /data/ncnn-logs/ai-team
+PASS path contract present in /data/lab/docs/BRIDGE_CONTRACT.md: /data/ncnn-logs/ai-team
+PASS path contract present in /data/lab/docs/SENSITIVE_DATA_POLICY.md: /data/.codex
+PASS path contract present in /data/lab/docs/CONTAINER_OPERATOR_QUICKSTART.ru.md: /data/ncnn-logs/ai-team
+PASS path contract present in /exchange/README.md: /data/ncnn-logs/ai-team
+PASS path contract present in /data/lab/scripts/bridge-common.sh: /data/ncnn-logs/ai-team
+PASS path contract present in /data/lab/scripts/init-shared-log-run.sh: /data/ncnn-logs/ai-team
+PASS path contract present in /data/lab/scripts/export-result-packet.sh: shared-log-dir.txt
+PASS stale text absent from /home/svt/.codex/AGENTS.md: AI_Team-logs
+PASS no stale import temp directories under /data/lab/task-runs
+PASS no stale export temp directories under /exchange/results/outbox
+PASS bridge layout check completed without errors
+exit=0
+[2026-07-07T06:42:23+02:00] cwd=/data cmd=/data/lab/scripts/init-shared-log-run.sh contcodex BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE25-CONV-THREADING-TILE-DECISION-001 stage25
+[bridge] Shared coordination log run ready: /data/ncnn-logs/ai-team/2026-07-07/2026-07-07_04-42-23__contcodex__BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE25-CONV-THREADING-TILE-DECISION-001__stage25
+/data/ncnn-logs/ai-team/2026-07-07/2026-07-07_04-42-23__contcodex__BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE25-CONV-THREADING-TILE-DECISION-001__stage25
+exit=0
+[2026-07-07T06:42:33+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=pwd; git rev-parse --abbrev-ref HEAD; git rev-parse HEAD; git status --short; git log --oneline -8; git remote -v
+/data/banana-yolo26-spacemit-demo
+yolo26-custom-int8-engine
+e3bbacba79f2c58b10057735c514a280577223c2
+?? stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE25-CONV-THREADING-TILE-DECISION-001/
+e3bbacb Repair YOLO26 model4 merge dataflow after ONNX cut proof
+fce411e Close model4 ONNX cut runner API and repair output quantization
+8350c57 Close model4 C2f ONNX cut oracle gate
+d802598 Integrate model4 C2f merge repair into YOLO26 custom INT8 runner
+6ea3f07 Repair model4 fullshape merge dataflow for YOLO26 custom INT8 engine
+53ac15a Integrate threaded model4 C2f sidecar for YOLO26 custom INT8 engine
+6c4c825 Integrate cluster0 threaded Conv sidecar for YOLO26 custom INT8 engine
+92e7d87 Measure YOLO26 custom INT8 Conv IME roofline and cluster0 threading feasibility
+github	git@github.com:RISCY-SVT/banana-yolo26-spacemit-demo.git (fetch)
+github	git@github.com:RISCY-SVT/banana-yolo26-spacemit-demo.git (push)
+gitlab-rd	git@gitlab.itglobal.com:riscy/sw/banana-yolo26-spacemit-demo.git (fetch)
+gitlab-rd	git@gitlab.itglobal.com:riscy/sw/banana-yolo26-spacemit-demo.git (push)
+template-yolo11-gitlab	git@gitlab.itglobal.com:riscy/sw/banana-yolo11-spacemit-demo.git (fetch)
+template-yolo11-gitlab	git@gitlab.itglobal.com:riscy/sw/banana-yolo11-spacemit-demo.git (push)
+exit=0
+[2026-07-07T06:42:47+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=find stages/BANANA-YOLO26...STAGE24 -maxdepth 1 -type f
+board_dir.txt
+bucket_attribution_report.md
+commands.txt
+git-status-final-before-commit.txt
+lane_selection_report.md
+next_step_decision.md
+runner_api_vs_onnx_cut_report.md
+runner_rounding_mode_report.md
+selected_repair_benchmark_report.md
+selected_repair_implementation_report.md
+source_hygiene_report.md
+stage23_replay_bucket_map.tsv
+stage23_replay_output_sha256.txt
+stage23_replay_raw.log
+stage23_replay_report.md
+stage23_traceability_fix_report.md
+stage23_vs_stage24_timing_reconciliation.md
+stage24_env.txt
+STAGE24_FINAL_REPORT.md
+stage24_hypotheses.md
+STAGE24_SUMMARY_RU.md
+stage25_prompt.md
+exit=0
+[2026-07-07T06:43:11+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=apply_patch Stage24 end_head traceability and add stage24_traceability_fix_report.md
+exit=0
+[2026-07-07T06:43:37+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=cmake -S custom_int8_engine -B .deps/custom_int8_engine/build-host-native-stage25 -DCMAKE_BUILD_TYPE=RelWithDebInfo -DY26_K1X_ENABLE_IME=OFF -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_CXX_COMPILER=/usr/bin/g++
+-- The CXX compiler identification is GNU 13.3.0
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/g++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE  
+-- Configuring done (1.6s)
+-- Generating done (0.5s)
+CMake Warning:
+  Manually-specified variables were not used by the project:
+
+    CMAKE_C_COMPILER
+
+
+-- Build files have been written to: /data/banana-yolo26-spacemit-demo/.deps/custom_int8_engine/build-host-native-stage25
+exit=0
+[2026-07-07T06:43:39+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=cmake --build .deps/custom_int8_engine/build-host-native-stage25 -j8
+[  2%] Building CXX object CMakeFiles/y26_k1x_custom_int8_engine.dir/kernels/conv1x1_i8s8s32_ime.cpp.o
+[  2%] Building CXX object CMakeFiles/y26_k1x_custom_int8_engine.dir/kernels/conv1x1_i8s8s32_scalar.cpp.o
+[  3%] Building CXX object CMakeFiles/y26_k1x_custom_int8_engine.dir/kernels/conv_mmt4d_prepack.cpp.o
+[  4%] Building CXX object CMakeFiles/y26_k1x_custom_int8_engine.dir/kernels/pack_mmt4d.cpp.o
+[  4%] Building CXX object CMakeFiles/y26_k1x_custom_int8_engine.dir/kernels/conv3x3_i8s8s32_ime.cpp.o
+[  4%] Building CXX object CMakeFiles/y26_k1x_custom_int8_engine.dir/kernels/activation_requant.cpp.o
+[  5%] Building CXX object CMakeFiles/y26_k1x_custom_int8_engine.dir/kernels/conv3x3_i8s8s32_scalar.cpp.o
+[  5%] Building CXX object CMakeFiles/y26_k1x_custom_int8_engine.dir/kernels/conv_threaded.cpp.o
+[  6%] Building CXX object CMakeFiles/y26_k1x_custom_int8_engine.dir/kernels/vmadot_4x4x8_ime.cpp.o
+[  6%] Building CXX object CMakeFiles/y26_k1x_custom_int8_engine.dir/kernels/vmadot_4x4x8_scalar.cpp.o
+[  7%] Building CXX object CMakeFiles/y26_k1x_custom_int8_engine.dir/kernels/vmadot_stub.cpp.o
+[  7%] Building CXX object CMakeFiles/y26_k1x_custom_int8_engine.dir/src/backbone_subset_runner.cpp.o
+[  8%] Building CXX object CMakeFiles/y26_k1x_custom_int8_engine.dir/src/branch_block_runner.cpp.o
+[  9%] Building CXX object CMakeFiles/y26_k1x_custom_int8_engine.dir/src/backbone_stage10_runner.cpp.o
+[ 10%] Building CXX object CMakeFiles/y26_k1x_custom_int8_engine.dir/src/c2f_block_runner.cpp.o
+[ 10%] Building CXX object CMakeFiles/y26_k1x_custom_int8_engine.dir/src/engine_stub.cpp.o
+[ 11%] Building CXX object CMakeFiles/y26_k1x_custom_int8_engine.dir/src/block_runner.cpp.o
+[ 12%] Building CXX object CMakeFiles/y26_k1x_custom_int8_engine.dir/src/multiblock_runner.cpp.o
+[ 12%] Building CXX object CMakeFiles/y26_k1x_custom_int8_engine.dir/src/model_format.cpp.o
+[ 13%] Building CXX object CMakeFiles/y26_k1x_custom_int8_engine.dir/src/quant_metadata.cpp.o
+[ 14%] Building CXX object CMakeFiles/y26_k1x_custom_int8_engine.dir/src/next_c2f_runner.cpp.o
+[ 14%] Building CXX object CMakeFiles/y26_k1x_custom_int8_engine.dir/src/model4_branch_runner.cpp.o
+[ 15%] Building CXX object CMakeFiles/y26_k1x_custom_int8_engine.dir/src/model4_c2f_runner.cpp.o
+[ 16%] Linking CXX static library liby26_k1x_custom_int8_engine.a
+[ 16%] Built target y26_k1x_custom_int8_engine
+[ 17%] Building CXX object CMakeFiles/bench_stage4_packing.dir/tools/bench_stage4_packing.cpp.o
+[ 17%] Building CXX object CMakeFiles/bench_vmadot_microkernel.dir/tools/bench_vmadot_microkernel.cpp.o
+[ 18%] Building CXX object CMakeFiles/bench_stage7_backbone_subset.dir/tools/bench_stage7_backbone_subset.cpp.o
+[ 19%] Building CXX object CMakeFiles/bench_vmadot_hotpath.dir/tools/bench_vmadot_hotpath.cpp.o
+[ 18%] Building CXX object CMakeFiles/bench_conv_kernels.dir/tools/bench_conv_kernels.cpp.o
+[ 19%] Building CXX object CMakeFiles/bench_stage5_first_block.dir/tools/bench_stage5_first_block.cpp.o
+[ 20%] Building CXX object CMakeFiles/bench_stage6_multiblock.dir/tools/bench_stage6_multiblock.cpp.o
+[ 21%] Building CXX object CMakeFiles/bench_stage3_packing.dir/tools/bench_stage3_packing.cpp.o
+[ 22%] Linking CXX executable bench_vmadot_microkernel
+[ 23%] Linking CXX executable bench_vmadot_hotpath
+[ 23%] Linking CXX executable bench_stage6_multiblock
+[ 23%] Built target bench_vmadot_microkernel
+[ 24%] Linking CXX executable bench_conv_kernels
+[ 24%] Building CXX object CMakeFiles/bench_stage8_activation_requant.dir/tools/bench_stage8_activation_requant.cpp.o
+[ 25%] Linking CXX executable bench_stage5_first_block
+[ 25%] Built target bench_vmadot_hotpath
+[ 25%] Built target bench_conv_kernels
+[ 25%] Built target bench_stage6_multiblock
+[ 26%] Building CXX object CMakeFiles/bench_stage9_activation_fusion.dir/tools/bench_stage9_activation_fusion.cpp.o
+[ 27%] Building CXX object CMakeFiles/bench_stage10_backbone_expansion.dir/tools/bench_stage10_backbone_expansion.cpp.o
+[ 27%] Linking CXX executable bench_stage3_packing
+[ 28%] Building CXX object CMakeFiles/bench_stage11_branch_block.dir/tools/bench_stage11_branch_block.cpp.o
+[ 28%] Built target bench_stage5_first_block
+[ 28%] Building CXX object CMakeFiles/bench_stage12_c2f_block.dir/tools/bench_stage12_c2f_block.cpp.o
+[ 29%] Linking CXX executable bench_stage4_packing
+[ 29%] Built target bench_stage3_packing
+[ 30%] Linking CXX executable bench_stage7_backbone_subset
+[ 31%] Building CXX object CMakeFiles/bench_stage13_merge_dataflow.dir/tools/bench_stage13_merge_dataflow.cpp.o
+[ 31%] Built target bench_stage4_packing
+[ 31%] Built target bench_stage7_backbone_subset
+[ 32%] Building CXX object CMakeFiles/bench_stage14_next_c2f.dir/tools/bench_stage14_next_c2f.cpp.o
+[ 32%] Building CXX object CMakeFiles/bench_stage15_model4_branch.dir/tools/bench_stage15_model4_branch.cpp.o
+[ 33%] Linking CXX executable bench_stage8_activation_requant
+[ 34%] Linking CXX executable bench_stage11_branch_block
+[ 35%] Linking CXX executable bench_stage14_next_c2f
+[ 35%] Built target bench_stage8_activation_requant
+[ 35%] Linking CXX executable bench_stage10_backbone_expansion
+[ 35%] Built target bench_stage14_next_c2f
+[ 36%] Building CXX object CMakeFiles/bench_stage16_fullshape_gate.dir/tools/bench_stage16_fullshape_gate.cpp.o
+[ 37%] Linking CXX executable bench_stage15_model4_branch
+[ 37%] Built target bench_stage11_branch_block
+[ 37%] Linking CXX executable bench_stage9_activation_fusion
+[ 38%] Building CXX object CMakeFiles/bench_stage16_model4_c2f.dir/tools/bench_stage16_model4_c2f.cpp.o
+[ 38%] Building CXX object CMakeFiles/bench_stage17_roofline_threading.dir/tools/bench_stage17_roofline_threading.cpp.o
+[ 38%] Built target bench_stage10_backbone_expansion
+[ 39%] Linking CXX executable bench_stage12_c2f_block
+[ 40%] Building CXX object CMakeFiles/bench_stage18_threaded_conv_integration.dir/tools/bench_stage18_threaded_conv_integration.cpp.o
+[ 40%] Built target bench_stage9_activation_fusion
+[ 40%] Built target bench_stage15_model4_branch
+[ 40%] Building CXX object CMakeFiles/bench_stage20_model4_fullshape_c2f.dir/tools/bench_stage20_model4_fullshape_c2f.cpp.o
+[ 41%] Building CXX object CMakeFiles/bench_stage19_threaded_c2f_integration.dir/tools/bench_stage19_threaded_c2f_integration.cpp.o
+[ 41%] Built target bench_stage12_c2f_block
+[ 41%] Linking CXX executable bench_stage13_merge_dataflow
+[ 42%] Building CXX object CMakeFiles/bench_stage21_model4_c2f_integrated.dir/tools/bench_stage21_model4_c2f_integrated.cpp.o
+[ 42%] Built target bench_stage13_merge_dataflow
+[ 43%] Building CXX object CMakeFiles/bench_stage22_model4_onnx_cut.dir/tools/bench_stage22_model4_onnx_cut.cpp.o
+[ 44%] Linking CXX executable bench_stage16_model4_c2f
+[ 44%] Built target bench_stage16_model4_c2f
+[ 44%] Building CXX object CMakeFiles/bench_stage23_model4_runner_cut.dir/tools/bench_stage23_model4_runner_cut.cpp.o
+[ 44%] Linking CXX executable bench_stage16_fullshape_gate
+[ 44%] Built target bench_stage16_fullshape_gate
+[ 45%] Linking CXX executable bench_stage19_threaded_c2f_integration
+[ 45%] Building CXX object tests/CMakeFiles/test_model_format_header.dir/test_model_format_header.cpp.o
+[ 45%] Linking CXX executable bench_stage21_model4_c2f_integrated
+[ 45%] Built target bench_stage19_threaded_c2f_integration
+[ 46%] Building CXX object tests/CMakeFiles/test_requant_rounding.dir/test_requant_rounding.cpp.o
+[ 47%] Linking CXX executable test_model_format_header
+[ 47%] Built target test_model_format_header
+[ 47%] Built target bench_stage21_model4_c2f_integrated
+[ 47%] Building CXX object tests/CMakeFiles/test_requant_fixed_point.dir/test_requant_fixed_point.cpp.o
+[ 48%] Building CXX object tests/CMakeFiles/test_pack_a_layout.dir/test_pack_a_layout.cpp.o
+[ 48%] Linking CXX executable test_requant_rounding
+[ 48%] Built target test_requant_rounding
+[ 49%] Building CXX object tests/CMakeFiles/test_pack_b_layout.dir/test_pack_b_layout.cpp.o
+[ 49%] Linking CXX executable bench_stage18_threaded_conv_integration
+[ 49%] Linking CXX executable test_pack_a_layout
+[ 49%] Built target bench_stage18_threaded_conv_integration
+[ 50%] Linking CXX executable test_pack_b_layout
+[ 51%] Linking CXX executable bench_stage20_model4_fullshape_c2f
+[ 52%] Linking CXX executable test_requant_fixed_point
+[ 53%] Building CXX object tests/CMakeFiles/test_vmadot_scalar_oracle_fixture.dir/test_vmadot_scalar_oracle_fixture.cpp.o
+[ 53%] Built target test_pack_a_layout
+[ 53%] Building CXX object tests/CMakeFiles/test_vmadot_4x4x8_scalar.dir/test_vmadot_4x4x8_scalar.cpp.o
+[ 53%] Built target test_pack_b_layout
+[ 53%] Built target test_requant_fixed_point
+[ 54%] Building CXX object tests/CMakeFiles/test_vmadot_4x4x8_host_vectors.dir/test_vmadot_4x4x8_host_vectors.cpp.o
+[ 54%] Built target bench_stage20_model4_fullshape_c2f
+[ 54%] Linking CXX executable test_vmadot_scalar_oracle_fixture
+[ 55%] Linking CXX executable bench_stage17_roofline_threading
+[ 56%] Building CXX object tests/CMakeFiles/test_vmadot_4x4x8_board_probe.dir/test_vmadot_4x4x8_board_probe.cpp.o
+[ 57%] Building CXX object tests/CMakeFiles/test_ime_runtime_probe.dir/test_ime_runtime_probe.cpp.o
+[ 58%] Linking CXX executable test_vmadot_4x4x8_scalar
+[ 59%] Linking CXX executable test_vmadot_4x4x8_host_vectors
+[ 59%] Built target bench_stage17_roofline_threading
+[ 59%] Built target test_vmadot_scalar_oracle_fixture
+[ 60%] Building CXX object tests/CMakeFiles/test_conv1x1_scalar.dir/test_conv1x1_scalar.cpp.o
+[ 61%] Building CXX object tests/CMakeFiles/test_conv1x1_ime_fixture.dir/test_conv1x1_ime_fixture.cpp.o
+[ 62%] Linking CXX executable test_ime_runtime_probe
+[ 62%] Built target test_vmadot_4x4x8_scalar
+[ 62%] Built target test_vmadot_4x4x8_host_vectors
+[ 62%] Linking CXX executable test_vmadot_4x4x8_board_probe
+[ 63%] Building CXX object tests/CMakeFiles/test_conv3x3_scalar.dir/test_conv3x3_scalar.cpp.o
+[ 63%] Building CXX object tests/CMakeFiles/test_conv3x3_ime_fixture.dir/test_conv3x3_ime_fixture.cpp.o
+[ 64%] Linking CXX executable bench_stage22_model4_onnx_cut
+[ 64%] Built target test_ime_runtime_probe
+[ 64%] Built target test_vmadot_4x4x8_board_probe
+[ 65%] Building CXX object tests/CMakeFiles/test_zero_point_correction_formula.dir/test_zero_point_correction_formula.cpp.o
+[ 65%] Building CXX object tests/CMakeFiles/test_stage3_real_conv_fixture.dir/test_stage3_real_conv_fixture.cpp.o
+[ 65%] Built target bench_stage22_model4_onnx_cut
+[ 65%] Linking CXX executable test_conv1x1_ime_fixture
+[ 66%] Building CXX object tests/CMakeFiles/test_stage4_packing_repair.dir/test_stage4_packing_repair.cpp.o
+[ 67%] Linking CXX executable test_conv1x1_scalar
+[ 68%] Linking CXX executable test_zero_point_correction_formula
+[ 68%] Linking CXX executable test_conv3x3_scalar
+[ 69%] Linking CXX executable test_conv3x3_ime_fixture
+[ 69%] Built target test_zero_point_correction_formula
+[ 69%] Built target test_conv1x1_ime_fixture
+[ 69%] Built target test_conv1x1_scalar
+[ 70%] Linking CXX executable bench_stage23_model4_runner_cut
+[ 71%] Building CXX object tests/CMakeFiles/test_stage5_first_block_runner.dir/test_stage5_first_block_runner.cpp.o
+[ 71%] Building CXX object tests/CMakeFiles/test_stage6_multiblock_runner.dir/test_stage6_multiblock_runner.cpp.o
+[ 71%] Built target test_conv3x3_scalar
+[ 72%] Building CXX object tests/CMakeFiles/test_stage7_backbone_subset_runner.dir/test_stage7_backbone_subset_runner.cpp.o
+[ 72%] Built target test_conv3x3_ime_fixture
+[ 73%] Building CXX object tests/CMakeFiles/test_stage8_activation_requant.dir/test_stage8_activation_requant.cpp.o
+[ 73%] Building CXX object tests/CMakeFiles/test_stage9_requant_scalar_optimized.dir/test_stage9_requant_scalar_optimized.cpp.o
+[ 73%] Built target bench_stage23_model4_runner_cut
+[ 73%] Building CXX object tests/CMakeFiles/test_stage9_activation_modes.dir/test_stage9_activation_modes.cpp.o
+[ 74%] Linking CXX executable test_stage3_real_conv_fixture
+[ 74%] Linking CXX executable test_stage4_packing_repair
+[ 75%] Linking CXX executable test_stage6_multiblock_runner
+[ 76%] Linking CXX executable test_stage5_first_block_runner
+[ 76%] Built target test_stage3_real_conv_fixture
+[ 76%] Linking CXX executable test_stage7_backbone_subset_runner
+[ 76%] Built target test_stage4_packing_repair
+[ 77%] Building CXX object tests/CMakeFiles/test_stage9_lut_oracle.dir/test_stage9_lut_oracle.cpp.o
+[ 78%] Building CXX object tests/CMakeFiles/test_stage9_pack_handoff.dir/test_stage9_pack_handoff.cpp.o
+[ 78%] Built target test_stage5_first_block_runner
+[ 79%] Linking CXX executable test_stage9_requant_scalar_optimized
+[ 79%] Built target test_stage6_multiblock_runner
+[ 80%] Linking CXX executable test_stage9_activation_modes
+[ 80%] Building CXX object tests/CMakeFiles/test_stage10_rvv_rounding_control.dir/test_stage10_rvv_rounding_control.cpp.o
+[ 80%] Built target test_stage7_backbone_subset_runner
+[ 81%] Building CXX object tests/CMakeFiles/test_stage10_backbone_expansion_runner.dir/test_stage10_backbone_expansion_runner.cpp.o
+[ 82%] Linking CXX executable test_stage8_activation_requant
+[ 82%] Built target test_stage9_requant_scalar_optimized
+[ 83%] Building CXX object tests/CMakeFiles/test_stage11_branch_block_runner.dir/test_stage11_branch_block_runner.cpp.o
+[ 84%] Building CXX object tests/CMakeFiles/test_stage12_c2f_block_runner.dir/test_stage12_c2f_block_runner.cpp.o
+[ 84%] Built target test_stage9_activation_modes
+[ 84%] Built target test_stage8_activation_requant
+[ 84%] Building CXX object tests/CMakeFiles/test_stage13_merge_dataflow.dir/test_stage13_merge_dataflow.cpp.o
+[ 85%] Building CXX object tests/CMakeFiles/test_stage14_next_c2f_runner.dir/test_stage14_next_c2f_runner.cpp.o
+[ 86%] Linking CXX executable test_stage9_pack_handoff
+[ 87%] Linking CXX executable test_stage10_rvv_rounding_control
+[ 87%] Built target test_stage9_pack_handoff
+[ 87%] Linking CXX executable test_stage9_lut_oracle
+[ 88%] Building CXX object tests/CMakeFiles/test_stage15_model4_branch_runner.dir/test_stage15_model4_branch_runner.cpp.o
+[ 89%] Linking CXX executable test_stage10_backbone_expansion_runner
+[ 90%] Linking CXX executable test_stage13_merge_dataflow
+[ 88%] Built target test_stage10_rvv_rounding_control
+[ 90%] Built target test_stage9_lut_oracle
+[ 90%] Building CXX object tests/CMakeFiles/test_stage16_model4_c2f_runner.dir/test_stage16_model4_c2f_runner.cpp.o
+[ 90%] Linking CXX executable test_stage11_branch_block_runner
+[ 91%] Building CXX object tests/CMakeFiles/test_stage18_threaded_conv_integration.dir/test_stage18_threaded_conv_integration.cpp.o
+[ 92%] Linking CXX executable test_stage12_c2f_block_runner
+[ 92%] Linking CXX executable test_stage14_next_c2f_runner
+[ 92%] Built target test_stage13_merge_dataflow
+[ 92%] Built target test_stage10_backbone_expansion_runner
+[ 93%] Building CXX object tests/CMakeFiles/test_stage19_threaded_c2f_integration.dir/test_stage19_threaded_c2f_integration.cpp.o
+[ 93%] Building CXX object tests/CMakeFiles/test_stage21_c2f_merge_repair.dir/test_stage21_c2f_merge_repair.cpp.o
+[ 93%] Built target test_stage11_branch_block_runner
+[ 93%] Built target test_stage14_next_c2f_runner
+[ 94%] Building CXX object tests/CMakeFiles/test_stage23_runner_api_cut.dir/test_stage23_runner_api_cut.cpp.o
+[ 94%] Built target test_stage12_c2f_block_runner
+[ 95%] Building CXX object tests/CMakeFiles/test_stage24_merge_repair.dir/test_stage24_merge_repair.cpp.o
+[ 96%] Linking CXX executable test_stage15_model4_branch_runner
+[ 97%] Linking CXX executable test_stage16_model4_c2f_runner
+[ 97%] Built target test_stage15_model4_branch_runner
+[ 97%] Built target test_stage16_model4_c2f_runner
+[ 98%] Linking CXX executable test_stage19_threaded_c2f_integration
+[ 99%] Linking CXX executable test_stage21_c2f_merge_repair
+[ 99%] Linking CXX executable test_stage23_runner_api_cut
+[ 99%] Built target test_stage19_threaded_c2f_integration
+[ 99%] Built target test_stage21_c2f_merge_repair
+[100%] Linking CXX executable test_stage24_merge_repair
+[100%] Built target test_stage23_runner_api_cut
+[100%] Built target test_stage24_merge_repair
+[100%] Linking CXX executable test_stage18_threaded_conv_integration
+[100%] Built target test_stage18_threaded_conv_integration
+exit=0
+[2026-07-07T06:44:22+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=ctest --test-dir .deps/custom_int8_engine/build-host-native-stage25 --output-on-failure
+Internal ctest changing into directory: /data/banana-yolo26-spacemit-demo/.deps/custom_int8_engine/build-host-native-stage25
+Test project /data/banana-yolo26-spacemit-demo/.deps/custom_int8_engine/build-host-native-stage25
+      Start  1: test_model_format_header
+ 1/38 Test  #1: test_model_format_header .................   Passed    0.01 sec
+      Start  2: test_requant_rounding
+ 2/38 Test  #2: test_requant_rounding ....................   Passed    0.01 sec
+      Start  3: test_requant_fixed_point
+ 3/38 Test  #3: test_requant_fixed_point .................   Passed    0.01 sec
+      Start  4: test_pack_a_layout
+ 4/38 Test  #4: test_pack_a_layout .......................   Passed    0.01 sec
+      Start  5: test_pack_b_layout
+ 5/38 Test  #5: test_pack_b_layout .......................   Passed    0.01 sec
+      Start  6: test_vmadot_scalar_oracle_fixture
+ 6/38 Test  #6: test_vmadot_scalar_oracle_fixture ........   Passed    0.01 sec
+      Start  7: test_vmadot_4x4x8_scalar
+ 7/38 Test  #7: test_vmadot_4x4x8_scalar .................   Passed    0.01 sec
+      Start  8: test_vmadot_4x4x8_host_vectors
+ 8/38 Test  #8: test_vmadot_4x4x8_host_vectors ...........   Passed    0.01 sec
+      Start  9: test_vmadot_4x4x8_board_probe
+ 9/38 Test  #9: test_vmadot_4x4x8_board_probe ............   Passed    0.01 sec
+      Start 10: test_ime_runtime_probe
+10/38 Test #10: test_ime_runtime_probe ...................   Passed    0.01 sec
+      Start 11: test_conv1x1_scalar
+11/38 Test #11: test_conv1x1_scalar ......................   Passed    0.01 sec
+      Start 12: test_conv1x1_ime_fixture
+12/38 Test #12: test_conv1x1_ime_fixture .................   Passed    0.01 sec
+      Start 13: test_conv3x3_scalar
+13/38 Test #13: test_conv3x3_scalar ......................   Passed    0.01 sec
+      Start 14: test_conv3x3_ime_fixture
+14/38 Test #14: test_conv3x3_ime_fixture .................   Passed    0.01 sec
+      Start 15: test_zero_point_correction_formula
+15/38 Test #15: test_zero_point_correction_formula .......   Passed    0.01 sec
+      Start 16: test_stage3_real_conv_fixture
+16/38 Test #16: test_stage3_real_conv_fixture ............   Passed    0.01 sec
+      Start 17: test_stage4_packing_repair
+17/38 Test #17: test_stage4_packing_repair ...............   Passed    0.01 sec
+      Start 18: test_stage5_first_block_runner
+18/38 Test #18: test_stage5_first_block_runner ...........   Passed    0.01 sec
+      Start 19: test_stage6_multiblock_runner
+19/38 Test #19: test_stage6_multiblock_runner ............   Passed    0.01 sec
+      Start 20: test_stage7_backbone_subset_runner
+20/38 Test #20: test_stage7_backbone_subset_runner .......   Passed    0.01 sec
+      Start 21: test_stage8_activation_requant
+21/38 Test #21: test_stage8_activation_requant ...........   Passed    0.01 sec
+      Start 22: test_stage9_requant_scalar_optimized
+22/38 Test #22: test_stage9_requant_scalar_optimized .....   Passed    0.01 sec
+      Start 23: test_stage9_activation_modes
+23/38 Test #23: test_stage9_activation_modes .............   Passed    0.01 sec
+      Start 24: test_stage9_lut_oracle
+24/38 Test #24: test_stage9_lut_oracle ...................   Passed    0.01 sec
+      Start 25: test_stage9_pack_handoff
+25/38 Test #25: test_stage9_pack_handoff .................   Passed    0.01 sec
+      Start 26: test_stage10_rvv_rounding_control
+26/38 Test #26: test_stage10_rvv_rounding_control ........   Passed    0.01 sec
+      Start 27: test_stage10_backbone_expansion_runner
+27/38 Test #27: test_stage10_backbone_expansion_runner ...   Passed    0.01 sec
+      Start 28: test_stage11_branch_block_runner
+28/38 Test #28: test_stage11_branch_block_runner .........   Passed    0.01 sec
+      Start 29: test_stage12_c2f_block_runner
+29/38 Test #29: test_stage12_c2f_block_runner ............   Passed    0.01 sec
+      Start 30: test_stage13_merge_dataflow
+30/38 Test #30: test_stage13_merge_dataflow ..............   Passed    0.02 sec
+      Start 31: test_stage14_next_c2f_runner
+31/38 Test #31: test_stage14_next_c2f_runner .............   Passed    0.02 sec
+      Start 32: test_stage15_model4_branch_runner
+32/38 Test #32: test_stage15_model4_branch_runner ........   Passed    0.02 sec
+      Start 33: test_stage16_model4_c2f_runner
+33/38 Test #33: test_stage16_model4_c2f_runner ...........   Passed    0.02 sec
+      Start 34: test_stage18_threaded_conv_integration
+34/38 Test #34: test_stage18_threaded_conv_integration ...   Passed    0.11 sec
+      Start 35: test_stage19_threaded_c2f_integration
+35/38 Test #35: test_stage19_threaded_c2f_integration ....   Passed    0.02 sec
+      Start 36: test_stage21_c2f_merge_repair
+36/38 Test #36: test_stage21_c2f_merge_repair ............   Passed    0.02 sec
+      Start 37: test_stage23_runner_api_cut
+37/38 Test #37: test_stage23_runner_api_cut ..............   Passed    0.02 sec
+      Start 38: test_stage24_merge_repair
+38/38 Test #38: test_stage24_merge_repair ................   Passed    0.02 sec
+
+100% tests passed, 0 tests failed out of 38
+
+Total Test time (real) =   0.64 sec
+exit=0
+[2026-07-07T06:44:34+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=source /data/build_scripts/01-env.sh; cmake -S custom_int8_engine -B .deps/custom_int8_engine/build-riscv-stage25 -DCMAKE_BUILD_TYPE=RelWithDebInfo -DY26_K1X_ENABLE_IME=ON -DCMAKE_CXX_COMPILER=/opt/riscv/bin/riscv64-unknown-linux-gnu-g++ -DCMAKE_CXX_FLAGS="-march=rv64gcv_zvfh -mabi=lp64d" -DCMAKE_SYSTEM_NAME=Linux -DCMAKE_SYSTEM_PROCESSOR=riscv64
+[dev] glibc: ldd (Ubuntu GLIBC 2.39-0ubuntu8.7) 2.39
+[dev] node : /usr/bin/node  v24.15.0 | npm: 11.17.0
+[dev] codex: /home/svt/.npm-global/bin/codex
+[dev] claude: /home/svt/.npm-global/bin/claude
+[dev] riscv default: /opt/riscv -> /opt/SpacemiT
+[env] TOOLCHAIN_ROOT=/data/SpacemiT/spacemit-toolchain-linux-glibc-x86_64-v1.1.2
+[env] ARCH_FLAGS=-march=rv64gcv_zvfh -mabi=lp64d
+[env] OPENCV_SRC=/data/opencv
+[env] NCNN_SRC=/data/ncnn
+[env] K1_SYSROOT_OVERLAY=/data/sysroots/k1x-gtk3-overlay
+[env] BANANA_SSH_TARGET=svt@banana
+[env] K1_LOG_ROOT=/data/ncnn-logs/ai-team
+-- The CXX compiler identification is GNU 14.3.0
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /opt/riscv/bin/riscv64-unknown-linux-gnu-g++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE  
+-- Configuring done (1.8s)
+-- Generating done (0.5s)
+-- Build files have been written to: /data/banana-yolo26-spacemit-demo/.deps/custom_int8_engine/build-riscv-stage25
+exit=0
+[2026-07-07T06:44:37+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=cmake --build .deps/custom_int8_engine/build-riscv-stage25 -j$(nproc)
+[dev] glibc: ldd (Ubuntu GLIBC 2.39-0ubuntu8.7) 2.39
+[dev] node : /usr/bin/node  v24.15.0 | npm: 11.17.0
+[dev] codex: /home/svt/.npm-global/bin/codex
+[dev] claude: /home/svt/.npm-global/bin/claude
+[dev] riscv default: /opt/riscv -> /opt/SpacemiT
+[  1%] Building CXX object CMakeFiles/y26_k1x_custom_int8_engine.dir/kernels/conv1x1_i8s8s32_scalar.cpp.o
+[  2%] Building CXX object CMakeFiles/y26_k1x_custom_int8_engine.dir/kernels/conv1x1_i8s8s32_ime.cpp.o
+[  2%] Building CXX object CMakeFiles/y26_k1x_custom_int8_engine.dir/kernels/activation_requant.cpp.o
+[  3%] Building CXX object CMakeFiles/y26_k1x_custom_int8_engine.dir/kernels/conv3x3_i8s8s32_scalar.cpp.o
+[  3%] Building CXX object CMakeFiles/y26_k1x_custom_int8_engine.dir/kernels/conv_threaded.cpp.o
+[  3%] Building CXX object CMakeFiles/y26_k1x_custom_int8_engine.dir/kernels/conv3x3_i8s8s32_ime.cpp.o
+[  4%] Building CXX object CMakeFiles/y26_k1x_custom_int8_engine.dir/kernels/conv_mmt4d_prepack.cpp.o
+[  5%] Building CXX object CMakeFiles/y26_k1x_custom_int8_engine.dir/kernels/pack_mmt4d.cpp.o
+[  6%] Building CXX object CMakeFiles/y26_k1x_custom_int8_engine.dir/kernels/vmadot_4x4x8_ime.cpp.o
+[  6%] Building CXX object CMakeFiles/y26_k1x_custom_int8_engine.dir/kernels/vmadot_4x4x8_scalar.cpp.o
+[  7%] Building CXX object CMakeFiles/y26_k1x_custom_int8_engine.dir/kernels/vmadot_stub.cpp.o
+[  8%] Building CXX object CMakeFiles/y26_k1x_custom_int8_engine.dir/src/branch_block_runner.cpp.o
+[  8%] Building CXX object CMakeFiles/y26_k1x_custom_int8_engine.dir/src/backbone_subset_runner.cpp.o
+[  9%] Building CXX object CMakeFiles/y26_k1x_custom_int8_engine.dir/src/backbone_stage10_runner.cpp.o
+[ 10%] Building CXX object CMakeFiles/y26_k1x_custom_int8_engine.dir/src/c2f_block_runner.cpp.o
+[ 10%] Building CXX object CMakeFiles/y26_k1x_custom_int8_engine.dir/src/engine_stub.cpp.o
+[ 11%] Building CXX object CMakeFiles/y26_k1x_custom_int8_engine.dir/src/block_runner.cpp.o
+[ 12%] Building CXX object CMakeFiles/y26_k1x_custom_int8_engine.dir/src/multiblock_runner.cpp.o
+[ 12%] Building CXX object CMakeFiles/y26_k1x_custom_int8_engine.dir/src/model_format.cpp.o
+[ 13%] Building CXX object CMakeFiles/y26_k1x_custom_int8_engine.dir/src/quant_metadata.cpp.o
+[ 14%] Building CXX object CMakeFiles/y26_k1x_custom_int8_engine.dir/src/next_c2f_runner.cpp.o
+[ 14%] Building CXX object CMakeFiles/y26_k1x_custom_int8_engine.dir/src/model4_branch_runner.cpp.o
+[ 15%] Building CXX object CMakeFiles/y26_k1x_custom_int8_engine.dir/src/model4_c2f_runner.cpp.o
+[ 16%] Linking CXX static library liby26_k1x_custom_int8_engine.a
+[ 16%] Built target y26_k1x_custom_int8_engine
+[ 16%] Building CXX object CMakeFiles/bench_vmadot_microkernel.dir/tools/bench_vmadot_microkernel.cpp.o
+[ 17%] Building CXX object CMakeFiles/bench_stage3_packing.dir/tools/bench_stage3_packing.cpp.o
+[ 17%] Building CXX object CMakeFiles/bench_stage5_first_block.dir/tools/bench_stage5_first_block.cpp.o
+[ 18%] Building CXX object CMakeFiles/bench_stage4_packing.dir/tools/bench_stage4_packing.cpp.o
+[ 18%] Building CXX object CMakeFiles/bench_conv_kernels.dir/tools/bench_conv_kernels.cpp.o
+[ 19%] Building CXX object CMakeFiles/bench_stage7_backbone_subset.dir/tools/bench_stage7_backbone_subset.cpp.o
+[ 20%] Building CXX object CMakeFiles/bench_stage6_multiblock.dir/tools/bench_stage6_multiblock.cpp.o
+[ 21%] Building CXX object CMakeFiles/bench_vmadot_hotpath.dir/tools/bench_vmadot_hotpath.cpp.o
+/data/banana-yolo26-spacemit-demo/custom_int8_engine/tools/bench_vmadot_microkernel.cpp: In function 'int main(int, char**)':
+/data/banana-yolo26-spacemit-demo/custom_int8_engine/tools/bench_vmadot_microkernel.cpp:147:9: warning: variable 'last_status' might be clobbered by 'longjmp' or 'vfork' [-Wclobbered]
+  147 |     int last_status = Y26_VMADOT_STATUS_SUCCESS;
+      |         ^~~~~~~~~~~
+[ 22%] Linking CXX executable bench_vmadot_microkernel
+[ 22%] Linking CXX executable bench_stage6_multiblock
+[ 23%] Linking CXX executable bench_stage7_backbone_subset
+[ 23%] Built target bench_vmadot_microkernel
+[ 23%] Building CXX object CMakeFiles/bench_stage8_activation_requant.dir/tools/bench_stage8_activation_requant.cpp.o
+[ 23%] Linking CXX executable bench_stage3_packing
+[ 24%] Linking CXX executable bench_vmadot_hotpath
+[ 25%] Linking CXX executable bench_conv_kernels
+[ 26%] Linking CXX executable bench_stage5_first_block
+[ 26%] Built target bench_stage6_multiblock
+[ 26%] Built target bench_stage3_packing
+[ 26%] Built target bench_stage7_backbone_subset
+[ 26%] Built target bench_stage5_first_block
+[ 26%] Built target bench_conv_kernels
+[ 26%] Built target bench_vmadot_hotpath
+[ 27%] Building CXX object CMakeFiles/bench_stage9_activation_fusion.dir/tools/bench_stage9_activation_fusion.cpp.o
+[ 28%] Building CXX object CMakeFiles/bench_stage10_backbone_expansion.dir/tools/bench_stage10_backbone_expansion.cpp.o
+[ 29%] Building CXX object CMakeFiles/bench_stage11_branch_block.dir/tools/bench_stage11_branch_block.cpp.o
+[ 29%] Building CXX object CMakeFiles/bench_stage12_c2f_block.dir/tools/bench_stage12_c2f_block.cpp.o
+[ 30%] Building CXX object CMakeFiles/bench_stage13_merge_dataflow.dir/tools/bench_stage13_merge_dataflow.cpp.o
+[ 31%] Building CXX object CMakeFiles/bench_stage14_next_c2f.dir/tools/bench_stage14_next_c2f.cpp.o
+[ 32%] Linking CXX executable bench_stage4_packing
+[ 32%] Built target bench_stage4_packing
+[ 32%] Building CXX object CMakeFiles/bench_stage15_model4_branch.dir/tools/bench_stage15_model4_branch.cpp.o
+[ 33%] Linking CXX executable bench_stage14_next_c2f
+[ 33%] Built target bench_stage14_next_c2f
+[ 34%] Building CXX object CMakeFiles/bench_stage16_fullshape_gate.dir/tools/bench_stage16_fullshape_gate.cpp.o
+[ 35%] Linking CXX executable bench_stage8_activation_requant
+[ 35%] Linking CXX executable bench_stage13_merge_dataflow
+[ 36%] Linking CXX executable bench_stage11_branch_block
+[ 36%] Built target bench_stage8_activation_requant
+[ 37%] Linking CXX executable bench_stage15_model4_branch
+[ 38%] Building CXX object CMakeFiles/bench_stage16_model4_c2f.dir/tools/bench_stage16_model4_c2f.cpp.o
+[ 38%] Built target bench_stage13_merge_dataflow
+[ 38%] Linking CXX executable bench_stage9_activation_fusion
+[ 38%] Built target bench_stage11_branch_block
+[ 38%] Building CXX object CMakeFiles/bench_stage17_roofline_threading.dir/tools/bench_stage17_roofline_threading.cpp.o
+[ 39%] Linking CXX executable bench_stage12_c2f_block
+[ 40%] Building CXX object CMakeFiles/bench_stage18_threaded_conv_integration.dir/tools/bench_stage18_threaded_conv_integration.cpp.o
+[ 40%] Built target bench_stage15_model4_branch
+[ 40%] Linking CXX executable bench_stage10_backbone_expansion
+[ 41%] Building CXX object CMakeFiles/bench_stage19_threaded_c2f_integration.dir/tools/bench_stage19_threaded_c2f_integration.cpp.o
+[ 41%] Built target bench_stage9_activation_fusion
+[ 41%] Building CXX object CMakeFiles/bench_stage20_model4_fullshape_c2f.dir/tools/bench_stage20_model4_fullshape_c2f.cpp.o
+[ 41%] Built target bench_stage12_c2f_block
+[ 41%] Built target bench_stage10_backbone_expansion
+[ 42%] Building CXX object CMakeFiles/bench_stage22_model4_onnx_cut.dir/tools/bench_stage22_model4_onnx_cut.cpp.o
+[ 43%] Building CXX object CMakeFiles/bench_stage21_model4_c2f_integrated.dir/tools/bench_stage21_model4_c2f_integrated.cpp.o
+[ 44%] Linking CXX executable bench_stage16_model4_c2f
+[ 44%] Built target bench_stage16_model4_c2f
+[ 44%] Building CXX object CMakeFiles/bench_stage23_model4_runner_cut.dir/tools/bench_stage23_model4_runner_cut.cpp.o
+[ 44%] Linking CXX executable bench_stage16_fullshape_gate
+[ 45%] Linking CXX executable bench_stage19_threaded_c2f_integration
+[ 45%] Linking CXX executable bench_stage21_model4_c2f_integrated
+[ 45%] Built target bench_stage16_fullshape_gate
+[ 45%] Building CXX object tests/CMakeFiles/test_model_format_header.dir/test_model_format_header.cpp.o
+[ 45%] Built target bench_stage19_threaded_c2f_integration
+[ 46%] Building CXX object tests/CMakeFiles/test_requant_rounding.dir/test_requant_rounding.cpp.o
+[ 46%] Built target bench_stage21_model4_c2f_integrated
+[ 46%] Building CXX object tests/CMakeFiles/test_requant_fixed_point.dir/test_requant_fixed_point.cpp.o
+[ 47%] Linking CXX executable test_model_format_header
+[ 47%] Linking CXX executable test_requant_rounding
+[ 47%] Built target test_model_format_header
+[ 47%] Built target test_requant_rounding
+[ 48%] Building CXX object tests/CMakeFiles/test_pack_a_layout.dir/test_pack_a_layout.cpp.o
+[ 49%] Building CXX object tests/CMakeFiles/test_pack_b_layout.dir/test_pack_b_layout.cpp.o
+[ 49%] Linking CXX executable bench_stage18_threaded_conv_integration
+[ 50%] Linking CXX executable test_requant_fixed_point
+[ 50%] Built target test_requant_fixed_point
+[ 50%] Linking CXX executable test_pack_a_layout
+[ 51%] Building CXX object tests/CMakeFiles/test_vmadot_scalar_oracle_fixture.dir/test_vmadot_scalar_oracle_fixture.cpp.o
+[ 52%] Linking CXX executable test_pack_b_layout
+[ 52%] Built target bench_stage18_threaded_conv_integration
+[ 53%] Linking CXX executable bench_stage22_model4_onnx_cut
+[ 53%] Built target test_pack_a_layout
+[ 53%] Building CXX object tests/CMakeFiles/test_vmadot_4x4x8_scalar.dir/test_vmadot_4x4x8_scalar.cpp.o
+[ 54%] Linking CXX executable bench_stage20_model4_fullshape_c2f
+[ 55%] Building CXX object tests/CMakeFiles/test_vmadot_4x4x8_host_vectors.dir/test_vmadot_4x4x8_host_vectors.cpp.o
+[ 55%] Built target test_pack_b_layout
+[ 55%] Built target bench_stage22_model4_onnx_cut
+[ 56%] Building CXX object tests/CMakeFiles/test_vmadot_4x4x8_board_probe.dir/test_vmadot_4x4x8_board_probe.cpp.o
+[ 57%] Building CXX object tests/CMakeFiles/test_ime_runtime_probe.dir/test_ime_runtime_probe.cpp.o
+[ 57%] Linking CXX executable test_vmadot_scalar_oracle_fixture
+[ 57%] Built target bench_stage20_model4_fullshape_c2f
+[ 58%] Linking CXX executable bench_stage17_roofline_threading
+[ 59%] Building CXX object tests/CMakeFiles/test_conv1x1_scalar.dir/test_conv1x1_scalar.cpp.o
+[ 60%] Linking CXX executable test_vmadot_4x4x8_host_vectors
+[ 60%] Built target test_vmadot_scalar_oracle_fixture
+[ 61%] Building CXX object tests/CMakeFiles/test_conv1x1_ime_fixture.dir/test_conv1x1_ime_fixture.cpp.o
+[ 62%] Linking CXX executable test_vmadot_4x4x8_scalar
+[ 62%] Linking CXX executable test_vmadot_4x4x8_board_probe
+[ 63%] Linking CXX executable test_ime_runtime_probe
+[ 63%] Built target test_vmadot_4x4x8_host_vectors
+[ 63%] Built target bench_stage17_roofline_threading
+[ 64%] Building CXX object tests/CMakeFiles/test_conv3x3_scalar.dir/test_conv3x3_scalar.cpp.o
+[ 64%] Building CXX object tests/CMakeFiles/test_conv3x3_ime_fixture.dir/test_conv3x3_ime_fixture.cpp.o
+[ 64%] Built target test_vmadot_4x4x8_scalar
+[ 64%] Built target test_ime_runtime_probe
+[ 64%] Built target test_vmadot_4x4x8_board_probe
+[ 65%] Building CXX object tests/CMakeFiles/test_zero_point_correction_formula.dir/test_zero_point_correction_formula.cpp.o
+[ 65%] Building CXX object tests/CMakeFiles/test_stage3_real_conv_fixture.dir/test_stage3_real_conv_fixture.cpp.o
+[ 66%] Building CXX object tests/CMakeFiles/test_stage4_packing_repair.dir/test_stage4_packing_repair.cpp.o
+[ 67%] Linking CXX executable test_conv1x1_scalar
+[ 68%] Linking CXX executable test_zero_point_correction_formula
+[ 68%] Linking CXX executable test_conv1x1_ime_fixture
+[ 68%] Built target test_conv1x1_scalar
+[ 69%] Building CXX object tests/CMakeFiles/test_stage5_first_block_runner.dir/test_stage5_first_block_runner.cpp.o
+[ 69%] Built target test_zero_point_correction_formula
+[ 70%] Linking CXX executable test_conv3x3_ime_fixture
+[ 70%] Linking CXX executable test_conv3x3_scalar
+[ 70%] Built target test_conv1x1_ime_fixture
+[ 70%] Building CXX object tests/CMakeFiles/test_stage6_multiblock_runner.dir/test_stage6_multiblock_runner.cpp.o
+[ 71%] Building CXX object tests/CMakeFiles/test_stage7_backbone_subset_runner.dir/test_stage7_backbone_subset_runner.cpp.o
+[ 71%] Built target test_conv3x3_ime_fixture
+[ 71%] Built target test_conv3x3_scalar
+[ 72%] Building CXX object tests/CMakeFiles/test_stage8_activation_requant.dir/test_stage8_activation_requant.cpp.o
+[ 72%] Building CXX object tests/CMakeFiles/test_stage9_requant_scalar_optimized.dir/test_stage9_requant_scalar_optimized.cpp.o
+[ 73%] Linking CXX executable bench_stage23_model4_runner_cut
+[ 74%] Linking CXX executable test_stage3_real_conv_fixture
+[ 74%] Built target bench_stage23_model4_runner_cut
+[ 75%] Linking CXX executable test_stage5_first_block_runner
+[ 75%] Building CXX object tests/CMakeFiles/test_stage9_activation_modes.dir/test_stage9_activation_modes.cpp.o
+[ 75%] Linking CXX executable test_stage4_packing_repair
+[ 75%] Built target test_stage3_real_conv_fixture
+[ 76%] Linking CXX executable test_stage6_multiblock_runner
+[ 76%] Built target test_stage5_first_block_runner
+[ 77%] Building CXX object tests/CMakeFiles/test_stage9_lut_oracle.dir/test_stage9_lut_oracle.cpp.o
+[ 77%] Linking CXX executable test_stage7_backbone_subset_runner
+[ 77%] Built target test_stage4_packing_repair
+[ 78%] Building CXX object tests/CMakeFiles/test_stage9_pack_handoff.dir/test_stage9_pack_handoff.cpp.o
+[ 79%] Linking CXX executable test_stage9_requant_scalar_optimized
+[ 79%] Building CXX object tests/CMakeFiles/test_stage10_rvv_rounding_control.dir/test_stage10_rvv_rounding_control.cpp.o
+[ 79%] Built target test_stage6_multiblock_runner
+[ 79%] Built target test_stage7_backbone_subset_runner
+[ 80%] Building CXX object tests/CMakeFiles/test_stage10_backbone_expansion_runner.dir/test_stage10_backbone_expansion_runner.cpp.o
+[ 81%] Linking CXX executable test_stage8_activation_requant
+[ 81%] Built target test_stage9_requant_scalar_optimized
+[ 82%] Building CXX object tests/CMakeFiles/test_stage11_branch_block_runner.dir/test_stage11_branch_block_runner.cpp.o
+[ 83%] Building CXX object tests/CMakeFiles/test_stage12_c2f_block_runner.dir/test_stage12_c2f_block_runner.cpp.o
+[ 83%] Built target test_stage8_activation_requant
+[ 83%] Building CXX object tests/CMakeFiles/test_stage13_merge_dataflow.dir/test_stage13_merge_dataflow.cpp.o
+[ 84%] Linking CXX executable test_stage9_activation_modes
+[ 85%] Linking CXX executable test_stage9_pack_handoff
+[ 85%] Linking CXX executable test_stage9_lut_oracle
+[ 85%] Built target test_stage9_activation_modes
+[ 86%] Linking CXX executable test_stage10_rvv_rounding_control
+[ 87%] Building CXX object tests/CMakeFiles/test_stage14_next_c2f_runner.dir/test_stage14_next_c2f_runner.cpp.o
+[ 87%] Built target test_stage9_pack_handoff
+[ 87%] Built target test_stage9_lut_oracle
+[ 88%] Building CXX object tests/CMakeFiles/test_stage15_model4_branch_runner.dir/test_stage15_model4_branch_runner.cpp.o
+[ 88%] Building CXX object tests/CMakeFiles/test_stage16_model4_c2f_runner.dir/test_stage16_model4_c2f_runner.cpp.o
+[ 88%] Built target test_stage10_rvv_rounding_control
+[ 89%] Building CXX object tests/CMakeFiles/test_stage18_threaded_conv_integration.dir/test_stage18_threaded_conv_integration.cpp.o
+[ 90%] Linking CXX executable test_stage10_backbone_expansion_runner
+[ 90%] Linking CXX executable test_stage11_branch_block_runner
+[ 91%] Linking CXX executable test_stage12_c2f_block_runner
+[ 91%] Built target test_stage10_backbone_expansion_runner
+[ 91%] Built target test_stage11_branch_block_runner
+[ 92%] Building CXX object tests/CMakeFiles/test_stage19_threaded_c2f_integration.dir/test_stage19_threaded_c2f_integration.cpp.o
+[ 92%] Building CXX object tests/CMakeFiles/test_stage21_c2f_merge_repair.dir/test_stage21_c2f_merge_repair.cpp.o
+[ 92%] Built target test_stage12_c2f_block_runner
+[ 93%] Building CXX object tests/CMakeFiles/test_stage23_runner_api_cut.dir/test_stage23_runner_api_cut.cpp.o
+[ 94%] Linking CXX executable test_stage13_merge_dataflow
+[ 94%] Built target test_stage13_merge_dataflow
+[ 95%] Building CXX object tests/CMakeFiles/test_stage24_merge_repair.dir/test_stage24_merge_repair.cpp.o
+[ 95%] Linking CXX executable test_stage14_next_c2f_runner
+[ 95%] Built target test_stage14_next_c2f_runner
+[ 96%] Linking CXX executable test_stage16_model4_c2f_runner
+[ 97%] Linking CXX executable test_stage15_model4_branch_runner
+[ 98%] Linking CXX executable test_stage19_threaded_c2f_integration
+[ 98%] Built target test_stage16_model4_c2f_runner
+[ 98%] Built target test_stage15_model4_branch_runner
+[ 98%] Built target test_stage19_threaded_c2f_integration
+[ 98%] Linking CXX executable test_stage23_runner_api_cut
+[ 99%] Linking CXX executable test_stage21_c2f_merge_repair
+[ 99%] Built target test_stage21_c2f_merge_repair
+[ 99%] Built target test_stage23_runner_api_cut
+[100%] Linking CXX executable test_stage24_merge_repair
+[100%] Linking CXX executable test_stage18_threaded_conv_integration
+[100%] Built target test_stage24_merge_repair
+[100%] Built target test_stage18_threaded_conv_integration
+exit=0
+[2026-07-07T06:46:28+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=ssh svt@banana 'mkdir -p /home/svt/yolo26-custom-int8-stage25/2026-07-07_06-42-19/fixtures' && scp .deps/custom_int8_engine/build-riscv-stage25/bench_stage23_model4_runner_cut svt@banana:/home/svt/yolo26-custom-int8-stage25/2026-07-07_06-42-19/bench_stage23_model4_runner_cut && scp .deps/custom_int8_engine/stage22_onnx_cut/model4_c2f_synthetic_seeded/model4_cv1_conv_q_u8_nhwc.bin .deps/custom_int8_engine/stage22_onnx_cut/model4_c2f_synthetic_seeded/model4_cv2_conv_q_u8_expected_nhwc.bin svt@banana:/home/svt/yolo26-custom-int8-stage25/2026-07-07_06-42-19/fixtures/
+[dev] glibc: ldd (Ubuntu GLIBC 2.39-0ubuntu8.7) 2.39
+[dev] node : /usr/bin/node  v24.15.0 | npm: 11.17.0
+[dev] codex: /home/svt/.npm-global/bin/codex
+[dev] claude: /home/svt/.npm-global/bin/claude
+[dev] riscv default: /opt/riscv -> /opt/SpacemiT
+exit=0
+[2026-07-07T06:46:31+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=ssh svt@banana 'hostname; uname -a; lscpu | sed -n "1,32p"; echo scaling_governor; cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor 2>/dev/null || true; echo scaling_cur_freq; cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq 2>/dev/null || true; echo thermal; find /sys/class/thermal -maxdepth 2 -type f -name temp -print -exec cat {} \; 2>/dev/null || true; cd /home/svt/yolo26-custom-int8-stage25/2026-07-07_06-42-19 && sha256sum bench_stage23_model4_runner_cut fixtures/model4_cv1_conv_q_u8_nhwc.bin fixtures/model4_cv2_conv_q_u8_expected_nhwc.bin'
+[dev] glibc: ldd (Ubuntu GLIBC 2.39-0ubuntu8.7) 2.39
+[dev] node : /usr/bin/node  v24.15.0 | npm: 11.17.0
+[dev] codex: /home/svt/.npm-global/bin/codex
+[dev] claude: /home/svt/.npm-global/bin/claude
+[dev] riscv default: /opt/riscv -> /opt/SpacemiT
+bf3
+Linux bf3 6.6.63 #2.2.7.2 SMP PREEMPT Fri Aug 15 12:32:44 UTC 2025 riscv64 riscv64 riscv64 GNU/Linux
+Architecture:        riscv64
+Byte Order:          Little Endian
+CPU(s):              8
+On-line CPU(s) list: 0-7
+Model name:          Spacemit(R) X60
+Thread(s) per core:  1
+Core(s) per socket:  8
+Socket(s):           1
+CPU(s) scaling MHz:  100%
+CPU max MHz:         1600.0000
+CPU min MHz:         614.4000
+L1d cache:           256 KiB (8 instances)
+L1i cache:           256 KiB (8 instances)
+L2 cache:            1 MiB (2 instances)
+scaling_governor
+performance
+scaling_cur_freq
+1600000
+thermal
+db15b3962ff485fc4be830ebb6555b151037a351a9b1e5531c85067f24ea14c7  bench_stage23_model4_runner_cut
+e4ec6700e37e974e5bf9814b90c415169b5e514ed9554592238dd836f84fdc5b  fixtures/model4_cv1_conv_q_u8_nhwc.bin
+70adcf083e85ea95d5fb42e57ea26f51255944aaa442cde4d919f5ae551b3433  fixtures/model4_cv2_conv_q_u8_expected_nhwc.bin
+exit=0
+[2026-07-07T06:46:32+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=ssh svt@banana 'cd /home/svt/yolo26-custom-int8-stage25/2026-07-07_06-42-19 && taskset -c 0-3 ./bench_stage23_model4_runner_cut --fixture-dir fixtures --mode ime_threaded --output-quantize rvv --merge-repair split1_lut --warmup 10 --runs 100 --repeats 5 --frm-sweep --dump-actual stage25_stage24_replay_actual.bin'
+[dev] glibc: ldd (Ubuntu GLIBC 2.39-0ubuntu8.7) 2.39
+[dev] node : /usr/bin/node  v24.15.0 | npm: 11.17.0
+[dev] codex: /home/svt/.npm-global/bin/codex
+[dev] claude: /home/svt/.npm-global/bin/claude
+[dev] riscv default: /opt/riscv -> /opt/SpacemiT
+stage23_runner_cut mode=ime_threaded output_quantize=rvv merge_repair=split1_lut warmup=10 runs=100 repeats=5 status=0 mismatches=0 max_abs_diff=0 checksum=106597930 expected_checksum=106597930 affinity_ok=1 mean_total_us=125176 stddev_total_us=69.4332 min_total_us=125090 max_total_us=125277 cv_total_pct=0.0554683 mean_input_adapter_us=2590.12 mean_conv_us=62070.3 mean_activation_requant_us=32592.5 mean_merge_us=20961.5 mean_post_concat_qdq_us=20961.5 mean_output_quantize_us=6945.9 mean_copy_layout_us=0 mean_pack_layout_us=0 mean_thread_overhead_us=345.819 mean_correction_us=8380.99 mean_branch0_conv_us=6529.83 mean_branch1_conv_us=18189.1 mean_model4_cv2_conv_us=37351.4 mean_attributed_us=125160 mean_attribution_pct=99.9871 mean_other_us=16.1248 conv_share_pct=49.5863 activation_share_pct=26.0372 merge_share_pct=16.7456 output_quantize_share_pct=5.54889 dump_actual_ok=1 note=selected-model4-cut-not-model-fps
+stage23_frm ambient_frm=0 status=0 mismatches=0 max_abs_diff=0 after_frm=0 checksum=106597930
+stage23_frm ambient_frm=1 status=0 mismatches=0 max_abs_diff=0 after_frm=1 checksum=106597930
+stage23_frm ambient_frm=2 status=0 mismatches=0 max_abs_diff=0 after_frm=2 checksum=106597930
+stage23_frm ambient_frm=3 status=0 mismatches=0 max_abs_diff=0 after_frm=3 checksum=106597930
+stage23_frm ambient_frm=4 status=0 mismatches=0 max_abs_diff=0 after_frm=4 checksum=106597930
+exit=0
+[2026-07-07T06:47:38+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=ssh svt@banana 'cd /home/svt/yolo26-custom-int8-stage25/2026-07-07_06-42-19 && sha256sum stage25_stage24_replay_actual.bin fixtures/model4_cv2_conv_q_u8_expected_nhwc.bin'
+[dev] glibc: ldd (Ubuntu GLIBC 2.39-0ubuntu8.7) 2.39
+[dev] node : /usr/bin/node  v24.15.0 | npm: 11.17.0
+[dev] codex: /home/svt/.npm-global/bin/codex
+[dev] claude: /home/svt/.npm-global/bin/claude
+[dev] riscv default: /opt/riscv -> /opt/SpacemiT
+70adcf083e85ea95d5fb42e57ea26f51255944aaa442cde4d919f5ae551b3433  stage25_stage24_replay_actual.bin
+70adcf083e85ea95d5fb42e57ea26f51255944aaa442cde4d919f5ae551b3433  fixtures/model4_cv2_conv_q_u8_expected_nhwc.bin
+exit=0
+[2026-07-07T06:50:04+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=apply_patch add Stage25 branch1 threaded Conv sidecar and CLI options
+exit=0
+[2026-07-07T06:50:04+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=cmake --build .deps/custom_int8_engine/build-host-native-stage25 -j8
+[  1%] Building CXX object CMakeFiles/y26_k1x_custom_int8_engine.dir/src/model4_c2f_runner.cpp.o
+[  2%] Linking CXX static library liby26_k1x_custom_int8_engine.a
+[ 16%] Built target y26_k1x_custom_int8_engine
+[ 17%] Linking CXX executable bench_vmadot_hotpath
+[ 17%] Linking CXX executable bench_stage6_multiblock
+[ 18%] Linking CXX executable bench_vmadot_microkernel
+[ 19%] Linking CXX executable bench_stage7_backbone_subset
+[ 19%] Linking CXX executable bench_stage3_packing
+[ 20%] Linking CXX executable bench_stage4_packing
+[ 21%] Linking CXX executable bench_conv_kernels
+[ 22%] Linking CXX executable bench_stage5_first_block
+[ 23%] Built target bench_stage6_multiblock
+[ 24%] Built target bench_stage4_packing
+[ 25%] Built target bench_stage5_first_block
+[ 25%] Built target bench_stage3_packing
+[ 25%] Built target bench_vmadot_microkernel
+[ 26%] Built target bench_vmadot_hotpath
+[ 27%] Linking CXX executable bench_stage8_activation_requant
+[ 27%] Linking CXX executable bench_stage10_backbone_expansion
+[ 27%] Linking CXX executable bench_stage9_activation_fusion
+[ 28%] Linking CXX executable bench_stage12_c2f_block
+[ 27%] Built target bench_conv_kernels
+[ 29%] Built target bench_stage7_backbone_subset
+[ 30%] Linking CXX executable bench_stage11_branch_block
+[ 30%] Linking CXX executable bench_stage13_merge_dataflow
+[ 31%] Linking CXX executable bench_stage14_next_c2f
+[ 32%] Linking CXX executable bench_stage15_model4_branch
+[ 32%] Built target bench_stage12_c2f_block
+[ 33%] Built target bench_stage11_branch_block
+[ 32%] Built target bench_stage8_activation_requant
+[ 34%] Built target bench_stage10_backbone_expansion
+[ 35%] Built target bench_stage9_activation_fusion
+[ 36%] Built target bench_stage13_merge_dataflow
+[ 37%] Building CXX object CMakeFiles/bench_stage16_model4_c2f.dir/tools/bench_stage16_model4_c2f.cpp.o
+[ 37%] Linking CXX executable bench_stage16_fullshape_gate
+[ 37%] Linking CXX executable bench_stage18_threaded_conv_integration
+[ 38%] Building CXX object CMakeFiles/bench_stage19_threaded_c2f_integration.dir/tools/bench_stage19_threaded_c2f_integration.cpp.o
+[ 39%] Linking CXX executable bench_stage17_roofline_threading
+[ 39%] Built target bench_stage15_model4_branch
+[ 40%] Built target bench_stage14_next_c2f
+[ 40%] Building CXX object CMakeFiles/bench_stage20_model4_fullshape_c2f.dir/tools/bench_stage20_model4_fullshape_c2f.cpp.o
+[ 41%] Building CXX object CMakeFiles/bench_stage22_model4_onnx_cut.dir/tools/bench_stage22_model4_onnx_cut.cpp.o
+[ 42%] Building CXX object CMakeFiles/bench_stage21_model4_c2f_integrated.dir/tools/bench_stage21_model4_c2f_integrated.cpp.o
+[ 42%] Built target bench_stage17_roofline_threading
+[ 43%] Built target bench_stage18_threaded_conv_integration
+[ 44%] Built target bench_stage16_fullshape_gate
+[ 44%] Building CXX object CMakeFiles/bench_stage23_model4_runner_cut.dir/tools/bench_stage23_model4_runner_cut.cpp.o
+[ 45%] Linking CXX executable test_model_format_header
+[ 45%] Linking CXX executable test_requant_rounding
+[ 46%] Built target test_requant_rounding
+[ 46%] Built target test_model_format_header
+[ 47%] Linking CXX executable test_requant_fixed_point
+[ 47%] Linking CXX executable test_pack_a_layout
+[ 47%] Built target test_requant_fixed_point
+[ 48%] Built target test_pack_a_layout
+[ 49%] Linking CXX executable test_pack_b_layout
+[ 49%] Linking CXX executable test_vmadot_scalar_oracle_fixture
+[ 50%] Linking CXX executable bench_stage16_model4_c2f
+[ 51%] Built target test_pack_b_layout
+[ 52%] Built target test_vmadot_scalar_oracle_fixture
+[ 53%] Linking CXX executable test_vmadot_4x4x8_scalar
+[ 54%] Linking CXX executable test_vmadot_4x4x8_host_vectors
+[ 55%] Built target test_vmadot_4x4x8_host_vectors
+[ 55%] Built target bench_stage16_model4_c2f
+[ 55%] Linking CXX executable bench_stage21_model4_c2f_integrated
+[ 55%] Built target test_vmadot_4x4x8_scalar
+[ 56%] Linking CXX executable test_ime_runtime_probe
+[ 56%] Linking CXX executable test_vmadot_4x4x8_board_probe
+[ 58%] Linking CXX executable bench_stage19_threaded_c2f_integration
+[ 58%] Linking CXX executable test_conv1x1_scalar
+[ 59%] Built target test_ime_runtime_probe
+[ 59%] Built target bench_stage21_model4_c2f_integrated
+[ 60%] Built target test_vmadot_4x4x8_board_probe
+[ 60%] Linking CXX executable test_conv3x3_scalar
+[ 60%] Linking CXX executable test_conv1x1_ime_fixture
+[ 61%] Built target test_conv1x1_scalar
+[ 61%] Built target bench_stage19_threaded_c2f_integration
+[ 62%] Linking CXX executable test_conv3x3_ime_fixture
+[ 63%] Linking CXX executable test_zero_point_correction_formula
+[ 64%] Linking CXX executable test_stage3_real_conv_fixture
+[ 65%] Built target test_conv1x1_ime_fixture
+[ 66%] Built target test_conv3x3_scalar
+[ 66%] Built target test_conv3x3_ime_fixture
+[ 67%] Linking CXX executable test_stage6_multiblock_runner
+[ 67%] Linking CXX executable test_stage4_packing_repair
+[ 68%] Built target test_zero_point_correction_formula
+[ 69%] Linking CXX executable test_stage5_first_block_runner
+[ 69%] Built target test_stage3_real_conv_fixture
+[ 69%] Linking CXX executable test_stage7_backbone_subset_runner
+[ 70%] Linking CXX executable test_stage8_activation_requant
+[ 70%] Built target test_stage6_multiblock_runner
+[ 71%] Built target test_stage5_first_block_runner
+[ 72%] Built target test_stage4_packing_repair
+[ 73%] Linking CXX executable bench_stage20_model4_fullshape_c2f
+[ 74%] Linking CXX executable test_stage9_requant_scalar_optimized
+[ 75%] Built target test_stage7_backbone_subset_runner
+[ 76%] Linking CXX executable test_stage9_activation_modes
+[ 76%] Linking CXX executable test_stage9_lut_oracle
+[ 77%] Linking CXX executable test_stage9_pack_handoff
+[ 78%] Built target test_stage8_activation_requant
+[ 78%] Built target bench_stage20_model4_fullshape_c2f
+[ 78%] Built target test_stage9_requant_scalar_optimized
+[ 79%] Linking CXX executable test_stage10_backbone_expansion_runner
+[ 80%] Built target test_stage9_lut_oracle
+[ 80%] Linking CXX executable test_stage11_branch_block_runner
+[ 81%] Linking CXX executable test_stage10_rvv_rounding_control
+[ 82%] Linking CXX executable test_stage12_c2f_block_runner
+[ 82%] Built target test_stage9_activation_modes
+[ 83%] Linking CXX executable bench_stage23_model4_runner_cut
+[ 84%] Linking CXX executable bench_stage22_model4_onnx_cut
+[ 85%] Built target test_stage9_pack_handoff
+[ 86%] Linking CXX executable test_stage13_merge_dataflow
+[ 87%] Built target test_stage10_backbone_expansion_runner
+[ 87%] Linking CXX executable test_stage14_next_c2f_runner
+[ 87%] Built target bench_stage22_model4_onnx_cut
+[ 87%] Built target test_stage10_rvv_rounding_control
+[ 88%] Built target test_stage12_c2f_block_runner
+[ 89%] Built target test_stage11_branch_block_runner
+[ 89%] Building CXX object tests/CMakeFiles/test_stage16_model4_c2f_runner.dir/test_stage16_model4_c2f_runner.cpp.o
+[ 89%] Linking CXX executable test_stage18_threaded_conv_integration
+[ 89%] Built target bench_stage23_model4_runner_cut
+[ 90%] Building CXX object tests/CMakeFiles/test_stage19_threaded_c2f_integration.dir/test_stage19_threaded_c2f_integration.cpp.o
+[ 91%] Linking CXX executable test_stage15_model4_branch_runner
+[ 91%] Building CXX object tests/CMakeFiles/test_stage21_c2f_merge_repair.dir/test_stage21_c2f_merge_repair.cpp.o
+[ 91%] Built target test_stage13_merge_dataflow
+[ 92%] Building CXX object tests/CMakeFiles/test_stage24_merge_repair.dir/test_stage24_merge_repair.cpp.o
+[ 93%] Building CXX object tests/CMakeFiles/test_stage23_runner_api_cut.dir/test_stage23_runner_api_cut.cpp.o
+[ 94%] Built target test_stage14_next_c2f_runner
+[ 95%] Built target test_stage18_threaded_conv_integration
+[ 96%] Built target test_stage15_model4_branch_runner
+[ 97%] Linking CXX executable test_stage16_model4_c2f_runner
+[ 98%] Linking CXX executable test_stage19_threaded_c2f_integration
+[ 99%] Linking CXX executable test_stage24_merge_repair
+[100%] Linking CXX executable test_stage21_c2f_merge_repair
+[100%] Built target test_stage16_model4_c2f_runner
+[100%] Linking CXX executable test_stage23_runner_api_cut
+[100%] Built target test_stage19_threaded_c2f_integration
+[100%] Built target test_stage24_merge_repair
+[100%] Built target test_stage21_c2f_merge_repair
+[100%] Built target test_stage23_runner_api_cut
+exit=0
+[2026-07-07T06:50:23+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=ctest --test-dir .deps/custom_int8_engine/build-host-native-stage25 --output-on-failure
+Internal ctest changing into directory: /data/banana-yolo26-spacemit-demo/.deps/custom_int8_engine/build-host-native-stage25
+Test project /data/banana-yolo26-spacemit-demo/.deps/custom_int8_engine/build-host-native-stage25
+      Start  1: test_model_format_header
+ 1/38 Test  #1: test_model_format_header .................   Passed    0.01 sec
+      Start  2: test_requant_rounding
+ 2/38 Test  #2: test_requant_rounding ....................   Passed    0.01 sec
+      Start  3: test_requant_fixed_point
+ 3/38 Test  #3: test_requant_fixed_point .................   Passed    0.01 sec
+      Start  4: test_pack_a_layout
+ 4/38 Test  #4: test_pack_a_layout .......................   Passed    0.01 sec
+      Start  5: test_pack_b_layout
+ 5/38 Test  #5: test_pack_b_layout .......................   Passed    0.01 sec
+      Start  6: test_vmadot_scalar_oracle_fixture
+ 6/38 Test  #6: test_vmadot_scalar_oracle_fixture ........   Passed    0.01 sec
+      Start  7: test_vmadot_4x4x8_scalar
+ 7/38 Test  #7: test_vmadot_4x4x8_scalar .................   Passed    0.01 sec
+      Start  8: test_vmadot_4x4x8_host_vectors
+ 8/38 Test  #8: test_vmadot_4x4x8_host_vectors ...........   Passed    0.01 sec
+      Start  9: test_vmadot_4x4x8_board_probe
+ 9/38 Test  #9: test_vmadot_4x4x8_board_probe ............   Passed    0.01 sec
+      Start 10: test_ime_runtime_probe
+10/38 Test #10: test_ime_runtime_probe ...................   Passed    0.01 sec
+      Start 11: test_conv1x1_scalar
+11/38 Test #11: test_conv1x1_scalar ......................   Passed    0.01 sec
+      Start 12: test_conv1x1_ime_fixture
+12/38 Test #12: test_conv1x1_ime_fixture .................   Passed    0.01 sec
+      Start 13: test_conv3x3_scalar
+13/38 Test #13: test_conv3x3_scalar ......................   Passed    0.01 sec
+      Start 14: test_conv3x3_ime_fixture
+14/38 Test #14: test_conv3x3_ime_fixture .................   Passed    0.01 sec
+      Start 15: test_zero_point_correction_formula
+15/38 Test #15: test_zero_point_correction_formula .......   Passed    0.01 sec
+      Start 16: test_stage3_real_conv_fixture
+16/38 Test #16: test_stage3_real_conv_fixture ............   Passed    0.01 sec
+      Start 17: test_stage4_packing_repair
+17/38 Test #17: test_stage4_packing_repair ...............   Passed    0.01 sec
+      Start 18: test_stage5_first_block_runner
+18/38 Test #18: test_stage5_first_block_runner ...........   Passed    0.01 sec
+      Start 19: test_stage6_multiblock_runner
+19/38 Test #19: test_stage6_multiblock_runner ............   Passed    0.01 sec
+      Start 20: test_stage7_backbone_subset_runner
+20/38 Test #20: test_stage7_backbone_subset_runner .......   Passed    0.01 sec
+      Start 21: test_stage8_activation_requant
+21/38 Test #21: test_stage8_activation_requant ...........   Passed    0.01 sec
+      Start 22: test_stage9_requant_scalar_optimized
+22/38 Test #22: test_stage9_requant_scalar_optimized .....   Passed    0.01 sec
+      Start 23: test_stage9_activation_modes
+23/38 Test #23: test_stage9_activation_modes .............   Passed    0.01 sec
+      Start 24: test_stage9_lut_oracle
+24/38 Test #24: test_stage9_lut_oracle ...................   Passed    0.01 sec
+      Start 25: test_stage9_pack_handoff
+25/38 Test #25: test_stage9_pack_handoff .................   Passed    0.01 sec
+      Start 26: test_stage10_rvv_rounding_control
+26/38 Test #26: test_stage10_rvv_rounding_control ........   Passed    0.01 sec
+      Start 27: test_stage10_backbone_expansion_runner
+27/38 Test #27: test_stage10_backbone_expansion_runner ...   Passed    0.01 sec
+      Start 28: test_stage11_branch_block_runner
+28/38 Test #28: test_stage11_branch_block_runner .........   Passed    0.01 sec
+      Start 29: test_stage12_c2f_block_runner
+29/38 Test #29: test_stage12_c2f_block_runner ............   Passed    0.01 sec
+      Start 30: test_stage13_merge_dataflow
+30/38 Test #30: test_stage13_merge_dataflow ..............   Passed    0.02 sec
+      Start 31: test_stage14_next_c2f_runner
+31/38 Test #31: test_stage14_next_c2f_runner .............   Passed    0.02 sec
+      Start 32: test_stage15_model4_branch_runner
+32/38 Test #32: test_stage15_model4_branch_runner ........   Passed    0.02 sec
+      Start 33: test_stage16_model4_c2f_runner
+33/38 Test #33: test_stage16_model4_c2f_runner ...........   Passed    0.02 sec
+      Start 34: test_stage18_threaded_conv_integration
+34/38 Test #34: test_stage18_threaded_conv_integration ...   Passed    0.11 sec
+      Start 35: test_stage19_threaded_c2f_integration
+35/38 Test #35: test_stage19_threaded_c2f_integration ....   Passed    0.02 sec
+      Start 36: test_stage21_c2f_merge_repair
+36/38 Test #36: test_stage21_c2f_merge_repair ............   Passed    0.02 sec
+      Start 37: test_stage23_runner_api_cut
+37/38 Test #37: test_stage23_runner_api_cut ..............   Passed    0.02 sec
+      Start 38: test_stage24_merge_repair
+38/38 Test #38: test_stage24_merge_repair ................   Passed    0.02 sec
+
+100% tests passed, 0 tests failed out of 38
+
+Total Test time (real) =   0.65 sec
+exit=0
+[2026-07-07T06:50:33+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=cmake --build .deps/custom_int8_engine/build-riscv-stage25 -j$(nproc)
+[dev] glibc: ldd (Ubuntu GLIBC 2.39-0ubuntu8.7) 2.39
+[dev] node : /usr/bin/node  v24.15.0 | npm: 11.17.0
+[dev] codex: /home/svt/.npm-global/bin/codex
+[dev] claude: /home/svt/.npm-global/bin/claude
+[dev] riscv default: /opt/riscv -> /opt/SpacemiT
+[  1%] Building CXX object CMakeFiles/y26_k1x_custom_int8_engine.dir/src/model4_c2f_runner.cpp.o
+[  2%] Linking CXX static library liby26_k1x_custom_int8_engine.a
+[ 16%] Built target y26_k1x_custom_int8_engine
+[ 17%] Linking CXX executable bench_conv_kernels
+[ 18%] Linking CXX executable bench_vmadot_hotpath
+[ 19%] Linking CXX executable bench_vmadot_microkernel
+[ 19%] Linking CXX executable bench_stage3_packing
+[ 20%] Linking CXX executable bench_stage7_backbone_subset
+[ 20%] Linking CXX executable bench_stage6_multiblock
+[ 21%] Linking CXX executable bench_stage4_packing
+[ 22%] Linking CXX executable bench_stage5_first_block
+[ 22%] Built target bench_conv_kernels
+[ 22%] Built target bench_vmadot_microkernel
+[ 23%] Built target bench_vmadot_hotpath
+[ 24%] Built target bench_stage3_packing
+[ 25%] Built target bench_stage6_multiblock
+[ 26%] Built target bench_stage4_packing
+[ 27%] Built target bench_stage7_backbone_subset
+[ 27%] Built target bench_stage5_first_block
+[ 27%] Linking CXX executable bench_stage9_activation_fusion
+[ 27%] Linking CXX executable bench_stage10_backbone_expansion
+[ 28%] Linking CXX executable bench_stage11_branch_block
+[ 29%] Linking CXX executable bench_stage12_c2f_block
+[ 30%] Linking CXX executable bench_stage8_activation_requant
+[ 31%] Linking CXX executable bench_stage14_next_c2f
+[ 32%] Linking CXX executable bench_stage15_model4_branch
+[ 32%] Linking CXX executable bench_stage13_merge_dataflow
+[ 33%] Built target bench_stage10_backbone_expansion
+[ 34%] Built target bench_stage11_branch_block
+[ 34%] Built target bench_stage8_activation_requant
+[ 34%] Built target bench_stage12_c2f_block
+[ 34%] Linking CXX executable bench_stage16_fullshape_gate
+[ 35%] Built target bench_stage9_activation_fusion
+[ 36%] Built target bench_stage13_merge_dataflow
+[ 36%] Built target bench_stage15_model4_branch
+[ 37%] Building CXX object CMakeFiles/bench_stage16_model4_c2f.dir/tools/bench_stage16_model4_c2f.cpp.o
+[ 38%] Built target bench_stage14_next_c2f
+[ 38%] Linking CXX executable bench_stage18_threaded_conv_integration
+[ 39%] Linking CXX executable bench_stage17_roofline_threading
+[ 39%] Building CXX object CMakeFiles/bench_stage20_model4_fullshape_c2f.dir/tools/bench_stage20_model4_fullshape_c2f.cpp.o
+[ 40%] Building CXX object CMakeFiles/bench_stage21_model4_c2f_integrated.dir/tools/bench_stage21_model4_c2f_integrated.cpp.o
+[ 41%] Building CXX object CMakeFiles/bench_stage19_threaded_c2f_integration.dir/tools/bench_stage19_threaded_c2f_integration.cpp.o
+[ 42%] Building CXX object CMakeFiles/bench_stage22_model4_onnx_cut.dir/tools/bench_stage22_model4_onnx_cut.cpp.o
+[ 43%] Built target bench_stage16_fullshape_gate
+[ 43%] Building CXX object CMakeFiles/bench_stage23_model4_runner_cut.dir/tools/bench_stage23_model4_runner_cut.cpp.o
+[ 44%] Built target bench_stage18_threaded_conv_integration
+[ 44%] Built target bench_stage17_roofline_threading
+[ 45%] Linking CXX executable test_model_format_header
+[ 45%] Linking CXX executable test_requant_rounding
+[ 45%] Built target test_model_format_header
+[ 46%] Built target test_requant_rounding
+[ 47%] Linking CXX executable test_requant_fixed_point
+[ 47%] Linking CXX executable test_pack_a_layout
+[ 47%] Built target test_requant_fixed_point
+[ 48%] Built target test_pack_a_layout
+[ 48%] Linking CXX executable test_vmadot_scalar_oracle_fixture
+[ 49%] Linking CXX executable test_pack_b_layout
+[ 50%] Built target test_pack_b_layout
+[ 51%] Built target test_vmadot_scalar_oracle_fixture
+[ 52%] Linking CXX executable bench_stage16_model4_c2f
+[ 53%] Linking CXX executable test_vmadot_4x4x8_scalar
+[ 54%] Linking CXX executable test_vmadot_4x4x8_host_vectors
+[ 55%] Built target test_vmadot_4x4x8_host_vectors
+[ 55%] Built target test_vmadot_4x4x8_scalar
+[ 55%] Linking CXX executable test_vmadot_4x4x8_board_probe
+[ 55%] Built target bench_stage16_model4_c2f
+[ 56%] Linking CXX executable test_conv1x1_scalar
+[ 57%] Linking CXX executable test_ime_runtime_probe
+[ 57%] Linking CXX executable bench_stage21_model4_c2f_integrated
+[ 58%] Built target test_vmadot_4x4x8_board_probe
+[ 58%] Linking CXX executable test_conv1x1_ime_fixture
+[ 59%] Built target test_conv1x1_scalar
+[ 60%] Built target test_ime_runtime_probe
+[ 60%] Linking CXX executable test_conv3x3_scalar
+[ 61%] Built target test_conv1x1_ime_fixture
+[ 62%] Linking CXX executable bench_stage19_threaded_c2f_integration
+[ 63%] Linking CXX executable test_conv3x3_ime_fixture
+[ 63%] Built target bench_stage21_model4_c2f_integrated
+[ 64%] Linking CXX executable test_zero_point_correction_formula
+[ 65%] Built target test_conv3x3_scalar
+[ 66%] Linking CXX executable test_stage3_real_conv_fixture
+[ 66%] Linking CXX executable test_stage4_packing_repair
+[ 66%] Built target test_conv3x3_ime_fixture
+[ 67%] Built target test_zero_point_correction_formula
+[ 67%] Built target bench_stage19_threaded_c2f_integration
+[ 68%] Linking CXX executable test_stage6_multiblock_runner
+[ 69%] Linking CXX executable test_stage5_first_block_runner
+[ 69%] Linking CXX executable test_stage7_backbone_subset_runner
+[ 69%] Built target test_stage3_real_conv_fixture
+[ 70%] Built target test_stage4_packing_repair
+[ 71%] Linking CXX executable test_stage8_activation_requant
+[ 72%] Linking CXX executable test_stage9_requant_scalar_optimized
+[ 72%] Built target test_stage6_multiblock_runner
+[ 73%] Built target test_stage5_first_block_runner
+[ 74%] Built target test_stage7_backbone_subset_runner
+[ 74%] Linking CXX executable test_stage9_lut_oracle
+[ 75%] Linking CXX executable test_stage9_pack_handoff
+[ 76%] Built target test_stage8_activation_requant
+[ 77%] Linking CXX executable test_stage9_activation_modes
+[ 77%] Built target test_stage9_requant_scalar_optimized
+[ 78%] Linking CXX executable test_stage10_rvv_rounding_control
+[ 79%] Linking CXX executable test_stage10_backbone_expansion_runner
+[ 80%] Built target test_stage9_lut_oracle
+[ 81%] Built target test_stage9_pack_handoff
+[ 81%] Built target test_stage9_activation_modes
+[ 82%] Linking CXX executable test_stage12_c2f_block_runner
+[ 82%] Built target test_stage10_rvv_rounding_control
+[ 83%] Linking CXX executable test_stage13_merge_dataflow
+[ 84%] Built target test_stage10_backbone_expansion_runner
+[ 84%] Linking CXX executable test_stage11_branch_block_runner
+[ 85%] Linking CXX executable bench_stage20_model4_fullshape_c2f
+[ 85%] Linking CXX executable test_stage14_next_c2f_runner
+[ 86%] Linking CXX executable test_stage15_model4_branch_runner
+[ 87%] Built target test_stage12_c2f_block_runner
+[ 88%] Linking CXX executable bench_stage23_model4_runner_cut
+[ 88%] Built target test_stage13_merge_dataflow
+[ 88%] Built target bench_stage20_model4_fullshape_c2f
+[ 89%] Built target test_stage11_branch_block_runner
+[ 89%] Building CXX object tests/CMakeFiles/test_stage16_model4_c2f_runner.dir/test_stage16_model4_c2f_runner.cpp.o
+[ 89%] Linking CXX executable test_stage18_threaded_conv_integration
+[ 90%] Built target test_stage14_next_c2f_runner
+[ 91%] Building CXX object tests/CMakeFiles/test_stage19_threaded_c2f_integration.dir/test_stage19_threaded_c2f_integration.cpp.o
+[ 92%] Built target test_stage15_model4_branch_runner
+[ 93%] Building CXX object tests/CMakeFiles/test_stage23_runner_api_cut.dir/test_stage23_runner_api_cut.cpp.o
+[ 93%] Building CXX object tests/CMakeFiles/test_stage21_c2f_merge_repair.dir/test_stage21_c2f_merge_repair.cpp.o
+[ 93%] Built target bench_stage23_model4_runner_cut
+[ 94%] Building CXX object tests/CMakeFiles/test_stage24_merge_repair.dir/test_stage24_merge_repair.cpp.o
+[ 95%] Built target test_stage18_threaded_conv_integration
+[ 96%] Linking CXX executable bench_stage22_model4_onnx_cut
+[ 96%] Built target bench_stage22_model4_onnx_cut
+[ 97%] Linking CXX executable test_stage19_threaded_c2f_integration
+[ 98%] Linking CXX executable test_stage16_model4_c2f_runner
+[ 99%] Linking CXX executable test_stage21_c2f_merge_repair
+[ 99%] Linking CXX executable test_stage23_runner_api_cut
+[ 99%] Built target test_stage19_threaded_c2f_integration
+[100%] Linking CXX executable test_stage24_merge_repair
+[100%] Built target test_stage16_model4_c2f_runner
+[100%] Built target test_stage23_runner_api_cut
+[100%] Built target test_stage21_c2f_merge_repair
+[100%] Built target test_stage24_merge_repair
+exit=0
+[2026-07-07T06:51:13+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=scp .deps/custom_int8_engine/build-riscv-stage25/bench_stage23_model4_runner_cut svt@banana:/home/svt/yolo26-custom-int8-stage25/2026-07-07_06-42-19/bench_stage23_model4_runner_cut && ssh svt@banana 'cd /home/svt/yolo26-custom-int8-stage25/2026-07-07_06-42-19 && sha256sum bench_stage23_model4_runner_cut'
+[dev] glibc: ldd (Ubuntu GLIBC 2.39-0ubuntu8.7) 2.39
+[dev] node : /usr/bin/node  v24.15.0 | npm: 11.17.0
+[dev] codex: /home/svt/.npm-global/bin/codex
+[dev] claude: /home/svt/.npm-global/bin/claude
+[dev] riscv default: /opt/riscv -> /opt/SpacemiT
+84f669a232ce144539ac6a15f535cac9afbad692b58b3f7234b8f2d6b84d1ba3  bench_stage23_model4_runner_cut
+exit=0
+[2026-07-07T06:51:15+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=ssh svt@banana 'cd /home/svt/yolo26-custom-int8-stage25/2026-07-07_06-42-19 && for n in 0 1 2 3 4; do echo STAGE25_BRANCH1_MATRIX thread_branch1=$n; taskset -c 0-3 ./bench_stage23_model4_runner_cut --fixture-dir fixtures --mode ime_threaded --output-quantize rvv --merge-repair split1_lut --thread-branch0 4 --thread-branch1 $n --warmup 10 --runs 100 --repeats 5 --dump-actual stage25_branch1_${n}_actual.bin || exit 1; sha256sum stage25_branch1_${n}_actual.bin; done'
+[dev] glibc: ldd (Ubuntu GLIBC 2.39-0ubuntu8.7) 2.39
+[dev] node : /usr/bin/node  v24.15.0 | npm: 11.17.0
+[dev] codex: /home/svt/.npm-global/bin/codex
+[dev] claude: /home/svt/.npm-global/bin/claude
+[dev] riscv default: /opt/riscv -> /opt/SpacemiT
+STAGE25_BRANCH1_MATRIX thread_branch1=0
+stage23_runner_cut mode=ime_threaded output_quantize=rvv merge_repair=split1_lut warmup=10 runs=100 repeats=5 thread_branch0=4 thread_branch1=0 status=0 mismatches=0 max_abs_diff=0 checksum=106597930 expected_checksum=106597930 affinity_ok=1 mean_total_us=124745 stddev_total_us=86.1097 min_total_us=124657 max_total_us=124871 cv_total_pct=0.0690285 mean_input_adapter_us=2567.19 mean_conv_us=61708 mean_activation_requant_us=32615.5 mean_merge_us=20992.7 mean_post_concat_qdq_us=20992.7 mean_output_quantize_us=6844.23 mean_copy_layout_us=0 mean_pack_layout_us=0 mean_thread_overhead_us=409.496 mean_correction_us=8402.62 mean_branch0_conv_us=6279.8 mean_branch1_conv_us=17902.8 mean_model4_cv2_conv_us=37525.4 mean_attributed_us=124728 mean_attribution_pct=99.9859 mean_other_us=17.5638 conv_share_pct=49.4672 activation_share_pct=26.1457 merge_share_pct=16.8284 output_quantize_share_pct=5.48657 dump_actual_ok=1 note=selected-model4-cut-not-model-fps
+70adcf083e85ea95d5fb42e57ea26f51255944aaa442cde4d919f5ae551b3433  stage25_branch1_0_actual.bin
+STAGE25_BRANCH1_MATRIX thread_branch1=1
+stage23_runner_cut mode=ime_threaded output_quantize=rvv merge_repair=split1_lut warmup=10 runs=100 repeats=5 thread_branch0=4 thread_branch1=1 status=0 mismatches=0 max_abs_diff=0 checksum=106597930 expected_checksum=106597930 affinity_ok=1 mean_total_us=125092 stddev_total_us=146.869 min_total_us=124985 max_total_us=125325 cv_total_pct=0.117408 mean_input_adapter_us=2558.74 mean_conv_us=61983.3 mean_activation_requant_us=32677.4 mean_merge_us=21009.3 mean_post_concat_qdq_us=21009.3 mean_output_quantize_us=6845.27 mean_copy_layout_us=0 mean_pack_layout_us=0 mean_thread_overhead_us=430.094 mean_correction_us=8725.4 mean_branch0_conv_us=6114.53 mean_branch1_conv_us=18318.1 mean_model4_cv2_conv_us=37550.7 mean_attributed_us=125074 mean_attribution_pct=99.9854 mean_other_us=18.2578 conv_share_pct=49.5501 activation_share_pct=26.1226 merge_share_pct=16.7951 output_quantize_share_pct=5.47218 dump_actual_ok=1 note=selected-model4-cut-not-model-fps
+70adcf083e85ea95d5fb42e57ea26f51255944aaa442cde4d919f5ae551b3433  stage25_branch1_1_actual.bin
+STAGE25_BRANCH1_MATRIX thread_branch1=2
+stage23_runner_cut mode=ime_threaded output_quantize=rvv merge_repair=split1_lut warmup=10 runs=100 repeats=5 thread_branch0=4 thread_branch1=2 status=0 mismatches=0 max_abs_diff=0 checksum=106597930 expected_checksum=106597930 affinity_ok=1 mean_total_us=116480 stddev_total_us=69.2975 min_total_us=116381 max_total_us=116568 cv_total_pct=0.0594928 mean_input_adapter_us=2545.4 mean_conv_us=53401.3 mean_activation_requant_us=32676.7 mean_merge_us=21000 mean_post_concat_qdq_us=21000 mean_output_quantize_us=6838.43 mean_copy_layout_us=0 mean_pack_layout_us=0 mean_thread_overhead_us=520.807 mean_correction_us=7881.32 mean_branch0_conv_us=6154.73 mean_branch1_conv_us=9710.02 mean_model4_cv2_conv_us=37536.5 mean_attributed_us=116462 mean_attribution_pct=99.984 mean_other_us=18.6629 conv_share_pct=45.8457 activation_share_pct=28.0533 merge_share_pct=18.0288 output_quantize_share_pct=5.87088 dump_actual_ok=1 note=selected-model4-cut-not-model-fps
+70adcf083e85ea95d5fb42e57ea26f51255944aaa442cde4d919f5ae551b3433  stage25_branch1_2_actual.bin
+STAGE25_BRANCH1_MATRIX thread_branch1=3
+stage23_runner_cut mode=ime_threaded output_quantize=rvv merge_repair=split1_lut warmup=10 runs=100 repeats=5 thread_branch0=4 thread_branch1=3 status=0 mismatches=0 max_abs_diff=0 checksum=106597930 expected_checksum=106597930 affinity_ok=1 mean_total_us=113855 stddev_total_us=321.074 min_total_us=113590 max_total_us=114379 cv_total_pct=0.282002 mean_input_adapter_us=2570.97 mean_conv_us=50654.2 mean_activation_requant_us=32747.4 mean_merge_us=21014.2 mean_post_concat_qdq_us=21014.2 mean_output_quantize_us=6849.92 mean_copy_layout_us=0 mean_pack_layout_us=0 mean_thread_overhead_us=595.134 mean_correction_us=7628.23 mean_branch0_conv_us=6307.4 mean_branch1_conv_us=6727.26 mean_model4_cv2_conv_us=37619.5 mean_attributed_us=113837 mean_attribution_pct=99.9837 mean_other_us=18.5105 conv_share_pct=44.49 activation_share_pct=28.7624 merge_share_pct=18.457 output_quantize_share_pct=6.01634 dump_actual_ok=1 note=selected-model4-cut-not-model-fps
+70adcf083e85ea95d5fb42e57ea26f51255944aaa442cde4d919f5ae551b3433  stage25_branch1_3_actual.bin
+STAGE25_BRANCH1_MATRIX thread_branch1=4
+stage23_runner_cut mode=ime_threaded output_quantize=rvv merge_repair=split1_lut warmup=10 runs=100 repeats=5 thread_branch0=4 thread_branch1=4 status=0 mismatches=0 max_abs_diff=0 checksum=106597930 expected_checksum=106597930 affinity_ok=1 mean_total_us=113889 stddev_total_us=330.951 min_total_us=113608 max_total_us=114444 cv_total_pct=0.29059 mean_input_adapter_us=2599.38 mean_conv_us=50699.7 mean_activation_requant_us=32699.5 mean_merge_us=21018.6 mean_post_concat_qdq_us=21018.6 mean_output_quantize_us=6853.23 mean_copy_layout_us=0 mean_pack_layout_us=0 mean_thread_overhead_us=2302 mean_correction_us=7515.88 mean_branch0_conv_us=7096.7 mean_branch1_conv_us=6059.11 mean_model4_cv2_conv_us=37543.9 mean_attributed_us=113870 mean_attribution_pct=99.9834 mean_other_us=18.8784 conv_share_pct=44.5167 activation_share_pct=28.7116 merge_share_pct=18.4553 output_quantize_share_pct=6.01745 dump_actual_ok=1 note=selected-model4-cut-not-model-fps
+70adcf083e85ea95d5fb42e57ea26f51255944aaa442cde4d919f5ae551b3433  stage25_branch1_4_actual.bin
+exit=0
+[2026-07-07T06:56:19+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=ssh svt@banana 'cd /home/svt/yolo26-custom-int8-stage25/2026-07-07_06-42-19 && taskset -c 0-3 ./bench_stage23_model4_runner_cut --fixture-dir fixtures --mode ime_threaded --output-quantize rvv --merge-repair split1_lut --thread-branch0 4 --thread-branch1 4 --warmup 10 --runs 100 --repeats 5 --frm-sweep --dump-actual stage25_branch1_4_frm_actual.bin && sha256sum stage25_branch1_4_frm_actual.bin fixtures/model4_cv2_conv_q_u8_expected_nhwc.bin'
+[dev] glibc: ldd (Ubuntu GLIBC 2.39-0ubuntu8.7) 2.39
+[dev] node : /usr/bin/node  v24.15.0 | npm: 11.17.0
+[dev] codex: /home/svt/.npm-global/bin/codex
+[dev] claude: /home/svt/.npm-global/bin/claude
+[dev] riscv default: /opt/riscv -> /opt/SpacemiT
+stage23_runner_cut mode=ime_threaded output_quantize=rvv merge_repair=split1_lut warmup=10 runs=100 repeats=5 thread_branch0=4 thread_branch1=4 status=0 mismatches=0 max_abs_diff=0 checksum=106597930 expected_checksum=106597930 affinity_ok=1 mean_total_us=113803 stddev_total_us=294.005 min_total_us=113459 max_total_us=114220 cv_total_pct=0.258347 mean_input_adapter_us=2639.55 mean_conv_us=50605 mean_activation_requant_us=32669.1 mean_merge_us=20995.5 mean_post_concat_qdq_us=20995.5 mean_output_quantize_us=6874.65 mean_copy_layout_us=0 mean_pack_layout_us=0 mean_thread_overhead_us=2169.71 mean_correction_us=7509.53 mean_branch0_conv_us=7008.6 mean_branch1_conv_us=6058.52 mean_model4_cv2_conv_us=37537.9 mean_attributed_us=113784 mean_attribution_pct=99.9835 mean_other_us=18.793 conv_share_pct=44.4674 activation_share_pct=28.7068 merge_share_pct=18.449 output_quantize_share_pct=6.04086 dump_actual_ok=1 note=selected-model4-cut-not-model-fps
+stage23_frm ambient_frm=0 status=0 mismatches=0 max_abs_diff=0 after_frm=0 checksum=106597930
+stage23_frm ambient_frm=1 status=0 mismatches=0 max_abs_diff=0 after_frm=1 checksum=106597930
+stage23_frm ambient_frm=2 status=0 mismatches=0 max_abs_diff=0 after_frm=2 checksum=106597930
+stage23_frm ambient_frm=3 status=0 mismatches=0 max_abs_diff=0 after_frm=3 checksum=106597930
+stage23_frm ambient_frm=4 status=0 mismatches=0 max_abs_diff=0 after_frm=4 checksum=106597930
+70adcf083e85ea95d5fb42e57ea26f51255944aaa442cde4d919f5ae551b3433  stage25_branch1_4_frm_actual.bin
+70adcf083e85ea95d5fb42e57ea26f51255944aaa442cde4d919f5ae551b3433  fixtures/model4_cv2_conv_q_u8_expected_nhwc.bin
+exit=0
+[2026-07-07T06:59:02+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=apply_patch add Stage25 model4_cv2 1x1 threaded Conv sidecar and CLI options
+exit=0
+[2026-07-07T06:59:02+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=cmake --build .deps/custom_int8_engine/build-host-native-stage25 -j8
+[  0%] Building CXX object CMakeFiles/y26_k1x_custom_int8_engine.dir/kernels/conv_threaded.cpp.o
+[  1%] Building CXX object CMakeFiles/y26_k1x_custom_int8_engine.dir/src/model4_c2f_runner.cpp.o
+[  2%] Linking CXX static library liby26_k1x_custom_int8_engine.a
+[ 16%] Built target y26_k1x_custom_int8_engine
+[ 17%] Linking CXX executable bench_stage7_backbone_subset
+[ 18%] Linking CXX executable bench_stage4_packing
+[ 18%] Linking CXX executable bench_stage3_packing
+[ 19%] Linking CXX executable bench_vmadot_hotpath
+[ 20%] Linking CXX executable bench_conv_kernels
+[ 20%] Linking CXX executable bench_stage6_multiblock
+[ 21%] Linking CXX executable bench_vmadot_microkernel
+[ 22%] Linking CXX executable bench_stage5_first_block
+[ 22%] Built target bench_stage5_first_block
+[ 23%] Built target bench_stage7_backbone_subset
+[ 24%] Built target bench_stage3_packing
+[ 24%] Built target bench_vmadot_microkernel
+[ 24%] Built target bench_conv_kernels
+[ 25%] Built target bench_stage4_packing
+[ 26%] Built target bench_stage6_multiblock
+[ 26%] Linking CXX executable bench_stage9_activation_fusion
+[ 27%] Built target bench_vmadot_hotpath
+[ 28%] Linking CXX executable bench_stage8_activation_requant
+[ 28%] Linking CXX executable bench_stage10_backbone_expansion
+[ 29%] Linking CXX executable bench_stage11_branch_block
+[ 30%] Linking CXX executable bench_stage12_c2f_block
+[ 31%] Linking CXX executable bench_stage14_next_c2f
+[ 31%] Linking CXX executable bench_stage13_merge_dataflow
+[ 32%] Linking CXX executable bench_stage15_model4_branch
+[ 32%] Built target bench_stage8_activation_requant
+[ 33%] Built target bench_stage10_backbone_expansion
+[ 34%] Built target bench_stage9_activation_fusion
+[ 34%] Built target bench_stage12_c2f_block
+[ 35%] Built target bench_stage11_branch_block
+[ 36%] Built target bench_stage13_merge_dataflow
+[ 36%] Linking CXX executable bench_stage16_fullshape_gate
+[ 37%] Building CXX object CMakeFiles/bench_stage16_model4_c2f.dir/tools/bench_stage16_model4_c2f.cpp.o
+[ 38%] Linking CXX executable bench_stage17_roofline_threading
+[ 39%] Built target bench_stage14_next_c2f
+[ 39%] Linking CXX executable bench_stage18_threaded_conv_integration
+[ 40%] Building CXX object CMakeFiles/bench_stage19_threaded_c2f_integration.dir/tools/bench_stage19_threaded_c2f_integration.cpp.o
+[ 40%] Building CXX object CMakeFiles/bench_stage20_model4_fullshape_c2f.dir/tools/bench_stage20_model4_fullshape_c2f.cpp.o
+[ 40%] Built target bench_stage15_model4_branch
+[ 41%] Building CXX object CMakeFiles/bench_stage21_model4_c2f_integrated.dir/tools/bench_stage21_model4_c2f_integrated.cpp.o
+[ 42%] Building CXX object CMakeFiles/bench_stage22_model4_onnx_cut.dir/tools/bench_stage22_model4_onnx_cut.cpp.o
+[ 43%] Built target bench_stage16_fullshape_gate
+[ 44%] Built target bench_stage18_threaded_conv_integration
+[ 44%] Built target bench_stage17_roofline_threading
+[ 44%] Building CXX object CMakeFiles/bench_stage23_model4_runner_cut.dir/tools/bench_stage23_model4_runner_cut.cpp.o
+[ 45%] Linking CXX executable test_model_format_header
+[ 45%] Linking CXX executable test_requant_rounding
+[ 45%] Built target test_model_format_header
+[ 46%] Built target test_requant_rounding
+[ 46%] Linking CXX executable test_pack_a_layout
+[ 47%] Linking CXX executable test_requant_fixed_point
+[ 48%] Built target test_pack_a_layout
+[ 48%] Built target test_requant_fixed_point
+[ 49%] Linking CXX executable test_pack_b_layout
+[ 49%] Linking CXX executable test_vmadot_scalar_oracle_fixture
+[ 50%] Linking CXX executable bench_stage16_model4_c2f
+[ 51%] Built target test_vmadot_scalar_oracle_fixture
+[ 52%] Linking CXX executable test_vmadot_4x4x8_scalar
+[ 53%] Built target test_pack_b_layout
+[ 53%] Built target bench_stage16_model4_c2f
+[ 54%] Linking CXX executable test_vmadot_4x4x8_host_vectors
+[ 54%] Built target test_vmadot_4x4x8_scalar
+[ 54%] Linking CXX executable test_vmadot_4x4x8_board_probe
+[ 54%] Linking CXX executable bench_stage21_model4_c2f_integrated
+[ 55%] Linking CXX executable test_ime_runtime_probe
+[ 56%] Built target test_vmadot_4x4x8_host_vectors
+[ 57%] Linking CXX executable test_conv1x1_scalar
+[ 58%] Built target test_vmadot_4x4x8_board_probe
+[ 59%] Linking CXX executable bench_stage19_threaded_c2f_integration
+[ 59%] Linking CXX executable test_conv1x1_ime_fixture
+[ 60%] Built target test_ime_runtime_probe
+[ 60%] Built target bench_stage21_model4_c2f_integrated
+[ 61%] Built target test_conv1x1_scalar
+[ 61%] Linking CXX executable test_conv3x3_scalar
+[ 62%] Linking CXX executable test_conv3x3_ime_fixture
+[ 63%] Linking CXX executable test_zero_point_correction_formula
+[ 63%] Built target bench_stage19_threaded_c2f_integration
+[ 64%] Built target test_conv1x1_ime_fixture
+[ 65%] Linking CXX executable test_stage3_real_conv_fixture
+[ 66%] Built target test_conv3x3_scalar
+[ 66%] Built target test_conv3x3_ime_fixture
+[ 66%] Linking CXX executable test_stage4_packing_repair
+[ 67%] Built target test_zero_point_correction_formula
+[ 68%] Linking CXX executable test_stage5_first_block_runner
+[ 69%] Linking CXX executable test_stage6_multiblock_runner
+[ 69%] Linking CXX executable test_stage7_backbone_subset_runner
+[ 69%] Built target test_stage3_real_conv_fixture
+[ 70%] Linking CXX executable test_stage8_activation_requant
+[ 71%] Built target test_stage4_packing_repair
+[ 71%] Built target test_stage6_multiblock_runner
+[ 72%] Linking CXX executable test_stage9_requant_scalar_optimized
+[ 73%] Built target test_stage5_first_block_runner
+[ 74%] Built target test_stage7_backbone_subset_runner
+[ 75%] Linking CXX executable test_stage9_activation_modes
+[ 75%] Linking CXX executable test_stage9_lut_oracle
+[ 76%] Linking CXX executable test_stage9_pack_handoff
+[ 77%] Built target test_stage8_activation_requant
+[ 78%] Linking CXX executable test_stage10_rvv_rounding_control
+[ 78%] Built target test_stage9_requant_scalar_optimized
+[ 79%] Built target test_stage9_lut_oracle
+[ 80%] Built target test_stage9_pack_handoff
+[ 81%] Linking CXX executable test_stage10_backbone_expansion_runner
+[ 81%] Built target test_stage9_activation_modes
+[ 82%] Linking CXX executable bench_stage20_model4_fullshape_c2f
+[ 83%] Linking CXX executable bench_stage23_model4_runner_cut
+[ 83%] Linking CXX executable test_stage11_branch_block_runner
+[ 84%] Linking CXX executable test_stage12_c2f_block_runner
+[ 84%] Built target test_stage10_rvv_rounding_control
+[ 85%] Linking CXX executable test_stage13_merge_dataflow
+[ 85%] Linking CXX executable test_stage14_next_c2f_runner
+[ 86%] Linking CXX executable bench_stage22_model4_onnx_cut
+[ 87%] Built target test_stage10_backbone_expansion_runner
+[ 87%] Built target bench_stage20_model4_fullshape_c2f
+[ 88%] Built target test_stage11_branch_block_runner
+[ 89%] Built target test_stage12_c2f_block_runner
+[ 90%] Linking CXX executable test_stage15_model4_branch_runner
+[ 90%] Built target test_stage13_merge_dataflow
+[ 90%] Built target bench_stage23_model4_runner_cut
+[ 90%] Building CXX object tests/CMakeFiles/test_stage16_model4_c2f_runner.dir/test_stage16_model4_c2f_runner.cpp.o
+[ 90%] Linking CXX executable test_stage18_threaded_conv_integration
+[ 91%] Building CXX object tests/CMakeFiles/test_stage19_threaded_c2f_integration.dir/test_stage19_threaded_c2f_integration.cpp.o
+[ 92%] Built target test_stage14_next_c2f_runner
+[ 92%] Building CXX object tests/CMakeFiles/test_stage21_c2f_merge_repair.dir/test_stage21_c2f_merge_repair.cpp.o
+[ 93%] Building CXX object tests/CMakeFiles/test_stage23_runner_api_cut.dir/test_stage23_runner_api_cut.cpp.o
+[ 93%] Built target bench_stage22_model4_onnx_cut
+[ 94%] Building CXX object tests/CMakeFiles/test_stage24_merge_repair.dir/test_stage24_merge_repair.cpp.o
+[ 95%] Built target test_stage15_model4_branch_runner
+[ 96%] Built target test_stage18_threaded_conv_integration
+[ 97%] Linking CXX executable test_stage19_threaded_c2f_integration
+[ 98%] Linking CXX executable test_stage16_model4_c2f_runner
+[ 98%] Linking CXX executable test_stage23_runner_api_cut
+[ 99%] Linking CXX executable test_stage21_c2f_merge_repair
+[100%] Linking CXX executable test_stage24_merge_repair
+[100%] Built target test_stage19_threaded_c2f_integration
+[100%] Built target test_stage16_model4_c2f_runner
+[100%] Built target test_stage23_runner_api_cut
+[100%] Built target test_stage21_c2f_merge_repair
+[100%] Built target test_stage24_merge_repair
+exit=0
+[2026-07-07T06:59:21+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=ctest --test-dir .deps/custom_int8_engine/build-host-native-stage25 --output-on-failure
+Internal ctest changing into directory: /data/banana-yolo26-spacemit-demo/.deps/custom_int8_engine/build-host-native-stage25
+Test project /data/banana-yolo26-spacemit-demo/.deps/custom_int8_engine/build-host-native-stage25
+      Start  1: test_model_format_header
+ 1/38 Test  #1: test_model_format_header .................   Passed    0.01 sec
+      Start  2: test_requant_rounding
+ 2/38 Test  #2: test_requant_rounding ....................   Passed    0.01 sec
+      Start  3: test_requant_fixed_point
+ 3/38 Test  #3: test_requant_fixed_point .................   Passed    0.01 sec
+      Start  4: test_pack_a_layout
+ 4/38 Test  #4: test_pack_a_layout .......................   Passed    0.01 sec
+      Start  5: test_pack_b_layout
+ 5/38 Test  #5: test_pack_b_layout .......................   Passed    0.01 sec
+      Start  6: test_vmadot_scalar_oracle_fixture
+ 6/38 Test  #6: test_vmadot_scalar_oracle_fixture ........   Passed    0.01 sec
+      Start  7: test_vmadot_4x4x8_scalar
+ 7/38 Test  #7: test_vmadot_4x4x8_scalar .................   Passed    0.01 sec
+      Start  8: test_vmadot_4x4x8_host_vectors
+ 8/38 Test  #8: test_vmadot_4x4x8_host_vectors ...........   Passed    0.01 sec
+      Start  9: test_vmadot_4x4x8_board_probe
+ 9/38 Test  #9: test_vmadot_4x4x8_board_probe ............   Passed    0.01 sec
+      Start 10: test_ime_runtime_probe
+10/38 Test #10: test_ime_runtime_probe ...................   Passed    0.01 sec
+      Start 11: test_conv1x1_scalar
+11/38 Test #11: test_conv1x1_scalar ......................   Passed    0.01 sec
+      Start 12: test_conv1x1_ime_fixture
+12/38 Test #12: test_conv1x1_ime_fixture .................   Passed    0.01 sec
+      Start 13: test_conv3x3_scalar
+13/38 Test #13: test_conv3x3_scalar ......................   Passed    0.01 sec
+      Start 14: test_conv3x3_ime_fixture
+14/38 Test #14: test_conv3x3_ime_fixture .................   Passed    0.01 sec
+      Start 15: test_zero_point_correction_formula
+15/38 Test #15: test_zero_point_correction_formula .......   Passed    0.01 sec
+      Start 16: test_stage3_real_conv_fixture
+16/38 Test #16: test_stage3_real_conv_fixture ............   Passed    0.01 sec
+      Start 17: test_stage4_packing_repair
+17/38 Test #17: test_stage4_packing_repair ...............   Passed    0.01 sec
+      Start 18: test_stage5_first_block_runner
+18/38 Test #18: test_stage5_first_block_runner ...........   Passed    0.01 sec
+      Start 19: test_stage6_multiblock_runner
+19/38 Test #19: test_stage6_multiblock_runner ............   Passed    0.01 sec
+      Start 20: test_stage7_backbone_subset_runner
+20/38 Test #20: test_stage7_backbone_subset_runner .......   Passed    0.01 sec
+      Start 21: test_stage8_activation_requant
+21/38 Test #21: test_stage8_activation_requant ...........   Passed    0.01 sec
+      Start 22: test_stage9_requant_scalar_optimized
+22/38 Test #22: test_stage9_requant_scalar_optimized .....   Passed    0.01 sec
+      Start 23: test_stage9_activation_modes
+23/38 Test #23: test_stage9_activation_modes .............   Passed    0.01 sec
+      Start 24: test_stage9_lut_oracle
+24/38 Test #24: test_stage9_lut_oracle ...................   Passed    0.01 sec
+      Start 25: test_stage9_pack_handoff
+25/38 Test #25: test_stage9_pack_handoff .................   Passed    0.01 sec
+      Start 26: test_stage10_rvv_rounding_control
+26/38 Test #26: test_stage10_rvv_rounding_control ........   Passed    0.01 sec
+      Start 27: test_stage10_backbone_expansion_runner
+27/38 Test #27: test_stage10_backbone_expansion_runner ...   Passed    0.01 sec
+      Start 28: test_stage11_branch_block_runner
+28/38 Test #28: test_stage11_branch_block_runner .........   Passed    0.01 sec
+      Start 29: test_stage12_c2f_block_runner
+29/38 Test #29: test_stage12_c2f_block_runner ............   Passed    0.01 sec
+      Start 30: test_stage13_merge_dataflow
+30/38 Test #30: test_stage13_merge_dataflow ..............   Passed    0.02 sec
+      Start 31: test_stage14_next_c2f_runner
+31/38 Test #31: test_stage14_next_c2f_runner .............   Passed    0.02 sec
+      Start 32: test_stage15_model4_branch_runner
+32/38 Test #32: test_stage15_model4_branch_runner ........   Passed    0.02 sec
+      Start 33: test_stage16_model4_c2f_runner
+33/38 Test #33: test_stage16_model4_c2f_runner ...........   Passed    0.02 sec
+      Start 34: test_stage18_threaded_conv_integration
+34/38 Test #34: test_stage18_threaded_conv_integration ...   Passed    0.11 sec
+      Start 35: test_stage19_threaded_c2f_integration
+35/38 Test #35: test_stage19_threaded_c2f_integration ....   Passed    0.02 sec
+      Start 36: test_stage21_c2f_merge_repair
+36/38 Test #36: test_stage21_c2f_merge_repair ............   Passed    0.03 sec
+      Start 37: test_stage23_runner_api_cut
+37/38 Test #37: test_stage23_runner_api_cut ..............   Passed    0.02 sec
+      Start 38: test_stage24_merge_repair
+38/38 Test #38: test_stage24_merge_repair ................   Passed    0.02 sec
+
+100% tests passed, 0 tests failed out of 38
+
+Total Test time (real) =   0.65 sec
+exit=0
+[2026-07-07T06:59:33+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=cmake --build .deps/custom_int8_engine/build-riscv-stage25 -j$(nproc)
+[dev] glibc: ldd (Ubuntu GLIBC 2.39-0ubuntu8.7) 2.39
+[dev] node : /usr/bin/node  v24.15.0 | npm: 11.17.0
+[dev] codex: /home/svt/.npm-global/bin/codex
+[dev] claude: /home/svt/.npm-global/bin/claude
+[dev] riscv default: /opt/riscv -> /opt/SpacemiT
+[  0%] Building CXX object CMakeFiles/y26_k1x_custom_int8_engine.dir/kernels/conv_threaded.cpp.o
+[  1%] Building CXX object CMakeFiles/y26_k1x_custom_int8_engine.dir/src/model4_c2f_runner.cpp.o
+[  2%] Linking CXX static library liby26_k1x_custom_int8_engine.a
+[ 16%] Built target y26_k1x_custom_int8_engine
+[ 17%] Linking CXX executable bench_conv_kernels
+[ 17%] Linking CXX executable bench_stage6_multiblock
+[ 17%] Linking CXX executable bench_stage3_packing
+[ 18%] Linking CXX executable bench_vmadot_microkernel
+[ 20%] Linking CXX executable bench_stage4_packing
+[ 21%] Linking CXX executable bench_stage5_first_block
+[ 19%] Linking CXX executable bench_vmadot_hotpath
+[ 22%] Linking CXX executable bench_stage7_backbone_subset
+[ 22%] Built target bench_conv_kernels
+[ 22%] Built target bench_vmadot_microkernel
+[ 23%] Built target bench_stage3_packing
+[ 24%] Built target bench_stage4_packing
+[ 25%] Built target bench_stage7_backbone_subset
+[ 26%] Built target bench_stage6_multiblock
+[ 27%] Linking CXX executable bench_stage8_activation_requant
+[ 27%] Linking CXX executable bench_stage9_activation_fusion
+[ 27%] Built target bench_stage5_first_block
+[ 28%] Linking CXX executable bench_stage11_branch_block
+[ 29%] Built target bench_vmadot_hotpath
+[ 29%] Linking CXX executable bench_stage10_backbone_expansion
+[ 30%] Linking CXX executable bench_stage12_c2f_block
+[ 30%] Linking CXX executable bench_stage13_merge_dataflow
+[ 31%] Linking CXX executable bench_stage14_next_c2f
+[ 32%] Linking CXX executable bench_stage15_model4_branch
+[ 32%] Built target bench_stage8_activation_requant
+[ 33%] Built target bench_stage10_backbone_expansion
+[ 34%] Built target bench_stage9_activation_fusion
+[ 35%] Built target bench_stage11_branch_block
+[ 35%] Linking CXX executable bench_stage16_fullshape_gate
+[ 36%] Building CXX object CMakeFiles/bench_stage16_model4_c2f.dir/tools/bench_stage16_model4_c2f.cpp.o
+[ 36%] Built target bench_stage12_c2f_block
+[ 37%] Built target bench_stage14_next_c2f
+[ 37%] Linking CXX executable bench_stage18_threaded_conv_integration
+[ 38%] Linking CXX executable bench_stage17_roofline_threading
+[ 39%] Built target bench_stage13_merge_dataflow
+[ 39%] Built target bench_stage15_model4_branch
+[ 39%] Building CXX object CMakeFiles/bench_stage20_model4_fullshape_c2f.dir/tools/bench_stage20_model4_fullshape_c2f.cpp.o
+[ 40%] Building CXX object CMakeFiles/bench_stage19_threaded_c2f_integration.dir/tools/bench_stage19_threaded_c2f_integration.cpp.o
+[ 41%] Built target bench_stage16_fullshape_gate
+[ 42%] Building CXX object CMakeFiles/bench_stage22_model4_onnx_cut.dir/tools/bench_stage22_model4_onnx_cut.cpp.o
+[ 43%] Building CXX object CMakeFiles/bench_stage21_model4_c2f_integrated.dir/tools/bench_stage21_model4_c2f_integrated.cpp.o
+[ 44%] Built target bench_stage18_threaded_conv_integration
+[ 44%] Built target bench_stage17_roofline_threading
+[ 44%] Building CXX object CMakeFiles/bench_stage23_model4_runner_cut.dir/tools/bench_stage23_model4_runner_cut.cpp.o
+[ 45%] Linking CXX executable test_model_format_header
+[ 45%] Linking CXX executable test_requant_rounding
+[ 45%] Built target test_model_format_header
+[ 46%] Built target test_requant_rounding
+[ 47%] Linking CXX executable test_requant_fixed_point
+[ 47%] Linking CXX executable test_pack_a_layout
+[ 47%] Built target test_requant_fixed_point
+[ 48%] Linking CXX executable test_pack_b_layout
+[ 49%] Built target test_pack_a_layout
+[ 49%] Linking CXX executable test_vmadot_scalar_oracle_fixture
+[ 50%] Built target test_vmadot_scalar_oracle_fixture
+[ 51%] Built target test_pack_b_layout
+[ 52%] Linking CXX executable test_vmadot_4x4x8_scalar
+[ 53%] Linking CXX executable test_vmadot_4x4x8_host_vectors
+[ 53%] Built target test_vmadot_4x4x8_scalar
+[ 53%] Linking CXX executable test_vmadot_4x4x8_board_probe
+[ 54%] Built target test_vmadot_4x4x8_host_vectors
+[ 55%] Linking CXX executable bench_stage16_model4_c2f
+[ 56%] Linking CXX executable test_ime_runtime_probe
+[ 57%] Built target test_ime_runtime_probe
+[ 58%] Built target test_vmadot_4x4x8_board_probe
+[ 59%] Linking CXX executable test_conv1x1_scalar
+[ 59%] Linking CXX executable test_conv1x1_ime_fixture
+[ 60%] Linking CXX executable bench_stage19_threaded_c2f_integration
+[ 60%] Built target bench_stage16_model4_c2f
+[ 61%] Built target test_conv1x1_scalar
+[ 61%] Linking CXX executable bench_stage21_model4_c2f_integrated
+[ 61%] Linking CXX executable test_conv3x3_scalar
+[ 62%] Linking CXX executable test_conv3x3_ime_fixture
+[ 63%] Built target test_conv1x1_ime_fixture
+[ 63%] Built target bench_stage19_threaded_c2f_integration
+[ 64%] Built target test_conv3x3_scalar
+[ 65%] Linking CXX executable test_zero_point_correction_formula
+[ 66%] Linking CXX executable test_stage3_real_conv_fixture
+[ 66%] Linking CXX executable test_stage4_packing_repair
+[ 66%] Built target test_conv3x3_ime_fixture
+[ 66%] Built target bench_stage21_model4_c2f_integrated
+[ 67%] Built target test_zero_point_correction_formula
+[ 68%] Linking CXX executable test_stage6_multiblock_runner
+[ 69%] Linking CXX executable test_stage5_first_block_runner
+[ 69%] Built target test_stage3_real_conv_fixture
+[ 69%] Linking CXX executable test_stage7_backbone_subset_runner
+[ 70%] Built target test_stage4_packing_repair
+[ 71%] Linking CXX executable test_stage9_requant_scalar_optimized
+[ 72%] Linking CXX executable test_stage8_activation_requant
+[ 72%] Built target test_stage6_multiblock_runner
+[ 73%] Linking CXX executable test_stage9_activation_modes
+[ 74%] Built target test_stage5_first_block_runner
+[ 74%] Linking CXX executable test_stage9_lut_oracle
+[ 74%] Built target test_stage9_requant_scalar_optimized
+[ 75%] Built target test_stage7_backbone_subset_runner
+[ 76%] Linking CXX executable test_stage9_pack_handoff
+[ 77%] Linking CXX executable test_stage10_rvv_rounding_control
+[ 77%] Built target test_stage9_activation_modes
+[ 78%] Built target test_stage8_activation_requant
+[ 78%] Linking CXX executable test_stage11_branch_block_runner
+[ 79%] Linking CXX executable test_stage10_backbone_expansion_runner
+[ 80%] Built target test_stage9_lut_oracle
+[ 81%] Linking CXX executable test_stage12_c2f_block_runner
+[ 81%] Built target test_stage10_rvv_rounding_control
+[ 82%] Built target test_stage9_pack_handoff
+[ 83%] Linking CXX executable test_stage13_merge_dataflow
+[ 83%] Linking CXX executable test_stage14_next_c2f_runner
+[ 84%] Built target test_stage11_branch_block_runner
+[ 85%] Built target test_stage12_c2f_block_runner
+[ 86%] Built target test_stage10_backbone_expansion_runner
+[ 87%] Linking CXX executable bench_stage20_model4_fullshape_c2f
+[ 88%] Linking CXX executable test_stage15_model4_branch_runner
+[ 88%] Built target test_stage13_merge_dataflow
+[ 88%] Building CXX object tests/CMakeFiles/test_stage16_model4_c2f_runner.dir/test_stage16_model4_c2f_runner.cpp.o
+[ 88%] Linking CXX executable test_stage18_threaded_conv_integration
+[ 89%] Building CXX object tests/CMakeFiles/test_stage19_threaded_c2f_integration.dir/test_stage19_threaded_c2f_integration.cpp.o
+[ 90%] Built target test_stage14_next_c2f_runner
+[ 90%] Building CXX object tests/CMakeFiles/test_stage21_c2f_merge_repair.dir/test_stage21_c2f_merge_repair.cpp.o
+[ 90%] Built target bench_stage20_model4_fullshape_c2f
+[ 91%] Linking CXX executable bench_stage22_model4_onnx_cut
+[ 92%] Built target test_stage15_model4_branch_runner
+[ 93%] Built target test_stage18_threaded_conv_integration
+[ 94%] Building CXX object tests/CMakeFiles/test_stage23_runner_api_cut.dir/test_stage23_runner_api_cut.cpp.o
+[ 95%] Linking CXX executable bench_stage23_model4_runner_cut
+[ 96%] Building CXX object tests/CMakeFiles/test_stage24_merge_repair.dir/test_stage24_merge_repair.cpp.o
+[ 96%] Built target bench_stage22_model4_onnx_cut
+[ 96%] Built target bench_stage23_model4_runner_cut
+[ 97%] Linking CXX executable test_stage16_model4_c2f_runner
+[ 98%] Linking CXX executable test_stage19_threaded_c2f_integration
+[ 98%] Built target test_stage16_model4_c2f_runner
+[ 99%] Linking CXX executable test_stage21_c2f_merge_repair
+[ 99%] Linking CXX executable test_stage23_runner_api_cut
+[ 99%] Built target test_stage19_threaded_c2f_integration
+[100%] Linking CXX executable test_stage24_merge_repair
+[100%] Built target test_stage21_c2f_merge_repair
+[100%] Built target test_stage23_runner_api_cut
+[100%] Built target test_stage24_merge_repair
+exit=0
+[2026-07-07T07:00:16+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=scp .deps/custom_int8_engine/build-riscv-stage25/bench_stage23_model4_runner_cut svt@banana:/home/svt/yolo26-custom-int8-stage25/2026-07-07_06-42-19/bench_stage23_model4_runner_cut && ssh svt@banana 'cd /home/svt/yolo26-custom-int8-stage25/2026-07-07_06-42-19 && sha256sum bench_stage23_model4_runner_cut'
+[dev] glibc: ldd (Ubuntu GLIBC 2.39-0ubuntu8.7) 2.39
+[dev] node : /usr/bin/node  v24.15.0 | npm: 11.17.0
+[dev] codex: /home/svt/.npm-global/bin/codex
+[dev] claude: /home/svt/.npm-global/bin/claude
+[dev] riscv default: /opt/riscv -> /opt/SpacemiT
+c5e1bfa7282555f4a5e7773d236492fa5d71c8d294dd46775b10b99b39302163  bench_stage23_model4_runner_cut
+exit=0
+[2026-07-07T07:00:18+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=ssh svt@banana 'cd /home/svt/yolo26-custom-int8-stage25/2026-07-07_06-42-19 && for n in 0 1 2 3 4; do echo STAGE25_MODEL4_CV2_MATRIX thread_model4_cv2=$n; taskset -c 0-3 ./bench_stage23_model4_runner_cut --fixture-dir fixtures --mode ime_threaded --output-quantize rvv --merge-repair split1_lut --thread-branch0 4 --thread-branch1 4 --thread-model4-cv2 $n --warmup 10 --runs 100 --repeats 5 --dump-actual stage25_model4_cv2_${n}_actual.bin || exit 1; sha256sum stage25_model4_cv2_${n}_actual.bin; done'
+[dev] glibc: ldd (Ubuntu GLIBC 2.39-0ubuntu8.7) 2.39
+[dev] node : /usr/bin/node  v24.15.0 | npm: 11.17.0
+[dev] codex: /home/svt/.npm-global/bin/codex
+[dev] claude: /home/svt/.npm-global/bin/claude
+[dev] riscv default: /opt/riscv -> /opt/SpacemiT
+STAGE25_MODEL4_CV2_MATRIX thread_model4_cv2=0
+stage23_runner_cut mode=ime_threaded output_quantize=rvv merge_repair=split1_lut warmup=10 runs=100 repeats=5 thread_branch0=4 thread_branch1=4 thread_model4_cv2=0 status=0 mismatches=0 max_abs_diff=0 checksum=106597930 expected_checksum=106597930 affinity_ok=1 mean_total_us=113729 stddev_total_us=344.653 min_total_us=113347 max_total_us=114235 cv_total_pct=0.303047 mean_input_adapter_us=2632.96 mean_conv_us=50799.7 mean_activation_requant_us=32820.9 mean_merge_us=20986.1 mean_post_concat_qdq_us=20986.1 mean_output_quantize_us=6470.97 mean_copy_layout_us=0 mean_pack_layout_us=0 mean_thread_overhead_us=2457.7 mean_correction_us=7557.41 mean_branch0_conv_us=6948.02 mean_branch1_conv_us=6306.44 mean_model4_cv2_conv_us=37545.2 mean_attributed_us=113711 mean_attribution_pct=99.9837 mean_other_us=18.5709 conv_share_pct=44.6673 activation_share_pct=28.8588 merge_share_pct=18.4527 output_quantize_share_pct=5.68981 dump_actual_ok=1 note=selected-model4-cut-not-model-fps
+70adcf083e85ea95d5fb42e57ea26f51255944aaa442cde4d919f5ae551b3433  stage25_model4_cv2_0_actual.bin
+STAGE25_MODEL4_CV2_MATRIX thread_model4_cv2=1
+stage23_runner_cut mode=ime_threaded output_quantize=rvv merge_repair=split1_lut warmup=10 runs=100 repeats=5 thread_branch0=4 thread_branch1=4 thread_model4_cv2=1 status=0 mismatches=0 max_abs_diff=0 checksum=106597930 expected_checksum=106597930 affinity_ok=1 mean_total_us=114918 stddev_total_us=60.5363 min_total_us=114827 max_total_us=114973 cv_total_pct=0.0526776 mean_input_adapter_us=2614.63 mean_conv_us=51915.2 mean_activation_requant_us=32753.9 mean_merge_us=21016.3 mean_post_concat_qdq_us=21016.3 mean_output_quantize_us=6599.65 mean_copy_layout_us=0 mean_pack_layout_us=0 mean_thread_overhead_us=2050.6 mean_correction_us=8766.26 mean_branch0_conv_us=6427.24 mean_branch1_conv_us=6000.33 mean_model4_cv2_conv_us=39487.6 mean_attributed_us=114900 mean_attribution_pct=99.9836 mean_other_us=18.8372 conv_share_pct=45.1757 activation_share_pct=28.5018 merge_share_pct=18.288 output_quantize_share_pct=5.7429 dump_actual_ok=1 note=selected-model4-cut-not-model-fps
+70adcf083e85ea95d5fb42e57ea26f51255944aaa442cde4d919f5ae551b3433  stage25_model4_cv2_1_actual.bin
+STAGE25_MODEL4_CV2_MATRIX thread_model4_cv2=2
+stage23_runner_cut mode=ime_threaded output_quantize=rvv merge_repair=split1_lut warmup=10 runs=100 repeats=5 thread_branch0=4 thread_branch1=4 thread_model4_cv2=2 status=0 mismatches=0 max_abs_diff=0 checksum=106597930 expected_checksum=106597930 affinity_ok=1 mean_total_us=96831.6 stddev_total_us=516.542 min_total_us=96506.2 max_total_us=97748.4 cv_total_pct=0.533444 mean_input_adapter_us=2636.58 mean_conv_us=33835.2 mean_activation_requant_us=32751.2 mean_merge_us=20971.7 mean_post_concat_qdq_us=20971.7 mean_output_quantize_us=6618.04 mean_copy_layout_us=0 mean_pack_layout_us=0 mean_thread_overhead_us=2645.19 mean_correction_us=5477.42 mean_branch0_conv_us=6377.68 mean_branch1_conv_us=6690.95 mean_model4_cv2_conv_us=20766.6 mean_attributed_us=96812.7 mean_attribution_pct=99.9805 mean_other_us=18.8746 conv_share_pct=34.9423 activation_share_pct=33.8229 merge_share_pct=21.6579 output_quantize_share_pct=6.83459 dump_actual_ok=1 note=selected-model4-cut-not-model-fps
+70adcf083e85ea95d5fb42e57ea26f51255944aaa442cde4d919f5ae551b3433  stage25_model4_cv2_2_actual.bin
+STAGE25_MODEL4_CV2_MATRIX thread_model4_cv2=3
+stage23_runner_cut mode=ime_threaded output_quantize=rvv merge_repair=split1_lut warmup=10 runs=100 repeats=5 thread_branch0=4 thread_branch1=4 thread_model4_cv2=3 status=0 mismatches=0 max_abs_diff=0 checksum=106597930 expected_checksum=106597930 affinity_ok=1 mean_total_us=91537.1 stddev_total_us=128.504 min_total_us=91351.2 max_total_us=91679.2 cv_total_pct=0.140385 mean_input_adapter_us=2601.9 mean_conv_us=28477.9 mean_activation_requant_us=32812.8 mean_merge_us=21010.5 mean_post_concat_qdq_us=21010.5 mean_output_quantize_us=6614.48 mean_copy_layout_us=0 mean_pack_layout_us=0 mean_thread_overhead_us=3789.47 mean_correction_us=4147.08 mean_branch0_conv_us=6650.12 mean_branch1_conv_us=7499.13 mean_model4_cv2_conv_us=14328.6 mean_attributed_us=91517.6 mean_attribution_pct=99.9787 mean_other_us=19.5233 conv_share_pct=31.1108 activation_share_pct=35.8465 merge_share_pct=22.953 output_quantize_share_pct=7.22601 dump_actual_ok=1 note=selected-model4-cut-not-model-fps
+70adcf083e85ea95d5fb42e57ea26f51255944aaa442cde4d919f5ae551b3433  stage25_model4_cv2_3_actual.bin
+STAGE25_MODEL4_CV2_MATRIX thread_model4_cv2=4
+stage23_runner_cut mode=ime_threaded output_quantize=rvv merge_repair=split1_lut warmup=10 runs=100 repeats=5 thread_branch0=4 thread_branch1=4 thread_model4_cv2=4 status=0 mismatches=0 max_abs_diff=0 checksum=106597930 expected_checksum=106597930 affinity_ok=1 mean_total_us=89346.1 stddev_total_us=202.251 min_total_us=89177.7 max_total_us=89657.4 cv_total_pct=0.226368 mean_input_adapter_us=2620.44 mean_conv_us=26311.7 mean_activation_requant_us=32784.2 mean_merge_us=21005.8 mean_post_concat_qdq_us=21005.8 mean_output_quantize_us=6604.14 mean_copy_layout_us=0 mean_pack_layout_us=0 mean_thread_overhead_us=4605.37 mean_correction_us=3927.88 mean_branch0_conv_us=7824.54 mean_branch1_conv_us=6387.97 mean_model4_cv2_conv_us=12099.2 mean_attributed_us=89326.3 mean_attribution_pct=99.9778 mean_other_us=19.8495 conv_share_pct=29.4492 activation_share_pct=36.6934 merge_share_pct=23.5106 output_quantize_share_pct=7.39164 dump_actual_ok=1 note=selected-model4-cut-not-model-fps
+70adcf083e85ea95d5fb42e57ea26f51255944aaa442cde4d919f5ae551b3433  stage25_model4_cv2_4_actual.bin
+exit=0
+[2026-07-07T07:04:38+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=ssh svt@banana 'cd /home/svt/yolo26-custom-int8-stage25/2026-07-07_06-42-19 && taskset -c 0-3 ./bench_stage23_model4_runner_cut --fixture-dir fixtures --mode ime_threaded --output-quantize rvv --merge-repair split1_lut --thread-branch0 4 --thread-branch1 4 --thread-model4-cv2 4 --warmup 10 --runs 100 --repeats 5 --frm-sweep --dump-actual stage25_all_threaded_frm_actual.bin && sha256sum stage25_all_threaded_frm_actual.bin fixtures/model4_cv2_conv_q_u8_expected_nhwc.bin'
+[dev] glibc: ldd (Ubuntu GLIBC 2.39-0ubuntu8.7) 2.39
+[dev] node : /usr/bin/node  v24.15.0 | npm: 11.17.0
+[dev] codex: /home/svt/.npm-global/bin/codex
+[dev] claude: /home/svt/.npm-global/bin/claude
+[dev] riscv default: /opt/riscv -> /opt/SpacemiT
+stage23_runner_cut mode=ime_threaded output_quantize=rvv merge_repair=split1_lut warmup=10 runs=100 repeats=5 thread_branch0=4 thread_branch1=4 thread_model4_cv2=4 status=0 mismatches=0 max_abs_diff=0 checksum=106597930 expected_checksum=106597930 affinity_ok=1 mean_total_us=89178.9 stddev_total_us=268.184 min_total_us=88770.1 max_total_us=89442.4 cv_total_pct=0.300726 mean_input_adapter_us=2649.76 mean_conv_us=26164.1 mean_activation_requant_us=32800.7 mean_merge_us=20964.3 mean_post_concat_qdq_us=20964.3 mean_output_quantize_us=6579.45 mean_copy_layout_us=0 mean_pack_layout_us=0 mean_thread_overhead_us=4330.86 mean_correction_us=3944.44 mean_branch0_conv_us=7830.04 mean_branch1_conv_us=6296.98 mean_model4_cv2_conv_us=12037.1 mean_attributed_us=89158.3 mean_attribution_pct=99.977 mean_other_us=20.5513 conv_share_pct=29.3389 activation_share_pct=36.7808 merge_share_pct=23.5081 output_quantize_share_pct=7.37782 dump_actual_ok=1 note=selected-model4-cut-not-model-fps
+stage23_frm ambient_frm=0 status=0 mismatches=0 max_abs_diff=0 after_frm=0 checksum=106597930
+stage23_frm ambient_frm=1 status=0 mismatches=0 max_abs_diff=0 after_frm=1 checksum=106597930
+stage23_frm ambient_frm=2 status=0 mismatches=0 max_abs_diff=0 after_frm=2 checksum=106597930
+stage23_frm ambient_frm=3 status=0 mismatches=0 max_abs_diff=0 after_frm=3 checksum=106597930
+stage23_frm ambient_frm=4 status=0 mismatches=0 max_abs_diff=0 after_frm=4 checksum=106597930
+70adcf083e85ea95d5fb42e57ea26f51255944aaa442cde4d919f5ae551b3433  stage25_all_threaded_frm_actual.bin
+70adcf083e85ea95d5fb42e57ea26f51255944aaa442cde4d919f5ae551b3433  fixtures/model4_cv2_conv_q_u8_expected_nhwc.bin
+exit=0
+[2026-07-07T07:05:59+02:00] cwd=/data cmd=python3 inline calculate Stage25 roofline ratios
+exit=0
+[2026-07-07T07:08:34+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=apply_patch add Stage25 required reports and Stage26 prompt
+exit=0
+[2026-07-07T07:08:51+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=git diff --check
+[dev] glibc: ldd (Ubuntu GLIBC 2.39-0ubuntu8.7) 2.39
+[dev] node : /usr/bin/node  v24.15.0 | npm: 11.17.0
+[dev] codex: /home/svt/.npm-global/bin/codex
+[dev] claude: /home/svt/.npm-global/bin/claude
+[dev] riscv default: /opt/riscv -> /opt/SpacemiT
+exit=0
+[2026-07-07T07:08:51+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=git diff --cached --check
+[dev] glibc: ldd (Ubuntu GLIBC 2.39-0ubuntu8.7) 2.39
+[dev] node : /usr/bin/node  v24.15.0 | npm: 11.17.0
+[dev] codex: /home/svt/.npm-global/bin/codex
+[dev] claude: /home/svt/.npm-global/bin/claude
+[dev] riscv default: /opt/riscv -> /opt/SpacemiT
+exit=0
+[2026-07-07T07:08:52+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=find custom_int8_engine stages -type l -print
+[dev] glibc: ldd (Ubuntu GLIBC 2.39-0ubuntu8.7) 2.39
+[dev] node : /usr/bin/node  v24.15.0 | npm: 11.17.0
+[dev] codex: /home/svt/.npm-global/bin/codex
+[dev] claude: /home/svt/.npm-global/bin/claude
+[dev] riscv default: /opt/riscv -> /opt/SpacemiT
+exit=0
+[2026-07-07T07:08:52+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=git status --short --branch
+[dev] glibc: ldd (Ubuntu GLIBC 2.39-0ubuntu8.7) 2.39
+[dev] node : /usr/bin/node  v24.15.0 | npm: 11.17.0
+[dev] codex: /home/svt/.npm-global/bin/codex
+[dev] claude: /home/svt/.npm-global/bin/claude
+[dev] riscv default: /opt/riscv -> /opt/SpacemiT
+## yolo26-custom-int8-engine
+ M custom_int8_engine/include/y26_k1x_model4_c2f_runner.h
+ M custom_int8_engine/kernels/conv_threaded.cpp
+ M custom_int8_engine/src/model4_c2f_runner.cpp
+ M custom_int8_engine/tools/bench_stage23_model4_runner_cut.cpp
+ M stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE24-BRANCH1-ACTIVATION-LUT-OR-MERGE-REPAIR-001/STAGE24_FINAL_REPORT.md
+ M stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE24-BRANCH1-ACTIVATION-LUT-OR-MERGE-REPAIR-001/STAGE24_SUMMARY_RU.md
+?? stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE25-CONV-THREADING-TILE-DECISION-001/
+exit=0
+[2026-07-07T07:08:53+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=paths="custom_int8_engine stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE25-CONV-THREADING-TILE-DECISION-001"; rg -n --hidden -S "(BEGIN (RSA|OPENSSH|EC|DSA) PRIVATE KEY|password=|token=|client_secret|oauth|Authorization:|ghp_|glpat-|AKIA)" $paths || true
+[dev] glibc: ldd (Ubuntu GLIBC 2.39-0ubuntu8.7) 2.39
+[dev] node : /usr/bin/node  v24.15.0 | npm: 11.17.0
+[dev] codex: /home/svt/.npm-global/bin/codex
+[dev] claude: /home/svt/.npm-global/bin/claude
+[dev] riscv default: /opt/riscv -> /opt/SpacemiT
+exit=0
+[2026-07-07T07:08:53+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=git diff --name-only | while read -r p; do [ -f "$p" ] && printf "%s\n" "$p"; done | xargs -r rg -n "/home/svt|/data/Settings|/home/svt/.codex|/data/.codex|/control/state/secrets" || true
+[dev] glibc: ldd (Ubuntu GLIBC 2.39-0ubuntu8.7) 2.39
+[dev] node : /usr/bin/node  v24.15.0 | npm: 11.17.0
+[dev] codex: /home/svt/.npm-global/bin/codex
+[dev] claude: /home/svt/.npm-global/bin/claude
+[dev] riscv default: /opt/riscv -> /opt/SpacemiT
+exit=0
+[2026-07-07T07:09:10+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=apply_patch add Stage25 source_hygiene_report.md
+exit=0
+[2026-07-07T07:09:29+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=git diff > '/data/ncnn-logs/ai-team/2026-07-07_06-42-19/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE25-CONV-THREADING-TILE-DECISION-001/diffs/stage25.diff' && git diff --stat > '/data/ncnn-logs/ai-team/2026-07-07_06-42-19/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE25-CONV-THREADING-TILE-DECISION-001/diffs/stage25.diffstat' && git status --short --branch > '/data/ncnn-logs/ai-team/2026-07-07_06-42-19/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE25-CONV-THREADING-TILE-DECISION-001/git-status-before-commit.txt'
+[dev] glibc: ldd (Ubuntu GLIBC 2.39-0ubuntu8.7) 2.39
+[dev] node : /usr/bin/node  v24.15.0 | npm: 11.17.0
+[dev] codex: /home/svt/.npm-global/bin/codex
+[dev] claude: /home/svt/.npm-global/bin/claude
+[dev] riscv default: /opt/riscv -> /opt/SpacemiT
+exit=0
+[2026-07-07T07:09:30+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=git add custom_int8_engine/include/y26_k1x_model4_c2f_runner.h custom_int8_engine/kernels/conv_threaded.cpp custom_int8_engine/src/model4_c2f_runner.cpp custom_int8_engine/tools/bench_stage23_model4_runner_cut.cpp stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE24-BRANCH1-ACTIVATION-LUT-OR-MERGE-REPAIR-001/STAGE24_FINAL_REPORT.md stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE24-BRANCH1-ACTIVATION-LUT-OR-MERGE-REPAIR-001/STAGE24_SUMMARY_RU.md stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE25-CONV-THREADING-TILE-DECISION-001 && git commit -m 'Select YOLO26 model4 Conv threading lane'
+[dev] glibc: ldd (Ubuntu GLIBC 2.39-0ubuntu8.7) 2.39
+[dev] node : /usr/bin/node  v24.15.0 | npm: 11.17.0
+[dev] codex: /home/svt/.npm-global/bin/codex
+[dev] claude: /home/svt/.npm-global/bin/claude
+[dev] riscv default: /opt/riscv -> /opt/SpacemiT
+[yolo26-custom-int8-engine b129496] Select YOLO26 model4 Conv threading lane
+ 26 files changed, 2391 insertions(+), 27 deletions(-)
+ create mode 100644 stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE25-CONV-THREADING-TILE-DECISION-001/STAGE25_FINAL_REPORT.md
+ create mode 100644 stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE25-CONV-THREADING-TILE-DECISION-001/STAGE25_SUMMARY_RU.md
+ create mode 100644 stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE25-CONV-THREADING-TILE-DECISION-001/board_dir.txt
+ create mode 100644 stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE25-CONV-THREADING-TILE-DECISION-001/commands.txt
+ create mode 100644 stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE25-CONV-THREADING-TILE-DECISION-001/conv_bucket_attribution_report.md
+ create mode 100644 stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE25-CONV-THREADING-TILE-DECISION-001/conv_lane_decision.md
+ create mode 100644 stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE25-CONV-THREADING-TILE-DECISION-001/conv_prepack_layout_report.md
+ create mode 100644 stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE25-CONV-THREADING-TILE-DECISION-001/conv_roofline_report.md
+ create mode 100644 stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE25-CONV-THREADING-TILE-DECISION-001/conv_shape_table.tsv
+ create mode 100644 stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE25-CONV-THREADING-TILE-DECISION-001/conv_threading_matrix.tsv
+ create mode 100644 stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE25-CONV-THREADING-TILE-DECISION-001/conv_tile_candidate_report.md
+ create mode 100644 stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE25-CONV-THREADING-TILE-DECISION-001/onnx_cut_replay_report.md
+ create mode 100644 stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE25-CONV-THREADING-TILE-DECISION-001/source_hygiene_report.md
+ create mode 100644 stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE25-CONV-THREADING-TILE-DECISION-001/stage24_replay_report.md
+ create mode 100644 stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE25-CONV-THREADING-TILE-DECISION-001/stage24_traceability_fix_report.md
+ create mode 100644 stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE25-CONV-THREADING-TILE-DECISION-001/stage26_prompt.md
+ create mode 100644 stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE25-CONV-THREADING-TILE-DECISION-001/stage_env.txt
+ create mode 100644 stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE25-CONV-THREADING-TILE-DECISION-001/thermal_frequency_anchor_report.md
+ create mode 100644 stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE25-CONV-THREADING-TILE-DECISION-001/track_b_map_baseline_note.md
+ create mode 100644 stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE25-CONV-THREADING-TILE-DECISION-001/vmadot123_future_lane_note.md
+exit=0
+[2026-07-07T07:09:30+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=git status --short --branch && git rev-parse HEAD
+[dev] glibc: ldd (Ubuntu GLIBC 2.39-0ubuntu8.7) 2.39
+[dev] node : /usr/bin/node  v24.15.0 | npm: 11.17.0
+[dev] codex: /home/svt/.npm-global/bin/codex
+[dev] claude: /home/svt/.npm-global/bin/claude
+[dev] riscv default: /opt/riscv -> /opt/SpacemiT
+## yolo26-custom-int8-engine
+ M stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE25-CONV-THREADING-TILE-DECISION-001/commands.txt
+b12949618ef781c617c78b33501594b84446b3b4
+exit=0
+
+[finalization-note] git add stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE25-CONV-THREADING-TILE-DECISION-001/commands.txt && git commit --amend --no-edit will be executed as the final tracked command-log update. Final head is recorded in result packet .with-final-head artifacts.
