@@ -1,0 +1,17 @@
+[2026-07-07T12:55:20+02:00] cwd=/data cmd=/data/lab/scripts/check-bridge-layout.sh exit=0
+[2026-07-07T12:55:20+02:00] cwd=/data cmd=/data/lab/scripts/init-shared-log-run.sh contcodex BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE27-CONV-OR-OUTPUT-QUANTIZE-DECISION-AFTER-ACTIVATION-REPAIR-001 stage27 exit=0
+[2026-07-07T12:55:20+02:00] cwd=/data cmd=/data/lab/scripts/import-task-packet.sh BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE27-CONV-OR-OUTPUT-QUANTIZE-DECISION-AFTER-ACTIVATION-REPAIR-001 || true exit=0
+[2026-07-07T12:55:32+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=git status --short --branch; git rev-parse HEAD; git branch --show-current
+[2026-07-07T12:56:08+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=apply_patch Stage26 traceability fix exit=0
+[2026-07-07T12:56:08+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=git grep pending-local-commit-see-final-response Stage26 stage dir
+[2026-07-07T12:57:09+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=cmake host-native stage27 configure/build/ctest
+[2026-07-07T12:58:17+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=source /data/build_scripts/01-env.sh; cmake riscv stage27 configure/build
+[2026-07-07T12:59:51+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=ssh/scp deploy Stage27 bench and Stage22 cut fixtures to board
+[2026-07-07T12:59:54+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=ssh svt@banana board environment anchor and sha256
+[2026-07-07T13:00:09+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=ssh svt@banana cd '/home/svt/yolo26-custom-int8-stage27/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE27-CONV-OR-OUTPUT-QUANTIZE-DECISION-AFTER-ACTIVATION-REPAIR-001' && taskset -c 0-3 ./bench_stage23_model4_runner_cut --fixture-dir fixtures --mode ime_threaded --output-quantize rvv --merge-repair branch1_add_lut --thread-branch0 4 --thread-branch1 4 --thread-model4-cv2 4 --warmup 10 --runs 100 --repeats 5 --frm-sweep --dump-actual stage27_stage26_replay_actual.bin && sha256sum stage27_stage26_replay_actual.bin fixtures/model4_cv2_conv_q_u8_expected_nhwc.bin
+[2026-07-07T13:01:06+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=ssh svt@banana Stage27 conv thread matrix stable protocol
+[2026-07-07T13:07:13+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=parse Stage27 board logs into TSV reports
+[2026-07-07T13:10:36+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=git diff --check; git diff --cached --check; symlink scan; secret/path scan; git status
+[2026-07-07T13:11:37+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=final pre-commit hygiene and diff stat
+[2026-07-07T13:12:14+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=git add Stage26 traceability and Stage27 reports; staged hygiene
+[2026-07-07T13:12:14+02:00] cwd=/data/banana-yolo26-spacemit-demo cmd=git commit -m 'Select YOLO26 model4 Conv tile prepack lane'

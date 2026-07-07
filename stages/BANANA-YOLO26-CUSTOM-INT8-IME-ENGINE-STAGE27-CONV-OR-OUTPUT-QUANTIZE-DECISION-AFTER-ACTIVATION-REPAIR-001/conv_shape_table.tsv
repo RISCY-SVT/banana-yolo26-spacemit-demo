@@ -1,0 +1,4 @@
+node_name	input_shape	output_shape	kernel	stride	pad	MAC_count	single_thread_us	threaded_us	speedup	threaded_GMAC_s	percent_of_2TOPS_equiv	bottleneck_class
+/model.4/m.0/cv1/conv/Conv	80x80x32	80x80x16	3x3	1	1	29491200	22088.400	7802.310	2.831	3.779804	0.377980	structural_low_K_or_packing_bound
+/model.4/m.0/cv2/conv/Conv	80x80x16	80x80x32	3x3	1	1	29491200	17750.100	6488.370	2.736	4.545240	0.454524	structural_low_K_or_packing_bound
+/model.4/cv2/conv/Conv	80x80x96	80x80x128	1x1	1	0	78643200	37331.900	12578.900	2.968	6.251993	0.625199	structural_low_K_or_packing_bound
