@@ -278,7 +278,10 @@ int run_conv_threaded(const Y26Stage15Model4BranchWorkspace& ws,
                       std::int32_t* output_i32,
                       double* conv_us,
                       double* correction_us,
-                      double* thread_overhead_us) {
+                      double* thread_overhead_us,
+                      double* compute_us,
+                      double* copy_us,
+                      double* worker_other_us) {
     Y26ThreadedConvTimingUs threaded_timing {};
     const int status =
         y26_threaded_conv_run_ime_cluster0(ws.branch0_threaded_workspace, input_s8, output_i32, &threaded_timing);
@@ -290,6 +293,15 @@ int run_conv_threaded(const Y26Stage15Model4BranchWorkspace& ws,
     }
     if (thread_overhead_us != nullptr) {
         *thread_overhead_us = std::max(0.0, threaded_timing.total_us - threaded_timing.worker_max_us);
+    }
+    if (compute_us != nullptr) {
+        *compute_us = threaded_timing.worker_compute_us;
+    }
+    if (copy_us != nullptr) {
+        *copy_us = threaded_timing.worker_copy_us;
+    }
+    if (worker_other_us != nullptr) {
+        *worker_other_us = threaded_timing.worker_other_us;
     }
     return status;
 }
@@ -394,6 +406,9 @@ int run_after_stage14(const Y26Stage15Model4BranchConfig& cfg,
 
     double branch0_conv_us = 0.0;
     double branch0_correction_us = 0.0;
+    double branch0_compute_us = 0.0;
+    double branch0_copy_us = 0.0;
+    double branch0_worker_other_us = 0.0;
     double branch0_thread_overhead_us = 0.0;
     if (use_threaded_conv) {
         status = run_conv_threaded(ws,
@@ -401,7 +416,10 @@ int run_after_stage14(const Y26Stage15Model4BranchConfig& cfg,
                                    ws.branch0_i32,
                                    &branch0_conv_us,
                                    &branch0_correction_us,
-                                   &branch0_thread_overhead_us);
+                                   &branch0_thread_overhead_us,
+                                   &branch0_compute_us,
+                                   &branch0_copy_us,
+                                   &branch0_worker_other_us);
     } else {
         status = use_ime ? run_conv_ime(cfg.branch0,
                                         ws.branch0_weights,
@@ -418,6 +436,7 @@ int run_after_stage14(const Y26Stage15Model4BranchConfig& cfg,
                                            ws.branch0_i32,
                                            &branch0_conv_us,
                                            &branch0_correction_us);
+        branch0_compute_us = std::max(0.0, branch0_conv_us - branch0_correction_us);
     }
     if (status != Y26_CONV_STATUS_SUCCESS) {
         return status;
@@ -457,6 +476,12 @@ int run_after_stage14(const Y26Stage15Model4BranchConfig& cfg,
         timing->branch0_conv_us += branch0_conv_us;
         timing->correction_us += branch0_correction_us;
         timing->branch0_correction_us += branch0_correction_us;
+        timing->conv_compute_us += branch0_compute_us;
+        timing->conv_copy_us += branch0_copy_us;
+        timing->conv_worker_other_us += branch0_worker_other_us;
+        timing->branch0_compute_us += branch0_compute_us;
+        timing->branch0_copy_us += branch0_copy_us;
+        timing->branch0_worker_other_us += branch0_worker_other_us;
         timing->branch0_activation_us += branch_activation_us;
         timing->thread_overhead_us += split_activation_thread_overhead_us + branch0_thread_overhead_us +
                                       branch_activation_thread_overhead_us;

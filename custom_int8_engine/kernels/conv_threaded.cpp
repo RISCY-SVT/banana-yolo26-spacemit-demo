@@ -103,13 +103,14 @@ struct ThreadWorker {
     Y26PrepackedConvWeights* weights = nullptr;
     Y26ConvWorkspace* conv_workspace = nullptr;
     std::vector<std::int32_t> raw;
-    std::vector<std::int32_t> corrected;
     std::thread thread;
     int status = Y26_CONV_STATUS_SUCCESS;
     int observed_cpu = -1;
     int affinity_set = 0;
     double total_us = 0.0;
+    double compute_us = 0.0;
     double correction_us = 0.0;
+    double copy_us = 0.0;
 };
 
 struct Y26ThreadedConvWorkspace {
@@ -162,18 +163,34 @@ void destroy_workspace(Y26ThreadedConvWorkspace* workspace) {
     delete workspace;
 }
 
-void copy_worker_output(const ThreadWorker& worker, std::int32_t* output_i32) {
-    const int output_w = worker.plan.output_rows_written > 0 ? worker.cfg.params.input_w : 0;
+int apply_worker_correction_to_output(const ThreadWorker& worker, std::int32_t* output_i32) {
+    if (output_i32 == nullptr || worker.cfg.bias_i32 == nullptr || worker.weights == nullptr ||
+        y26_prepacked_conv_weights_sums(worker.weights) == nullptr || worker.plan.output_rows_written <= 0) {
+        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    }
+    const int output_w = worker.cfg.params.input_w;
     const int output_c = worker.cfg.params.output_c;
+    const std::int32_t* weight_sums_oc = y26_prepacked_conv_weights_sums(worker.weights);
+    const std::int64_t correction_offset = 128 - static_cast<std::int64_t>(worker.cfg.activation_zero_point_u8);
     const std::size_t row_values = static_cast<std::size_t>(output_w) * static_cast<std::size_t>(output_c);
-    const std::int32_t* src = worker.corrected.data() +
-                              static_cast<std::size_t>(worker.plan.local_output_offset) * row_values;
+    const std::int32_t* src =
+        worker.raw.data() + static_cast<std::size_t>(worker.plan.local_output_offset) * row_values;
     std::int32_t* dst = output_i32 + static_cast<std::size_t>(worker.plan.row_begin) * row_values;
     for (int row = 0; row < worker.plan.output_rows_written; ++row) {
-        std::memcpy(dst + static_cast<std::size_t>(row) * row_values,
-                    src + static_cast<std::size_t>(row) * row_values,
-                    row_values * sizeof(std::int32_t));
+        const std::int32_t* src_row = src + static_cast<std::size_t>(row) * row_values;
+        std::int32_t* dst_row = dst + static_cast<std::size_t>(row) * row_values;
+        for (int ow = 0; ow < output_w; ++ow) {
+            const std::size_t base = static_cast<std::size_t>(ow) * static_cast<std::size_t>(output_c);
+            for (int oc = 0; oc < output_c; ++oc) {
+                const std::int64_t corrected =
+                    static_cast<std::int64_t>(src_row[base + static_cast<std::size_t>(oc)]) +
+                    correction_offset * static_cast<std::int64_t>(weight_sums_oc[oc]) +
+                    static_cast<std::int64_t>(worker.cfg.bias_i32[oc]);
+                dst_row[base + static_cast<std::size_t>(oc)] = static_cast<std::int32_t>(corrected);
+            }
+        }
     }
+    return Y26_CONV_STATUS_SUCCESS;
 }
 
 int run_worker_once(ThreadWorker& worker,
@@ -192,21 +209,14 @@ int run_worker_once(ThreadWorker& worker,
                                                           Y26_CONV_LOOP_ORDER_M_MAJOR);
     const auto correction_begin = Clock::now();
     if (status == Y26_CONV_STATUS_SUCCESS) {
-        const int local_output_m = worker.plan.local_output_h * worker.cfg.params.input_w;
-        status = y26_conv2d_apply_u8_as_s8_correction_nhwc(worker.raw.data(),
-                                                           worker.cfg.bias_i32,
-                                                           y26_prepacked_conv_weights_sums(worker.weights),
-                                                           worker.corrected.data(),
-                                                           local_output_m,
-                                                           worker.cfg.params.output_c,
-                                                           worker.cfg.activation_zero_point_u8);
+        status = apply_worker_correction_to_output(worker, output_i32);
     }
-    if (status == Y26_CONV_STATUS_SUCCESS) {
-        copy_worker_output(worker, output_i32);
-    }
+    const auto correction_end = Clock::now();
+    worker.copy_us = 0.0;
     const auto end = Clock::now();
     worker.total_us = elapsed_us(begin, end);
-    worker.correction_us = elapsed_us(correction_begin, end);
+    worker.compute_us = elapsed_us(begin, correction_begin);
+    worker.correction_us = elapsed_us(correction_begin, correction_end);
     return status;
 }
 
@@ -321,7 +331,6 @@ bool configure_workers(Y26ThreadedConvWorkspace* workspace, const Y26Stage7ConvN
         worker.plan.workspace_bytes = y26_conv_workspace_bytes(worker.conv_workspace);
         worker.raw.resize(static_cast<std::size_t>(worker.plan.local_output_h) *
                           static_cast<std::size_t>(output_w) * static_cast<std::size_t>(cfg.params.output_c));
-        worker.corrected.resize(worker.raw.size());
         workspace->plan.total_overcomputed_rows += worker.plan.overcomputed_rows;
         workspace->plan.total_discarded_rows += worker.plan.discarded_rows;
         workspace->plan.estimated_extra_macs += static_cast<long long>(worker.plan.overcomputed_rows) * output_w *
@@ -395,7 +404,9 @@ extern "C" int y26_threaded_conv_run_ime_cluster0(const Y26ThreadedConvWorkspace
     for (ThreadWorker& worker : workspace->workers) {
         worker.status = Y26_CONV_STATUS_SUCCESS;
         worker.total_us = 0.0;
+        worker.compute_us = 0.0;
         worker.correction_us = 0.0;
+        worker.copy_us = 0.0;
     }
     const auto begin = Clock::now();
     workspace->start_barrier->arrive_and_wait();
@@ -406,11 +417,15 @@ extern "C" int y26_threaded_conv_run_ime_cluster0(const Y26ThreadedConvWorkspace
     double worker_max = 0.0;
     double worker_min = workspace->workers.empty() ? 0.0 : workspace->workers.front().total_us;
     double correction_max = 0.0;
+    const ThreadWorker* critical_worker = nullptr;
     for (const ThreadWorker& worker : workspace->workers) {
         if (worker.status != Y26_CONV_STATUS_SUCCESS && status == Y26_CONV_STATUS_SUCCESS) {
             status = worker.status;
         }
-        worker_max = std::max(worker_max, worker.total_us);
+        if (worker.total_us >= worker_max) {
+            worker_max = worker.total_us;
+            critical_worker = &worker;
+        }
         worker_min = std::min(worker_min, worker.total_us);
         correction_max = std::max(correction_max, worker.correction_us);
     }
@@ -420,6 +435,14 @@ extern "C" int y26_threaded_conv_run_ime_cluster0(const Y26ThreadedConvWorkspace
         timing->worker_max_us = worker_max;
         timing->worker_min_us = worker_min;
         timing->correction_us = correction_max;
+        if (critical_worker != nullptr) {
+            timing->worker_compute_us = critical_worker->compute_us;
+            timing->worker_correction_us = critical_worker->correction_us;
+            timing->worker_copy_us = critical_worker->copy_us;
+            const double worker_attributed =
+                critical_worker->compute_us + critical_worker->correction_us + critical_worker->copy_us;
+            timing->worker_other_us = std::max(0.0, critical_worker->total_us - worker_attributed);
+        }
     }
     return status;
 }
@@ -453,7 +476,9 @@ extern "C" int y26_threaded_conv_run_activation_rvv_f32_rows(
     for (ThreadWorker& worker : workspace->workers) {
         worker.status = Y26_CONV_STATUS_SUCCESS;
         worker.total_us = 0.0;
+        worker.compute_us = 0.0;
         worker.correction_us = 0.0;
+        worker.copy_us = 0.0;
     }
     const auto begin = Clock::now();
     workspace->start_barrier->arrive_and_wait();

@@ -478,7 +478,10 @@ int run_conv_threaded(const Y26Stage15Model4BranchWorkspace& ws,
                       std::int32_t* output_i32,
                       double* conv_us,
                       double* correction_us,
-                      double* thread_overhead_us) {
+                      double* thread_overhead_us,
+                      double* compute_us,
+                      double* copy_us,
+                      double* worker_other_us) {
     Y26ThreadedConvTimingUs threaded {};
     const int status = y26_threaded_conv_run_ime_cluster0(
         ws.branch0_threaded_workspace, input_s8, output_i32, &threaded);
@@ -490,6 +493,15 @@ int run_conv_threaded(const Y26Stage15Model4BranchWorkspace& ws,
     }
     if (thread_overhead_us != nullptr) {
         *thread_overhead_us = std::max(0.0, threaded.total_us - threaded.worker_max_us);
+    }
+    if (compute_us != nullptr) {
+        *compute_us = threaded.worker_compute_us;
+    }
+    if (copy_us != nullptr) {
+        *copy_us = threaded.worker_copy_us;
+    }
+    if (worker_other_us != nullptr) {
+        *worker_other_us = threaded.worker_other_us;
     }
     return status;
 }
@@ -503,6 +515,9 @@ void accumulate_stage15_timing(Y26Stage16TimingUs& dst, const Y26Stage15TimingUs
     dst.post_qdq_us += src.post_qdq_us;
     dst.pack_layout_us += src.pack_layout_us;
     dst.correction_us += src.correction_us;
+    dst.conv_compute_us += src.conv_compute_us;
+    dst.conv_copy_us += src.conv_copy_us;
+    dst.conv_worker_other_us += src.conv_worker_other_us;
     dst.thread_overhead_us += src.thread_overhead_us;
 }
 
@@ -776,6 +791,9 @@ int run_after_stage15(const Y26Stage16Model4C2fConfig& cfg,
                       bool split0_concat_prebuilt) {
     double branch1_conv_us = 0.0;
     double branch1_correction_us = 0.0;
+    double branch1_compute_us = 0.0;
+    double branch1_copy_us = 0.0;
+    double branch1_worker_other_us = 0.0;
     int status = Y26_CONV_STATUS_SUCCESS;
     if (use_ime && ws.branch1_threaded_workspace != nullptr) {
         Y26ThreadedConvTimingUs threaded {};
@@ -785,6 +803,9 @@ int run_after_stage15(const Y26Stage16Model4C2fConfig& cfg,
                                                     &threaded);
         branch1_conv_us = threaded.total_us;
         branch1_correction_us = threaded.correction_us;
+        branch1_compute_us = threaded.worker_compute_us;
+        branch1_copy_us = threaded.worker_copy_us;
+        branch1_worker_other_us = threaded.worker_other_us;
         if (timing != nullptr) {
             timing->thread_overhead_us += std::max(0.0, threaded.total_us - threaded.worker_max_us);
         }
@@ -804,6 +825,7 @@ int run_after_stage15(const Y26Stage16Model4C2fConfig& cfg,
                                            ws.branch1_i32,
                                            &branch1_conv_us,
                                            &branch1_correction_us);
+        branch1_compute_us = std::max(0.0, branch1_conv_us - branch1_correction_us);
     }
     if (status != Y26_CONV_STATUS_SUCCESS) {
         return status;
@@ -836,6 +858,9 @@ int run_after_stage15(const Y26Stage16Model4C2fConfig& cfg,
 
     double model4_cv2_conv_us = 0.0;
     double model4_cv2_correction_us = 0.0;
+    double model4_cv2_compute_us = 0.0;
+    double model4_cv2_copy_us = 0.0;
+    double model4_cv2_worker_other_us = 0.0;
     if (use_ime && ws.model4_cv2_threaded_workspace != nullptr) {
         Y26ThreadedConvTimingUs threaded {};
         status = y26_threaded_conv_run_ime_cluster0(ws.model4_cv2_threaded_workspace,
@@ -844,6 +869,9 @@ int run_after_stage15(const Y26Stage16Model4C2fConfig& cfg,
                                                     &threaded);
         model4_cv2_conv_us = threaded.total_us;
         model4_cv2_correction_us = threaded.correction_us;
+        model4_cv2_compute_us = threaded.worker_compute_us;
+        model4_cv2_copy_us = threaded.worker_copy_us;
+        model4_cv2_worker_other_us = threaded.worker_other_us;
         if (timing != nullptr) {
             timing->thread_overhead_us += std::max(0.0, threaded.total_us - threaded.worker_max_us);
         }
@@ -863,6 +891,7 @@ int run_after_stage15(const Y26Stage16Model4C2fConfig& cfg,
                                            output_i32_nhwc,
                                            &model4_cv2_conv_us,
                                            &model4_cv2_correction_us);
+        model4_cv2_compute_us = std::max(0.0, model4_cv2_conv_us - model4_cv2_correction_us);
     }
 
     if (timing != nullptr) {
@@ -872,6 +901,15 @@ int run_after_stage15(const Y26Stage16Model4C2fConfig& cfg,
         timing->correction_us += branch1_correction_us + model4_cv2_correction_us;
         timing->branch1_correction_us += branch1_correction_us;
         timing->model4_cv2_correction_us += model4_cv2_correction_us;
+        timing->conv_compute_us += branch1_compute_us + model4_cv2_compute_us;
+        timing->conv_copy_us += branch1_copy_us + model4_cv2_copy_us;
+        timing->conv_worker_other_us += branch1_worker_other_us + model4_cv2_worker_other_us;
+        timing->branch1_compute_us += branch1_compute_us;
+        timing->branch1_copy_us += branch1_copy_us;
+        timing->branch1_worker_other_us += branch1_worker_other_us;
+        timing->model4_cv2_compute_us += model4_cv2_compute_us;
+        timing->model4_cv2_copy_us += model4_cv2_copy_us;
+        timing->model4_cv2_worker_other_us += model4_cv2_worker_other_us;
         if (cfg.merge_mode != Y26_STAGE16_MERGE_MODE_STAGE26_BRANCH1_ADD_LUT) {
             timing->activation_requant_us += branch1_activation_us;
             timing->branch1_activation_us += branch1_activation_us;
@@ -919,6 +957,9 @@ int run_cut_branch0(const Y26Stage16Model4C2fConfig& cfg,
                     Y26Stage16TimingUs* timing) {
     double branch0_conv_us = 0.0;
     double branch0_correction_us = 0.0;
+    double branch0_compute_us = 0.0;
+    double branch0_copy_us = 0.0;
+    double branch0_worker_other_us = 0.0;
     double thread_overhead_us = 0.0;
     int status = Y26_CONV_STATUS_SUCCESS;
     if (use_threaded_branch0) {
@@ -927,7 +968,10 @@ int run_cut_branch0(const Y26Stage16Model4C2fConfig& cfg,
                                    ws.stage15_ws.branch0_i32,
                                    &branch0_conv_us,
                                    &branch0_correction_us,
-                                   &thread_overhead_us);
+                                   &thread_overhead_us,
+                                   &branch0_compute_us,
+                                   &branch0_copy_us,
+                                   &branch0_worker_other_us);
     } else {
         status = use_ime ? run_conv_ime(cfg.stage15.branch0,
                                         ws.stage15_ws.branch0_weights,
@@ -944,6 +988,7 @@ int run_cut_branch0(const Y26Stage16Model4C2fConfig& cfg,
                                            ws.stage15_ws.branch0_i32,
                                            &branch0_conv_us,
                                            &branch0_correction_us);
+        branch0_compute_us = std::max(0.0, branch0_conv_us - branch0_correction_us);
     }
     if (status != Y26_CONV_STATUS_SUCCESS) {
         return status;
@@ -965,6 +1010,15 @@ int run_cut_branch0(const Y26Stage16Model4C2fConfig& cfg,
         timing->stage15_timing_us.branch0_conv_us += branch0_conv_us;
         timing->correction_us += branch0_correction_us;
         timing->stage15_timing_us.branch0_correction_us += branch0_correction_us;
+        timing->conv_compute_us += branch0_compute_us;
+        timing->conv_copy_us += branch0_copy_us;
+        timing->conv_worker_other_us += branch0_worker_other_us;
+        timing->stage15_timing_us.conv_compute_us += branch0_compute_us;
+        timing->stage15_timing_us.conv_copy_us += branch0_copy_us;
+        timing->stage15_timing_us.conv_worker_other_us += branch0_worker_other_us;
+        timing->stage15_timing_us.branch0_compute_us += branch0_compute_us;
+        timing->stage15_timing_us.branch0_copy_us += branch0_copy_us;
+        timing->stage15_timing_us.branch0_worker_other_us += branch0_worker_other_us;
         timing->activation_requant_us += activation_us;
         timing->stage15_timing_us.branch0_activation_us += activation_us;
         timing->thread_overhead_us += thread_overhead_us;

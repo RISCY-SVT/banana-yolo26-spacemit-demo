@@ -5,7 +5,7 @@ stage_id: `BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE27-CONV-OR-OUTPUT-QUANTIZE-
 repo: `/data/banana-yolo26-spacemit-demo`
 branch: `yolo26-custom-int8-engine`
 start_head: `6a32c904cf711afab24e3efd9d2adaa9306c101f`
-end_head: `see-final-head-copy-after-local-commit`
+end_head: `502f7abe06aaba413310731971176ede603f527f`
 pushed: false
 full_engine_implemented: false
 ncnn_source_mutated: false

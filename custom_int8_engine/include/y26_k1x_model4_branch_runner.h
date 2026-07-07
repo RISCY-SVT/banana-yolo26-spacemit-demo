@@ -30,8 +30,14 @@ struct Y26Stage15TimingUs {
     double post_qdq_us;
     double pack_layout_us;
     double correction_us;
+    double conv_compute_us;
+    double conv_copy_us;
+    double conv_worker_other_us;
     double branch0_conv_us;
     double branch0_correction_us;
+    double branch0_compute_us;
+    double branch0_copy_us;
+    double branch0_worker_other_us;
     double branch0_activation_us;
     double thread_overhead_us;
     double total_us;

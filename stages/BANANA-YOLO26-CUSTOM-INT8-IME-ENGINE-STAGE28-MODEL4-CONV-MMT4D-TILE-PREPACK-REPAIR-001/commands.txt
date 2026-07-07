@@ -1,0 +1,294 @@
+# commands.txt
+stage_id=BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE28-MODEL4-CONV-MMT4D-TILE-PREPACK-REPAIR-001
+run_ts=2026-07-07_15-38-04
+log_dir=/data/ncnn-logs/ai-team/2026-07-07_15-38-04/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE28-MODEL4-CONV-MMT4D-TILE-PREPACK-REPAIR-001
+repo=/data/banana-yolo26-spacemit-demo
+
+
+[2026-07-07T15:38:04+02:00] cwd=/data command=/data/lab/scripts/check-bridge-layout.sh
+[2026-07-07T15:38:08+02:00] exit_code=0
+
+[2026-07-07T15:38:08+02:00] cwd=/data/banana-yolo26-spacemit-demo command=pwd
+[2026-07-07T15:38:08+02:00] exit_code=0
+
+[2026-07-07T15:38:08+02:00] cwd=/data/banana-yolo26-spacemit-demo command=git\ status\ --short\ --branch
+[2026-07-07T15:38:08+02:00] exit_code=0
+
+[2026-07-07T15:38:08+02:00] cwd=/data/banana-yolo26-spacemit-demo command=git\ rev-parse\ HEAD
+[2026-07-07T15:38:08+02:00] exit_code=0
+
+[2026-07-07T15:38:08+02:00] cwd=/data/banana-yolo26-spacemit-demo command=git\ branch\ --show-current
+[2026-07-07T15:38:08+02:00] exit_code=0
+
+[2026-07-07T15:38:08+02:00] cwd=/data/banana-yolo26-spacemit-demo command=git\ log\ --oneline\ -5
+[2026-07-07T15:38:08+02:00] exit_code=0
+
+[2026-07-07T15:38:08+02:00] cwd=/data/banana-yolo26-spacemit-demo command=git\ remote\ -v
+[2026-07-07T15:38:08+02:00] exit_code=0
+
+[2026-07-07T15:38:30+02:00] cwd=/data/banana-yolo26-spacemit-demo command=git grep -n "pending-local-commit-see-final-response\|see-final-head-copy-after-local-commit" stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE27-CONV-OR-OUTPUT-QUANTIZE-DECISION-AFTER-ACTIVATION-REPAIR-001 || true
+[2026-07-07T15:38:31+02:00] exit_code=0
+
+[2026-07-07T15:38:31+02:00] cwd=/data/banana-yolo26-spacemit-demo command=sed -n "1,220p" stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE27-CONV-OR-OUTPUT-QUANTIZE-DECISION-AFTER-ACTIVATION-REPAIR-001/STAGE27_FINAL_REPORT.md
+[2026-07-07T15:38:31+02:00] exit_code=0
+
+[2026-07-07T15:38:31+02:00] cwd=/data/banana-yolo26-spacemit-demo command=sed -n "1,220p" stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE27-CONV-OR-OUTPUT-QUANTIZE-DECISION-AFTER-ACTIVATION-REPAIR-001/stage28_prompt.md
+[2026-07-07T15:38:31+02:00] exit_code=0
+
+[2026-07-07T15:38:31+02:00] cwd=/data/banana-yolo26-spacemit-demo command=rg -n "STAGE26_BRANCH1_ADD_LUT|STAGE24_B3|MODEL4|model4_c2f|branch0|branch1|thread_overhead|conv_us|pack|im2col|mmt4d|compute_us|correction" custom_int8_engine/include custom_int8_engine/src custom_int8_engine/kernels custom_int8_engine/tools custom_int8_engine/tests -S
+[2026-07-07T15:38:31+02:00] exit_code=0
+
+[2026-07-07T15:38:31+02:00] cwd=/data/banana-yolo26-spacemit-demo command=rg --files custom_int8_engine | rg "model4|thread|conv|stage2[3-8]|stage16|stage21|stage22|stage23"
+[2026-07-07T15:38:31+02:00] exit_code=0
+
+[2026-07-07T15:38:50+02:00] cwd=/data/banana-yolo26-spacemit-demo command=perl -0pi -e "s/end_head: `see-final-head-copy-after-local-commit`/end_head: `502f7abe06aaba413310731971176ede603f527f`/g" stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE27-CONV-OR-OUTPUT-QUANTIZE-DECISION-AFTER-ACTIVATION-REPAIR-001/STAGE27_FINAL_REPORT.md stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE27-CONV-OR-OUTPUT-QUANTIZE-DECISION-AFTER-ACTIVATION-REPAIR-001/STAGE27_SUMMARY_RU.md
+[2026-07-07T15:38:50+02:00] exit_code=0
+
+[2026-07-07T15:38:50+02:00] cwd=/data/banana-yolo26-spacemit-demo command=git diff -- stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE27-CONV-OR-OUTPUT-QUANTIZE-DECISION-AFTER-ACTIVATION-REPAIR-001/STAGE27_FINAL_REPORT.md stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE27-CONV-OR-OUTPUT-QUANTIZE-DECISION-AFTER-ACTIVATION-REPAIR-001/STAGE27_SUMMARY_RU.md stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE28-MODEL4-CONV-MMT4D-TILE-PREPACK-REPAIR-001/stage27_traceability_fix_report.md
+[2026-07-07T15:38:50+02:00] exit_code=0
+
+[2026-07-07T15:39:10+02:00] cwd=/data/banana-yolo26-spacemit-demo command=apply_patch Stage27 end_head traceability and Stage28 traceability report
+[2026-07-07T15:39:10+02:00] exit_code=0
+
+[2026-07-07T15:39:26+02:00] cwd=/data/banana-yolo26-spacemit-demo command=apply_patch add Stage28 hypotheses.md
+[2026-07-07T15:39:26+02:00] exit_code=0
+
+[2026-07-07T15:39:42+02:00] cwd=/data/banana-yolo26-spacemit-demo command=sed -n "1,260p" custom_int8_engine/include/y26_k1x_model4_c2f_runner.h
+[2026-07-07T15:39:42+02:00] exit_code=0
+
+[2026-07-07T15:39:42+02:00] cwd=/data/banana-yolo26-spacemit-demo command=sed -n "380,920p" custom_int8_engine/src/model4_c2f_runner.cpp
+[2026-07-07T15:39:42+02:00] exit_code=0
+
+[2026-07-07T15:39:42+02:00] cwd=/data/banana-yolo26-spacemit-demo command=sed -n "920,1320p" custom_int8_engine/src/model4_c2f_runner.cpp
+[2026-07-07T15:39:43+02:00] exit_code=0
+
+[2026-07-07T15:39:43+02:00] cwd=/data/banana-yolo26-spacemit-demo command=sed -n "1,260p" custom_int8_engine/include/y26_k1x_threaded_conv.h
+[2026-07-07T15:39:43+02:00] exit_code=0
+
+[2026-07-07T15:39:43+02:00] cwd=/data/banana-yolo26-spacemit-demo command=sed -n "1,360p" custom_int8_engine/kernels/conv_threaded.cpp
+[2026-07-07T15:39:44+02:00] exit_code=0
+
+[2026-07-07T15:39:44+02:00] cwd=/data/banana-yolo26-spacemit-demo command=sed -n "1,320p" custom_int8_engine/kernels/conv_mmt4d_prepack.cpp
+[2026-07-07T15:39:44+02:00] exit_code=0
+
+[2026-07-07T15:39:44+02:00] cwd=/data/banana-yolo26-spacemit-demo command=sed -n "1,260p" custom_int8_engine/include/y26_k1x_conv_kernels.h
+[2026-07-07T15:39:45+02:00] exit_code=0
+
+[2026-07-07T15:39:45+02:00] cwd=/data/banana-yolo26-spacemit-demo command=sed -n "1,360p" custom_int8_engine/tools/bench_stage23_model4_runner_cut.cpp
+[2026-07-07T15:39:45+02:00] exit_code=0
+
+[2026-07-07T15:39:45+02:00] cwd=/data/banana-yolo26-spacemit-demo command=sed -n "360,760p" custom_int8_engine/tools/bench_stage23_model4_runner_cut.cpp
+[2026-07-07T15:39:46+02:00] exit_code=0
+
+[2026-07-07T15:39:59+02:00] cwd=/data/banana-yolo26-spacemit-demo command=nl -ba custom_int8_engine/include/y26_k1x_threaded_conv.h | sed -n "1,220p"
+[2026-07-07T15:39:59+02:00] exit_code=0
+
+[2026-07-07T15:39:59+02:00] cwd=/data/banana-yolo26-spacemit-demo command=nl -ba custom_int8_engine/kernels/conv_threaded.cpp | sed -n "1,260p"
+[2026-07-07T15:40:00+02:00] exit_code=0
+
+[2026-07-07T15:40:00+02:00] cwd=/data/banana-yolo26-spacemit-demo command=nl -ba custom_int8_engine/kernels/conv_threaded.cpp | sed -n "260,560p"
+[2026-07-07T15:40:00+02:00] exit_code=0
+
+[2026-07-07T15:40:00+02:00] cwd=/data/banana-yolo26-spacemit-demo command=nl -ba custom_int8_engine/kernels/conv_mmt4d_prepack.cpp | sed -n "1,220p"
+[2026-07-07T15:40:01+02:00] exit_code=0
+
+[2026-07-07T15:40:01+02:00] cwd=/data/banana-yolo26-spacemit-demo command=nl -ba custom_int8_engine/kernels/conv_mmt4d_prepack.cpp | sed -n "220,520p"
+[2026-07-07T15:40:01+02:00] exit_code=0
+
+[2026-07-07T15:40:14+02:00] cwd=/data/banana-yolo26-spacemit-demo command=nl -ba custom_int8_engine/kernels/conv_threaded.cpp | sed -n "316,520p"
+[2026-07-07T15:40:15+02:00] exit_code=0
+
+[2026-07-07T15:40:15+02:00] cwd=/data/banana-yolo26-spacemit-demo command=nl -ba custom_int8_engine/kernels/conv_threaded.cpp | sed -n "520,760p"
+[2026-07-07T15:40:15+02:00] exit_code=0
+
+[2026-07-07T15:40:15+02:00] cwd=/data/banana-yolo26-spacemit-demo command=nl -ba custom_int8_engine/kernels/conv_mmt4d_prepack.cpp | sed -n "520,760p"
+[2026-07-07T15:40:16+02:00] exit_code=0
+
+[2026-07-07T15:40:16+02:00] cwd=/data/banana-yolo26-spacemit-demo command=nl -ba custom_int8_engine/src/model4_c2f_runner.cpp | sed -n "780,1120p"
+[2026-07-07T15:40:16+02:00] exit_code=0
+
+[2026-07-07T15:40:16+02:00] cwd=/data/banana-yolo26-spacemit-demo command=nl -ba custom_int8_engine/src/model4_c2f_runner.cpp | sed -n "1120,1280p"
+[2026-07-07T15:40:17+02:00] exit_code=0
+
+[2026-07-07T15:40:28+02:00] cwd=/data/banana-yolo26-spacemit-demo command=nl -ba custom_int8_engine/include/y26_k1x_model4_branch_runner.h | sed -n "1,220p"
+[2026-07-07T15:40:28+02:00] exit_code=0
+
+[2026-07-07T15:40:28+02:00] cwd=/data/banana-yolo26-spacemit-demo command=nl -ba custom_int8_engine/src/model4_branch_runner.cpp | sed -n "500,760p"
+[2026-07-07T15:40:29+02:00] exit_code=0
+
+[2026-07-07T15:40:29+02:00] cwd=/data/banana-yolo26-spacemit-demo command=nl -ba custom_int8_engine/src/model4_branch_runner.cpp | sed -n "760,980p"
+[2026-07-07T15:40:29+02:00] exit_code=0
+
+[2026-07-07T15:40:39+02:00] cwd=/data/banana-yolo26-spacemit-demo command=nl -ba custom_int8_engine/src/model4_branch_runner.cpp | sed -n "260,500p"
+[2026-07-07T15:40:39+02:00] exit_code=0
+
+[2026-07-07T15:41:43+02:00] cwd=/data/banana-yolo26-spacemit-demo command=apply_patch add threaded Conv component timing fields
+[2026-07-07T15:41:43+02:00] exit_code=0
+
+[2026-07-07T15:41:53+02:00] cwd=/data/banana-yolo26-spacemit-demo command=rg -n run_conv_threaded custom_int8_engine/src
+[2026-07-07T15:41:53+02:00] exit_code=0
+
+[2026-07-07T15:42:01+02:00] cwd=/data/banana-yolo26-spacemit-demo command=nl -ba custom_int8_engine/src/model4_c2f_runner.cpp | sed -n 880,980p
+[2026-07-07T15:42:01+02:00] exit_code=0
+
+[2026-07-07T15:42:21+02:00] cwd=/data/banana-yolo26-spacemit-demo command=nl -ba model4_c2f_runner timing context
+[2026-07-07T15:42:21+02:00] exit_code=0
+
+[2026-07-07T15:43:53+02:00] cwd=/data/banana-yolo26-spacemit-demo command=cmake -S custom_int8_engine -B .deps/custom_int8_engine/build-host-native-stage28 -DCMAKE_BUILD_TYPE=RelWithDebInfo -DY26_K1X_ENABLE_IME=OFF -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_CXX_COMPILER=/usr/bin/g++
+[2026-07-07T15:43:55+02:00] exit_code=0
+
+[2026-07-07T15:43:55+02:00] cwd=/data/banana-yolo26-spacemit-demo command=cmake --build .deps/custom_int8_engine/build-host-native-stage28 -j$(nproc)
+[2026-07-07T15:44:36+02:00] exit_code=0
+
+[2026-07-07T15:44:36+02:00] cwd=/data/banana-yolo26-spacemit-demo command=ctest --test-dir .deps/custom_int8_engine/build-host-native-stage28 --output-on-failure
+[2026-07-07T15:44:37+02:00] exit_code=0
+
+[2026-07-07T15:44:51+02:00] cwd=/data/banana-yolo26-spacemit-demo command=ls -la custom_int8_engine | sed -n "1,120p"
+[2026-07-07T15:44:52+02:00] exit_code=0
+
+[2026-07-07T15:44:52+02:00] cwd=/data/banana-yolo26-spacemit-demo command=find custom_int8_engine -maxdepth 3 -iname "*toolchain*" -o -name "*.cmake" | sort
+[2026-07-07T15:44:52+02:00] exit_code=0
+
+[2026-07-07T15:44:52+02:00] cwd=/data/banana-yolo26-spacemit-demo command=rg -n "build-riscv-stage2[3-7]|CMAKE_TOOLCHAIN_FILE|riscv64|Y26_K1X_ENABLE_IME=ON" stages custom_int8_engine scripts docs . -g "!*.bin" -g "!*.npy" -S | head -n 200
+[2026-07-07T15:44:53+02:00] exit_code=0
+
+[2026-07-07T15:45:05+02:00] cwd=/data/banana-yolo26-spacemit-demo command=source /data/build_scripts/01-env.sh; cmake -S custom_int8_engine -B .deps/custom_int8_engine/build-riscv-stage28 -DCMAKE_BUILD_TYPE=RelWithDebInfo -DY26_K1X_ENABLE_IME=ON -DCMAKE_CXX_COMPILER=/opt/riscv/bin/riscv64-unknown-linux-gnu-g++ -DCMAKE_CXX_FLAGS="-march=rv64gcv_zvfh -mabi=lp64d" -DCMAKE_SYSTEM_NAME=Linux -DCMAKE_SYSTEM_PROCESSOR=riscv64
+[2026-07-07T15:45:08+02:00] exit_code=0
+
+[2026-07-07T15:45:08+02:00] cwd=/data/banana-yolo26-spacemit-demo command=cmake --build .deps/custom_int8_engine/build-riscv-stage28 -j$(nproc)
+[2026-07-07T15:45:59+02:00] exit_code=0
+
+[2026-07-07T15:46:26+02:00] cwd=/data/banana-yolo26-spacemit-demo command=test -f .deps/custom_int8_engine/build-riscv-stage28/bench_stage23_model4_runner_cut
+[2026-07-07T15:46:26+02:00] exit_code=0
+
+[2026-07-07T15:46:26+02:00] cwd=/data/banana-yolo26-spacemit-demo command=test -f .deps/custom_int8_engine/stage22_onnx_cut/model4_c2f_synthetic_seeded/model4_cv1_conv_q_u8_nhwc.bin && test -f .deps/custom_int8_engine/stage22_onnx_cut/model4_c2f_synthetic_seeded/model4_cv2_conv_q_u8_expected_nhwc.bin
+[2026-07-07T15:46:26+02:00] exit_code=0
+
+[2026-07-07T15:46:26+02:00] cwd=/data/banana-yolo26-spacemit-demo command=sha256sum .deps/custom_int8_engine/build-riscv-stage28/bench_stage23_model4_runner_cut .deps/custom_int8_engine/stage22_onnx_cut/model4_c2f_synthetic_seeded/model4_cv1_conv_q_u8_nhwc.bin .deps/custom_int8_engine/stage22_onnx_cut/model4_c2f_synthetic_seeded/model4_cv2_conv_q_u8_expected_nhwc.bin
+[2026-07-07T15:46:27+02:00] exit_code=0
+
+[2026-07-07T15:46:27+02:00] cwd=/data/banana-yolo26-spacemit-demo command=ssh svt@banana 'mkdir -p "/home/svt/yolo26-custom-int8-stage28/2026-07-07_15-38-04/fixtures"'
+[2026-07-07T15:46:28+02:00] exit_code=0
+
+[2026-07-07T15:46:28+02:00] cwd=/data/banana-yolo26-spacemit-demo command=scp .deps/custom_int8_engine/build-riscv-stage28/bench_stage23_model4_runner_cut svt@banana:'/home/svt/yolo26-custom-int8-stage28/2026-07-07_15-38-04/bench_stage23_model4_runner_cut'
+[2026-07-07T15:46:29+02:00] exit_code=0
+
+[2026-07-07T15:46:29+02:00] cwd=/data/banana-yolo26-spacemit-demo command=scp .deps/custom_int8_engine/stage22_onnx_cut/model4_c2f_synthetic_seeded/model4_cv1_conv_q_u8_nhwc.bin .deps/custom_int8_engine/stage22_onnx_cut/model4_c2f_synthetic_seeded/model4_cv2_conv_q_u8_expected_nhwc.bin svt@banana:'/home/svt/yolo26-custom-int8-stage28/2026-07-07_15-38-04/fixtures/'
+[2026-07-07T15:46:31+02:00] exit_code=0
+
+[2026-07-07T15:46:31+02:00] cwd=/data/banana-yolo26-spacemit-demo command=ssh svt@banana 'cd "/home/svt/yolo26-custom-int8-stage28/2026-07-07_15-38-04" && hostname; uname -a; lscpu | sed -n "1,32p"; echo scaling_governor; cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor 2>/dev/null || true; echo scaling_cur_freq; cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq 2>/dev/null || true; echo thermal; find /sys/class/thermal -maxdepth 2 -type f -name temp -print -exec cat {} \; 2>/dev/null || true; sha256sum bench_stage23_model4_runner_cut fixtures/model4_cv1_conv_q_u8_nhwc.bin fixtures/model4_cv2_conv_q_u8_expected_nhwc.bin'
+[2026-07-07T15:46:32+02:00] exit_code=0
+
+[2026-07-07T15:46:32+02:00] cwd=/data/banana-yolo26-spacemit-demo command=ssh svt@banana 'cd "/home/svt/yolo26-custom-int8-stage28/2026-07-07_15-38-04" && taskset -c 0-3 ./bench_stage23_model4_runner_cut --fixture-dir fixtures --mode ime_threaded --output-quantize rvv --merge-repair branch1_add_lut --thread-branch0 4 --thread-branch1 4 --thread-model4-cv2 4 --warmup 10 --runs 100 --repeats 5 --frm-sweep --dump-actual stage28_stage27_replay_actual.bin'
+[2026-07-07T15:46:55+02:00] exit_code=0
+
+[2026-07-07T15:46:55+02:00] cwd=/data/banana-yolo26-spacemit-demo command=ssh svt@banana 'cd "/home/svt/yolo26-custom-int8-stage28/2026-07-07_15-38-04" && sha256sum stage28_stage27_replay_actual.bin fixtures/model4_cv2_conv_q_u8_expected_nhwc.bin'
+[2026-07-07T15:46:56+02:00] exit_code=0
+
+[2026-07-07T15:48:06+02:00] cwd=/data/banana-yolo26-spacemit-demo command=apply_patch add T1 component timing and T2 fused correction/writeback candidate
+[2026-07-07T15:48:06+02:00] exit_code=0
+
+[2026-07-07T15:48:16+02:00] cwd=/data/banana-yolo26-spacemit-demo command=cmake --build .deps/custom_int8_engine/build-host-native-stage28 -j$(nproc)
+[2026-07-07T15:48:28+02:00] exit_code=0
+
+[2026-07-07T15:48:28+02:00] cwd=/data/banana-yolo26-spacemit-demo command=ctest --test-dir .deps/custom_int8_engine/build-host-native-stage28 --output-on-failure
+[2026-07-07T15:48:29+02:00] exit_code=0
+
+[2026-07-07T15:48:29+02:00] cwd=/data/banana-yolo26-spacemit-demo command=cmake --build .deps/custom_int8_engine/build-riscv-stage28 -j$(nproc)
+[2026-07-07T15:48:42+02:00] exit_code=0
+
+[2026-07-07T15:48:57+02:00] cwd=/data/banana-yolo26-spacemit-demo command=sha256sum .deps/custom_int8_engine/build-riscv-stage28/bench_stage23_model4_runner_cut
+[2026-07-07T15:48:57+02:00] exit_code=0
+
+[2026-07-07T15:48:57+02:00] cwd=/data/banana-yolo26-spacemit-demo command=scp .deps/custom_int8_engine/build-riscv-stage28/bench_stage23_model4_runner_cut svt@banana:'/home/svt/yolo26-custom-int8-stage28/2026-07-07_15-38-04/bench_stage23_model4_runner_cut'
+[2026-07-07T15:48:58+02:00] exit_code=0
+
+[2026-07-07T15:48:58+02:00] cwd=/data/banana-yolo26-spacemit-demo command=ssh svt@banana 'cd "/home/svt/yolo26-custom-int8-stage28/2026-07-07_15-38-04" && sha256sum bench_stage23_model4_runner_cut'
+[2026-07-07T15:48:59+02:00] exit_code=0
+
+[2026-07-07T15:48:59+02:00] cwd=/data/banana-yolo26-spacemit-demo command=ssh svt@banana 'cd "/home/svt/yolo26-custom-int8-stage28/2026-07-07_15-38-04" && taskset -c 0-3 ./bench_stage23_model4_runner_cut --fixture-dir fixtures --mode ime_threaded --output-quantize rvv --merge-repair branch1_add_lut --thread-branch0 4 --thread-branch1 4 --thread-model4-cv2 4 --warmup 10 --runs 100 --repeats 5 --frm-sweep --dump-actual stage28_t2_actual.bin'
+[2026-07-07T15:49:21+02:00] exit_code=0
+
+[2026-07-07T15:49:21+02:00] cwd=/data/banana-yolo26-spacemit-demo command=ssh svt@banana 'cd "/home/svt/yolo26-custom-int8-stage28/2026-07-07_15-38-04" && sha256sum stage28_t2_actual.bin fixtures/model4_cv2_conv_q_u8_expected_nhwc.bin'
+[2026-07-07T15:49:22+02:00] exit_code=0
+
+[2026-07-07T15:52:02+02:00] cwd=/data/banana-yolo26-spacemit-demo command=apply_patch add Stage28 evidence reports and stage29 prompt
+[2026-07-07T15:52:02+02:00] exit_code=0
+
+[2026-07-07T15:52:24+02:00] cwd=/data/banana-yolo26-spacemit-demo command=git diff --check
+[2026-07-07T15:52:24+02:00] exit_code=0
+
+[2026-07-07T15:52:24+02:00] cwd=/data/banana-yolo26-spacemit-demo command=git diff --cached --check
+[2026-07-07T15:52:25+02:00] exit_code=0
+
+[2026-07-07T15:52:25+02:00] cwd=/data/banana-yolo26-spacemit-demo command=find custom_int8_engine stages -type l -print
+[2026-07-07T15:52:25+02:00] exit_code=0
+
+[2026-07-07T15:52:25+02:00] cwd=/data/banana-yolo26-spacemit-demo command=git status --short
+[2026-07-07T15:52:26+02:00] exit_code=0
+
+[2026-07-07T15:52:26+02:00] cwd=/data/banana-yolo26-spacemit-demo command=git diff --name-only > /data/ncnn-logs/ai-team/2026-07-07_15-38-04/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE28-MODEL4-CONV-MMT4D-TILE-PREPACK-REPAIR-001/run_logs/changed_files.txt
+[2026-07-07T15:52:26+02:00] exit_code=0
+
+[2026-07-07T15:52:26+02:00] cwd=/data/banana-yolo26-spacemit-demo command=if [ -s "/data/ncnn-logs/ai-team/2026-07-07_15-38-04/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE28-MODEL4-CONV-MMT4D-TILE-PREPACK-REPAIR-001/run_logs/changed_files.txt" ]; then xargs -a "/data/ncnn-logs/ai-team/2026-07-07_15-38-04/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE28-MODEL4-CONV-MMT4D-TILE-PREPACK-REPAIR-001/run_logs/changed_files.txt" -r rg -n --hidden -S "(BEGIN (RSA|OPENSSH|EC|DSA) PRIVATE KEY|password=|token=|client_secret|oauth|Authorization:|ghp_|glpat-|AKIA)" -- || true; else true; fi
+[2026-07-07T15:52:26+02:00] exit_code=0
+
+[2026-07-07T15:52:27+02:00] cwd=/data/banana-yolo26-spacemit-demo command=if [ -s "/data/ncnn-logs/ai-team/2026-07-07_15-38-04/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE28-MODEL4-CONV-MMT4D-TILE-PREPACK-REPAIR-001/run_logs/changed_files.txt" ]; then xargs -a "/data/ncnn-logs/ai-team/2026-07-07_15-38-04/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE28-MODEL4-CONV-MMT4D-TILE-PREPACK-REPAIR-001/run_logs/changed_files.txt" -r rg -n --hidden -S "/home/svt/\.codex|/data/\.codex|/data/Settings|/control/state/secrets|\.env" -- || true; else true; fi
+[2026-07-07T15:52:27+02:00] exit_code=0
+
+[2026-07-07T15:52:27+02:00] cwd=/data/banana-yolo26-spacemit-demo command=git diff --stat
+[2026-07-07T15:52:28+02:00] exit_code=0
+
+[2026-07-07T15:53:34+02:00] cwd=/data/banana-yolo26-spacemit-demo command=apply_patch add Stage28 final reports and source hygiene report
+[2026-07-07T15:53:34+02:00] exit_code=0
+
+[2026-07-07T15:53:34+02:00] cwd=/data/banana-yolo26-spacemit-demo command=git diff --check
+[2026-07-07T15:53:35+02:00] exit_code=0
+
+[2026-07-07T15:53:35+02:00] cwd=/data/banana-yolo26-spacemit-demo command=git diff --cached --check
+[2026-07-07T15:53:36+02:00] exit_code=0
+
+[2026-07-07T15:53:36+02:00] cwd=/data/banana-yolo26-spacemit-demo command=find custom_int8_engine stages -type l -print
+[2026-07-07T15:53:36+02:00] exit_code=0
+
+[2026-07-07T15:53:36+02:00] cwd=/data/banana-yolo26-spacemit-demo command=git diff --stat
+[2026-07-07T15:53:37+02:00] exit_code=0
+
+[2026-07-07T15:53:37+02:00] cwd=/data/banana-yolo26-spacemit-demo command=git status --short
+[2026-07-07T15:53:37+02:00] exit_code=0
+
+[2026-07-07T15:53:58+02:00] cwd=/data/banana-yolo26-spacemit-demo command=rg -n --hidden -S "(BEGIN (RSA|OPENSSH|EC|DSA) PRIVATE KEY|password=|token=|client_secret|oauth|Authorization:|ghp_|glpat-|AKIA)" custom_int8_engine/include/y26_k1x_model4_branch_runner.h custom_int8_engine/include/y26_k1x_model4_c2f_runner.h custom_int8_engine/include/y26_k1x_threaded_conv.h custom_int8_engine/kernels/conv_threaded.cpp custom_int8_engine/src/model4_branch_runner.cpp custom_int8_engine/src/model4_c2f_runner.cpp custom_int8_engine/tools/bench_stage23_model4_runner_cut.cpp stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE27-CONV-OR-OUTPUT-QUANTIZE-DECISION-AFTER-ACTIVATION-REPAIR-001/STAGE27_FINAL_REPORT.md stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE27-CONV-OR-OUTPUT-QUANTIZE-DECISION-AFTER-ACTIVATION-REPAIR-001/STAGE27_SUMMARY_RU.md stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE28-MODEL4-CONV-MMT4D-TILE-PREPACK-REPAIR-001 || true
+[2026-07-07T15:53:59+02:00] exit_code=0
+
+[2026-07-07T15:53:59+02:00] cwd=/data/banana-yolo26-spacemit-demo command=rg -n --hidden -S "/home/svt/\.codex|/data/\.codex|/data/Settings|/control/state/secrets|\.env" custom_int8_engine/include/y26_k1x_model4_branch_runner.h custom_int8_engine/include/y26_k1x_model4_c2f_runner.h custom_int8_engine/include/y26_k1x_threaded_conv.h custom_int8_engine/kernels/conv_threaded.cpp custom_int8_engine/src/model4_branch_runner.cpp custom_int8_engine/src/model4_c2f_runner.cpp custom_int8_engine/tools/bench_stage23_model4_runner_cut.cpp stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE27-CONV-OR-OUTPUT-QUANTIZE-DECISION-AFTER-ACTIVATION-REPAIR-001/STAGE27_FINAL_REPORT.md stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE27-CONV-OR-OUTPUT-QUANTIZE-DECISION-AFTER-ACTIVATION-REPAIR-001/STAGE27_SUMMARY_RU.md stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE28-MODEL4-CONV-MMT4D-TILE-PREPACK-REPAIR-001 || true
+[2026-07-07T15:53:59+02:00] exit_code=0
+
+[2026-07-07T15:54:15+02:00] cwd=/data/banana-yolo26-spacemit-demo command=apply_patch document Stage28 scan self-matches
+[2026-07-07T15:54:15+02:00] exit_code=0
+
+[2026-07-07T15:54:33+02:00] cwd=/data/banana-yolo26-spacemit-demo command=git diff --check
+[2026-07-07T15:54:34+02:00] exit_code=0
+
+[2026-07-07T15:54:34+02:00] cwd=/data/banana-yolo26-spacemit-demo command=git diff > "/data/ncnn-logs/ai-team/2026-07-07_15-38-04/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE28-MODEL4-CONV-MMT4D-TILE-PREPACK-REPAIR-001/diffs/stage28_precommit.diff"
+[2026-07-07T15:54:34+02:00] exit_code=0
+
+[2026-07-07T15:54:34+02:00] cwd=/data/banana-yolo26-spacemit-demo command=git status --short
+[2026-07-07T15:54:35+02:00] exit_code=0
+
+[2026-07-07T15:54:35+02:00] cwd=/data/banana-yolo26-spacemit-demo command=git add custom_int8_engine/include/y26_k1x_model4_branch_runner.h custom_int8_engine/include/y26_k1x_model4_c2f_runner.h custom_int8_engine/include/y26_k1x_threaded_conv.h custom_int8_engine/kernels/conv_threaded.cpp custom_int8_engine/src/model4_branch_runner.cpp custom_int8_engine/src/model4_c2f_runner.cpp custom_int8_engine/tools/bench_stage23_model4_runner_cut.cpp stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE27-CONV-OR-OUTPUT-QUANTIZE-DECISION-AFTER-ACTIVATION-REPAIR-001/STAGE27_FINAL_REPORT.md stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE27-CONV-OR-OUTPUT-QUANTIZE-DECISION-AFTER-ACTIVATION-REPAIR-001/STAGE27_SUMMARY_RU.md stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE28-MODEL4-CONV-MMT4D-TILE-PREPACK-REPAIR-001
+[2026-07-07T15:54:35+02:00] exit_code=0
+
+[2026-07-07T15:54:35+02:00] cwd=/data/banana-yolo26-spacemit-demo command=git diff --cached --check
+[2026-07-07T15:54:36+02:00] exit_code=0
+
+[2026-07-07T15:54:36+02:00] cwd=/data/banana-yolo26-spacemit-demo command=git status --short
+[2026-07-07T15:54:36+02:00] exit_code=0
+
+[2026-07-07T15:54:36+02:00] cwd=/data/banana-yolo26-spacemit-demo command=git commit -m "Repair YOLO26 model4 Conv correction writeback"
+[2026-07-07T15:54:37+02:00] exit_code=0
+
+[2026-07-07T15:54:37+02:00] cwd=/data/banana-yolo26-spacemit-demo command=git rev-parse HEAD
+[2026-07-07T15:54:37+02:00] exit_code=0
+
+[2026-07-07T15:54:37+02:00] cwd=/data/banana-yolo26-spacemit-demo command=git status --short --branch
+[2026-07-07T15:54:38+02:00] exit_code=0
