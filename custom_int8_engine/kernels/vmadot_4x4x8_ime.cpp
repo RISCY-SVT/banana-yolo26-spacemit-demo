@@ -75,6 +75,39 @@ __attribute__((noinline)) void y26_vmadot_4x4x8_ime_unguarded(const std::int8_t*
             : "cc", "memory", "t0", "v0", "v1", "v28", "v29");
     }
 }
+
+__attribute__((noinline)) void y26_vmadotus_4x4x8_ime_unguarded(const std::uint8_t* a_4x8_row_major_u8,
+                                                                 const std::int8_t* b_4x8_transposed_nk,
+                                                                 std::int32_t* c_4x4_row_major,
+                                                                 bool accumulate) {
+    if (accumulate) {
+        __asm__ volatile(
+            "vsetvli      t0, zero, e32, m2       \n\t"
+            "vle32.v      v28, (%[C])             \n\t"
+            "vsetvli      t0, zero, e8, m1        \n\t"
+            "vle8.v       v0, (%[A])              \n\t"
+            "vle8.v       v1, (%[B])              \n\t"
+            "smt.vmadotus v28, v0, v1             \n\t"
+            "vsetvli      t0, zero, e32, m2       \n\t"
+            "vse32.v      v28, (%[C])             \n\t"
+            :
+            : [A] "r"(a_4x8_row_major_u8), [B] "r"(b_4x8_transposed_nk), [C] "r"(c_4x4_row_major)
+            : "cc", "memory", "t0", "v0", "v1", "v28", "v29");
+    } else {
+        __asm__ volatile(
+            "vsetvli      t0, zero, e32, m2       \n\t"
+            "vxor.vv      v28, v28, v28           \n\t"
+            "vsetvli      t0, zero, e8, m1        \n\t"
+            "vle8.v       v0, (%[A])              \n\t"
+            "vle8.v       v1, (%[B])              \n\t"
+            "smt.vmadotus v28, v0, v1             \n\t"
+            "vsetvli      t0, zero, e32, m2       \n\t"
+            "vse32.v      v28, (%[C])             \n\t"
+            :
+            : [A] "r"(a_4x8_row_major_u8), [B] "r"(b_4x8_transposed_nk), [C] "r"(c_4x4_row_major)
+            : "cc", "memory", "t0", "v0", "v1", "v28", "v29");
+    }
+}
 #endif
 
 std::atomic<int> g_probe_initialized {0};
@@ -88,6 +121,12 @@ bool pointers_valid(const std::int8_t* a_4x8_row_major,
                     const std::int8_t* b_4x8_transposed_nk,
                     const std::int32_t* c_4x4_row_major) {
     return a_4x8_row_major != nullptr && b_4x8_transposed_nk != nullptr && c_4x4_row_major != nullptr;
+}
+
+bool pointers_valid_u8s8(const std::uint8_t* a_4x8_row_major_u8,
+                         const std::int8_t* b_4x8_transposed_nk,
+                         const std::int32_t* c_4x4_row_major) {
+    return a_4x8_row_major_u8 != nullptr && b_4x8_transposed_nk != nullptr && c_4x4_row_major != nullptr;
 }
 
 }  // namespace
@@ -217,6 +256,23 @@ extern "C" int y26_k1x_vmadot_4x4x8_unsafe_cluster0_s8s8s32(const std::int8_t* a
 
 #if defined(Y26_K1X_ENABLE_IME_ASM) && defined(__riscv)
     y26_vmadot_4x4x8_ime_unguarded(a_4x8_row_major, b_4x8_transposed_nk, c_4x4_row_major, accumulate);
+    return Y26_VMADOT_STATUS_SUCCESS;
+#else
+    (void)accumulate;
+    return Y26_VMADOT_STATUS_NOT_BUILT_WITH_IME;
+#endif
+}
+
+extern "C" int y26_k1x_vmadot_4x4x8_unsafe_cluster0_u8s8s32(const std::uint8_t* a_4x8_row_major_u8,
+                                                             const std::int8_t* b_4x8_transposed_nk,
+                                                             std::int32_t* c_4x4_row_major,
+                                                             bool accumulate) {
+    if (!pointers_valid_u8s8(a_4x8_row_major_u8, b_4x8_transposed_nk, c_4x4_row_major)) {
+        return Y26_VMADOT_STATUS_INVALID_ARGUMENT;
+    }
+
+#if defined(Y26_K1X_ENABLE_IME_ASM) && defined(__riscv)
+    y26_vmadotus_4x4x8_ime_unguarded(a_4x8_row_major_u8, b_4x8_transposed_nk, c_4x4_row_major, accumulate);
     return Y26_VMADOT_STATUS_SUCCESS;
 #else
     (void)accumulate;

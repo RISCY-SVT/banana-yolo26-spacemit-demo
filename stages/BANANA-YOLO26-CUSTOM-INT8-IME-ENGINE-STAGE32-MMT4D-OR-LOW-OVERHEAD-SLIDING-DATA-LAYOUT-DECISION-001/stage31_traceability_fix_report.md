@@ -2,11 +2,7 @@
 
 stage_id: BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE31-VMADOT123-DIRECT-CONV-INTEGRATION-001
 
-The tracked Stage31 `STAGE31_FINAL_REPORT.md` contained:
-
-```text
-end_head: pending-local-commit-see-final-response
-```
+The tracked Stage31 `STAGE31_FINAL_REPORT.md` contained a pending local commit end-head marker.
 
 Stage32 patched that tracked report to:
 

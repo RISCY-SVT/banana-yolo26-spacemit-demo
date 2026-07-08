@@ -72,6 +72,12 @@ int y26_threaded_conv_run_ime_cluster0(const Y26ThreadedConvWorkspace* workspace
                                        std::int32_t* corrected_output_nhwc,
                                        Y26ThreadedConvTimingUs* timing);
 
+int y26_threaded_conv_run_ime_cluster0_u8s8_fused_correction(
+    const Y26ThreadedConvWorkspace* workspace,
+    const std::int8_t* input_nhwc_s8_storage,
+    std::int32_t* corrected_output_nhwc,
+    Y26ThreadedConvTimingUs* timing);
+
 int y26_threaded_conv_run_activation_rvv_f32_rows(const Y26ThreadedConvWorkspace* workspace,
                                                   const Y26ActivationRequantParams* params,
                                                   const std::int32_t* producer_i32,

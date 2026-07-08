@@ -1,0 +1,33 @@
+# Stage33 command log summary
+
+stage_id: `BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE33-MMT4D-MIXED-SIGNEDNESS-CORRECTION-PROOF-001`
+log_dir: `/data/ncnn-logs/ai-team/2026-07-08_14-41-34/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE33-MMT4D-MIXED-SIGNEDNESS-CORRECTION-PROOF-001`
+
+The raw stdout/stderr for board and disassembly commands is preserved under `run_logs/`.
+
+```bash
+/data/lab/scripts/check-bridge-layout.sh
+/data/lab/scripts/init-shared-log-run.sh contcodex BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE33-MMT4D-MIXED-SIGNEDNESS-CORRECTION-PROOF-001 stage33-mixed-signedness-correction
+cd /data/banana-yolo26-spacemit-demo
+git status --short --branch
+git rev-parse HEAD
+git branch --show-current
+git grep -n "pending-local-commit-see-final-response" stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE32-MMT4D-OR-LOW-OVERHEAD-SLIDING-DATA-LAYOUT-DECISION-001 || true
+ssh svt@banana 'hostname; uname -a; lscpu | sed -n "1,40p"; echo governor; cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor 2>/dev/null || true; echo cur_freq; cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq 2>/dev/null || true; echo thermal; find /sys/class/thermal -maxdepth 2 -type f -name temp -print -exec cat {} \; 2>/dev/null || true'
+cmake -S custom_int8_engine -B .deps/custom_int8_engine/build-host-native-stage33 -DCMAKE_BUILD_TYPE=RelWithDebInfo -DY26_K1X_ENABLE_IME=OFF -DCMAKE_CXX_COMPILER=/usr/bin/g++
+cmake --build .deps/custom_int8_engine/build-host-native-stage33 -j$(nproc)
+ctest --test-dir .deps/custom_int8_engine/build-host-native-stage33 --output-on-failure
+rm -rf .deps/custom_int8_engine/build-riscv-stage33
+source /data/build_scripts/01-env.sh && cmake -S custom_int8_engine -B .deps/custom_int8_engine/build-riscv-stage33 -DCMAKE_BUILD_TYPE=RelWithDebInfo -DY26_K1X_ENABLE_IME=ON -DCMAKE_C_COMPILER=${CC} -DCMAKE_CXX_COMPILER=${CXX} -DCMAKE_CXX_FLAGS="${K1_ARCH_FLAGS}" -DCMAKE_C_FLAGS="${K1_ARCH_FLAGS}"
+source /data/build_scripts/01-env.sh && cmake --build .deps/custom_int8_engine/build-riscv-stage33 -j$(nproc)
+riscv64-unknown-linux-gnu-objdump -d .deps/custom_int8_engine/build-riscv-stage33/tools/bench_stage23_model4_runner_cut | grep -E 'smt\.vmadot|vmadotus|\.word|\.insn'
+scp .deps/custom_int8_engine/build-riscv-stage33/tools/bench_stage23_model4_runner_cut svt@banana:/home/svt/yolo26-custom-int8-stage33/
+scp .deps/custom_int8_engine/build-riscv-stage33/tests/test_stage33_mixed_signedness_oracle svt@banana:/home/svt/yolo26-custom-int8-stage33/
+ssh svt@banana 'cd /home/svt/yolo26-custom-int8-stage33 && sha256sum bench_stage23_model4_runner_cut test_stage33_mixed_signedness_oracle fixtures/model4_cv1_conv_q_u8_nhwc.bin fixtures/model4_cv2_conv_q_u8_expected_nhwc.bin'
+ssh svt@banana 'cd /home/svt/yolo26-custom-int8-stage33 && for cpu in 0 1 2 3; do taskset -c $cpu ./test_stage33_mixed_signedness_oracle; done'
+ssh svt@banana 'cd /home/svt/yolo26-custom-int8-stage33 && taskset -c 0-3 ./bench_stage23_model4_runner_cut --fixture-dir fixtures --mode ime_threaded --output-quantize rvv --merge-repair branch1_add_lut --thread-branch0 4 --thread-branch1 4 --thread-model4-cv2 4 --warmup 10 --runs 100 --repeats 5 --frm-sweep --dump-actual stage33_baseline_actual_rerun.bin'
+ssh svt@banana 'cd /home/svt/yolo26-custom-int8-stage33 && taskset -c 0-3 ./bench_stage23_model4_runner_cut --fixture-dir fixtures --mode ime_threaded --output-quantize rvv --merge-repair branch1_add_lut_mixed_cv2 --thread-branch0 4 --thread-branch1 4 --thread-model4-cv2 4 --warmup 10 --runs 100 --repeats 5 --frm-sweep --dump-actual stage33_candidate_actual_rerun.bin'
+git diff --check
+git diff --cached --check
+find custom_int8_engine stages -type l -print
+```

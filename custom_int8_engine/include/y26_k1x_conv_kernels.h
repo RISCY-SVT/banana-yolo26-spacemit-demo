@@ -119,6 +119,15 @@ int y26_conv2d_i8s8s32_nhwc_ime_prepacked_v1(const std::int8_t* input_nhwc_s8,
                                              Y26ConvWorkspace* workspace,
                                              int loop_order);
 
+int y26_conv2d_u8s8s32_nhwc_ime_prepacked_fused_correction_v1(
+    const std::int8_t* input_nhwc_s8_storage,
+    const Y26PrepackedConvWeights* weights,
+    const std::int32_t* bias_oc,
+    std::int32_t* corrected_output_nhwc,
+    int activation_zero_point_u8,
+    Y26ConvWorkspace* workspace,
+    int loop_order);
+
 int y26_conv2d_apply_u8_as_s8_correction_nhwc(const std::int32_t* raw_dot_nhwc,
                                                const std::int32_t* bias_oc,
                                                const std::int32_t* weight_sums_oc,

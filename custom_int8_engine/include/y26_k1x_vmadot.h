@@ -53,4 +53,9 @@ int y26_k1x_vmadot_4x4x8_unsafe_cluster0_s8s8s32(const std::int8_t* a_4x8_row_ma
                                                   std::int32_t* c_4x4_row_major,
                                                   bool accumulate);
 
+int y26_k1x_vmadot_4x4x8_unsafe_cluster0_u8s8s32(const std::uint8_t* a_4x8_row_major_u8,
+                                                  const std::int8_t* b_4x8_transposed_nk,
+                                                  std::int32_t* c_4x4_row_major,
+                                                  bool accumulate);
+
 }

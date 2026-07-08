@@ -5,7 +5,7 @@ stage_id: BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE32-MMT4D-OR-LOW-OVERHEAD-SLI
 repo: /data/banana-yolo26-spacemit-demo
 branch: yolo26-custom-int8-engine
 start_head: 00aa667b8770cd9e6c7a5cdd24ac2714bb1d52a9
-end_head: pending-local-commit-see-final-response
+end_head: 1304c765cbb97241a5ac5700bb91c0fce7d4c60b
 
 ## Proven
 

@@ -135,19 +135,22 @@ bool merge_mode_valid(int mode) {
            mode == Y26_STAGE16_MERGE_MODE_A2_FUSED_QDQ_NHWC ||
            mode == Y26_STAGE16_MERGE_MODE_C2_SPLIT0_CONCAT_LUT ||
            mode == Y26_STAGE16_MERGE_MODE_STAGE24_B3_SPLIT1_LUT ||
-           mode == Y26_STAGE16_MERGE_MODE_STAGE26_BRANCH1_ADD_LUT;
+           mode == Y26_STAGE16_MERGE_MODE_STAGE26_BRANCH1_ADD_LUT ||
+           mode == Y26_STAGE16_MERGE_MODE_STAGE33_MODEL4_CV2_MIXED_SIGNEDNESS;
 }
 
 bool cut_merge_mode_valid(int mode) {
     return mode == Y26_STAGE16_MERGE_MODE_C2_SPLIT0_CONCAT_LUT ||
            mode == Y26_STAGE16_MERGE_MODE_STAGE24_B3_SPLIT1_LUT ||
-           mode == Y26_STAGE16_MERGE_MODE_STAGE26_BRANCH1_ADD_LUT;
+           mode == Y26_STAGE16_MERGE_MODE_STAGE26_BRANCH1_ADD_LUT ||
+           mode == Y26_STAGE16_MERGE_MODE_STAGE33_MODEL4_CV2_MIXED_SIGNEDNESS;
 }
 
 bool merge_mode_uses_split0_concat_lut(int mode) {
     return mode == Y26_STAGE16_MERGE_MODE_C2_SPLIT0_CONCAT_LUT ||
            mode == Y26_STAGE16_MERGE_MODE_STAGE24_B3_SPLIT1_LUT ||
-           mode == Y26_STAGE16_MERGE_MODE_STAGE26_BRANCH1_ADD_LUT;
+           mode == Y26_STAGE16_MERGE_MODE_STAGE26_BRANCH1_ADD_LUT ||
+           mode == Y26_STAGE16_MERGE_MODE_STAGE33_MODEL4_CV2_MIXED_SIGNEDNESS;
 }
 
 bool config_valid(const Y26Stage16Model4C2fConfig* cfg) {
@@ -473,6 +476,31 @@ int run_conv_ime(const Y26Stage7ConvNodeConfig& cfg,
     return status;
 }
 
+int run_conv_ime_u8s8_fused_correction(const Y26Stage7ConvNodeConfig& cfg,
+                                        const Y26PrepackedConvWeights* weights,
+                                        Y26ConvWorkspace* workspace,
+                                        const std::int8_t* input_s8_storage,
+                                        std::int32_t* output_i32,
+                                        double* conv_us,
+                                        double* correction_us) {
+    const auto begin = Clock::now();
+    const int status = y26_conv2d_u8s8s32_nhwc_ime_prepacked_fused_correction_v1(input_s8_storage,
+                                                                                  weights,
+                                                                                  cfg.bias_i32,
+                                                                                  output_i32,
+                                                                                  cfg.activation_zero_point_u8,
+                                                                                  workspace,
+                                                                                  Y26_CONV_LOOP_ORDER_M_MAJOR);
+    const auto end = Clock::now();
+    if (conv_us != nullptr) {
+        *conv_us = elapsed_us(begin, end);
+    }
+    if (correction_us != nullptr) {
+        *correction_us = 0.0;
+    }
+    return status;
+}
+
 int run_conv_threaded(const Y26Stage15Model4BranchWorkspace& ws,
                       const std::int8_t* input_s8,
                       std::int32_t* output_i32,
@@ -676,7 +704,8 @@ int build_concat_qdq_nhwc(const Y26Stage16Model4C2fConfig& cfg,
     if (use_split0_concat_lut && ws.split0_concat_s8 == nullptr) {
         return Y26_CONV_STATUS_INVALID_ARGUMENT;
     }
-    if (cfg.merge_mode == Y26_STAGE16_MERGE_MODE_STAGE26_BRANCH1_ADD_LUT) {
+    if (cfg.merge_mode == Y26_STAGE16_MERGE_MODE_STAGE26_BRANCH1_ADD_LUT ||
+        cfg.merge_mode == Y26_STAGE16_MERGE_MODE_STAGE33_MODEL4_CV2_MIXED_SIGNEDNESS) {
         return build_concat_qdq_nhwc_branch1_add_lut(cfg, ws, timing);
     }
     if (cfg.merge_mode == Y26_STAGE16_MERGE_MODE_STAGE24_B3_SPLIT1_LUT) {
@@ -832,7 +861,8 @@ int run_after_stage15(const Y26Stage16Model4C2fConfig& cfg,
     }
 
     double branch1_activation_us = 0.0;
-    if (cfg.merge_mode == Y26_STAGE16_MERGE_MODE_STAGE26_BRANCH1_ADD_LUT) {
+    if (cfg.merge_mode == Y26_STAGE16_MERGE_MODE_STAGE26_BRANCH1_ADD_LUT ||
+        cfg.merge_mode == Y26_STAGE16_MERGE_MODE_STAGE33_MODEL4_CV2_MIXED_SIGNEDNESS) {
         status = build_branch1_activation_code_lut(cfg, ws, use_ime, timing);
         if (status != Y26_CONV_STATUS_SUCCESS) {
             return status;
@@ -861,12 +891,17 @@ int run_after_stage15(const Y26Stage16Model4C2fConfig& cfg,
     double model4_cv2_compute_us = 0.0;
     double model4_cv2_copy_us = 0.0;
     double model4_cv2_worker_other_us = 0.0;
+    const bool use_model4_cv2_mixed =
+        cfg.merge_mode == Y26_STAGE16_MERGE_MODE_STAGE33_MODEL4_CV2_MIXED_SIGNEDNESS;
     if (use_ime && ws.model4_cv2_threaded_workspace != nullptr) {
         Y26ThreadedConvTimingUs threaded {};
-        status = y26_threaded_conv_run_ime_cluster0(ws.model4_cv2_threaded_workspace,
-                                                    ws.concat_s8,
-                                                    output_i32_nhwc,
-                                                    &threaded);
+        status = use_model4_cv2_mixed
+                     ? y26_threaded_conv_run_ime_cluster0_u8s8_fused_correction(
+                           ws.model4_cv2_threaded_workspace, ws.concat_s8, output_i32_nhwc, &threaded)
+                     : y26_threaded_conv_run_ime_cluster0(ws.model4_cv2_threaded_workspace,
+                                                          ws.concat_s8,
+                                                          output_i32_nhwc,
+                                                          &threaded);
         model4_cv2_conv_us = threaded.total_us;
         model4_cv2_correction_us = threaded.correction_us;
         model4_cv2_compute_us = threaded.worker_compute_us;
@@ -876,21 +911,30 @@ int run_after_stage15(const Y26Stage16Model4C2fConfig& cfg,
             timing->thread_overhead_us += std::max(0.0, threaded.total_us - threaded.worker_max_us);
         }
     } else {
-        status = use_ime ? run_conv_ime(cfg.model4_cv2,
-                                        ws.model4_cv2_weights,
-                                        ws.model4_cv2_workspace,
-                                        ws.concat_s8,
-                                        ws.model4_cv2_raw_i32,
-                                        output_i32_nhwc,
-                                        &model4_cv2_conv_us,
-                                        &model4_cv2_correction_us)
-                         : run_conv_scalar(cfg.model4_cv2,
+        status = use_ime
+                     ? (use_model4_cv2_mixed
+                            ? run_conv_ime_u8s8_fused_correction(cfg.model4_cv2,
+                                                                  ws.model4_cv2_weights,
+                                                                  ws.model4_cv2_workspace,
+                                                                  ws.concat_s8,
+                                                                  output_i32_nhwc,
+                                                                  &model4_cv2_conv_us,
+                                                                  &model4_cv2_correction_us)
+                            : run_conv_ime(cfg.model4_cv2,
                                            ws.model4_cv2_weights,
+                                           ws.model4_cv2_workspace,
                                            ws.concat_s8,
                                            ws.model4_cv2_raw_i32,
                                            output_i32_nhwc,
                                            &model4_cv2_conv_us,
-                                           &model4_cv2_correction_us);
+                                           &model4_cv2_correction_us))
+                     : run_conv_scalar(cfg.model4_cv2,
+                                       ws.model4_cv2_weights,
+                                       ws.concat_s8,
+                                       ws.model4_cv2_raw_i32,
+                                       output_i32_nhwc,
+                                       &model4_cv2_conv_us,
+                                       &model4_cv2_correction_us);
         model4_cv2_compute_us = std::max(0.0, model4_cv2_conv_us - model4_cv2_correction_us);
     }
 
@@ -910,7 +954,8 @@ int run_after_stage15(const Y26Stage16Model4C2fConfig& cfg,
         timing->model4_cv2_compute_us += model4_cv2_compute_us;
         timing->model4_cv2_copy_us += model4_cv2_copy_us;
         timing->model4_cv2_worker_other_us += model4_cv2_worker_other_us;
-        if (cfg.merge_mode != Y26_STAGE16_MERGE_MODE_STAGE26_BRANCH1_ADD_LUT) {
+        if (cfg.merge_mode != Y26_STAGE16_MERGE_MODE_STAGE26_BRANCH1_ADD_LUT &&
+            cfg.merge_mode != Y26_STAGE16_MERGE_MODE_STAGE33_MODEL4_CV2_MIXED_SIGNEDNESS) {
             timing->activation_requant_us += branch1_activation_us;
             timing->branch1_activation_us += branch1_activation_us;
         }
