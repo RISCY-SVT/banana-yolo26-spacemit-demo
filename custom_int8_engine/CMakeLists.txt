@@ -340,6 +340,15 @@ if(Y26_K1X_BUILD_TOOLS)
     if(Y26_K1X_ENABLE_IME)
         target_compile_definitions(bench_stage32_layout_decision PRIVATE Y26_K1X_ENABLE_IME_ASM=1)
     endif()
+
+    add_executable(bench_stage34_vmadot_throughput
+        tools/bench_stage34_vmadot_throughput.cpp
+    )
+    target_link_libraries(bench_stage34_vmadot_throughput PRIVATE y26_k1x_custom_int8_engine)
+    target_compile_options(bench_stage34_vmadot_throughput PRIVATE -Wall -Wextra -Wpedantic)
+    if(Y26_K1X_ENABLE_IME)
+        target_compile_definitions(bench_stage34_vmadot_throughput PRIVATE Y26_K1X_ENABLE_IME_ASM=1)
+    endif()
 endif()
 
 if(Y26_K1X_ENABLE_TESTS)

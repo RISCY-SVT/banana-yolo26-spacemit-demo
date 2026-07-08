@@ -1,0 +1,12 @@
+case	accumulator_groups	loads_per_iteration	status	mean_cycles_or_ns	stddev	min	max	guard_or_rc	notes
+probe_only_no_vmadot	0	0	pass	0	0	0	0	0	Stage34 bench default; validates probe/affinity path only and executes no smt.vmadot payload
+accepted_wrapper_existing	1	2	pass	49.487_ns_per_call	0.025	na	na	0	existing bench_vmadot_microkernel direct wrapper; selected-subset microdiagnostic only
+exact_single_wrapper_shape	1	2	sigill	na	na	na	na	132	Stage34 inline exact wrapper shape trapped; not used for runner
+dependent_chain_1acc_loadfree	1	0	sigill	na	na	na	na	132	back-to-back/loop direct asm trapped
+load_included_1acc	1	2	sigill	na	na	na	na	132	load-included direct asm loop trapped
+independent_2acc_high_loadfree	2	0	sigill	na	na	na	na	132	v28/v30 accumulator pair trapped
+independent_2acc_loadfree	2	0	sigill	na	na	na	na	132	v24/v26 accumulator pair trapped
+independent_4acc_loadfree	4	0	sigill	na	na	na	na	132	v20/v22/v24/v26 accumulator groups trapped
+independent_6acc_loadfree	6	0	sigill	na	na	na	na	132	v20/v22/v24/v26/v28/v30 accumulator groups trapped
+safe_vset_each_1acc	1	0	sigill	na	na	na	na	132	post-dot vsetvli e32 before loop control still trapped
+safe_vset_each_2acc_high	2	0	sigill	na	na	na	na	132	v28/v30 safe-vset loop trapped

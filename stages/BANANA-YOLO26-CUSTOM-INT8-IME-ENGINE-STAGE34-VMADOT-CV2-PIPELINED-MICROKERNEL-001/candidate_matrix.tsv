@@ -1,0 +1,7 @@
+candidate	status	correctness	performance	notes
+A0_current_baseline	pass	pass	not_candidate	Stage26/25 selected path replay, mismatches=0, SHA stable
+A1_unrolled_address_arithmetic_reduced	not_attempted	blocked_by_step0	not_run	Step0 direct inline smt.vmadot shapes trapped
+A2_pipeline_2_accumulator_tiles	rejected_preimplementation	blocked_by_step0	not_run	2 accumulator diagnostic shapes trapped with SIGILL
+A3_pipeline_4_accumulator_tiles	rejected_preimplementation	blocked_by_step0	not_run	4 accumulator diagnostic shape trapped with SIGILL
+A4_pipeline_4_accumulators_prefetch_distance_2	not_attempted	blocked_by_step0	not_run	no safe A3 substrate
+A5_pipeline_4_accumulators_prefetch_distance_3	not_attempted	blocked_by_step0	not_run	no safe A3 substrate

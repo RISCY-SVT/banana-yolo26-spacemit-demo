@@ -1,0 +1,11 @@
+bucket	mean_us	notes
+total_selected_cut_us	40178.5	selected /model.4 ONNX-cut only
+cv2_conv_us	12096.5	/model.4/cv2/conv/Conv threaded MMT4D
+cv2_compute_us	8071.68	critical worker raw smt.vmadot compute bucket
+cv2_correction_us	1753.73	explicit signed-storage correction
+cv2_writeback_us	0	Stage28 writeback cleanup retained
+cv2_thread_overhead_us	unknown_per_node	total selected thread_overhead_us=5243.32 includes all threaded conv regions
+output_quantize_us	7070.4	final selected-cut output QuantizeLinear
+merge_us	2124	branch1/add LUT merge path
+activation_requant_us	2980.93	post Stage26 activation path
+attribution_pct	99.9385	non-overlapping selected-cut attribution from runner output
