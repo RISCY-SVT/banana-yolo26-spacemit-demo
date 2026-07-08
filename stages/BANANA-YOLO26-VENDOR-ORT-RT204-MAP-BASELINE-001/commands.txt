@@ -1,0 +1,189 @@
+# Commands
+RUN_TS=2026-07-08_06-06-54
+LOG_DIR=/data/ncnn-logs/ai-team/2026-07-08_06-06-54/BANANA-YOLO26-VENDOR-ORT-RT204-MAP-BASELINE-001
+TASK_RUN_DIR=/data/lab/task-runs/BANANA-YOLO26-VENDOR-ORT-RT204-MAP-BASELINE-001
+STAGE_DIR=/data/banana-yolo26-spacemit-demo/stages/BANANA-YOLO26-VENDOR-ORT-RT204-MAP-BASELINE-001
+===== COMMAND preflight_pwd =====
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=pwd
+timestamp=2026-07-08T06:07:18+02:00
+exit_code=0
+log=/data/ncnn-logs/ai-team/2026-07-08_06-06-54/BANANA-YOLO26-VENDOR-ORT-RT204-MAP-BASELINE-001/run_logs/preflight_pwd.log
+===== COMMAND preflight_git_status =====
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=git status --short --branch
+timestamp=2026-07-08T06:07:18+02:00
+exit_code=0
+log=/data/ncnn-logs/ai-team/2026-07-08_06-06-54/BANANA-YOLO26-VENDOR-ORT-RT204-MAP-BASELINE-001/run_logs/preflight_git_status.log
+===== COMMAND preflight_head =====
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=git rev-parse HEAD
+timestamp=2026-07-08T06:07:18+02:00
+exit_code=0
+log=/data/ncnn-logs/ai-team/2026-07-08_06-06-54/BANANA-YOLO26-VENDOR-ORT-RT204-MAP-BASELINE-001/run_logs/preflight_head.log
+===== COMMAND preflight_branch =====
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=git branch --show-current
+timestamp=2026-07-08T06:07:19+02:00
+exit_code=0
+log=/data/ncnn-logs/ai-team/2026-07-08_06-06-54/BANANA-YOLO26-VENDOR-ORT-RT204-MAP-BASELINE-001/run_logs/preflight_branch.log
+===== COMMAND preflight_remotes =====
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=git remote -v
+timestamp=2026-07-08T06:07:19+02:00
+exit_code=0
+log=/data/ncnn-logs/ai-team/2026-07-08_06-06-54/BANANA-YOLO26-VENDOR-ORT-RT204-MAP-BASELINE-001/run_logs/preflight_remotes.log
+===== COMMAND preflight_log =====
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=git log --oneline -8
+timestamp=2026-07-08T06:07:19+02:00
+exit_code=0
+log=/data/ncnn-logs/ai-team/2026-07-08_06-06-54/BANANA-YOLO26-VENDOR-ORT-RT204-MAP-BASELINE-001/run_logs/preflight_log.log
+===== COMMAND preflight_untracked_summary =====
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=bash -lc git status --porcelain=v1 | sed -n "1,120p"
+timestamp=2026-07-08T06:07:19+02:00
+exit_code=0
+log=/data/ncnn-logs/ai-team/2026-07-08_06-06-54/BANANA-YOLO26-VENDOR-ORT-RT204-MAP-BASELINE-001/run_logs/preflight_untracked_summary.log
+===== COMMAND stage28_exists =====
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=bash -lc test -d stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE28-MODEL4-CONV-MMT4D-TILE-PREPACK-REPAIR-001 && find stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE28-MODEL4-CONV-MMT4D-TILE-PREPACK-REPAIR-001 -maxdepth 1 -type f | sort | sed -n "1,120p"
+timestamp=2026-07-08T06:07:19+02:00
+exit_code=0
+log=/data/ncnn-logs/ai-team/2026-07-08_06-06-54/BANANA-YOLO26-VENDOR-ORT-RT204-MAP-BASELINE-001/run_logs/stage28_exists.log
+===== COMMAND python_versions =====
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=bash -lc python3 --version; python3 - <<"PY"
+import sys
+mods=["onnx","onnxruntime","numpy","pycocotools"]
+for m in mods:
+    try:
+        mod=__import__(m)
+        print(f"{m}={getattr(mod, __version__, unknown)}")
+    except Exception as e:
+        print(f"{m}=MISSING ({e.__class__.__name__}: {e})")
+PY
+timestamp=2026-07-08T06:07:20+02:00
+exit_code=0
+log=/data/ncnn-logs/ai-team/2026-07-08_06-06-54/BANANA-YOLO26-VENDOR-ORT-RT204-MAP-BASELINE-001/run_logs/python_versions.log
+===== COMMAND host_env =====
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=bash -lc hostname; uname -a; date -Iseconds; env | sort | rg -n "^(BANANA|K1X|RISCV|ORT|ONNX|LD_LIBRARY_PATH|PATH=|PYTHONPATH=)" || true
+timestamp=2026-07-08T06:07:21+02:00
+exit_code=0
+log=/data/ncnn-logs/ai-team/2026-07-08_06-06-54/BANANA-YOLO26-VENDOR-ORT-RT204-MAP-BASELINE-001/run_logs/host_env.log
+===== COMMAND repo_file_summary =====
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=bash -lc find . -maxdepth 3 \( -name "*.onnx" -o -name "*.pt" -o -name "*.json" -o -name "*.bin" \) -type f | sed -n "1,200p"
+timestamp=2026-07-08T06:07:21+02:00
+exit_code=0
+log=/data/ncnn-logs/ai-team/2026-07-08_06-06-54/BANANA-YOLO26-VENDOR-ORT-RT204-MAP-BASELINE-001/run_logs/repo_file_summary.log
+===== COMMAND build_rt204_with_coco_predict =====
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=BANANA_DEMO_BUILD_VARIANTS=rt204 scripts/build_cross.sh
+timestamp=2026-07-08T06:12:17+02:00
+exit_code=0
+===== COMMAND board_storage_probe =====
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=ssh svt@banana df/find
+timestamp=2026-07-08T06:12:39+02:00
+===== COMMAND setup_eval_venv =====
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=python3 -m venv .deps/venvs/trackb_coco_eval && pip install pycocotools
+timestamp=2026-07-08T06:13:01+02:00
+exit_code=0
+===== COMMAND deploy_trackb_rt204 =====
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=rsync rt204/model/tool to board:/home/svt/banana-yolo26-trackb-rt204-map
+timestamp=2026-07-08T06:13:48+02:00
+exit_code=0
+===== COMMAND board_smoke_fp16_predict =====
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=ssh svt@banana cd '/home/svt/banana-yolo26-trackb-rt204-map' && rm -f outputs/pred_smoke_fp16.json outputs/timing_smoke_fp16.tsv && taskset -c 0-3 bin/yolo26_coco_predict --model models/yolo26n_640_e2e_native_fp16_body_headfp32_keep_io.onnx --labels assets/coco80.txt --images /home/svt/datasets/coco2017/val2017 --output outputs/pred_smoke_fp16.json --timing-tsv outputs/timing_smoke_fp16.tsv --provider spacemit --threads 4 --pin cluster0 --input-size 640 --conf 0.001 --iou 0.7 --limit 10 --log-every 1
+timestamp=2026-07-08T06:14:15+02:00
+exit_code=0
+===== COMMAND smoke_cocoeval_fp16 =====
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=.deps/venvs/trackb_coco_eval/bin/python /data/ncnn-logs/ai-team/2026-07-08_06-06-54/BANANA-YOLO26-VENDOR-ORT-RT204-MAP-BASELINE-001/run_eval.py --ann /data/datasets/coco2017/annotations/instances_val2017.json --pred /data/ncnn-logs/ai-team/2026-07-08_06-06-54/BANANA-YOLO26-VENDOR-ORT-RT204-MAP-BASELINE-001/artifacts/pred_smoke_fp16.json
+timestamp=2026-07-08T06:14:47+02:00
+===== COMMAND board_full_coco_fp32_predict =====
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=ssh svt@banana cd '/home/svt/banana-yolo26-trackb-rt204-map' && rm -f outputs/pred_full_fp32.json outputs/timing_full_fp32.tsv && taskset -c 0-3 bin/yolo26_coco_predict --model models/yolo26n_640_e2e_fp32.onnx --labels assets/coco80.txt --images /home/svt/datasets/coco2017/val2017 --output outputs/pred_full_fp32.json --timing-tsv outputs/timing_full_fp32.tsv --provider spacemit --threads 4 --pin cluster0 --input-size 640 --conf 0.001 --iou 0.7 --log-every 100
+timestamp=2026-07-08T06:15:18+02:00
+exit_code=0
+===== COMMAND fetch_and_eval_full_fp32 =====
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=scp fp32 outputs; pycocotools COCOeval
+timestamp=2026-07-08T07:01:47+02:00
+===== COMMAND board_full_coco_fp16_keepio_predict =====
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=ssh svt@banana cd '/home/svt/banana-yolo26-trackb-rt204-map' && rm -f outputs/pred_full_fp16_keepio.json outputs/timing_full_fp16_keepio.tsv && taskset -c 0-3 bin/yolo26_coco_predict --model models/yolo26n_640_e2e_native_fp16_body_headfp32_keep_io.onnx --labels assets/coco80.txt --images /home/svt/datasets/coco2017/val2017 --output outputs/pred_full_fp16_keepio.json --timing-tsv outputs/timing_full_fp16_keepio.tsv --provider spacemit --threads 4 --pin cluster0 --input-size 640 --conf 0.001 --iou 0.7 --log-every 100
+timestamp=2026-07-08T07:04:33+02:00
+exit_code=0
+===== COMMAND fetch_and_eval_full_fp16_keepio =====
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=scp fp16 outputs; pycocotools COCOeval
+timestamp=2026-07-08T07:40:19+02:00
+===== COMMAND board_stable_fps_matrix =====
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=ssh svt@banana <stable app/perf matrix>
+timestamp=2026-07-08T07:42:37+02:00
+exit_code=1
+===== COMMAND board_stable_fps_matrix_retry_loader =====
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=ssh svt@banana <fp16 app and perf matrix with LD_LIBRARY_PATH>
+timestamp=2026-07-08T07:53:05+02:00
+exit_code=0
+===== COMMAND output_contract_sanity_compare =====
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=.deps/venvs/ultralytics_latest/bin/python /data/ncnn-logs/ai-team/2026-07-08_06-06-54/BANANA-YOLO26-VENDOR-ORT-RT204-MAP-BASELINE-001/run_sanity_compare.py /data/ncnn-logs/ai-team/2026-07-08_06-06-54/BANANA-YOLO26-VENDOR-ORT-RT204-MAP-BASELINE-001
+timestamp=2026-07-08T08:09:50+02:00
+===== FINAL VALIDATION 2026-07-08T08:14:37+02:00 =====
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=git diff --check
+exit_code=0
+cmd=find custom_int8_engine stages -type l -print
+exit_code=0
+cmd=rg secret-like scan over changed source/reports excluding commands logs
+exit_code=0
+cmd=git status --short --branch
+===== COMMAND final_cross_build_rt204 =====
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=BANANA_DEMO_BUILD_VARIANTS=rt204 scripts/build_cross.sh
+timestamp=2026-07-08T08:14:47+02:00
+exit_code=0
+===== COMMAND cross_track_status_notes =====
+cwd=/data
+cmd=git -C /data/ncnn status --short; git -C /data/banana-yolo11-spacemit-demo status --short
+timestamp=2026-07-08T08:15:04+02:00
+exit_code=0
+===== COMMAND git_stage_trackb_files =====
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=git add CMakeLists.txt tools/yolo26_coco_predict.cpp stages/BANANA-YOLO26-VENDOR-ORT-RT204-MAP-BASELINE-001
+timestamp=2026-07-08T08:15:52+02:00
+exit_code=0
+===== COMMAND git_diff_cached_check =====
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=git diff --cached --check
+timestamp=2026-07-08T08:15:52+02:00
+exit_code=0
+===== COMMAND git_diff_cached_stat =====
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=git diff --cached --stat
+timestamp=2026-07-08T08:15:52+02:00
+exit_code=0
+===== COMMAND staged_file_size_check =====
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=git diff --cached --name-only | xargs ls -lh
+timestamp=2026-07-08T08:16:07+02:00
+exit_code=0
+===== COMMAND git_add_commands_final_precommit =====
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=git add stages/BANANA-YOLO26-VENDOR-ORT-RT204-MAP-BASELINE-001/commands.txt
+timestamp=2026-07-08T08:16:07+02:00
+exit_code=0
+===== COMMAND git_status_precommit =====
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=git status --short
+timestamp=2026-07-08T08:16:07+02:00
+exit_code=0

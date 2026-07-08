@@ -75,12 +75,19 @@ endif()
 
 add_executable(banana_yolo11_demo src/main.cpp)
 target_link_libraries(banana_yolo11_demo PRIVATE banana_demo_core)
+
+add_executable(yolo26_coco_predict tools/yolo26_coco_predict.cpp)
+target_link_libraries(yolo26_coco_predict PRIVATE banana_demo_core)
 set_target_properties(banana_yolo11_demo PROPERTIES
     BUILD_RPATH "${VENDOR_SPACEMIT_ORT_ROOT}/lib"
     INSTALL_RPATH "$ORIGIN/../runtime/${BANANA_DEMO_RUNTIME_SUBDIR};$ORIGIN/../../runtime/${BANANA_DEMO_RUNTIME_SUBDIR};$ORIGIN/../opencv/lib;$ORIGIN/../../opencv/lib"
 )
+set_target_properties(yolo26_coco_predict PROPERTIES
+    BUILD_RPATH "${VENDOR_SPACEMIT_ORT_ROOT}/lib"
+    INSTALL_RPATH "$ORIGIN/../runtime/${BANANA_DEMO_RUNTIME_SUBDIR};$ORIGIN/../../runtime/${BANANA_DEMO_RUNTIME_SUBDIR};$ORIGIN/../opencv/lib;$ORIGIN/../../opencv/lib"
+)
 
-install(TARGETS banana_yolo11_demo
+install(TARGETS banana_yolo11_demo yolo26_coco_predict
     RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
 )
 
