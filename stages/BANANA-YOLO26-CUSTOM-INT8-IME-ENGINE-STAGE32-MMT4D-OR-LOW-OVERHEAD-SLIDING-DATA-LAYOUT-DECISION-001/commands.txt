@@ -1,0 +1,36 @@
+[2026-07-08T12:51:32+02:00] cwd=/data command=preflight repo status
+exit_code=0
+[2026-07-08T12:59:12+02:00] cwd=/data/banana-yolo26-spacemit-demo command=env sanity and host configure/build/ctest
+[2026-07-08T13:00:04+02:00] cwd=/data/banana-yolo26-spacemit-demo command=host build retry and ctest
+exit_code=0
+[2026-07-08T13:00:34+02:00] cwd=/data/banana-yolo26-spacemit-demo command=riscv cross configure/build
+[2026-07-08T13:00:54+02:00] cwd=/data/banana-yolo26-spacemit-demo command=riscv cross configure/build with explicit ARCH_FLAGS
+[2026-07-08T13:01:07+02:00] cwd=/data/banana-yolo26-spacemit-demo command=riscv cross configure/build with explicit K1_ARCH_FLAGS fallback
+exit_code=0
+[2026-07-08T13:02:09+02:00] cwd=/data/banana-yolo26-spacemit-demo command=objdump Stage32 tool signedness/IME evidence
+exit_code=0
+[2026-07-08T13:02:32+02:00] cwd=/data/banana-yolo26-spacemit-demo command=board deploy and environment anchor
+exit_code=0
+[2026-07-08T13:02:46+02:00] cwd=/data/banana-yolo26-spacemit-demo command=board Stage31 replay stable
+exit_code=0
+[2026-07-08T13:03:45+02:00] cwd=/data/banana-yolo26-spacemit-demo command=board Stage32 layout/signedness stable
+[2026-07-08T13:05:24+02:00] cwd=/data/banana-yolo26-spacemit-demo command=rebuild Stage32 tool host/cross after B4 fix
+exit_code=0
+[2026-07-08T13:05:59+02:00] cwd=/data/banana-yolo26-spacemit-demo command=board Stage32 layout/signedness stable retry
+exit_code=0
+[2026-07-08T13:07:29+02:00] cwd=/data/banana-yolo26-spacemit-demo command=board selected-cut Stage26/28 MMT4D threaded replay
+exit_code=0
+[2026-07-08T13:08:05+02:00] cwd=/data/banana-yolo26-spacemit-demo command=board Stage32 CPU0-3 signedness proof smoke
+exit_code=0
+[2026-07-08T13:13:47+02:00] cwd=/data/banana-yolo26-spacemit-demo command=final host build and ctest
+exit_code=0
+[2026-07-08T13:14:00+02:00] cwd=/data/banana-yolo26-spacemit-demo command=final riscv cross build
+exit_code=0
+[2026-07-08T13:14:20+02:00] cwd=/data/banana-yolo26-spacemit-demo command=final hygiene scans
+exit_code=0
+[2026-07-08T13:15:05+02:00] cwd=/data/banana-yolo26-spacemit-demo command=git add and cached diff check
+exit_code=2
+[2026-07-08T13:15:17+02:00] cwd=/data/banana-yolo26-spacemit-demo command=trim report trailing blank lines and rerun cached diff check
+exit_code=0
+[2026-07-08T13:15:32+02:00] cwd=/data/banana-yolo26-spacemit-demo command=local commit Stage32
+commit_message=Decide YOLO26 MMT4D mainline after sliding layout proof
