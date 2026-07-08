@@ -23,6 +23,7 @@ add_library(y26_k1x_custom_int8_engine
     kernels/pack_mmt4d.cpp
     kernels/vmadot_4x4x8_ime.cpp
     kernels/vmadot_4x4x8_scalar.cpp
+    kernels/vmadot123_probe.cpp
     kernels/vmadot_stub.cpp
     src/branch_block_runner.cpp
     src/backbone_subset_runner.cpp
@@ -308,6 +309,15 @@ if(Y26_K1X_BUILD_TOOLS)
     target_compile_options(bench_stage23_model4_runner_cut PRIVATE -Wall -Wextra -Wpedantic)
     if(Y26_K1X_ENABLE_IME)
         target_compile_definitions(bench_stage23_model4_runner_cut PRIVATE Y26_K1X_ENABLE_IME_ASM=1)
+    endif()
+
+    add_executable(bench_stage30_vmadot123_probe
+        tools/bench_stage30_vmadot123_probe.cpp
+    )
+    target_link_libraries(bench_stage30_vmadot123_probe PRIVATE y26_k1x_custom_int8_engine)
+    target_compile_options(bench_stage30_vmadot123_probe PRIVATE -Wall -Wextra -Wpedantic)
+    if(Y26_K1X_ENABLE_IME)
+        target_compile_definitions(bench_stage30_vmadot123_probe PRIVATE Y26_K1X_ENABLE_IME_ASM=1)
     endif()
 endif()
 

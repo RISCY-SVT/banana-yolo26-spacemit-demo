@@ -1,0 +1,5 @@
+candidate	node	correctness_status	mean_us	speedup_vs_stage28_mmt4d	notes
+stage28_threaded_mmt4d	/model.4/m.0/cv1/conv/Conv	accepted_previous	7797.29	1.0	Stage28 reference from prior report
+stage28_threaded_mmt4d	/model.4/m.0/cv2/conv/Conv	accepted_previous	5996.58	1.0	Stage28 reference from prior report
+vmadot123_direct_conv_sidecar	/model.4/m.0/cv1/conv/Conv	not_attempted	n/a	n/a	instruction semantics proven; real expanded-A schedule deferred
+vmadot123_direct_conv_sidecar	/model.4/m.0/cv2/conv/Conv	not_attempted	n/a	n/a	instruction semantics proven; real expanded-A schedule deferred

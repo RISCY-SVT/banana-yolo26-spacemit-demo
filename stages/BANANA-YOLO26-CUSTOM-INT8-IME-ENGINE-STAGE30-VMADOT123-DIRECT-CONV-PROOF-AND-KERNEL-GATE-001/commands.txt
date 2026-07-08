@@ -1,0 +1,358 @@
+[bootstrap] cwd=/data exit=0
+RUN_TS=2026-07-08T09:43:24+02:00
+LOG_DIR=/data/ncnn-logs/ai-team/2026-07-08_09-43-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE30-VMADOT123-DIRECT-CONV-PROOF-AND-KERNEL-GATE-001
+SHARED_LOG=/data/ncnn-logs/ai-team/2026-07-08/2026-07-08_07-43-24__contcodex__BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE30-VMADOT123-DIRECT-CONV-PROOF-AND-KERNEL-GATE-001__stage30-vmadot123-proof
+check-bridge-layout: see /data/ncnn-logs/ai-team/2026-07-08_09-43-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE30-VMADOT123-DIRECT-CONV-PROOF-AND-KERNEL-GATE-001/run_logs/check_bridge_layout.log
+---
+ts=2026-07-08T09:43:52+02:00
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=pwd
+env_notes=STAGE_ID=BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE30-VMADOT123-DIRECT-CONV-PROOF-AND-KERNEL-GATE-001 LOG_DIR=/data/ncnn-logs/ai-team/2026-07-08_09-43-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE30-VMADOT123-DIRECT-CONV-PROOF-AND-KERNEL-GATE-001
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-08_09-43-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE30-VMADOT123-DIRECT-CONV-PROOF-AND-KERNEL-GATE-001/run_logs/preflight_pwd.log
+---
+ts=2026-07-08T09:43:52+02:00
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=git status --short --branch
+env_notes=STAGE_ID=BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE30-VMADOT123-DIRECT-CONV-PROOF-AND-KERNEL-GATE-001 LOG_DIR=/data/ncnn-logs/ai-team/2026-07-08_09-43-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE30-VMADOT123-DIRECT-CONV-PROOF-AND-KERNEL-GATE-001
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-08_09-43-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE30-VMADOT123-DIRECT-CONV-PROOF-AND-KERNEL-GATE-001/run_logs/preflight_git_status.log
+---
+ts=2026-07-08T09:43:52+02:00
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=git rev-parse HEAD
+env_notes=STAGE_ID=BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE30-VMADOT123-DIRECT-CONV-PROOF-AND-KERNEL-GATE-001 LOG_DIR=/data/ncnn-logs/ai-team/2026-07-08_09-43-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE30-VMADOT123-DIRECT-CONV-PROOF-AND-KERNEL-GATE-001
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-08_09-43-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE30-VMADOT123-DIRECT-CONV-PROOF-AND-KERNEL-GATE-001/run_logs/preflight_head.log
+---
+ts=2026-07-08T09:43:52+02:00
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=git branch --show-current
+env_notes=STAGE_ID=BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE30-VMADOT123-DIRECT-CONV-PROOF-AND-KERNEL-GATE-001 LOG_DIR=/data/ncnn-logs/ai-team/2026-07-08_09-43-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE30-VMADOT123-DIRECT-CONV-PROOF-AND-KERNEL-GATE-001
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-08_09-43-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE30-VMADOT123-DIRECT-CONV-PROOF-AND-KERNEL-GATE-001/run_logs/preflight_branch.log
+---
+ts=2026-07-08T09:43:52+02:00
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=git log --oneline -8
+env_notes=STAGE_ID=BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE30-VMADOT123-DIRECT-CONV-PROOF-AND-KERNEL-GATE-001 LOG_DIR=/data/ncnn-logs/ai-team/2026-07-08_09-43-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE30-VMADOT123-DIRECT-CONV-PROOF-AND-KERNEL-GATE-001
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-08_09-43-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE30-VMADOT123-DIRECT-CONV-PROOF-AND-KERNEL-GATE-001/run_logs/preflight_log.log
+---
+ts=2026-07-08T09:43:52+02:00
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=git remote -v
+env_notes=STAGE_ID=BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE30-VMADOT123-DIRECT-CONV-PROOF-AND-KERNEL-GATE-001 LOG_DIR=/data/ncnn-logs/ai-team/2026-07-08_09-43-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE30-VMADOT123-DIRECT-CONV-PROOF-AND-KERNEL-GATE-001
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-08_09-43-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE30-VMADOT123-DIRECT-CONV-PROOF-AND-KERNEL-GATE-001/run_logs/preflight_remotes.log
+---
+ts=2026-07-08T09:43:52+02:00
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=git diff --stat
+env_notes=STAGE_ID=BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE30-VMADOT123-DIRECT-CONV-PROOF-AND-KERNEL-GATE-001 LOG_DIR=/data/ncnn-logs/ai-team/2026-07-08_09-43-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE30-VMADOT123-DIRECT-CONV-PROOF-AND-KERNEL-GATE-001
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-08_09-43-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE30-VMADOT123-DIRECT-CONV-PROOF-AND-KERNEL-GATE-001/run_logs/preflight_diff_stat.log
+---
+ts=2026-07-08T09:43:52+02:00
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=git diff --check
+env_notes=STAGE_ID=BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE30-VMADOT123-DIRECT-CONV-PROOF-AND-KERNEL-GATE-001 LOG_DIR=/data/ncnn-logs/ai-team/2026-07-08_09-43-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE30-VMADOT123-DIRECT-CONV-PROOF-AND-KERNEL-GATE-001
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-08_09-43-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE30-VMADOT123-DIRECT-CONV-PROOF-AND-KERNEL-GATE-001/run_logs/preflight_diff_check.log
+---
+ts=2026-07-08T09:43:52+02:00
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=bash -lc /opt/riscv/bin/riscv64-unknown-linux-gnu-gcc --version || true
+env_notes=STAGE_ID=BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE30-VMADOT123-DIRECT-CONV-PROOF-AND-KERNEL-GATE-001 LOG_DIR=/data/ncnn-logs/ai-team/2026-07-08_09-43-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE30-VMADOT123-DIRECT-CONV-PROOF-AND-KERNEL-GATE-001
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-08_09-43-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE30-VMADOT123-DIRECT-CONV-PROOF-AND-KERNEL-GATE-001/run_logs/toolchain_opt_riscv.log
+---
+ts=2026-07-08T09:43:53+02:00
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=bash -lc /data/SpacemiT/spacemit-toolchain-linux-glibc-x86_64-v1.1.2/bin/riscv64-unknown-linux-gnu-gcc --version || true
+env_notes=STAGE_ID=BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE30-VMADOT123-DIRECT-CONV-PROOF-AND-KERNEL-GATE-001 LOG_DIR=/data/ncnn-logs/ai-team/2026-07-08_09-43-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE30-VMADOT123-DIRECT-CONV-PROOF-AND-KERNEL-GATE-001
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-08_09-43-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE30-VMADOT123-DIRECT-CONV-PROOF-AND-KERNEL-GATE-001/run_logs/toolchain_spacemit.log
+---
+ts=2026-07-08T09:43:53+02:00
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=check task packet presence
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-08_09-43-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE30-VMADOT123-DIRECT-CONV-PROOF-AND-KERNEL-GATE-001/run_logs/packet_absent.log
+---
+ts=2026-07-08T09:47:41+02:00
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=cmake -S custom_int8_engine -B .deps/custom_int8_engine/build-host-native-stage30 -DCMAKE_BUILD_TYPE=Debug -DY26_K1X_ENABLE_IME=OFF -DCMAKE_CXX_COMPILER=/usr/bin/g++
+env_notes=host build stage30
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-08_09-43-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE30-VMADOT123-DIRECT-CONV-PROOF-AND-KERNEL-GATE-001/run_logs/host_cmake_config.log
+---
+ts=2026-07-08T09:47:43+02:00
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=cmake --build .deps/custom_int8_engine/build-host-native-stage30 -j8
+env_notes=host build stage30
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-08_09-43-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE30-VMADOT123-DIRECT-CONV-PROOF-AND-KERNEL-GATE-001/run_logs/host_cmake_build.log
+---
+ts=2026-07-08T09:48:16+02:00
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=ctest --test-dir .deps/custom_int8_engine/build-host-native-stage30 --output-on-failure
+env_notes=host build stage30
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-08_09-43-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE30-VMADOT123-DIRECT-CONV-PROOF-AND-KERNEL-GATE-001/run_logs/host_ctest.log
+---
+ts=2026-07-08T09:48:40+02:00
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=cmake -S custom_int8_engine -B .deps/custom_int8_engine/build-riscv-stage30 -DCMAKE_BUILD_TYPE=Release -DY26_K1X_ENABLE_IME=ON -DCMAKE_SYSTEM_NAME=Linux -DCMAKE_SYSTEM_PROCESSOR=riscv64 -DCMAKE_C_COMPILER=/data/SpacemiT/spacemit-toolchain-linux-glibc-x86_64-v1.1.2/bin/riscv64-unknown-linux-gnu-gcc -DCMAKE_CXX_COMPILER=/data/SpacemiT/spacemit-toolchain-linux-glibc-x86_64-v1.1.2/bin/riscv64-unknown-linux-gnu-g++ -DCMAKE_FIND_ROOT_PATH=/data/SpacemiT/spacemit-toolchain-linux-glibc-x86_64-v1.1.2/sysroot
+env_notes=cross build stage30
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-08_09-43-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE30-VMADOT123-DIRECT-CONV-PROOF-AND-KERNEL-GATE-001/run_logs/riscv_cmake_config.log
+---
+ts=2026-07-08T09:48:43+02:00
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=cmake --build .deps/custom_int8_engine/build-riscv-stage30 -j8
+env_notes=cross build stage30
+exit_code=2 log=/data/ncnn-logs/ai-team/2026-07-08_09-43-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE30-VMADOT123-DIRECT-CONV-PROOF-AND-KERNEL-GATE-001/run_logs/riscv_cmake_build.log
+---
+ts=2026-07-08T09:49:35+02:00
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=cmake -S custom_int8_engine -B .deps/custom_int8_engine/build-riscv-stage30 -DCMAKE_BUILD_TYPE=Release -DY26_K1X_ENABLE_IME=ON -DCMAKE_SYSTEM_NAME=Linux -DCMAKE_SYSTEM_PROCESSOR=riscv64 -DCMAKE_C_COMPILER=/data/SpacemiT/spacemit-toolchain-linux-glibc-x86_64-v1.1.2/bin/riscv64-unknown-linux-gnu-gcc -DCMAKE_CXX_COMPILER=/data/SpacemiT/spacemit-toolchain-linux-glibc-x86_64-v1.1.2/bin/riscv64-unknown-linux-gnu-g++ -DCMAKE_FIND_ROOT_PATH=/data/SpacemiT/spacemit-toolchain-linux-glibc-x86_64-v1.1.2/sysroot -DCMAKE_CXX_FLAGS=-march=rv64gcv_zvfh -mabi=lp64d
+env_notes=cross build stage30 with explicit ARCH_FLAGS
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-08_09-43-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE30-VMADOT123-DIRECT-CONV-PROOF-AND-KERNEL-GATE-001/run_logs/riscv_cmake_config_arch.log
+---
+ts=2026-07-08T09:49:37+02:00
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=cmake --build .deps/custom_int8_engine/build-riscv-stage30 -j8
+env_notes=cross build stage30 with explicit ARCH_FLAGS
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-08_09-43-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE30-VMADOT123-DIRECT-CONV-PROOF-AND-KERNEL-GATE-001/run_logs/riscv_cmake_build_arch.log
+---
+ts=2026-07-08T09:50:23+02:00
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=bash -lc /data/SpacemiT/spacemit-toolchain-linux-glibc-x86_64-v1.1.2/bin/riscv64-unknown-linux-gnu-objdump -d .deps/custom_int8_engine/build-riscv-stage30/bench_stage30_vmadot123_probe | grep -E "smt\.vmadot|\.insn|\.word" || true
+env_notes=cross build stage30 with explicit ARCH_FLAGS
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-08_09-43-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE30-VMADOT123-DIRECT-CONV-PROOF-AND-KERNEL-GATE-001/run_logs/riscv_objdump_stage30.log
+---
+ts=2026-07-08T09:50:50+02:00
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=ssh svt@banana hostname; uname -a; lscpu | sed -n '1,40p'; echo governor; cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor 2>/dev/null || true; echo freq; cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq 2>/dev/null || true
+env_notes=board stage30 soft-capture
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-08_09-43-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE30-VMADOT123-DIRECT-CONV-PROOF-AND-KERNEL-GATE-001/run_logs/board_env.log
+---
+ts=2026-07-08T09:50:51+02:00
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=ssh svt@banana mkdir -p '/home/svt/banana-yolo26-stage30-vmadot123'
+env_notes=board stage30 soft-capture
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-08_09-43-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE30-VMADOT123-DIRECT-CONV-PROOF-AND-KERNEL-GATE-001/run_logs/board_mkdir.log
+---
+ts=2026-07-08T09:50:52+02:00
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=scp .deps/custom_int8_engine/build-riscv-stage30/bench_stage30_vmadot123_probe svt@banana:/home/svt/banana-yolo26-stage30-vmadot123/bench_stage30_vmadot123_probe
+env_notes=board stage30 soft-capture
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-08_09-43-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE30-VMADOT123-DIRECT-CONV-PROOF-AND-KERNEL-GATE-001/run_logs/board_scp.log
+---
+ts=2026-07-08T09:50:52+02:00
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=ssh svt@banana sha256sum '/home/svt/banana-yolo26-stage30-vmadot123/bench_stage30_vmadot123_probe'
+env_notes=board stage30 soft-capture
+exit_code=0 log=/data/ncnn-logs/ai-team/2026-07-08_09-43-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE30-VMADOT123-DIRECT-CONV-PROOF-AND-KERNEL-GATE-001/run_logs/board_sha.log
+---
+ts=2026-07-08T09:50:53+02:00
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=ssh svt@banana timeout 20s taskset -c 0 '/home/svt/banana-yolo26-stage30-vmadot123/bench_stage30_vmadot123_probe'
+env_notes=board stage30 soft-capture
+exit_code=1 log=/data/ncnn-logs/ai-team/2026-07-08_09-43-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE30-VMADOT123-DIRECT-CONV-PROOF-AND-KERNEL-GATE-001/run_logs/board_probe_cpu0.log
+---
+ts=2026-07-08T09:50:54+02:00
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=ssh svt@banana timeout 20s taskset -c 1 '/home/svt/banana-yolo26-stage30-vmadot123/bench_stage30_vmadot123_probe'
+env_notes=board stage30 soft-capture
+exit_code=1 log=/data/ncnn-logs/ai-team/2026-07-08_09-43-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE30-VMADOT123-DIRECT-CONV-PROOF-AND-KERNEL-GATE-001/run_logs/board_probe_cpu1.log
+---
+ts=2026-07-08T09:50:54+02:00
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=ssh svt@banana timeout 20s taskset -c 2 '/home/svt/banana-yolo26-stage30-vmadot123/bench_stage30_vmadot123_probe'
+env_notes=board stage30 soft-capture
+exit_code=1 log=/data/ncnn-logs/ai-team/2026-07-08_09-43-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE30-VMADOT123-DIRECT-CONV-PROOF-AND-KERNEL-GATE-001/run_logs/board_probe_cpu2.log
+---
+ts=2026-07-08T09:50:55+02:00
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=ssh svt@banana timeout 20s taskset -c 3 '/home/svt/banana-yolo26-stage30-vmadot123/bench_stage30_vmadot123_probe'
+env_notes=board stage30 soft-capture
+exit_code=1 log=/data/ncnn-logs/ai-team/2026-07-08_09-43-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE30-VMADOT123-DIRECT-CONV-PROOF-AND-KERNEL-GATE-001/run_logs/board_probe_cpu3.log
+---
+ts=2026-07-08T09:50:56+02:00
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=ssh svt@banana timeout 20s taskset -c 0 '/home/svt/banana-yolo26-stage30-vmadot123/bench_stage30_vmadot123_probe' --variant 1
+env_notes=board stage30 soft-capture
+exit_code=1 log=/data/ncnn-logs/ai-team/2026-07-08_09-43-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE30-VMADOT123-DIRECT-CONV-PROOF-AND-KERNEL-GATE-001/run_logs/board_probe_cpu0_vmadot1.log
+---
+ts=2026-07-08T09:50:57+02:00
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=ssh svt@banana timeout 20s taskset -c 0 '/home/svt/banana-yolo26-stage30-vmadot123/bench_stage30_vmadot123_probe' --variant 2
+env_notes=board stage30 soft-capture
+exit_code=1 log=/data/ncnn-logs/ai-team/2026-07-08_09-43-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE30-VMADOT123-DIRECT-CONV-PROOF-AND-KERNEL-GATE-001/run_logs/board_probe_cpu0_vmadot2.log
+---
+ts=2026-07-08T09:50:57+02:00
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=ssh svt@banana timeout 20s taskset -c 0 '/home/svt/banana-yolo26-stage30-vmadot123/bench_stage30_vmadot123_probe' --variant 3
+env_notes=board stage30 soft-capture
+exit_code=1 log=/data/ncnn-logs/ai-team/2026-07-08_09-43-20/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE30-VMADOT123-DIRECT-CONV-PROOF-AND-KERNEL-GATE-001/run_logs/board_probe_cpu0_vmadot3.log
+### command: cmake -S custom_int8_engine -B .deps/custom_int8_engine/build-host-native-stage30 -DCMAKE_BUILD_TYPE=Debug -DY26_K1X_ENABLE_IME=OFF -DCMAKE_CXX_COMPILER=/usr/bin/g++
+### cwd: /data/banana-yolo26-spacemit-demo
+### start: 2026-07-08T09:54:44+02:00
+### exit_code: 0
+### end: 2026-07-08T09:54:45+02:00
+### command: cmake --build .deps/custom_int8_engine/build-host-native-stage30 -j8
+### cwd: /data/banana-yolo26-spacemit-demo
+### start: 2026-07-08T09:54:45+02:00
+### exit_code: 0
+### end: 2026-07-08T09:54:48+02:00
+### command: ctest --test-dir .deps/custom_int8_engine/build-host-native-stage30 --output-on-failure
+### cwd: /data/banana-yolo26-spacemit-demo
+### start: 2026-07-08T09:54:48+02:00
+### exit_code: 0
+### end: 2026-07-08T09:54:49+02:00
+### command: source /data/build_scripts/01-env.sh && ARCH_FLAGS_EXPLICIT="-march=rv64gcv_zvfh -mabi=lp64d" && cmake -S custom_int8_engine -B .deps/custom_int8_engine/build-riscv-stage30 -DCMAKE_BUILD_TYPE=Release -DY26_K1X_ENABLE_IME=ON -DCMAKE_SYSTEM_NAME=Linux -DCMAKE_SYSTEM_PROCESSOR=riscv64 -DCMAKE_C_COMPILER=/data/SpacemiT/spacemit-toolchain-linux-glibc-x86_64-v1.1.2/bin/riscv64-unknown-linux-gnu-gcc -DCMAKE_CXX_COMPILER=/data/SpacemiT/spacemit-toolchain-linux-glibc-x86_64-v1.1.2/bin/riscv64-unknown-linux-gnu-g++ -DCMAKE_FIND_ROOT_PATH=/data/SpacemiT/spacemit-toolchain-linux-glibc-x86_64-v1.1.2/sysroot "-DCMAKE_CXX_FLAGS=${ARCH_FLAGS_EXPLICIT}"
+### cwd: /data/banana-yolo26-spacemit-demo
+### start: 2026-07-08T09:55:07+02:00
+### exit_code: 0
+### end: 2026-07-08T09:55:09+02:00
+### command: source /data/build_scripts/01-env.sh && cmake --build .deps/custom_int8_engine/build-riscv-stage30 -j$(nproc)
+### cwd: /data/banana-yolo26-spacemit-demo
+### start: 2026-07-08T09:55:09+02:00
+### exit_code: 0
+### end: 2026-07-08T09:55:15+02:00
+### command: /data/SpacemiT/spacemit-toolchain-linux-glibc-x86_64-v1.1.2/bin/riscv64-unknown-linux-gnu-objdump -d .deps/custom_int8_engine/build-riscv-stage30/bench_stage30_vmadot123_probe | grep -E "smt\.vmadot|\.insn|\.word"
+### cwd: /data/banana-yolo26-spacemit-demo
+### start: 2026-07-08T09:55:15+02:00
+### exit_code: 0
+### end: 2026-07-08T09:55:16+02:00
+### command: ssh svt@banana "hostname; uname -a; lscpu | sed -n '1,40p'; echo affinity; taskset -pc \$\$; echo governor; cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor 2>/dev/null || true; echo freq; cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq 2>/dev/null || true"
+### cwd: /data/banana-yolo26-spacemit-demo
+### start: 2026-07-08T09:55:40+02:00
+### exit_code: 0
+### end: 2026-07-08T09:55:41+02:00
+### command: ssh svt@banana 'mkdir -p /home/svt/banana-yolo26-stage30-vmadot123'
+### cwd: /data/banana-yolo26-spacemit-demo
+### start: 2026-07-08T09:55:41+02:00
+### exit_code: 0
+### end: 2026-07-08T09:55:42+02:00
+### command: scp .deps/custom_int8_engine/build-riscv-stage30/bench_stage30_vmadot123_probe svt@banana:/home/svt/banana-yolo26-stage30-vmadot123/bench_stage30_vmadot123_probe
+### cwd: /data/banana-yolo26-spacemit-demo
+### start: 2026-07-08T09:55:42+02:00
+### exit_code: 0
+### end: 2026-07-08T09:55:43+02:00
+### command: sha256sum .deps/custom_int8_engine/build-riscv-stage30/bench_stage30_vmadot123_probe && ssh svt@banana 'sha256sum /home/svt/banana-yolo26-stage30-vmadot123/bench_stage30_vmadot123_probe'
+### cwd: /data/banana-yolo26-spacemit-demo
+### start: 2026-07-08T09:55:43+02:00
+### exit_code: 0
+### end: 2026-07-08T09:55:44+02:00
+### command: ssh svt@banana 'timeout 120s taskset -c 0 /home/svt/banana-yolo26-stage30-vmadot123/bench_stage30_vmadot123_probe --derive-oracle'
+### cwd: /data/banana-yolo26-spacemit-demo
+### start: 2026-07-08T09:56:00+02:00
+### exit_code: 1
+### end: 2026-07-08T09:56:01+02:00
+### command: ssh svt@banana 'timeout 120s taskset -c 1 /home/svt/banana-yolo26-stage30-vmadot123/bench_stage30_vmadot123_probe --derive-oracle'
+### cwd: /data/banana-yolo26-spacemit-demo
+### start: 2026-07-08T09:56:01+02:00
+### exit_code: 1
+### end: 2026-07-08T09:56:02+02:00
+### command: ssh svt@banana 'timeout 120s taskset -c 2 /home/svt/banana-yolo26-stage30-vmadot123/bench_stage30_vmadot123_probe --derive-oracle'
+### cwd: /data/banana-yolo26-spacemit-demo
+### start: 2026-07-08T09:56:02+02:00
+### exit_code: 1
+### end: 2026-07-08T09:56:04+02:00
+### command: ssh svt@banana 'timeout 120s taskset -c 3 /home/svt/banana-yolo26-stage30-vmadot123/bench_stage30_vmadot123_probe --derive-oracle'
+### cwd: /data/banana-yolo26-spacemit-demo
+### start: 2026-07-08T09:56:04+02:00
+### exit_code: 1
+### end: 2026-07-08T09:56:05+02:00
+### command: cmake --build .deps/custom_int8_engine/build-host-native-stage30 -j8
+### cwd: /data/banana-yolo26-spacemit-demo
+### start: 2026-07-08T09:58:17+02:00
+### exit_code: 2
+### end: 2026-07-08T09:58:23+02:00
+### command: cmake --build .deps/custom_int8_engine/build-host-native-stage30 -j8
+### cwd: /data/banana-yolo26-spacemit-demo
+### start: 2026-07-08T09:58:45+02:00
+### exit_code: 0
+### end: 2026-07-08T09:58:49+02:00
+### command: ctest --test-dir .deps/custom_int8_engine/build-host-native-stage30 --output-on-failure
+### cwd: /data/banana-yolo26-spacemit-demo
+### start: 2026-07-08T09:58:49+02:00
+### exit_code: 0
+### end: 2026-07-08T09:58:51+02:00
+### command: source /data/build_scripts/01-env.sh && cmake --build .deps/custom_int8_engine/build-riscv-stage30 -j$(nproc)
+### cwd: /data/banana-yolo26-spacemit-demo
+### start: 2026-07-08T09:59:04+02:00
+### exit_code: 0
+### end: 2026-07-08T09:59:13+02:00
+### command: /data/SpacemiT/spacemit-toolchain-linux-glibc-x86_64-v1.1.2/bin/riscv64-unknown-linux-gnu-objdump -d .deps/custom_int8_engine/build-riscv-stage30/bench_stage30_vmadot123_probe | grep -E "smt\.vmadot|\.insn|\.word"
+### cwd: /data/banana-yolo26-spacemit-demo
+### start: 2026-07-08T09:59:13+02:00
+### exit_code: 0
+### end: 2026-07-08T09:59:14+02:00
+### command: scp .deps/custom_int8_engine/build-riscv-stage30/bench_stage30_vmadot123_probe svt@banana:/home/svt/banana-yolo26-stage30-vmadot123/bench_stage30_vmadot123_probe
+### cwd: /data/banana-yolo26-spacemit-demo
+### start: 2026-07-08T09:59:28+02:00
+### exit_code: 0
+### end: 2026-07-08T09:59:29+02:00
+### command: sha256sum .deps/custom_int8_engine/build-riscv-stage30/bench_stage30_vmadot123_probe && ssh svt@banana 'sha256sum /home/svt/banana-yolo26-stage30-vmadot123/bench_stage30_vmadot123_probe'
+### cwd: /data/banana-yolo26-spacemit-demo
+### start: 2026-07-08T09:59:29+02:00
+### exit_code: 0
+### end: 2026-07-08T09:59:30+02:00
+### command: ssh svt@banana 'timeout 120s taskset -c 0 /home/svt/banana-yolo26-stage30-vmadot123/bench_stage30_vmadot123_probe --derive-oracle'
+### cwd: /data/banana-yolo26-spacemit-demo
+### start: 2026-07-08T09:59:41+02:00
+### exit_code: 0
+### end: 2026-07-08T09:59:42+02:00
+### command: ssh svt@banana 'timeout 120s taskset -c 1 /home/svt/banana-yolo26-stage30-vmadot123/bench_stage30_vmadot123_probe --derive-oracle'
+### cwd: /data/banana-yolo26-spacemit-demo
+### start: 2026-07-08T09:59:42+02:00
+### exit_code: 0
+### end: 2026-07-08T09:59:44+02:00
+### command: ssh svt@banana 'timeout 120s taskset -c 2 /home/svt/banana-yolo26-stage30-vmadot123/bench_stage30_vmadot123_probe --derive-oracle'
+### cwd: /data/banana-yolo26-spacemit-demo
+### start: 2026-07-08T09:59:44+02:00
+### exit_code: 0
+### end: 2026-07-08T09:59:45+02:00
+### command: ssh svt@banana 'timeout 120s taskset -c 3 /home/svt/banana-yolo26-stage30-vmadot123/bench_stage30_vmadot123_probe --derive-oracle'
+### cwd: /data/banana-yolo26-spacemit-demo
+### start: 2026-07-08T09:59:45+02:00
+### exit_code: 0
+### end: 2026-07-08T09:59:46+02:00
+### command: git diff --check
+### cwd: /data/banana-yolo26-spacemit-demo
+### start: 2026-07-08T10:03:28+02:00
+### exit_code: 0
+### end: 2026-07-08T10:03:29+02:00
+### command: git diff --cached --check || true
+### cwd: /data/banana-yolo26-spacemit-demo
+### start: 2026-07-08T10:03:29+02:00
+### exit_code: 0
+### end: 2026-07-08T10:03:29+02:00
+### command: find custom_int8_engine stages -type l -print
+### cwd: /data/banana-yolo26-spacemit-demo
+### start: 2026-07-08T10:03:29+02:00
+### exit_code: 0
+### end: 2026-07-08T10:03:30+02:00
+### command: (git diff --name-only; git ls-files --others --exclude-standard) | sort -u
+### cwd: /data/banana-yolo26-spacemit-demo
+### start: 2026-07-08T10:03:30+02:00
+### exit_code: 0
+### end: 2026-07-08T10:03:31+02:00
+### command: FILES=$((git diff --name-only; git ls-files --others --exclude-standard) | sort -u | grep -E "^(custom_int8_engine|stages)/" || true); if [ -n "$FILES" ]; then grep -RInE "BEGIN (RSA|OPENSSH|PRIVATE)|password=|token=|client_secret|oauth|Authorization:" $FILES 2>/dev/null; ec=$?; if [ $ec -eq 1 ]; then exit 0; else exit $ec; fi; fi
+### cwd: /data/banana-yolo26-spacemit-demo
+### start: 2026-07-08T10:03:31+02:00
+### exit_code: 0
+### end: 2026-07-08T10:03:31+02:00
+### command: FILES=$((git diff --name-only; git ls-files --others --exclude-standard) | sort -u | grep -E "^(custom_int8_engine|stages)/" || true); if [ -n "$FILES" ]; then python3 - "$FILES" <<'PY'
+import sys, pathlib
+bad=[]
+for name in sys.argv[1].splitlines():
+    p=pathlib.Path(name)
+    if not p.is_file():
+        continue
+    data=p.read_bytes()
+    for i,b in enumerate(data):
+        if b in (9,10,13):
+            continue
+        if b < 32:
+            bad.append((name,i,b))
+            break
+if bad:
+    for item in bad:
+        print(f"control-byte {item[0]} offset={item[1]} byte={item[2]}")
+    sys.exit(1)
+PY
+fi
+### cwd: /data/banana-yolo26-spacemit-demo
+### start: 2026-07-08T10:03:31+02:00
+### exit_code: 0
+### end: 2026-07-08T10:03:32+02:00
