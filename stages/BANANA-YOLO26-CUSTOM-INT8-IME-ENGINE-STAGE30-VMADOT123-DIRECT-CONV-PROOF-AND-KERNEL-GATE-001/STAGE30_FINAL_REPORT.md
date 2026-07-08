@@ -5,7 +5,7 @@ stage_id: `BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE30-VMADOT123-DIRECT-CONV-PR
 repo: `/data/banana-yolo26-spacemit-demo`
 branch: `yolo26-custom-int8-engine`
 start_head: `8c3d64735c3460174e709c780b6a179724a807e8`
-end_head: `pending-local-commit-see-final-response`
+end_head: `921c1d75ab5161bb9e3e732516047cfe058e3b16`
 pushed: false
 full_engine_implemented: false
 ncnn_source_mutated: false
