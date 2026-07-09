@@ -639,6 +639,114 @@ int conv1x1_stage36_pipelined_core(const std::int8_t* input_nhwc_s8,
     return Y26_CONV_STATUS_SUCCESS;
 }
 
+int conv_stage37_pipelined_core(const std::int8_t* input_nhwc_s8,
+                                const std::int8_t* packed_b_mmt4d,
+                                std::int32_t* raw_output_nhwc,
+                                const Y26Conv2DParams* params,
+                                int kernel_h,
+                                int kernel_w,
+                                int input_storage_zero_point_s8,
+                                std::int8_t* a_workspace_tiles,
+                                std::size_t workspace_bytes,
+                                int accumulator_groups,
+                                int loop_order) {
+    if (input_nhwc_s8 == nullptr || packed_b_mmt4d == nullptr || raw_output_nhwc == nullptr ||
+        a_workspace_tiles == nullptr || !y26_k1x::kernels::conv_params_valid(params) ||
+        !kernel_shape_supported(kernel_h, kernel_w) || !storage_zero_point_valid(input_storage_zero_point_s8) ||
+        !loop_order_valid(loop_order) || (accumulator_groups != 4 && accumulator_groups != 6)) {
+        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    }
+    if (loop_order != Y26_CONV_LOOP_ORDER_M_MAJOR) {
+        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    }
+    if (!y26_vmadot_4x4x8_ime_available_buildtime()) {
+        return Y26_CONV_STATUS_NOT_BUILT_WITH_IME;
+    }
+    if (!y26_k1x_ime_hotpath_allowed_on_current_cpu()) {
+        const auto snapshot = y26_k1x_ime_runtime_state_snapshot();
+        return y26_k1x::kernels::conv_status_from_vmadot_status(snapshot.probe_status);
+    }
+
+    const int output_h = output_h_for_kernel(params, kernel_h);
+    const int output_w = output_w_for_kernel(params, kernel_w);
+    if (output_h <= 0 || output_w <= 0 || params->input_c % 8 != 0 || params->output_c % 4 != 0) {
+        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    }
+    const int kernel_k = kernel_h * kernel_w * params->input_c;
+    const int k_padded = align_up(kernel_k, 8);
+    const int k_tiles = k_padded / 8;
+    if (workspace_bytes < static_cast<std::size_t>(4 * k_padded)) {
+        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    }
+
+    const int output_m = output_h * output_w;
+    std::array<std::int32_t, 16> c_tile {};
+#if defined(Y26_K1X_ENABLE_IME_ASM) && defined(__riscv)
+    std::array<std::int32_t, 16 * 4> c4 {};
+    std::array<std::int32_t, 16 * 6> c6 {};
+#endif
+    for (int m0 = 0; m0 < output_m; m0 += 4) {
+        pack_a_panel_4xk_tile_contiguous(input_nhwc_s8,
+                                         *params,
+                                         kernel_h,
+                                         kernel_w,
+                                         output_w,
+                                         output_m,
+                                         m0,
+                                         k_padded,
+                                         static_cast<std::int8_t>(input_storage_zero_point_s8),
+                                         a_workspace_tiles);
+        int n0 = 0;
+#if defined(Y26_K1X_ENABLE_IME_ASM) && defined(__riscv)
+        if (accumulator_groups == 6) {
+            for (; n0 + 24 <= params->output_c; n0 += 24) {
+                const int status = run_c_tiles_stage36_pipelined6(a_workspace_tiles,
+                                                                  packed_b_mmt4d,
+                                                                  raw_output_nhwc,
+                                                                  *params,
+                                                                  output_m,
+                                                                  m0,
+                                                                  n0,
+                                                                  k_tiles,
+                                                                  c6);
+                if (status != Y26_CONV_STATUS_SUCCESS) {
+                    return status;
+                }
+            }
+        }
+        for (; n0 + 16 <= params->output_c; n0 += 16) {
+            const int status = run_c_tiles_stage36_pipelined4(a_workspace_tiles,
+                                                              packed_b_mmt4d,
+                                                              raw_output_nhwc,
+                                                              *params,
+                                                              output_m,
+                                                              m0,
+                                                              n0,
+                                                              k_tiles,
+                                                              c4);
+            if (status != Y26_CONV_STATUS_SUCCESS) {
+                return status;
+            }
+        }
+#endif
+        for (; n0 < params->output_c; n0 += 4) {
+            const int status = run_c_tile(a_workspace_tiles,
+                                          packed_b_mmt4d,
+                                          raw_output_nhwc,
+                                          *params,
+                                          output_m,
+                                          m0,
+                                          n0,
+                                          k_tiles,
+                                          c_tile);
+            if (status != Y26_CONV_STATUS_SUCCESS) {
+                return status;
+            }
+        }
+    }
+    return Y26_CONV_STATUS_SUCCESS;
+}
+
 int run_c_tile_u8s8_fused_correction(const std::uint8_t* a_tiles_u8,
                                       const std::int8_t* packed_b_mmt4d,
                                       const std::int32_t* bias_oc,
@@ -1163,6 +1271,35 @@ extern "C" int y26_conv2d_i8s8s32_nhwc_ime_prepacked_stage36_pipelined_v1(
                                           workspace->bytes,
                                           accumulator_groups,
                                           loop_order);
+}
+
+extern "C" int y26_conv2d_i8s8s32_nhwc_ime_prepacked_stage37_pipelined_v1(
+    const std::int8_t* input_nhwc_s8,
+    const Y26PrepackedConvWeights* weights,
+    std::int32_t* raw_output_nhwc,
+    int input_storage_zero_point_s8,
+    Y26ConvWorkspace* workspace,
+    int accumulator_groups,
+    int loop_order) {
+    if (weights == nullptr || workspace == nullptr || weights->packed_b_mmt4d == nullptr ||
+        workspace->a_tiles == nullptr || weights->kernel_h != workspace->kernel_h ||
+        weights->kernel_w != workspace->kernel_w || weights->params.input_h != workspace->params.input_h ||
+        weights->params.input_w != workspace->params.input_w ||
+        weights->params.input_c != workspace->params.input_c ||
+        weights->params.output_c != workspace->params.output_c) {
+        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    }
+    return conv_stage37_pipelined_core(input_nhwc_s8,
+                                       weights->packed_b_mmt4d,
+                                       raw_output_nhwc,
+                                       &weights->params,
+                                       weights->kernel_h,
+                                       weights->kernel_w,
+                                       input_storage_zero_point_s8,
+                                       workspace->a_tiles,
+                                       workspace->bytes,
+                                       accumulator_groups,
+                                       loop_order);
 }
 
 extern "C" int y26_conv2d_u8s8s32_nhwc_ime_prepacked_fused_correction_v1(

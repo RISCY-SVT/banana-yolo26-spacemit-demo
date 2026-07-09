@@ -79,6 +79,13 @@ int y26_threaded_conv_run_ime_cluster0_stage36_pipelined_cv2(
     int accumulator_groups,
     Y26ThreadedConvTimingUs* timing);
 
+int y26_threaded_conv_run_ime_cluster0_stage37_pipelined(
+    const Y26ThreadedConvWorkspace* workspace,
+    const std::int8_t* input_nhwc_s8,
+    std::int32_t* corrected_output_nhwc,
+    int accumulator_groups,
+    Y26ThreadedConvTimingUs* timing);
+
 int y26_threaded_conv_run_ime_cluster0_u8s8_fused_correction(
     const Y26ThreadedConvWorkspace* workspace,
     const std::int8_t* input_nhwc_s8_storage,

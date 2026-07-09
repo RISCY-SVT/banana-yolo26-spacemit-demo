@@ -5,7 +5,7 @@ classification: stage36-cv2-pipelined-vmadot-selected
 repo: /data/banana-yolo26-spacemit-demo
 branch: yolo26-custom-int8-engine
 start_head: a8b76072f19ff792bc5afc33ab93a022f2c26eb6
-end_head: pending-local-commit-see-final-response
+end_head: a945d60a5fedf3d5b74483a02e5b95214c5cd973
 pushed: false
 full_engine_implemented: false
 ncnn_source_mutated: false

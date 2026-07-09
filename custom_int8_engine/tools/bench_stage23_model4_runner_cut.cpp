@@ -425,7 +425,8 @@ int main(int argc, char** argv) {
         std::cerr << "usage: bench_stage23_model4_runner_cut --fixture-dir <dir>"
                   << " [--mode scalar|ime|ime_threaded] [--output-quantize scalar|rvv]"
                   << " [--merge-repair baseline|split1_lut|branch1_add_lut|branch1_add_lut_mixed_cv2"
-                     "|branch1_add_lut_cv2_pipelined4|branch1_add_lut_cv2_pipelined6]"
+                     "|branch1_add_lut_cv2_pipelined4|branch1_add_lut_cv2_pipelined6"
+                     "|branch3x3_pipelined4]"
                   << " [--thread-branch0 1|2|3|4] [--thread-branch1 0|1|2|3|4]"
                   << " [--thread-model4-cv2 0|1|2|3|4]\n";
         return 2;
@@ -433,22 +434,25 @@ int main(int argc, char** argv) {
     if (options.merge_repair != "baseline" && options.merge_repair != "split1_lut" &&
         options.merge_repair != "branch1_add_lut" && options.merge_repair != "branch1_add_lut_mixed_cv2" &&
         options.merge_repair != "branch1_add_lut_cv2_pipelined4" &&
-        options.merge_repair != "branch1_add_lut_cv2_pipelined6") {
+        options.merge_repair != "branch1_add_lut_cv2_pipelined6" &&
+        options.merge_repair != "branch3x3_pipelined4") {
         std::cerr << "unsupported --merge-repair " << options.merge_repair << "\n";
         return 2;
     }
-    const int merge_mode =
-        options.merge_repair == "branch1_add_lut_cv2_pipelined4"
-            ? Y26_STAGE16_MERGE_MODE_STAGE36_CV2_PIPELINED4
-            : (options.merge_repair == "branch1_add_lut_cv2_pipelined6"
-                   ? Y26_STAGE16_MERGE_MODE_STAGE36_CV2_PIPELINED6
-                   : (options.merge_repair == "branch1_add_lut_mixed_cv2"
-                          ? Y26_STAGE16_MERGE_MODE_STAGE33_MODEL4_CV2_MIXED_SIGNEDNESS
-                          : (options.merge_repair == "branch1_add_lut"
-                                 ? Y26_STAGE16_MERGE_MODE_STAGE26_BRANCH1_ADD_LUT
-                                 : (options.merge_repair == "split1_lut"
-                                        ? Y26_STAGE16_MERGE_MODE_STAGE24_B3_SPLIT1_LUT
-                                        : Y26_STAGE16_MERGE_MODE_C2_SPLIT0_CONCAT_LUT))));
+    int merge_mode = Y26_STAGE16_MERGE_MODE_C2_SPLIT0_CONCAT_LUT;
+    if (options.merge_repair == "branch3x3_pipelined4") {
+        merge_mode = Y26_STAGE16_MERGE_MODE_STAGE37_BRANCH3X3_PIPELINED4;
+    } else if (options.merge_repair == "branch1_add_lut_cv2_pipelined4") {
+        merge_mode = Y26_STAGE16_MERGE_MODE_STAGE36_CV2_PIPELINED4;
+    } else if (options.merge_repair == "branch1_add_lut_cv2_pipelined6") {
+        merge_mode = Y26_STAGE16_MERGE_MODE_STAGE36_CV2_PIPELINED6;
+    } else if (options.merge_repair == "branch1_add_lut_mixed_cv2") {
+        merge_mode = Y26_STAGE16_MERGE_MODE_STAGE33_MODEL4_CV2_MIXED_SIGNEDNESS;
+    } else if (options.merge_repair == "branch1_add_lut") {
+        merge_mode = Y26_STAGE16_MERGE_MODE_STAGE26_BRANCH1_ADD_LUT;
+    } else if (options.merge_repair == "split1_lut") {
+        merge_mode = Y26_STAGE16_MERGE_MODE_STAGE24_B3_SPLIT1_LUT;
+    }
     const bool use_threaded = options.mode == "ime_threaded";
     const bool use_ime = options.mode == "ime" || use_threaded;
     const int activation_mode = use_ime ? Y26_ACTIVATION_MODE_STAGE9_RVV_F32_LUT : Y26_ACTIVATION_MODE_INT8_LUT;

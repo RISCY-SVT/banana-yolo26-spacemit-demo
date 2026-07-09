@@ -1,0 +1,145 @@
+---
+timestamp=2026-07-09T07:04:30+02:00
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=cmake -S custom_int8_engine -B .deps/custom_int8_engine/build-host-native-stage37 -DCMAKE_BUILD_TYPE=RelWithDebInfo -DY26_K1X_ENABLE_IME=OFF -DCMAKE_CXX_COMPILER=/usr/bin/g++
+stdout_stderr=/data/ncnn-logs/ai-team/2026-07-09_07-02-24/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE37-MODEL4-POST-CV2-PIPELINED-VMADOT-BOTTLENECK-GATE-001/run_logs/host_configure.log
+exit_code=0
+---
+timestamp=2026-07-09T07:04:32+02:00
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=cmake --build .deps/custom_int8_engine/build-host-native-stage37 -j8
+stdout_stderr=/data/ncnn-logs/ai-team/2026-07-09_07-02-24/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE37-MODEL4-POST-CV2-PIPELINED-VMADOT-BOTTLENECK-GATE-001/run_logs/host_build.log
+exit_code=0
+---
+timestamp=2026-07-09T07:05:13+02:00
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=ctest --test-dir .deps/custom_int8_engine/build-host-native-stage37 --output-on-failure
+stdout_stderr=/data/ncnn-logs/ai-team/2026-07-09_07-02-24/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE37-MODEL4-POST-CV2-PIPELINED-VMADOT-BOTTLENECK-GATE-001/run_logs/host_ctest.log
+exit_code=0
+---
+timestamp=2026-07-09T07:05:14+02:00
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=bash -lc source\ /data/build_scripts/01-env.sh\;\ cmake\ -S\ custom_int8_engine\ -B\ .deps/custom_int8_engine/build-riscv-stage37\ -DCMAKE_BUILD_TYPE=RelWithDebInfo\ -DY26_K1X_ENABLE_IME=ON\ -DCMAKE_CXX_COMPILER=/opt/riscv/bin/riscv64-unknown-linux-gnu-g++\ -DCMAKE_C_COMPILER=/opt/riscv/bin/riscv64-unknown-linux-gnu-gcc\ -DCMAKE_CXX_FLAGS=\"-march=rv64gcv_zvfh\ -mabi=lp64d\"\ -DCMAKE_C_FLAGS=\"-march=rv64gcv_zvfh\ -mabi=lp64d\"\ -DCMAKE_SYSTEM_NAME=Linux\ -DCMAKE_SYSTEM_PROCESSOR=riscv64
+stdout_stderr=/data/ncnn-logs/ai-team/2026-07-09_07-02-24/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE37-MODEL4-POST-CV2-PIPELINED-VMADOT-BOTTLENECK-GATE-001/run_logs/riscv_configure.log
+exit_code=0
+---
+timestamp=2026-07-09T07:05:17+02:00
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=cmake --build .deps/custom_int8_engine/build-riscv-stage37 -j8
+stdout_stderr=/data/ncnn-logs/ai-team/2026-07-09_07-02-24/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE37-MODEL4-POST-CV2-PIPELINED-VMADOT-BOTTLENECK-GATE-001/run_logs/riscv_build.log
+exit_code=0
+---
+timestamp=2026-07-09T07:06:40+02:00
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=ssh svt@banana hostname\;\ uname\ -a\;\ lscpu\ \|\ sed\ -n\ \"1\,40p\"\;\ echo\ governor\;\ cat\ /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor\ 2\>/dev/null\ \|\|\ true\;\ echo\ cur_freq\;\ cat\ /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq\ 2\>/dev/null\ \|\|\ true\;\ echo\ min_freq\;\ cat\ /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq\ 2\>/dev/null\ \|\|\ true\;\ echo\ max_freq\;\ cat\ /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq\ 2\>/dev/null\ \|\|\ true\;\ echo\ boot_id\;\ cat\ /proc/sys/kernel/random/boot_id\ 2\>/dev/null\ \|\|\ true\;\ echo\ thermal\;\ find\ /sys/class/thermal\ -maxdepth\ 2\ -type\ f\ -name\ temp\ -print\ -exec\ cat\ \{\}\ \\\;\ 2\>/dev/null\ \|\|\ true
+stdout_stderr=/data/ncnn-logs/ai-team/2026-07-09_07-02-24/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE37-MODEL4-POST-CV2-PIPELINED-VMADOT-BOTTLENECK-GATE-001/run_logs/board_anchor.log
+exit_code=0
+---
+timestamp=2026-07-09T07:06:40+02:00
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=ssh svt@banana mkdir\ -p\ \'/home/svt/yolo26-custom-int8-stage37/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE37-MODEL4-POST-CV2-PIPELINED-VMADOT-BOTTLENECK-GATE-001/fixture\'\ \'/home/svt/yolo26-custom-int8-stage37/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE37-MODEL4-POST-CV2-PIPELINED-VMADOT-BOTTLENECK-GATE-001/logs\'
+stdout_stderr=/data/ncnn-logs/ai-team/2026-07-09_07-02-24/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE37-MODEL4-POST-CV2-PIPELINED-VMADOT-BOTTLENECK-GATE-001/run_logs/board_mkdir.log
+exit_code=0
+---
+timestamp=2026-07-09T07:06:41+02:00
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=scp .deps/custom_int8_engine/build-riscv-stage37/bench_stage23_model4_runner_cut svt@banana:/home/svt/yolo26-custom-int8-stage37/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE37-MODEL4-POST-CV2-PIPELINED-VMADOT-BOTTLENECK-GATE-001/bench_stage23_model4_runner_cut
+stdout_stderr=/data/ncnn-logs/ai-team/2026-07-09_07-02-24/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE37-MODEL4-POST-CV2-PIPELINED-VMADOT-BOTTLENECK-GATE-001/run_logs/board_copy_bench.log
+exit_code=0
+---
+timestamp=2026-07-09T07:06:42+02:00
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=scp .deps/custom_int8_engine/stage22_onnx_cut/model4_c2f_synthetic_seeded/model4_cv1_conv_q_u8_nhwc.bin .deps/custom_int8_engine/stage22_onnx_cut/model4_c2f_synthetic_seeded/model4_cv2_conv_q_u8_expected_nhwc.bin svt@banana:/home/svt/yolo26-custom-int8-stage37/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE37-MODEL4-POST-CV2-PIPELINED-VMADOT-BOTTLENECK-GATE-001/fixture/
+stdout_stderr=/data/ncnn-logs/ai-team/2026-07-09_07-02-24/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE37-MODEL4-POST-CV2-PIPELINED-VMADOT-BOTTLENECK-GATE-001/run_logs/board_copy_fixture.log
+exit_code=0
+---
+timestamp=2026-07-09T07:06:43+02:00
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=ssh svt@banana sha256sum\ \'/home/svt/yolo26-custom-int8-stage37/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE37-MODEL4-POST-CV2-PIPELINED-VMADOT-BOTTLENECK-GATE-001/bench_stage23_model4_runner_cut\'\ \'/home/svt/yolo26-custom-int8-stage37/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE37-MODEL4-POST-CV2-PIPELINED-VMADOT-BOTTLENECK-GATE-001/fixture/\'\*.bin
+stdout_stderr=/data/ncnn-logs/ai-team/2026-07-09_07-02-24/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE37-MODEL4-POST-CV2-PIPELINED-VMADOT-BOTTLENECK-GATE-001/run_logs/board_sha256.log
+exit_code=0
+---
+timestamp=2026-07-09T07:06:43+02:00
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=ssh svt@banana cd\ \'/home/svt/yolo26-custom-int8-stage37/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE37-MODEL4-POST-CV2-PIPELINED-VMADOT-BOTTLENECK-GATE-001\'\ \&\&\ taskset\ -c\ 0-3\ ./bench_stage23_model4_runner_cut\ --fixture-dir\ fixture\ --mode\ ime_threaded\ --output-quantize\ rvv\ --merge-repair\ branch1_add_lut_cv2_pipelined4\ --thread-branch0\ 4\ --thread-branch1\ 4\ --thread-model4-cv2\ 4\ --warmup\ 10\ --runs\ 100\ --repeats\ 5\ --frm-sweep\ --dump-actual\ stage37_stage36_a1_actual.bin\ \|\ tee\ logs/stage36_a1_replay.log\ \&\&\ sha256sum\ stage37_stage36_a1_actual.bin\ fixture/model4_cv2_conv_q_u8_expected_nhwc.bin\ \|\ tee\ logs/stage36_a1_sha256.log
+stdout_stderr=/data/ncnn-logs/ai-team/2026-07-09_07-02-24/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE37-MODEL4-POST-CV2-PIPELINED-VMADOT-BOTTLENECK-GATE-001/run_logs/board_stage36_replay.log
+exit_code=0
+---
+timestamp=2026-07-09T07:11:25+02:00
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=rg -n STAGE37\|branch3x3_pipelined4\|stage37_pipelined custom_int8_engine/include custom_int8_engine/src custom_int8_engine/kernels custom_int8_engine/tools
+stdout_stderr=/data/ncnn-logs/ai-team/2026-07-09_07-02-24/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE37-MODEL4-POST-CV2-PIPELINED-VMADOT-BOTTLENECK-GATE-001/run_logs/stage37_mode_references.log
+exit_code=0
+---
+timestamp=2026-07-09T07:11:26+02:00
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=cmake --build .deps/custom_int8_engine/build-host-native-stage37 -j8
+stdout_stderr=/data/ncnn-logs/ai-team/2026-07-09_07-02-24/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE37-MODEL4-POST-CV2-PIPELINED-VMADOT-BOTTLENECK-GATE-001/run_logs/host_build_after_stage37_candidate.log
+exit_code=0
+---
+timestamp=2026-07-09T07:12:04+02:00
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=ctest --test-dir .deps/custom_int8_engine/build-host-native-stage37 --output-on-failure
+stdout_stderr=/data/ncnn-logs/ai-team/2026-07-09_07-02-24/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE37-MODEL4-POST-CV2-PIPELINED-VMADOT-BOTTLENECK-GATE-001/run_logs/host_ctest_after_stage37_candidate.log
+exit_code=0
+---
+timestamp=2026-07-09T07:12:18+02:00
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=cmake --build .deps/custom_int8_engine/build-riscv-stage37 -j8
+stdout_stderr=/data/ncnn-logs/ai-team/2026-07-09_07-02-24/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE37-MODEL4-POST-CV2-PIPELINED-VMADOT-BOTTLENECK-GATE-001/run_logs/riscv_build_after_stage37_candidate.log
+exit_code=0
+---
+timestamp=2026-07-09T07:13:06+02:00
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=bash -lc /opt/riscv/bin/riscv64-unknown-linux-gnu-objdump\ -drC\ .deps/custom_int8_engine/build-riscv-stage37/bench_stage23_model4_runner_cut\ \|\ rg\ -n\ \"smt\\.vmadot\|\<.\*stage37\|\<.\*stage36\|vsetvli\"\ \|\ head\ -200
+stdout_stderr=/data/ncnn-logs/ai-team/2026-07-09_07-02-24/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE37-MODEL4-POST-CV2-PIPELINED-VMADOT-BOTTLENECK-GATE-001/run_logs/objdump_stage37_vmadot.log
+exit_code=0
+---
+timestamp=2026-07-09T07:13:25+02:00
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=scp .deps/custom_int8_engine/build-riscv-stage37/bench_stage23_model4_runner_cut svt@banana:/home/svt/yolo26-custom-int8-stage37/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE37-MODEL4-POST-CV2-PIPELINED-VMADOT-BOTTLENECK-GATE-001/bench_stage23_model4_runner_cut
+stdout_stderr=/data/ncnn-logs/ai-team/2026-07-09_07-02-24/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE37-MODEL4-POST-CV2-PIPELINED-VMADOT-BOTTLENECK-GATE-001/run_logs/board_copy_stage37_bench.log
+exit_code=0
+---
+timestamp=2026-07-09T07:13:26+02:00
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=ssh svt@banana cd\ \'/home/svt/yolo26-custom-int8-stage37/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE37-MODEL4-POST-CV2-PIPELINED-VMADOT-BOTTLENECK-GATE-001\'\ \&\&\ taskset\ -c\ 0-3\ ./bench_stage23_model4_runner_cut\ --fixture-dir\ fixture\ --mode\ ime_threaded\ --output-quantize\ rvv\ --merge-repair\ branch3x3_pipelined4\ --thread-branch0\ 4\ --thread-branch1\ 4\ --thread-model4-cv2\ 4\ --warmup\ 1\ --runs\ 1\ --repeats\ 1\ --dump-actual\ stage37_candidate_smoke_actual.bin\ \|\ tee\ logs/stage37_candidate_smoke.log\ \&\&\ sha256sum\ stage37_candidate_smoke_actual.bin\ fixture/model4_cv2_conv_q_u8_expected_nhwc.bin\ \|\ tee\ logs/stage37_candidate_smoke_sha256.log
+stdout_stderr=/data/ncnn-logs/ai-team/2026-07-09_07-02-24/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE37-MODEL4-POST-CV2-PIPELINED-VMADOT-BOTTLENECK-GATE-001/run_logs/board_stage37_smoke.log
+exit_code=0
+---
+timestamp=2026-07-09T07:13:50+02:00
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=ssh svt@banana cd\ \'/home/svt/yolo26-custom-int8-stage37/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE37-MODEL4-POST-CV2-PIPELINED-VMADOT-BOTTLENECK-GATE-001\'\ \&\&\ taskset\ -c\ 0-3\ ./bench_stage23_model4_runner_cut\ --fixture-dir\ fixture\ --mode\ ime_threaded\ --output-quantize\ rvv\ --merge-repair\ branch1_add_lut_cv2_pipelined4\ --thread-branch0\ 4\ --thread-branch1\ 4\ --thread-model4-cv2\ 4\ --warmup\ 10\ --runs\ 100\ --repeats\ 5\ --frm-sweep\ --dump-actual\ stage37_baseline_actual.bin\ \|\ tee\ logs/stage37_same_session_baseline.log\ \&\&\ sha256sum\ stage37_baseline_actual.bin\ fixture/model4_cv2_conv_q_u8_expected_nhwc.bin\ \|\ tee\ logs/stage37_same_session_baseline_sha256.log
+stdout_stderr=/data/ncnn-logs/ai-team/2026-07-09_07-02-24/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE37-MODEL4-POST-CV2-PIPELINED-VMADOT-BOTTLENECK-GATE-001/run_logs/board_stage37_same_session_baseline.log
+exit_code=0
+---
+timestamp=2026-07-09T07:14:10+02:00
+cwd=/data/banana-yolo26-spacemit-demo
+cmd=ssh svt@banana cd\ \'/home/svt/yolo26-custom-int8-stage37/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE37-MODEL4-POST-CV2-PIPELINED-VMADOT-BOTTLENECK-GATE-001\'\ \&\&\ taskset\ -c\ 0-3\ ./bench_stage23_model4_runner_cut\ --fixture-dir\ fixture\ --mode\ ime_threaded\ --output-quantize\ rvv\ --merge-repair\ branch3x3_pipelined4\ --thread-branch0\ 4\ --thread-branch1\ 4\ --thread-model4-cv2\ 4\ --warmup\ 10\ --runs\ 100\ --repeats\ 5\ --frm-sweep\ --dump-actual\ stage37_candidate_actual.bin\ \|\ tee\ logs/stage37_candidate_stable.log\ \&\&\ sha256sum\ stage37_candidate_actual.bin\ fixture/model4_cv2_conv_q_u8_expected_nhwc.bin\ \|\ tee\ logs/stage37_candidate_sha256.log
+stdout_stderr=/data/ncnn-logs/ai-team/2026-07-09_07-02-24/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE37-MODEL4-POST-CV2-PIPELINED-VMADOT-BOTTLENECK-GATE-001/run_logs/board_stage37_candidate_stable.log
+exit_code=0
+[2026-07-09T05:20:07Z] cwd=/data/banana-yolo26-spacemit-demo cmd=git\ diff\ --check
+[2026-07-09T05:20:07Z] exit=0 log=/data/ncnn-logs/ai-team/2026-07-09_07-02-24/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE37-MODEL4-POST-CV2-PIPELINED-VMADOT-BOTTLENECK-GATE-001/run_logs/final_git_diff_check.log
+[2026-07-09T05:20:07Z] cwd=/data/banana-yolo26-spacemit-demo cmd=find\ custom_int8_engine\ stages\ -type\ l\ -print
+[2026-07-09T05:20:07Z] exit=0 log=/data/ncnn-logs/ai-team/2026-07-09_07-02-24/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE37-MODEL4-POST-CV2-PIPELINED-VMADOT-BOTTLENECK-GATE-001/run_logs/final_symlink_scan.log
+[2026-07-09T05:20:27Z] cwd=/data/banana-yolo26-spacemit-demo cmd=cmake\ --build\ .deps/custom_int8_engine/build-host-native-stage37\ -j\$\(nproc\)
+[2026-07-09T05:20:27Z] cwd=/data/banana-yolo26-spacemit-demo cmd=cmake\ --build\ .deps/custom_int8_engine/build-riscv-stage37\ -j\$\(nproc\)
+[2026-07-09T05:20:32Z] exit=0 log=/data/ncnn-logs/ai-team/2026-07-09_07-02-24/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE37-MODEL4-POST-CV2-PIPELINED-VMADOT-BOTTLENECK-GATE-001/run_logs/final_riscv_build.log
+[2026-07-09T05:20:32Z] exit=0 log=/data/ncnn-logs/ai-team/2026-07-09_07-02-24/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE37-MODEL4-POST-CV2-PIPELINED-VMADOT-BOTTLENECK-GATE-001/run_logs/final_host_build.log
+[2026-07-09T05:20:32Z] cwd=/data/banana-yolo26-spacemit-demo cmd=ctest\ --test-dir\ .deps/custom_int8_engine/build-host-native-stage37\ --output-on-failure
+[2026-07-09T05:20:32Z] exit=0 log=/data/ncnn-logs/ai-team/2026-07-09_07-02-24/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE37-MODEL4-POST-CV2-PIPELINED-VMADOT-BOTTLENECK-GATE-001/run_logs/final_host_ctest.log
+[2026-07-09T05:21:11Z] cwd=/data/banana-yolo26-spacemit-demo cmd=git\ ls-files\ -m\ -o\ --exclude-standard
+[2026-07-09T05:21:11Z] exit=0 log=/data/ncnn-logs/ai-team/2026-07-09_07-02-24/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE37-MODEL4-POST-CV2-PIPELINED-VMADOT-BOTTLENECK-GATE-001/run_logs/final_changed_files.log
+[2026-07-09T05:21:11Z] cwd=/data/banana-yolo26-spacemit-demo cmd=changed-file\ secret-like\ scan
+[2026-07-09T05:21:12Z] exit=0 log=/data/ncnn-logs/ai-team/2026-07-09_07-02-24/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE37-MODEL4-POST-CV2-PIPELINED-VMADOT-BOTTLENECK-GATE-001/run_logs/final_secret_scan.log
+[2026-07-09T05:21:12Z] cwd=/data/banana-yolo26-spacemit-demo cmd=changed-file\ path\ hygiene\ scan
+[2026-07-09T05:21:12Z] exit=1 log=/data/ncnn-logs/ai-team/2026-07-09_07-02-24/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE37-MODEL4-POST-CV2-PIPELINED-VMADOT-BOTTLENECK-GATE-001/run_logs/final_path_scan.log
+[2026-07-09T05:21:46Z] cwd=/data/banana-yolo26-spacemit-demo cmd=git\ diff\ --check\ after\ reports
+[2026-07-09T05:21:46Z] exit=0 log=/data/ncnn-logs/ai-team/2026-07-09_07-02-24/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE37-MODEL4-POST-CV2-PIPELINED-VMADOT-BOTTLENECK-GATE-001/run_logs/final_git_diff_check_after_reports.log
+[2026-07-09T05:21:57Z] cwd=/data/banana-yolo26-spacemit-demo cmd=scp\ board\ Stage37\ logs\ to\ LOG_DIR/artifacts/board_logs
+[2026-07-09T05:21:58Z] exit=0 log=/data/ncnn-logs/ai-team/2026-07-09_07-02-24/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE37-MODEL4-POST-CV2-PIPELINED-VMADOT-BOTTLENECK-GATE-001/run_logs/final_scp_board_logs.log
+[2026-07-09T05:22:31Z] cwd=/data/banana-yolo26-spacemit-demo cmd=git\ add\ Stage37\ changed\ files
+[2026-07-09T05:22:31Z] exit=0
+[2026-07-09T05:22:31Z] cwd=/data/banana-yolo26-spacemit-demo cmd=git\ diff\ --cached\ --check
+[2026-07-09T05:23:06Z] cwd=/data/banana-yolo26-spacemit-demo cmd=git\ commit\ -m\ Gate\ YOLO26\ model4\ post-cv2\ bottleneck\ after\ pipelined\ vmadot
+[2026-07-09T05:23:06Z] exit=0 log=/data/ncnn-logs/ai-team/2026-07-09_07-02-24/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE37-MODEL4-POST-CV2-PIPELINED-VMADOT-BOTTLENECK-GATE-001/run_logs/final_git_commit.log
