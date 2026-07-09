@@ -443,7 +443,7 @@ int main(int argc, char** argv) {
                   << " [--mode scalar|ime_threaded] [--output-quantize scalar|rvv|rvv_direct]"
                   << " [--merge-repair baseline|split1_lut|branch1_add_lut|branch1_add_lut_mixed_cv2"
                      "|branch1_add_lut_cv2_pipelined4|branch1_add_lut_cv2_pipelined6"
-                     "|branch3x3_pipelined4]"
+                     "|branch3x3_pipelined4|branch3x3_fastpack]"
                   << " [--thread-branch0 1|2|3|4] [--thread-branch1 0|1|2|3|4]"
                   << " [--thread-model4-cv2 0|1|2|3|4] [--measure-im2col-pack]\n";
         return 2;
@@ -452,7 +452,7 @@ int main(int argc, char** argv) {
         options.merge_repair != "branch1_add_lut" && options.merge_repair != "branch1_add_lut_mixed_cv2" &&
         options.merge_repair != "branch1_add_lut_cv2_pipelined4" &&
         options.merge_repair != "branch1_add_lut_cv2_pipelined6" &&
-        options.merge_repair != "branch3x3_pipelined4") {
+        options.merge_repair != "branch3x3_pipelined4" && options.merge_repair != "branch3x3_fastpack") {
         std::cerr << "unsupported --merge-repair " << options.merge_repair << "\n";
         return 2;
     }
@@ -464,6 +464,8 @@ int main(int argc, char** argv) {
     int merge_mode = Y26_STAGE16_MERGE_MODE_C2_SPLIT0_CONCAT_LUT;
     if (options.merge_repair == "branch3x3_pipelined4") {
         merge_mode = Y26_STAGE16_MERGE_MODE_STAGE37_BRANCH3X3_PIPELINED4;
+    } else if (options.merge_repair == "branch3x3_fastpack") {
+        merge_mode = Y26_STAGE16_MERGE_MODE_STAGE39_BRANCH3X3_FAST_PACK;
     } else if (options.merge_repair == "branch1_add_lut_cv2_pipelined4") {
         merge_mode = Y26_STAGE16_MERGE_MODE_STAGE36_CV2_PIPELINED4;
     } else if (options.merge_repair == "branch1_add_lut_cv2_pipelined6") {

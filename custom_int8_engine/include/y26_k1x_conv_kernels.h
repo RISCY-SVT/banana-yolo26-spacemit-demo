@@ -140,6 +140,15 @@ int y26_conv2d_i8s8s32_nhwc_ime_prepacked_stage37_pipelined_v1(
     int accumulator_groups,
     int loop_order);
 
+int y26_conv2d_i8s8s32_nhwc_ime_prepacked_stage39_fastpack_v1(
+    const std::int8_t* input_nhwc_s8,
+    const Y26PrepackedConvWeights* weights,
+    std::int32_t* raw_output_nhwc,
+    int input_storage_zero_point_s8,
+    Y26ConvWorkspace* workspace,
+    int accumulator_groups,
+    int loop_order);
+
 int y26_conv2d_u8s8s32_nhwc_ime_prepacked_fused_correction_v1(
     const std::int8_t* input_nhwc_s8_storage,
     const Y26PrepackedConvWeights* weights,

@@ -1,0 +1,4 @@
+run	merge_repair	measure_im2col_pack	mean_total_us	stddev_total_us	cv_pct	mismatches	max_abs_diff	checksum	affinity_ok
+stage38_replay	branch3x3_pipelined4	1	30334.5	207.007	0.682414	0	0	106597930	1
+stage38_replay_after	branch3x3_pipelined4	1	30206.4	264.204	0.874662	0	0	106597930	1
+stage38_no_measure	branch3x3_pipelined4	0	30253.7	307.965	1.01794	0	0	106597930	1

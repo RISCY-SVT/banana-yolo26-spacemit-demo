@@ -1,0 +1,5 @@
+candidate	mode	status	mismatches	max_abs_diff	mean_total_us	stddev_total_us	combined_branch3x3_im2col_pack_us	combined_branch3x3_conv_us	selected_cut_total_speedup_vs_initial_replay	branch3x3_im2col_speedup	branch3x3_conv_speedup	notes
+A0	branch3x3_pipelined4	pass	0	0	30334.5	207.007	5558.070000	10291.260000	1.000000	1.000000	1.000000	baseline Stage38 selected path
+A1_A2_fast_chunks	branch3x3_fastpack	partial	0	0	28073	192.905	5355.820000	8882.390000	1.080558	1.037763	1.158614	byte exact and total improved, but im2col_pack gate missed
+A3	interior_fast_path	not_separate	0	0	0	0	0	0	0	0	0	included inside A1/A2 fast chunks for interior panels
+A4	row_tile_reuse	not_attempted	0	0	0	0	0	0	0	0	0	deferred; would require broader layout change

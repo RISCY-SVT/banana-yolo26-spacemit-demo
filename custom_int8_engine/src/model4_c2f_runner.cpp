@@ -139,7 +139,8 @@ bool merge_mode_valid(int mode) {
            mode == Y26_STAGE16_MERGE_MODE_STAGE33_MODEL4_CV2_MIXED_SIGNEDNESS ||
            mode == Y26_STAGE16_MERGE_MODE_STAGE36_CV2_PIPELINED4 ||
            mode == Y26_STAGE16_MERGE_MODE_STAGE36_CV2_PIPELINED6 ||
-           mode == Y26_STAGE16_MERGE_MODE_STAGE37_BRANCH3X3_PIPELINED4;
+           mode == Y26_STAGE16_MERGE_MODE_STAGE37_BRANCH3X3_PIPELINED4 ||
+           mode == Y26_STAGE16_MERGE_MODE_STAGE39_BRANCH3X3_FAST_PACK;
 }
 
 bool cut_merge_mode_valid(int mode) {
@@ -149,7 +150,8 @@ bool cut_merge_mode_valid(int mode) {
            mode == Y26_STAGE16_MERGE_MODE_STAGE33_MODEL4_CV2_MIXED_SIGNEDNESS ||
            mode == Y26_STAGE16_MERGE_MODE_STAGE36_CV2_PIPELINED4 ||
            mode == Y26_STAGE16_MERGE_MODE_STAGE36_CV2_PIPELINED6 ||
-           mode == Y26_STAGE16_MERGE_MODE_STAGE37_BRANCH3X3_PIPELINED4;
+           mode == Y26_STAGE16_MERGE_MODE_STAGE37_BRANCH3X3_PIPELINED4 ||
+           mode == Y26_STAGE16_MERGE_MODE_STAGE39_BRANCH3X3_FAST_PACK;
 }
 
 bool merge_mode_uses_split0_concat_lut(int mode) {
@@ -159,7 +161,27 @@ bool merge_mode_uses_split0_concat_lut(int mode) {
            mode == Y26_STAGE16_MERGE_MODE_STAGE33_MODEL4_CV2_MIXED_SIGNEDNESS ||
            mode == Y26_STAGE16_MERGE_MODE_STAGE36_CV2_PIPELINED4 ||
            mode == Y26_STAGE16_MERGE_MODE_STAGE36_CV2_PIPELINED6 ||
-           mode == Y26_STAGE16_MERGE_MODE_STAGE37_BRANCH3X3_PIPELINED4;
+           mode == Y26_STAGE16_MERGE_MODE_STAGE37_BRANCH3X3_PIPELINED4 ||
+           mode == Y26_STAGE16_MERGE_MODE_STAGE39_BRANCH3X3_FAST_PACK;
+}
+
+bool merge_mode_uses_branch1_add_lut(int mode) {
+    return mode == Y26_STAGE16_MERGE_MODE_STAGE26_BRANCH1_ADD_LUT ||
+           mode == Y26_STAGE16_MERGE_MODE_STAGE33_MODEL4_CV2_MIXED_SIGNEDNESS ||
+           mode == Y26_STAGE16_MERGE_MODE_STAGE36_CV2_PIPELINED4 ||
+           mode == Y26_STAGE16_MERGE_MODE_STAGE36_CV2_PIPELINED6 ||
+           mode == Y26_STAGE16_MERGE_MODE_STAGE37_BRANCH3X3_PIPELINED4 ||
+           mode == Y26_STAGE16_MERGE_MODE_STAGE39_BRANCH3X3_FAST_PACK;
+}
+
+int merge_mode_branch3x3_pipelined_kind(int mode) {
+    if (mode == Y26_STAGE16_MERGE_MODE_STAGE39_BRANCH3X3_FAST_PACK) {
+        return 39;
+    }
+    if (mode == Y26_STAGE16_MERGE_MODE_STAGE37_BRANCH3X3_PIPELINED4) {
+        return 37;
+    }
+    return 0;
 }
 
 bool config_valid(const Y26Stage16Model4C2fConfig* cfg) {
@@ -513,7 +535,7 @@ int run_conv_ime_u8s8_fused_correction(const Y26Stage7ConvNodeConfig& cfg,
 int run_conv_threaded(const Y26Stage15Model4BranchWorkspace& ws,
                       const std::int8_t* input_s8,
                       std::int32_t* output_i32,
-                      bool stage37_pipelined,
+                      int branch3x3_pipelined_kind,
                       double* conv_us,
                       double* correction_us,
                       double* thread_overhead_us,
@@ -522,11 +544,17 @@ int run_conv_threaded(const Y26Stage15Model4BranchWorkspace& ws,
                       double* copy_us,
                       double* worker_other_us) {
     Y26ThreadedConvTimingUs threaded {};
-    const int status = stage37_pipelined
-                           ? y26_threaded_conv_run_ime_cluster0_stage37_pipelined(
-                                 ws.branch0_threaded_workspace, input_s8, output_i32, 4, &threaded)
-                           : y26_threaded_conv_run_ime_cluster0(
-                                 ws.branch0_threaded_workspace, input_s8, output_i32, &threaded);
+    int status = Y26_CONV_STATUS_SUCCESS;
+    if (branch3x3_pipelined_kind == 39) {
+        status = y26_threaded_conv_run_ime_cluster0_stage39_fastpack(
+            ws.branch0_threaded_workspace, input_s8, output_i32, 4, &threaded);
+    } else if (branch3x3_pipelined_kind == 37) {
+        status = y26_threaded_conv_run_ime_cluster0_stage37_pipelined(
+            ws.branch0_threaded_workspace, input_s8, output_i32, 4, &threaded);
+    } else {
+        status = y26_threaded_conv_run_ime_cluster0(
+            ws.branch0_threaded_workspace, input_s8, output_i32, &threaded);
+    }
     if (conv_us != nullptr) {
         *conv_us = threaded.total_us;
     }
@@ -722,11 +750,7 @@ int build_concat_qdq_nhwc(const Y26Stage16Model4C2fConfig& cfg,
     if (use_split0_concat_lut && ws.split0_concat_s8 == nullptr) {
         return Y26_CONV_STATUS_INVALID_ARGUMENT;
     }
-    if (cfg.merge_mode == Y26_STAGE16_MERGE_MODE_STAGE26_BRANCH1_ADD_LUT ||
-        cfg.merge_mode == Y26_STAGE16_MERGE_MODE_STAGE33_MODEL4_CV2_MIXED_SIGNEDNESS ||
-        cfg.merge_mode == Y26_STAGE16_MERGE_MODE_STAGE36_CV2_PIPELINED4 ||
-        cfg.merge_mode == Y26_STAGE16_MERGE_MODE_STAGE36_CV2_PIPELINED6 ||
-        cfg.merge_mode == Y26_STAGE16_MERGE_MODE_STAGE37_BRANCH3X3_PIPELINED4) {
+    if (merge_mode_uses_branch1_add_lut(cfg.merge_mode)) {
         return build_concat_qdq_nhwc_branch1_add_lut(cfg, ws, timing);
     }
     if (cfg.merge_mode == Y26_STAGE16_MERGE_MODE_STAGE24_B3_SPLIT1_LUT) {
@@ -848,19 +872,27 @@ int run_after_stage15(const Y26Stage16Model4C2fConfig& cfg,
     int status = Y26_CONV_STATUS_SUCCESS;
     if (use_ime && ws.branch1_threaded_workspace != nullptr) {
         Y26ThreadedConvTimingUs threaded {};
-        const bool use_stage37_branch1 =
-            cfg.merge_mode == Y26_STAGE16_MERGE_MODE_STAGE37_BRANCH3X3_PIPELINED4;
-        status = use_stage37_branch1
-                     ? y26_threaded_conv_run_ime_cluster0_stage37_pipelined(
-                           ws.branch1_threaded_workspace,
-                           y26_stage15_model4_branch_branch0_act_s8(&ws.stage15_ws),
-                           ws.branch1_i32,
-                           4,
-                           &threaded)
-                     : y26_threaded_conv_run_ime_cluster0(ws.branch1_threaded_workspace,
-                                                          y26_stage15_model4_branch_branch0_act_s8(&ws.stage15_ws),
-                                                          ws.branch1_i32,
-                                                          &threaded);
+        const int branch3x3_kind = merge_mode_branch3x3_pipelined_kind(cfg.merge_mode);
+        if (branch3x3_kind == 39) {
+            status = y26_threaded_conv_run_ime_cluster0_stage39_fastpack(
+                ws.branch1_threaded_workspace,
+                y26_stage15_model4_branch_branch0_act_s8(&ws.stage15_ws),
+                ws.branch1_i32,
+                4,
+                &threaded);
+        } else if (branch3x3_kind == 37) {
+            status = y26_threaded_conv_run_ime_cluster0_stage37_pipelined(
+                ws.branch1_threaded_workspace,
+                y26_stage15_model4_branch_branch0_act_s8(&ws.stage15_ws),
+                ws.branch1_i32,
+                4,
+                &threaded);
+        } else {
+            status = y26_threaded_conv_run_ime_cluster0(ws.branch1_threaded_workspace,
+                                                        y26_stage15_model4_branch_branch0_act_s8(&ws.stage15_ws),
+                                                        ws.branch1_i32,
+                                                        &threaded);
+        }
         branch1_conv_us = threaded.total_us;
         branch1_correction_us = threaded.correction_us;
         branch1_im2col_pack_us = threaded.worker_im2col_pack_us;
@@ -894,11 +926,7 @@ int run_after_stage15(const Y26Stage16Model4C2fConfig& cfg,
     }
 
     double branch1_activation_us = 0.0;
-    if (cfg.merge_mode == Y26_STAGE16_MERGE_MODE_STAGE26_BRANCH1_ADD_LUT ||
-        cfg.merge_mode == Y26_STAGE16_MERGE_MODE_STAGE33_MODEL4_CV2_MIXED_SIGNEDNESS ||
-        cfg.merge_mode == Y26_STAGE16_MERGE_MODE_STAGE36_CV2_PIPELINED4 ||
-        cfg.merge_mode == Y26_STAGE16_MERGE_MODE_STAGE36_CV2_PIPELINED6 ||
-        cfg.merge_mode == Y26_STAGE16_MERGE_MODE_STAGE37_BRANCH3X3_PIPELINED4) {
+    if (merge_mode_uses_branch1_add_lut(cfg.merge_mode)) {
         status = build_branch1_activation_code_lut(cfg, ws, use_ime, timing);
         if (status != Y26_CONV_STATUS_SUCCESS) {
             return status;
@@ -932,7 +960,8 @@ int run_after_stage15(const Y26Stage16Model4C2fConfig& cfg,
         cfg.merge_mode == Y26_STAGE16_MERGE_MODE_STAGE33_MODEL4_CV2_MIXED_SIGNEDNESS;
     const int model4_cv2_stage36_accumulators =
         (cfg.merge_mode == Y26_STAGE16_MERGE_MODE_STAGE36_CV2_PIPELINED4 ||
-         cfg.merge_mode == Y26_STAGE16_MERGE_MODE_STAGE37_BRANCH3X3_PIPELINED4)
+         cfg.merge_mode == Y26_STAGE16_MERGE_MODE_STAGE37_BRANCH3X3_PIPELINED4 ||
+         cfg.merge_mode == Y26_STAGE16_MERGE_MODE_STAGE39_BRANCH3X3_FAST_PACK)
             ? 4
             : (cfg.merge_mode == Y26_STAGE16_MERGE_MODE_STAGE36_CV2_PIPELINED6 ? 6 : 0);
     if (use_ime && ws.model4_cv2_threaded_workspace != nullptr) {
@@ -1033,11 +1062,7 @@ int run_after_stage15(const Y26Stage16Model4C2fConfig& cfg,
         timing->model4_cv2_compute_us += model4_cv2_compute_us;
         timing->model4_cv2_copy_us += model4_cv2_copy_us;
         timing->model4_cv2_worker_other_us += model4_cv2_worker_other_us;
-        if (cfg.merge_mode != Y26_STAGE16_MERGE_MODE_STAGE26_BRANCH1_ADD_LUT &&
-            cfg.merge_mode != Y26_STAGE16_MERGE_MODE_STAGE33_MODEL4_CV2_MIXED_SIGNEDNESS &&
-            cfg.merge_mode != Y26_STAGE16_MERGE_MODE_STAGE36_CV2_PIPELINED4 &&
-            cfg.merge_mode != Y26_STAGE16_MERGE_MODE_STAGE36_CV2_PIPELINED6 &&
-            cfg.merge_mode != Y26_STAGE16_MERGE_MODE_STAGE37_BRANCH3X3_PIPELINED4) {
+        if (!merge_mode_uses_branch1_add_lut(cfg.merge_mode)) {
             timing->activation_requant_us += branch1_activation_us;
             timing->branch1_activation_us += branch1_activation_us;
         }
@@ -1091,12 +1116,11 @@ int run_cut_branch0(const Y26Stage16Model4C2fConfig& cfg,
     double thread_overhead_us = 0.0;
     int status = Y26_CONV_STATUS_SUCCESS;
     if (use_threaded_branch0) {
-        const bool use_stage37_branch0 =
-            cfg.merge_mode == Y26_STAGE16_MERGE_MODE_STAGE37_BRANCH3X3_PIPELINED4;
+        const int branch3x3_kind = merge_mode_branch3x3_pipelined_kind(cfg.merge_mode);
         status = run_conv_threaded(ws.stage15_ws,
                                    ws.stage15_ws.split1_input_s8,
                                    ws.stage15_ws.branch0_i32,
-                                   use_stage37_branch0,
+                                   branch3x3_kind,
                                    &branch0_conv_us,
                                    &branch0_correction_us,
                                    &thread_overhead_us,

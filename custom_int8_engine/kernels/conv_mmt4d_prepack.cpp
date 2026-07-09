@@ -201,6 +201,70 @@ void pack_conv3x3_a_panel(const std::int8_t* input_nhwc_s8,
     }
 }
 
+void store_a_8_values(std::int8_t* a_tiles, int m, int flat_k, const std::int8_t* src) {
+    std::memcpy(a_tiles + (flat_k / 8) * 32 + m * 8, src, 8);
+}
+
+void fill_a_8_values(std::int8_t* a_tiles, int m, int flat_k, std::int8_t value) {
+    std::memset(a_tiles + (flat_k / 8) * 32 + m * 8, static_cast<int>(value), 8);
+}
+
+bool pack_conv3x3_a_panel_fast_chunks_supported(const Y26Conv2DParams& params,
+                                                int output_w,
+                                                int output_m,
+                                                int m0,
+                                                int k_padded) {
+    return params.stride_h == 1 && params.stride_w == 1 && params.pad_h == 1 && params.pad_w == 1 &&
+           params.input_c > 0 && params.input_c % 8 == 0 && k_padded == 9 * params.input_c &&
+           m0 + 3 < output_m && (m0 % output_w) + 3 < output_w;
+}
+
+void pack_conv3x3_a_panel_fast_chunks(const std::int8_t* input_nhwc_s8,
+                                      const Y26Conv2DParams& params,
+                                      int output_w,
+                                      int m0,
+                                      std::int8_t input_storage_zero_point_s8,
+                                      std::int8_t* a_tiles) {
+    const int oh = m0 / output_w;
+    const int ow0 = m0 - oh * output_w;
+    const bool interior = oh > 0 && oh + 1 < params.input_h && ow0 > 0 && ow0 + 4 < params.input_w;
+    int flat_k_base = 0;
+    for (int kh = 0; kh < 3; ++kh) {
+        const int ih = oh + kh - 1;
+        const bool valid_h = ih >= 0 && ih < params.input_h;
+        for (int kw = 0; kw < 3; ++kw) {
+            const int iw0 = ow0 + kw - 1;
+            if (interior) {
+                for (int m = 0; m < 4; ++m) {
+                    const std::int8_t* src =
+                        input_nhwc_s8 + (static_cast<std::size_t>(ih) * params.input_w + iw0 + m) *
+                                             static_cast<std::size_t>(params.input_c);
+                    for (int ic = 0; ic < params.input_c; ic += 8) {
+                        store_a_8_values(a_tiles, m, flat_k_base + ic, src + ic);
+                    }
+                }
+            } else {
+                for (int m = 0; m < 4; ++m) {
+                    const int iw = iw0 + m;
+                    const bool inside = valid_h && iw >= 0 && iw < params.input_w;
+                    const std::int8_t* src =
+                        inside ? input_nhwc_s8 + (static_cast<std::size_t>(ih) * params.input_w + iw) *
+                                                       static_cast<std::size_t>(params.input_c)
+                               : nullptr;
+                    for (int ic = 0; ic < params.input_c; ic += 8) {
+                        if (inside) {
+                            store_a_8_values(a_tiles, m, flat_k_base + ic, src + ic);
+                        } else {
+                            fill_a_8_values(a_tiles, m, flat_k_base + ic, input_storage_zero_point_s8);
+                        }
+                    }
+                }
+            }
+            flat_k_base += params.input_c;
+        }
+    }
+}
+
 void pack_a_panel_4xk_tile_contiguous(const std::int8_t* input_nhwc_s8,
                                       const Y26Conv2DParams& params,
                                       int kernel_h,
@@ -219,6 +283,34 @@ void pack_a_panel_4xk_tile_contiguous(const std::int8_t* input_nhwc_s8,
         pack_conv3x3_a_panel(
             input_nhwc_s8, params, output_w, output_m, m0, input_storage_zero_point_s8, a_tiles);
     }
+}
+
+void pack_a_panel_4xk_tile_contiguous_stage39_fastpack(const std::int8_t* input_nhwc_s8,
+                                                       const Y26Conv2DParams& params,
+                                                       int kernel_h,
+                                                       int kernel_w,
+                                                       int output_w,
+                                                       int output_m,
+                                                       int m0,
+                                                       int k_padded,
+                                                       std::int8_t input_storage_zero_point_s8,
+                                                       std::int8_t* a_tiles) {
+    if (kernel_h == 3 && kernel_w == 3 &&
+        pack_conv3x3_a_panel_fast_chunks_supported(params, output_w, output_m, m0, k_padded)) {
+        pack_conv3x3_a_panel_fast_chunks(
+            input_nhwc_s8, params, output_w, m0, input_storage_zero_point_s8, a_tiles);
+        return;
+    }
+    pack_a_panel_4xk_tile_contiguous(input_nhwc_s8,
+                                     params,
+                                     kernel_h,
+                                     kernel_w,
+                                     output_w,
+                                     output_m,
+                                     m0,
+                                     k_padded,
+                                     input_storage_zero_point_s8,
+                                     a_tiles);
 }
 
 void pack_a_panel_4xk_tile_contiguous_timed(const std::int8_t* input_nhwc_s8,
@@ -255,6 +347,45 @@ void pack_a_panel_4xk_tile_contiguous_timed(const std::int8_t* input_nhwc_s8,
                                      k_padded,
                                      input_storage_zero_point_s8,
                                      a_tiles);
+    const auto end = Clock::now();
+    g_stage38_last_im2col_pack_us +=
+        static_cast<double>(std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count()) / 1000.0;
+}
+
+void pack_a_panel_4xk_tile_contiguous_stage39_timed(const std::int8_t* input_nhwc_s8,
+                                                    const Y26Conv2DParams& params,
+                                                    int kernel_h,
+                                                    int kernel_w,
+                                                    int output_w,
+                                                    int output_m,
+                                                    int m0,
+                                                    int k_padded,
+                                                    std::int8_t input_storage_zero_point_s8,
+                                                    std::int8_t* a_tiles) {
+    if (g_stage38_pack_timing_enabled.load(std::memory_order_relaxed) == 0) {
+        pack_a_panel_4xk_tile_contiguous_stage39_fastpack(input_nhwc_s8,
+                                                          params,
+                                                          kernel_h,
+                                                          kernel_w,
+                                                          output_w,
+                                                          output_m,
+                                                          m0,
+                                                          k_padded,
+                                                          input_storage_zero_point_s8,
+                                                          a_tiles);
+        return;
+    }
+    const auto begin = Clock::now();
+    pack_a_panel_4xk_tile_contiguous_stage39_fastpack(input_nhwc_s8,
+                                                      params,
+                                                      kernel_h,
+                                                      kernel_w,
+                                                      output_w,
+                                                      output_m,
+                                                      m0,
+                                                      k_padded,
+                                                      input_storage_zero_point_s8,
+                                                      a_tiles);
     const auto end = Clock::now();
     g_stage38_last_im2col_pack_us +=
         static_cast<double>(std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count()) / 1000.0;
@@ -696,7 +827,8 @@ int conv_stage37_pipelined_core(const std::int8_t* input_nhwc_s8,
                                 std::int8_t* a_workspace_tiles,
                                 std::size_t workspace_bytes,
                                 int accumulator_groups,
-                                int loop_order) {
+                                int loop_order,
+                                bool use_stage39_fast_pack) {
     if (input_nhwc_s8 == nullptr || packed_b_mmt4d == nullptr || raw_output_nhwc == nullptr ||
         a_workspace_tiles == nullptr || !y26_k1x::kernels::conv_params_valid(params) ||
         !kernel_shape_supported(kernel_h, kernel_w) || !storage_zero_point_valid(input_storage_zero_point_s8) ||
@@ -734,16 +866,29 @@ int conv_stage37_pipelined_core(const std::int8_t* input_nhwc_s8,
     std::array<std::int32_t, 16 * 6> c6 {};
 #endif
     for (int m0 = 0; m0 < output_m; m0 += 4) {
-        pack_a_panel_4xk_tile_contiguous_timed(input_nhwc_s8,
-                                               *params,
-                                               kernel_h,
-                                               kernel_w,
-                                               output_w,
-                                               output_m,
-                                               m0,
-                                               k_padded,
-                                               static_cast<std::int8_t>(input_storage_zero_point_s8),
-                                               a_workspace_tiles);
+        if (use_stage39_fast_pack) {
+            pack_a_panel_4xk_tile_contiguous_stage39_timed(input_nhwc_s8,
+                                                           *params,
+                                                           kernel_h,
+                                                           kernel_w,
+                                                           output_w,
+                                                           output_m,
+                                                           m0,
+                                                           k_padded,
+                                                           static_cast<std::int8_t>(input_storage_zero_point_s8),
+                                                           a_workspace_tiles);
+        } else {
+            pack_a_panel_4xk_tile_contiguous_timed(input_nhwc_s8,
+                                                   *params,
+                                                   kernel_h,
+                                                   kernel_w,
+                                                   output_w,
+                                                   output_m,
+                                                   m0,
+                                                   k_padded,
+                                                   static_cast<std::int8_t>(input_storage_zero_point_s8),
+                                                   a_workspace_tiles);
+        }
         int n0 = 0;
 #if defined(Y26_K1X_ENABLE_IME_ASM) && defined(__riscv)
         if (accumulator_groups == 6) {
@@ -1356,7 +1501,38 @@ extern "C" int y26_conv2d_i8s8s32_nhwc_ime_prepacked_stage37_pipelined_v1(
                                        workspace->a_tiles,
                                        workspace->bytes,
                                        accumulator_groups,
-                                       loop_order);
+                                       loop_order,
+                                       false);
+}
+
+extern "C" int y26_conv2d_i8s8s32_nhwc_ime_prepacked_stage39_fastpack_v1(
+    const std::int8_t* input_nhwc_s8,
+    const Y26PrepackedConvWeights* weights,
+    std::int32_t* raw_output_nhwc,
+    int input_storage_zero_point_s8,
+    Y26ConvWorkspace* workspace,
+    int accumulator_groups,
+    int loop_order) {
+    if (weights == nullptr || workspace == nullptr || weights->packed_b_mmt4d == nullptr ||
+        workspace->a_tiles == nullptr || weights->kernel_h != workspace->kernel_h ||
+        weights->kernel_w != workspace->kernel_w || weights->params.input_h != workspace->params.input_h ||
+        weights->params.input_w != workspace->params.input_w ||
+        weights->params.input_c != workspace->params.input_c ||
+        weights->params.output_c != workspace->params.output_c) {
+        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    }
+    return conv_stage37_pipelined_core(input_nhwc_s8,
+                                       weights->packed_b_mmt4d,
+                                       raw_output_nhwc,
+                                       &weights->params,
+                                       weights->kernel_h,
+                                       weights->kernel_w,
+                                       input_storage_zero_point_s8,
+                                       workspace->a_tiles,
+                                       workspace->bytes,
+                                       accumulator_groups,
+                                       loop_order,
+                                       true);
 }
 
 extern "C" int y26_conv2d_u8s8s32_nhwc_ime_prepacked_fused_correction_v1(

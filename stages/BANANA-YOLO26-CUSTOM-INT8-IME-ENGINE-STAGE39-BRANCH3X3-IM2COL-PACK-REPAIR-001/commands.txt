@@ -1,0 +1,24 @@
+# BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE39-BRANCH3X3-IM2COL-PACK-REPAIR-001 commands
+timestamp: 2026-07-09_10-31-09
+log_dir: /data/ncnn-logs/ai-team/2026-07-09_10-31-09/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE39-BRANCH3X3-IM2COL-PACK-REPAIR-001
+shared_run=/data/ncnn-logs/ai-team/2026-07-09/2026-07-09_08-31-13__contcodex__BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE39-BRANCH3X3-IM2COL-PACK-REPAIR-001__stage39-branch3x3-im2col-pack-repair
+stage_log_dir=/data/ncnn-logs/ai-team/2026-07-09_10-31-09/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE39-BRANCH3X3-IM2COL-PACK-REPAIR-001
+## setup and traceability 2026-07-09T10:31:42+02:00
+cwd=/data/banana-yolo26-spacemit-demo
+cmd: mkdir -p stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE39-BRANCH3X3-IM2COL-PACK-REPAIR-001
+cmd: rg -n pending-local-commit-see-final-response Stage38 reports
+
+## major command log summary 2026-07-09T10:48:50+02:00
+preflight: /data/ncnn-logs/ai-team/2026-07-09_10-31-09/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE39-BRANCH3X3-IM2COL-PACK-REPAIR-001/run_logs/preflight_git.log
+toolchain: /data/ncnn-logs/ai-team/2026-07-09_10-31-09/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE39-BRANCH3X3-IM2COL-PACK-REPAIR-001/run_logs/toolchain_route.log
+thermal: /data/ncnn-logs/ai-team/2026-07-09_10-31-09/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE39-BRANCH3X3-IM2COL-PACK-REPAIR-001/run_logs/thermal_frequency_anchor.log
+host pre-edit build/ctest: /data/ncnn-logs/ai-team/2026-07-09_10-31-09/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE39-BRANCH3X3-IM2COL-PACK-REPAIR-001/run_logs/host_pre_edit_build_ctest.log
+host post-edit build/ctest: /data/ncnn-logs/ai-team/2026-07-09_10-31-09/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE39-BRANCH3X3-IM2COL-PACK-REPAIR-001/run_logs/host_post_edit_build_ctest.log
+riscv cross build: /data/ncnn-logs/ai-team/2026-07-09_10-31-09/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE39-BRANCH3X3-IM2COL-PACK-REPAIR-001/run_logs/riscv_cross_build.log
+board deploy: /data/ncnn-logs/ai-team/2026-07-09_10-31-09/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE39-BRANCH3X3-IM2COL-PACK-REPAIR-001/run_logs/board_deploy.log
+board Stage38 replay: /data/ncnn-logs/ai-team/2026-07-09_10-31-09/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE39-BRANCH3X3-IM2COL-PACK-REPAIR-001/run_logs/board_stage38_replay.log
+board Stage39 fastpack: /data/ncnn-logs/ai-team/2026-07-09_10-31-09/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE39-BRANCH3X3-IM2COL-PACK-REPAIR-001/run_logs/board_stage39_fastpack.log
+board Stage38 replay after: /data/ncnn-logs/ai-team/2026-07-09_10-31-09/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE39-BRANCH3X3-IM2COL-PACK-REPAIR-001/run_logs/board_stage38_replay_after.log
+board no-measure A/B: /data/ncnn-logs/ai-team/2026-07-09_10-31-09/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE39-BRANCH3X3-IM2COL-PACK-REPAIR-001/run_logs/board_no_measure_ab.log
+board actual sha256: /data/ncnn-logs/ai-team/2026-07-09_10-31-09/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE39-BRANCH3X3-IM2COL-PACK-REPAIR-001/run_logs/board_actual_sha256.log
+source hygiene: /data/ncnn-logs/ai-team/2026-07-09_10-31-09/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE39-BRANCH3X3-IM2COL-PACK-REPAIR-001/run_logs/source_hygiene.log

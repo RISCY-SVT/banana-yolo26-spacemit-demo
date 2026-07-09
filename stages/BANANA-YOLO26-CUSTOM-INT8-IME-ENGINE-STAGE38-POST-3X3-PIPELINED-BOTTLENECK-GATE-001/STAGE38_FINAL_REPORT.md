@@ -5,7 +5,7 @@ stage_id: BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE38-POST-3X3-PIPELINED-BOTTLE
 repo: /data/banana-yolo26-spacemit-demo
 branch: yolo26-custom-int8-engine
 start_head: 97d9e8ce52c584a5ecc3d3aa44dc6e18e4e9e8a8
-end_head: pending-local-commit-see-final-response
+end_head: 11675ccfbdf905bef92b5fd69f75d08a541a549c
 pushed: false
 full_engine_implemented: false
 ncnn_source_mutated: false
