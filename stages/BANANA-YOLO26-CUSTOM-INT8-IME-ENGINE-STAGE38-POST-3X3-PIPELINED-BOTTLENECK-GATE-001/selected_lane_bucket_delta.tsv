@@ -1,0 +1,11 @@
+bucket	stage37_replay_us	stage38_lane_a_us	delta_us	speedup
+total	32890.5	30341.5	-2549.0	1.08401
+input_adapter	2640.44	2602.06	-38.38	1.01475
+conv	18051.0	18048.1	-2.9	1.00016
+activation_requant	3004.23	3036.11	31.88	0.98950
+merge	2112.38	2075.46	-36.92	1.01779
+output_quantize	7055.2	4551.97	-2503.23	1.54994
+thread_overhead_diagnostic	4707.19	4730.13	22.94	0.99515
+branch0_im2col_pack	3646.44	3601.25	-45.19	1.01255
+branch1_im2col_pack	2014.70	2000.66	-14.04	1.00702
+model4_cv2_im2col_pack	1137.78	1130.18	-7.60	1.00672

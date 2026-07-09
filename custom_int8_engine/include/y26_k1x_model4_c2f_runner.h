@@ -19,6 +19,12 @@ enum Y26Stage16MergeMode {
     Y26_STAGE16_MERGE_MODE_STAGE37_BRANCH3X3_PIPELINED4 = 3704,
 };
 
+enum Y26Stage16OutputQuantizeMode {
+    Y26_STAGE16_OUTPUT_QUANTIZE_SCALAR = 0,
+    Y26_STAGE16_OUTPUT_QUANTIZE_RVV_F32 = 1,
+    Y26_STAGE16_OUTPUT_QUANTIZE_STAGE38_RVV_DIRECT_STORE = 38,
+};
+
 struct Y26Stage16Model4C2fConfig {
     const char* subset_id;
     Y26Stage15Model4BranchConfig stage15;
@@ -45,18 +51,21 @@ struct Y26Stage16TimingUs {
     double hash_checksum_compare_us;
     double other_us;
     double correction_us;
+    double conv_im2col_pack_us;
     double conv_compute_us;
     double conv_copy_us;
     double conv_worker_other_us;
     double copy_us;
     double branch1_conv_us;
     double branch1_correction_us;
+    double branch1_im2col_pack_us;
     double branch1_compute_us;
     double branch1_copy_us;
     double branch1_worker_other_us;
     double branch1_activation_us;
     double model4_cv2_conv_us;
     double model4_cv2_correction_us;
+    double model4_cv2_im2col_pack_us;
     double model4_cv2_compute_us;
     double model4_cv2_copy_us;
     double model4_cv2_worker_other_us;
@@ -153,7 +162,7 @@ int y26_stage16_model4_c2f_run_cut_u8_output(const Y26Stage16Model4C2fConfig* cf
                                              std::uint8_t* output_q_u8_nhwc,
                                              int use_ime,
                                              int use_threaded_branch0,
-                                             int use_optimized_output_quantize,
+                                             int output_quantize_mode,
                                              Y26Stage16TimingUs* timing);
 
 int y26_stage16_model4_c2f_threaded_worker_affinity_ok(const Y26Stage16Model4C2fWorkspace* ws);

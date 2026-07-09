@@ -119,6 +119,9 @@ int y26_conv2d_i8s8s32_nhwc_ime_prepacked_v1(const std::int8_t* input_nhwc_s8,
                                              Y26ConvWorkspace* workspace,
                                              int loop_order);
 
+void y26_conv_mmt4d_set_stage38_pack_timing_enabled(int enabled);
+double y26_conv_mmt4d_last_im2col_pack_us();
+
 int y26_conv2d_i8s8s32_nhwc_ime_prepacked_stage36_pipelined_v1(
     const std::int8_t* input_nhwc_s8,
     const Y26PrepackedConvWeights* weights,

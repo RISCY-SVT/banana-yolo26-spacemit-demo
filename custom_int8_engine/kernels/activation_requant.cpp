@@ -421,6 +421,39 @@ int conv_output_quantize_rvv_f32_impl(const Y26ConvOutputQuantizeParams& params,
     }
     return Y26_CONV_STATUS_SUCCESS;
 }
+
+int conv_output_quantize_rvv_f32_direct_store_impl(const Y26ConvOutputQuantizeParams& params,
+                                                   const std::int32_t* producer_i32,
+                                                   std::uint8_t* output_u8) {
+    float acc_scales[256] {};
+    build_output_acc_scales(params, acc_scales);
+    const std::size_t pixels = params.element_count / static_cast<std::size_t>(params.channels);
+    const std::int32_t* src = producer_i32;
+    std::uint8_t* dst = output_u8;
+    for (std::size_t pixel = 0; pixel < pixels; ++pixel) {
+        int channel = 0;
+        while (channel < params.channels) {
+            const std::size_t vl = __riscv_vsetvl_e32m4(static_cast<std::size_t>(params.channels - channel));
+            vint32m4_t vacc = __riscv_vle32_v_i32m4(src + channel, vl);
+            vfloat32m4_t vf = __riscv_vfcvt_f_x_v_f32m4(vacc, vl);
+            vfloat32m4_t vscale = __riscv_vle32_v_f32m4(acc_scales + channel, vl);
+            vf = __riscv_vfmul_vv_f32m4(vf, vscale, vl);
+            vf = __riscv_vfdiv_vf_f32m4(vf, params.output_scale, vl);
+            vint32m4_t vcode = __riscv_vfcvt_x_f_v_i32m4_rm(vf, __RISCV_FRM_RNE, vl);
+            vcode = __riscv_vadd_vx_i32m4(vcode, params.output_zero_point_u8, vl);
+            vcode = __riscv_vmax_vx_i32m4(vcode, 0, vl);
+            vcode = __riscv_vmin_vx_i32m4(vcode, 255, vl);
+            vuint32m4_t vu32 = __riscv_vreinterpret_v_i32m4_u32m4(vcode);
+            vuint16m2_t vu16 = __riscv_vnclipu_wx_u16m2(vu32, 0, __RISCV_VXRM_RNU, vl);
+            vuint8m1_t vu8 = __riscv_vnclipu_wx_u8m1(vu16, 0, __RISCV_VXRM_RNU, vl);
+            __riscv_vse8_v_u8m1(dst + channel, vu8, vl);
+            channel += static_cast<int>(vl);
+        }
+        src += params.channels;
+        dst += params.channels;
+    }
+    return Y26_CONV_STATUS_SUCCESS;
+}
 #endif
 
 }  // namespace
@@ -809,6 +842,21 @@ extern "C" int y26_conv_output_quantize_i32_to_u8_rvv_f32(const Y26ConvOutputQua
     }
 #if defined(__riscv_vector)
     return conv_output_quantize_rvv_f32_impl(*params, producer_i32, output_u8);
+#else
+    conv_output_quantize_scalar_unrolled_impl(*params, producer_i32, output_u8);
+    return Y26_CONV_STATUS_SUCCESS;
+#endif
+}
+
+extern "C" int y26_conv_output_quantize_i32_to_u8_rvv_f32_direct_store(
+    const Y26ConvOutputQuantizeParams* params,
+    const std::int32_t* producer_i32,
+    std::uint8_t* output_u8) {
+    if (!conv_output_quantize_params_valid(params) || producer_i32 == nullptr || output_u8 == nullptr) {
+        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    }
+#if defined(__riscv_vector)
+    return conv_output_quantize_rvv_f32_direct_store_impl(*params, producer_i32, output_u8);
 #else
     conv_output_quantize_scalar_unrolled_impl(*params, producer_i32, output_u8);
     return Y26_CONV_STATUS_SUCCESS;

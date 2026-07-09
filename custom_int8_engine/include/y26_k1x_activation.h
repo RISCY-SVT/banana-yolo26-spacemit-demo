@@ -155,4 +155,8 @@ int y26_conv_output_quantize_i32_to_u8_rvv_f32(const Y26ConvOutputQuantizeParams
                                                const std::int32_t* producer_i32,
                                                std::uint8_t* output_u8);
 
+int y26_conv_output_quantize_i32_to_u8_rvv_f32_direct_store(const Y26ConvOutputQuantizeParams* params,
+                                                            const std::int32_t* producer_i32,
+                                                            std::uint8_t* output_u8);
+
 }

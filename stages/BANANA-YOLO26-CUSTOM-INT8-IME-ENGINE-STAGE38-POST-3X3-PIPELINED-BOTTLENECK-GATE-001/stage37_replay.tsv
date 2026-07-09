@@ -1,0 +1,2 @@
+mode	output_quantize	mean_total_us	stddev_total_us	cv_total_pct	mismatches	max_abs_diff	output_sha256	input_adapter_us	conv_us	activation_requant_us	merge_us	output_quantize_us	thread_overhead_us	attribution_pct
+branch3x3_pipelined4	rvv	32890.5	269.396	0.819071	0	0	70adcf083e85ea95d5fb42e57ea26f51255944aaa442cde4d919f5ae551b3433	2640.44	18051.0	3004.23	2112.38	7055.2	4707.19	99.9173

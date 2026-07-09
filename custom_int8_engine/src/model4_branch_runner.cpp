@@ -279,6 +279,7 @@ int run_conv_threaded(const Y26Stage15Model4BranchWorkspace& ws,
                       double* conv_us,
                       double* correction_us,
                       double* thread_overhead_us,
+                      double* im2col_pack_us,
                       double* compute_us,
                       double* copy_us,
                       double* worker_other_us) {
@@ -293,6 +294,9 @@ int run_conv_threaded(const Y26Stage15Model4BranchWorkspace& ws,
     }
     if (thread_overhead_us != nullptr) {
         *thread_overhead_us = std::max(0.0, threaded_timing.total_us - threaded_timing.worker_max_us);
+    }
+    if (im2col_pack_us != nullptr) {
+        *im2col_pack_us = threaded_timing.worker_im2col_pack_us;
     }
     if (compute_us != nullptr) {
         *compute_us = threaded_timing.worker_compute_us;
@@ -406,6 +410,7 @@ int run_after_stage14(const Y26Stage15Model4BranchConfig& cfg,
 
     double branch0_conv_us = 0.0;
     double branch0_correction_us = 0.0;
+    double branch0_im2col_pack_us = 0.0;
     double branch0_compute_us = 0.0;
     double branch0_copy_us = 0.0;
     double branch0_worker_other_us = 0.0;
@@ -417,6 +422,7 @@ int run_after_stage14(const Y26Stage15Model4BranchConfig& cfg,
                                    &branch0_conv_us,
                                    &branch0_correction_us,
                                    &branch0_thread_overhead_us,
+                                   &branch0_im2col_pack_us,
                                    &branch0_compute_us,
                                    &branch0_copy_us,
                                    &branch0_worker_other_us);
@@ -437,6 +443,7 @@ int run_after_stage14(const Y26Stage15Model4BranchConfig& cfg,
                                            &branch0_conv_us,
                                            &branch0_correction_us);
         branch0_compute_us = std::max(0.0, branch0_conv_us - branch0_correction_us);
+        branch0_im2col_pack_us = use_ime ? y26_conv_mmt4d_last_im2col_pack_us() : 0.0;
     }
     if (status != Y26_CONV_STATUS_SUCCESS) {
         return status;
@@ -476,6 +483,8 @@ int run_after_stage14(const Y26Stage15Model4BranchConfig& cfg,
         timing->branch0_conv_us += branch0_conv_us;
         timing->correction_us += branch0_correction_us;
         timing->branch0_correction_us += branch0_correction_us;
+        timing->conv_im2col_pack_us += branch0_im2col_pack_us;
+        timing->branch0_im2col_pack_us += branch0_im2col_pack_us;
         timing->conv_compute_us += branch0_compute_us;
         timing->conv_copy_us += branch0_copy_us;
         timing->conv_worker_other_us += branch0_worker_other_us;

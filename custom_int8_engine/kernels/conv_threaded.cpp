@@ -1,6 +1,7 @@
 #include "y26_k1x_threaded_conv.h"
 
 #include "y26_k1x_activation.h"
+#include "y26_k1x_conv_kernels.h"
 #include "y26_k1x_vmadot.h"
 
 #include <algorithm>
@@ -111,6 +112,7 @@ struct ThreadWorker {
     int observed_cpu = -1;
     int affinity_set = 0;
     double total_us = 0.0;
+    double im2col_pack_us = 0.0;
     double compute_us = 0.0;
     double correction_us = 0.0;
     double copy_us = 0.0;
@@ -231,6 +233,7 @@ int run_worker_once(ThreadWorker& worker,
     }
     const auto correction_end = Clock::now();
     worker.copy_us = 0.0;
+    worker.im2col_pack_us = y26_conv_mmt4d_last_im2col_pack_us();
     const auto end = Clock::now();
     worker.total_us = elapsed_us(begin, end);
     worker.compute_us = elapsed_us(begin, correction_begin);
@@ -261,6 +264,7 @@ int run_worker_stage36_pipelined_once(ThreadWorker& worker,
     }
     const auto correction_end = Clock::now();
     worker.copy_us = 0.0;
+    worker.im2col_pack_us = y26_conv_mmt4d_last_im2col_pack_us();
     const auto end = Clock::now();
     worker.total_us = elapsed_us(begin, end);
     worker.compute_us = elapsed_us(begin, correction_begin);
@@ -291,6 +295,7 @@ int run_worker_stage37_pipelined_once(ThreadWorker& worker,
     }
     const auto correction_end = Clock::now();
     worker.copy_us = 0.0;
+    worker.im2col_pack_us = y26_conv_mmt4d_last_im2col_pack_us();
     const auto end = Clock::now();
     worker.total_us = elapsed_us(begin, end);
     worker.compute_us = elapsed_us(begin, correction_begin);
@@ -320,6 +325,7 @@ int run_worker_u8s8_fused_once(ThreadWorker& worker,
     const auto copy_end = Clock::now();
     const auto end = Clock::now();
     worker.total_us = elapsed_us(begin, end);
+    worker.im2col_pack_us = 0.0;
     worker.compute_us = elapsed_us(begin, copy_begin);
     worker.correction_us = 0.0;
     worker.copy_us = elapsed_us(copy_begin, copy_end);
@@ -347,6 +353,7 @@ int run_worker_activation_once(ThreadWorker& worker,
         &local_params, input_i32 + offset, lut_s8, output_s8 + offset);
     const auto end = Clock::now();
     worker.total_us = elapsed_us(begin, end);
+    worker.im2col_pack_us = 0.0;
     worker.correction_us = 0.0;
     return status;
 }
@@ -523,6 +530,7 @@ extern "C" int y26_threaded_conv_run_ime_cluster0(const Y26ThreadedConvWorkspace
     for (ThreadWorker& worker : workspace->workers) {
         worker.status = Y26_CONV_STATUS_SUCCESS;
         worker.total_us = 0.0;
+        worker.im2col_pack_us = 0.0;
         worker.compute_us = 0.0;
         worker.correction_us = 0.0;
         worker.copy_us = 0.0;
@@ -556,6 +564,7 @@ extern "C" int y26_threaded_conv_run_ime_cluster0(const Y26ThreadedConvWorkspace
         timing->correction_us = correction_max;
         if (critical_worker != nullptr) {
             timing->worker_compute_us = critical_worker->compute_us;
+            timing->worker_im2col_pack_us = critical_worker->im2col_pack_us;
             timing->worker_correction_us = critical_worker->correction_us;
             timing->worker_copy_us = critical_worker->copy_us;
             const double worker_attributed =
@@ -587,6 +596,7 @@ extern "C" int y26_threaded_conv_run_ime_cluster0_u8s8_fused_correction(
     for (ThreadWorker& worker : workspace->workers) {
         worker.status = Y26_CONV_STATUS_SUCCESS;
         worker.total_us = 0.0;
+        worker.im2col_pack_us = 0.0;
         worker.compute_us = 0.0;
         worker.correction_us = 0.0;
         worker.copy_us = 0.0;
@@ -620,6 +630,7 @@ extern "C" int y26_threaded_conv_run_ime_cluster0_u8s8_fused_correction(
         timing->correction_us = 0.0;
         if (critical_worker != nullptr) {
             timing->worker_compute_us = critical_worker->compute_us;
+            timing->worker_im2col_pack_us = critical_worker->im2col_pack_us;
             timing->worker_correction_us = 0.0;
             timing->worker_copy_us = copy_max;
             const double worker_attributed = critical_worker->compute_us + critical_worker->copy_us;
@@ -653,6 +664,7 @@ extern "C" int y26_threaded_conv_run_ime_cluster0_stage36_pipelined_cv2(
     for (ThreadWorker& worker : workspace->workers) {
         worker.status = Y26_CONV_STATUS_SUCCESS;
         worker.total_us = 0.0;
+        worker.im2col_pack_us = 0.0;
         worker.compute_us = 0.0;
         worker.correction_us = 0.0;
         worker.copy_us = 0.0;
@@ -686,6 +698,7 @@ extern "C" int y26_threaded_conv_run_ime_cluster0_stage36_pipelined_cv2(
         timing->correction_us = correction_max;
         if (critical_worker != nullptr) {
             timing->worker_compute_us = critical_worker->compute_us;
+            timing->worker_im2col_pack_us = critical_worker->im2col_pack_us;
             timing->worker_correction_us = critical_worker->correction_us;
             timing->worker_copy_us = critical_worker->copy_us;
             const double worker_attributed =
@@ -720,6 +733,7 @@ extern "C" int y26_threaded_conv_run_ime_cluster0_stage37_pipelined(
     for (ThreadWorker& worker : workspace->workers) {
         worker.status = Y26_CONV_STATUS_SUCCESS;
         worker.total_us = 0.0;
+        worker.im2col_pack_us = 0.0;
         worker.compute_us = 0.0;
         worker.correction_us = 0.0;
         worker.copy_us = 0.0;
@@ -753,6 +767,7 @@ extern "C" int y26_threaded_conv_run_ime_cluster0_stage37_pipelined(
         timing->correction_us = correction_max;
         if (critical_worker != nullptr) {
             timing->worker_compute_us = critical_worker->compute_us;
+            timing->worker_im2col_pack_us = critical_worker->im2col_pack_us;
             timing->worker_correction_us = critical_worker->correction_us;
             timing->worker_copy_us = critical_worker->copy_us;
             const double worker_attributed =
@@ -792,6 +807,7 @@ extern "C" int y26_threaded_conv_run_activation_rvv_f32_rows(
     for (ThreadWorker& worker : workspace->workers) {
         worker.status = Y26_CONV_STATUS_SUCCESS;
         worker.total_us = 0.0;
+        worker.im2col_pack_us = 0.0;
         worker.compute_us = 0.0;
         worker.correction_us = 0.0;
         worker.copy_us = 0.0;

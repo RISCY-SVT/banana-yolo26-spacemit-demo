@@ -517,6 +517,7 @@ int run_conv_threaded(const Y26Stage15Model4BranchWorkspace& ws,
                       double* conv_us,
                       double* correction_us,
                       double* thread_overhead_us,
+                      double* im2col_pack_us,
                       double* compute_us,
                       double* copy_us,
                       double* worker_other_us) {
@@ -534,6 +535,9 @@ int run_conv_threaded(const Y26Stage15Model4BranchWorkspace& ws,
     }
     if (thread_overhead_us != nullptr) {
         *thread_overhead_us = std::max(0.0, threaded.total_us - threaded.worker_max_us);
+    }
+    if (im2col_pack_us != nullptr) {
+        *im2col_pack_us = threaded.worker_im2col_pack_us;
     }
     if (compute_us != nullptr) {
         *compute_us = threaded.worker_compute_us;
@@ -556,6 +560,7 @@ void accumulate_stage15_timing(Y26Stage16TimingUs& dst, const Y26Stage15TimingUs
     dst.post_qdq_us += src.post_qdq_us;
     dst.pack_layout_us += src.pack_layout_us;
     dst.correction_us += src.correction_us;
+    dst.conv_im2col_pack_us += src.conv_im2col_pack_us;
     dst.conv_compute_us += src.conv_compute_us;
     dst.conv_copy_us += src.conv_copy_us;
     dst.conv_worker_other_us += src.conv_worker_other_us;
@@ -836,6 +841,7 @@ int run_after_stage15(const Y26Stage16Model4C2fConfig& cfg,
                       bool split0_concat_prebuilt) {
     double branch1_conv_us = 0.0;
     double branch1_correction_us = 0.0;
+    double branch1_im2col_pack_us = 0.0;
     double branch1_compute_us = 0.0;
     double branch1_copy_us = 0.0;
     double branch1_worker_other_us = 0.0;
@@ -857,6 +863,7 @@ int run_after_stage15(const Y26Stage16Model4C2fConfig& cfg,
                                                           &threaded);
         branch1_conv_us = threaded.total_us;
         branch1_correction_us = threaded.correction_us;
+        branch1_im2col_pack_us = threaded.worker_im2col_pack_us;
         branch1_compute_us = threaded.worker_compute_us;
         branch1_copy_us = threaded.worker_copy_us;
         branch1_worker_other_us = threaded.worker_other_us;
@@ -880,6 +887,7 @@ int run_after_stage15(const Y26Stage16Model4C2fConfig& cfg,
                                            &branch1_conv_us,
                                            &branch1_correction_us);
         branch1_compute_us = std::max(0.0, branch1_conv_us - branch1_correction_us);
+        branch1_im2col_pack_us = use_ime ? y26_conv_mmt4d_last_im2col_pack_us() : 0.0;
     }
     if (status != Y26_CONV_STATUS_SUCCESS) {
         return status;
@@ -916,6 +924,7 @@ int run_after_stage15(const Y26Stage16Model4C2fConfig& cfg,
 
     double model4_cv2_conv_us = 0.0;
     double model4_cv2_correction_us = 0.0;
+    double model4_cv2_im2col_pack_us = 0.0;
     double model4_cv2_compute_us = 0.0;
     double model4_cv2_copy_us = 0.0;
     double model4_cv2_worker_other_us = 0.0;
@@ -946,6 +955,7 @@ int run_after_stage15(const Y26Stage16Model4C2fConfig& cfg,
         }
         model4_cv2_conv_us = threaded.total_us;
         model4_cv2_correction_us = threaded.correction_us;
+        model4_cv2_im2col_pack_us = threaded.worker_im2col_pack_us;
         model4_cv2_compute_us = threaded.worker_compute_us;
         model4_cv2_copy_us = threaded.worker_copy_us;
         model4_cv2_worker_other_us = threaded.worker_other_us;
@@ -971,6 +981,7 @@ int run_after_stage15(const Y26Stage16Model4C2fConfig& cfg,
             const auto end = Clock::now();
             model4_cv2_conv_us = elapsed_us(begin, end);
             model4_cv2_correction_us = elapsed_us(correction_begin, end);
+            model4_cv2_im2col_pack_us = y26_conv_mmt4d_last_im2col_pack_us();
         } else {
             status = use_ime
                          ? (use_model4_cv2_mixed
@@ -998,6 +1009,9 @@ int run_after_stage15(const Y26Stage16Model4C2fConfig& cfg,
                                            &model4_cv2_correction_us);
         }
         model4_cv2_compute_us = std::max(0.0, model4_cv2_conv_us - model4_cv2_correction_us);
+        if (use_ime && model4_cv2_im2col_pack_us == 0.0) {
+            model4_cv2_im2col_pack_us = y26_conv_mmt4d_last_im2col_pack_us();
+        }
     }
 
     if (timing != nullptr) {
@@ -1007,6 +1021,9 @@ int run_after_stage15(const Y26Stage16Model4C2fConfig& cfg,
         timing->correction_us += branch1_correction_us + model4_cv2_correction_us;
         timing->branch1_correction_us += branch1_correction_us;
         timing->model4_cv2_correction_us += model4_cv2_correction_us;
+        timing->conv_im2col_pack_us += branch1_im2col_pack_us + model4_cv2_im2col_pack_us;
+        timing->branch1_im2col_pack_us += branch1_im2col_pack_us;
+        timing->model4_cv2_im2col_pack_us += model4_cv2_im2col_pack_us;
         timing->conv_compute_us += branch1_compute_us + model4_cv2_compute_us;
         timing->conv_copy_us += branch1_copy_us + model4_cv2_copy_us;
         timing->conv_worker_other_us += branch1_worker_other_us + model4_cv2_worker_other_us;
@@ -1067,6 +1084,7 @@ int run_cut_branch0(const Y26Stage16Model4C2fConfig& cfg,
                     Y26Stage16TimingUs* timing) {
     double branch0_conv_us = 0.0;
     double branch0_correction_us = 0.0;
+    double branch0_im2col_pack_us = 0.0;
     double branch0_compute_us = 0.0;
     double branch0_copy_us = 0.0;
     double branch0_worker_other_us = 0.0;
@@ -1082,6 +1100,7 @@ int run_cut_branch0(const Y26Stage16Model4C2fConfig& cfg,
                                    &branch0_conv_us,
                                    &branch0_correction_us,
                                    &thread_overhead_us,
+                                   &branch0_im2col_pack_us,
                                    &branch0_compute_us,
                                    &branch0_copy_us,
                                    &branch0_worker_other_us);
@@ -1102,6 +1121,7 @@ int run_cut_branch0(const Y26Stage16Model4C2fConfig& cfg,
                                            &branch0_conv_us,
                                            &branch0_correction_us);
         branch0_compute_us = std::max(0.0, branch0_conv_us - branch0_correction_us);
+        branch0_im2col_pack_us = use_ime ? y26_conv_mmt4d_last_im2col_pack_us() : 0.0;
     }
     if (status != Y26_CONV_STATUS_SUCCESS) {
         return status;
@@ -1123,6 +1143,9 @@ int run_cut_branch0(const Y26Stage16Model4C2fConfig& cfg,
         timing->stage15_timing_us.branch0_conv_us += branch0_conv_us;
         timing->correction_us += branch0_correction_us;
         timing->stage15_timing_us.branch0_correction_us += branch0_correction_us;
+        timing->conv_im2col_pack_us += branch0_im2col_pack_us;
+        timing->stage15_timing_us.conv_im2col_pack_us += branch0_im2col_pack_us;
+        timing->stage15_timing_us.branch0_im2col_pack_us += branch0_im2col_pack_us;
         timing->conv_compute_us += branch0_compute_us;
         timing->conv_copy_us += branch0_copy_us;
         timing->conv_worker_other_us += branch0_worker_other_us;
@@ -1143,15 +1166,20 @@ int quantize_cut_output(const Y26Stage16Model4C2fConfig& cfg,
                         const Y26Stage16Model4C2fWorkspace& ws,
                         const std::int32_t* output_i32_nhwc,
                         std::uint8_t* output_q_u8_nhwc,
-                        bool optimized,
+                        int output_quantize_mode,
                         Y26Stage16TimingUs* timing) {
     const auto begin = Clock::now();
     const Y26ConvOutputQuantizeParams params =
         output_quantize_params(cfg.model4_cv2, ws.model4_cv2_output_count);
-    const int status = optimized ? y26_conv_output_quantize_i32_to_u8_rvv_f32(
-                                       &params, output_i32_nhwc, output_q_u8_nhwc)
-                                 : y26_conv_output_quantize_i32_to_u8_scalar_unrolled(
-                                       &params, output_i32_nhwc, output_q_u8_nhwc);
+    int status = Y26_CONV_STATUS_SUCCESS;
+    if (output_quantize_mode == Y26_STAGE16_OUTPUT_QUANTIZE_STAGE38_RVV_DIRECT_STORE) {
+        status = y26_conv_output_quantize_i32_to_u8_rvv_f32_direct_store(
+            &params, output_i32_nhwc, output_q_u8_nhwc);
+    } else if (output_quantize_mode == Y26_STAGE16_OUTPUT_QUANTIZE_RVV_F32) {
+        status = y26_conv_output_quantize_i32_to_u8_rvv_f32(&params, output_i32_nhwc, output_q_u8_nhwc);
+    } else {
+        status = y26_conv_output_quantize_i32_to_u8_scalar_unrolled(&params, output_i32_nhwc, output_q_u8_nhwc);
+    }
     const auto end = Clock::now();
     if (timing != nullptr) {
         timing->output_quantize_us += elapsed_us(begin, end);
@@ -1550,7 +1578,7 @@ extern "C" int y26_stage16_model4_c2f_run_cut_u8_output(const Y26Stage16Model4C2
                                                          std::uint8_t* output_q_u8_nhwc,
                                                          int use_ime,
                                                          int use_threaded_branch0,
-                                                         int use_optimized_output_quantize,
+                                                         int output_quantize_mode,
                                                          Y26Stage16TimingUs* timing) {
     if (!cut_config_valid(cfg) || ws == nullptr || ws->prepared != 1 || model4_cv1_q_u8_nhwc == nullptr ||
         output_q_u8_nhwc == nullptr || ws->model4_cv2_i32 == nullptr) {
@@ -1578,7 +1606,7 @@ extern "C" int y26_stage16_model4_c2f_run_cut_u8_output(const Y26Stage16Model4C2
                                  *ws,
                                  ws->model4_cv2_i32,
                                  output_q_u8_nhwc,
-                                 use_optimized_output_quantize != 0,
+                                 output_quantize_mode,
                                  timing);
     const auto end = Clock::now();
     if (timing != nullptr) {

@@ -7,7 +7,7 @@ stage_id: BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE37-MODEL4-POST-CV2-PIPELINED
 repo: /data/banana-yolo26-spacemit-demo
 branch: yolo26-custom-int8-engine
 start_head: a945d60a5fedf3d5b74483a02e5b95214c5cd973
-end_head: pending-local-commit-see-final-response
+end_head: 97d9e8ce52c584a5ecc3d3aa44dc6e18e4e9e8a8
 pushed: false
 
 ## Non-Claims

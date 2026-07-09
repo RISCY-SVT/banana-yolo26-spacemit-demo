@@ -32,6 +32,7 @@ struct Options {
     std::string dump_actual;
     Protocol protocol {};
     bool frm_sweep = false;
+    bool measure_im2col_pack = false;
     int thread_branch0 = 4;
     int thread_branch1 = 0;
     int thread_model4_cv2 = 0;
@@ -171,24 +172,28 @@ void add_timing(Y26Stage16TimingUs& dst, const Y26Stage16TimingUs& src) {
     dst.copy_layout_us += src.copy_layout_us;
     dst.pack_layout_us += src.pack_layout_us;
     dst.correction_us += src.correction_us;
+    dst.conv_im2col_pack_us += src.conv_im2col_pack_us;
     dst.conv_compute_us += src.conv_compute_us;
     dst.conv_copy_us += src.conv_copy_us;
     dst.conv_worker_other_us += src.conv_worker_other_us;
     dst.thread_overhead_us += src.thread_overhead_us;
     dst.branch1_conv_us += src.branch1_conv_us;
     dst.branch1_correction_us += src.branch1_correction_us;
+    dst.branch1_im2col_pack_us += src.branch1_im2col_pack_us;
     dst.branch1_compute_us += src.branch1_compute_us;
     dst.branch1_copy_us += src.branch1_copy_us;
     dst.branch1_worker_other_us += src.branch1_worker_other_us;
     dst.branch1_activation_us += src.branch1_activation_us;
     dst.model4_cv2_conv_us += src.model4_cv2_conv_us;
     dst.model4_cv2_correction_us += src.model4_cv2_correction_us;
+    dst.model4_cv2_im2col_pack_us += src.model4_cv2_im2col_pack_us;
     dst.model4_cv2_compute_us += src.model4_cv2_compute_us;
     dst.model4_cv2_copy_us += src.model4_cv2_copy_us;
     dst.model4_cv2_worker_other_us += src.model4_cv2_worker_other_us;
     dst.total_us += src.total_us;
     dst.stage15_timing_us.branch0_conv_us += src.stage15_timing_us.branch0_conv_us;
     dst.stage15_timing_us.branch0_correction_us += src.stage15_timing_us.branch0_correction_us;
+    dst.stage15_timing_us.branch0_im2col_pack_us += src.stage15_timing_us.branch0_im2col_pack_us;
     dst.stage15_timing_us.branch0_compute_us += src.stage15_timing_us.branch0_compute_us;
     dst.stage15_timing_us.branch0_copy_us += src.stage15_timing_us.branch0_copy_us;
     dst.stage15_timing_us.branch0_worker_other_us += src.stage15_timing_us.branch0_worker_other_us;
@@ -211,24 +216,28 @@ void divide_timing(Y26Stage16TimingUs& timing, double denom) {
     timing.copy_layout_us /= denom;
     timing.pack_layout_us /= denom;
     timing.correction_us /= denom;
+    timing.conv_im2col_pack_us /= denom;
     timing.conv_compute_us /= denom;
     timing.conv_copy_us /= denom;
     timing.conv_worker_other_us /= denom;
     timing.thread_overhead_us /= denom;
     timing.branch1_conv_us /= denom;
     timing.branch1_correction_us /= denom;
+    timing.branch1_im2col_pack_us /= denom;
     timing.branch1_compute_us /= denom;
     timing.branch1_copy_us /= denom;
     timing.branch1_worker_other_us /= denom;
     timing.branch1_activation_us /= denom;
     timing.model4_cv2_conv_us /= denom;
     timing.model4_cv2_correction_us /= denom;
+    timing.model4_cv2_im2col_pack_us /= denom;
     timing.model4_cv2_compute_us /= denom;
     timing.model4_cv2_copy_us /= denom;
     timing.model4_cv2_worker_other_us /= denom;
     timing.total_us /= denom;
     timing.stage15_timing_us.branch0_conv_us /= denom;
     timing.stage15_timing_us.branch0_correction_us /= denom;
+    timing.stage15_timing_us.branch0_im2col_pack_us /= denom;
     timing.stage15_timing_us.branch0_compute_us /= denom;
     timing.stage15_timing_us.branch0_copy_us /= denom;
     timing.stage15_timing_us.branch0_worker_other_us /= denom;
@@ -267,7 +276,13 @@ int run_protocol(const Y26Stage16Model4C2fConfig& cfg,
                  Summary& summary) {
     const bool use_ime = options.mode == "ime" || options.mode == "ime_threaded";
     const bool use_threaded = options.mode == "ime_threaded";
-    const bool optimized_output_quantize = options.output_quantize == "rvv";
+    int output_quantize_mode = Y26_STAGE16_OUTPUT_QUANTIZE_SCALAR;
+    if (options.output_quantize == "rvv") {
+        output_quantize_mode = Y26_STAGE16_OUTPUT_QUANTIZE_RVV_F32;
+    } else if (options.output_quantize == "rvv_direct") {
+        output_quantize_mode = Y26_STAGE16_OUTPUT_QUANTIZE_STAGE38_RVV_DIRECT_STORE;
+    }
+    y26_conv_mmt4d_set_stage38_pack_timing_enabled(options.measure_im2col_pack ? 1 : 0);
     if (use_ime) {
         (void)y26_k1x_ime_probe_once();
     }
@@ -279,7 +294,7 @@ int run_protocol(const Y26Stage16Model4C2fConfig& cfg,
                                                                     actual.data(),
                                                                     use_ime ? 1 : 0,
                                                                     use_threaded ? 1 : 0,
-                                                                    optimized_output_quantize ? 1 : 0,
+                                                                    output_quantize_mode,
                                                                     &timing);
         if (status != Y26_CONV_STATUS_SUCCESS) {
             summary.status = status;
@@ -300,7 +315,7 @@ int run_protocol(const Y26Stage16Model4C2fConfig& cfg,
                                                               actual.data(),
                                                               use_ime ? 1 : 0,
                                                               use_threaded ? 1 : 0,
-                                                              optimized_output_quantize ? 1 : 0,
+                                                              output_quantize_mode,
                                                               &timing);
             if (status != Y26_CONV_STATUS_SUCCESS) {
                 break;
@@ -363,6 +378,8 @@ Options parse_options(int argc, char** argv) {
             options.dump_actual = require_value("--dump-actual");
         } else if (arg == "--frm-sweep") {
             options.frm_sweep = true;
+        } else if (arg == "--measure-im2col-pack") {
+            options.measure_im2col_pack = true;
         } else if (arg == "--thread-branch0") {
             options.thread_branch0 = std::max(1, std::atoi(require_value("--thread-branch0").c_str()));
         } else if (arg == "--thread-branch1") {
@@ -423,12 +440,12 @@ int main(int argc, char** argv) {
     const Options options = parse_options(argc, argv);
     if (options.fixture_dir.empty()) {
         std::cerr << "usage: bench_stage23_model4_runner_cut --fixture-dir <dir>"
-                  << " [--mode scalar|ime|ime_threaded] [--output-quantize scalar|rvv]"
+                  << " [--mode scalar|ime_threaded] [--output-quantize scalar|rvv|rvv_direct]"
                   << " [--merge-repair baseline|split1_lut|branch1_add_lut|branch1_add_lut_mixed_cv2"
                      "|branch1_add_lut_cv2_pipelined4|branch1_add_lut_cv2_pipelined6"
                      "|branch3x3_pipelined4]"
                   << " [--thread-branch0 1|2|3|4] [--thread-branch1 0|1|2|3|4]"
-                  << " [--thread-model4-cv2 0|1|2|3|4]\n";
+                  << " [--thread-model4-cv2 0|1|2|3|4] [--measure-im2col-pack]\n";
         return 2;
     }
     if (options.merge_repair != "baseline" && options.merge_repair != "split1_lut" &&
@@ -437,6 +454,11 @@ int main(int argc, char** argv) {
         options.merge_repair != "branch1_add_lut_cv2_pipelined6" &&
         options.merge_repair != "branch3x3_pipelined4") {
         std::cerr << "unsupported --merge-repair " << options.merge_repair << "\n";
+        return 2;
+    }
+    if (options.output_quantize != "scalar" && options.output_quantize != "rvv" &&
+        options.output_quantize != "rvv_direct") {
+        std::cerr << "unsupported --output-quantize " << options.output_quantize << "\n";
         return 2;
     }
     int merge_mode = Y26_STAGE16_MERGE_MODE_C2_SPLIT0_CONCAT_LUT;
@@ -516,6 +538,7 @@ int main(int argc, char** argv) {
               << " thread_branch0=" << (use_threaded ? options.thread_branch0 : 0)
               << " thread_branch1=" << (use_threaded ? options.thread_branch1 : 0)
               << " thread_model4_cv2=" << (use_threaded ? options.thread_model4_cv2 : 0)
+              << " measure_im2col_pack=" << (options.measure_im2col_pack ? 1 : 0)
               << " status=" << summary.status
               << " mismatches=" << summary.mismatches
               << " max_abs_diff=" << summary.max_abs_diff
@@ -537,23 +560,27 @@ int main(int argc, char** argv) {
               << " mean_pack_layout_us=" << t.pack_layout_us
               << " mean_thread_overhead_us=" << t.thread_overhead_us
               << " mean_correction_us=" << t.correction_us
+              << " mean_conv_im2col_pack_us=" << t.conv_im2col_pack_us
               << " mean_conv_compute_us=" << t.conv_compute_us
               << " mean_conv_copy_us=" << t.conv_copy_us
               << " mean_conv_worker_other_us=" << t.conv_worker_other_us
               << " mean_branch0_conv_us=" << t.stage15_timing_us.branch0_conv_us
               << " mean_branch0_correction_us=" << t.stage15_timing_us.branch0_correction_us
+              << " mean_branch0_im2col_pack_us=" << t.stage15_timing_us.branch0_im2col_pack_us
               << " mean_branch0_compute_us=" << t.stage15_timing_us.branch0_compute_us
               << " mean_branch0_copy_us=" << t.stage15_timing_us.branch0_copy_us
               << " mean_branch0_worker_other_us=" << t.stage15_timing_us.branch0_worker_other_us
               << " mean_branch0_activation_us=" << t.stage15_timing_us.branch0_activation_us
               << " mean_branch1_conv_us=" << t.branch1_conv_us
               << " mean_branch1_correction_us=" << t.branch1_correction_us
+              << " mean_branch1_im2col_pack_us=" << t.branch1_im2col_pack_us
               << " mean_branch1_compute_us=" << t.branch1_compute_us
               << " mean_branch1_copy_us=" << t.branch1_copy_us
               << " mean_branch1_worker_other_us=" << t.branch1_worker_other_us
               << " mean_branch1_activation_us=" << t.branch1_activation_us
               << " mean_model4_cv2_conv_us=" << t.model4_cv2_conv_us
               << " mean_model4_cv2_correction_us=" << t.model4_cv2_correction_us
+              << " mean_model4_cv2_im2col_pack_us=" << t.model4_cv2_im2col_pack_us
               << " mean_model4_cv2_compute_us=" << t.model4_cv2_compute_us
               << " mean_model4_cv2_copy_us=" << t.model4_cv2_copy_us
               << " mean_model4_cv2_worker_other_us=" << t.model4_cv2_worker_other_us

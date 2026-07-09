@@ -1,0 +1,71 @@
+# commands.txt
+stage_id: BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE38-POST-3X3-PIPELINED-BOTTLENECK-GATE-001
+run_ts: 2026-07-09_08-54-07
+log_dir: /data/ncnn-logs/ai-team/2026-07-09_08-54-07/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE38-POST-3X3-PIPELINED-BOTTLENECK-GATE-001
+repo: /data/banana-yolo26-spacemit-demo
+
+
+## command 2026-07-09T08:54:20+02:00
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: git status --short --branch; git rev-parse HEAD; git branch --show-current; git diff --check
+
+## command 2026-07-09T08:54:40+02:00
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: git grep -n pending-local-commit-see-final-response stages/...STAGE37... || true
+
+## manual edit 2026-07-09T08:55:32+02:00
+files: Stage37 STAGE37_FINAL_REPORT.md, Stage38 hypotheses.md, stage37_traceability_fix_report.md
+
+## command 2026-07-09T09:00:35+02:00
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: cmake -S custom_int8_engine -B .deps/custom_int8_engine/build-host-native-stage38 -DCMAKE_BUILD_TYPE=RelWithDebInfo -DY26_K1X_ENABLE_IME=OFF -DCMAKE_CXX_COMPILER=/usr/bin/g++ && cmake --build ... && ctest ...
+
+## command 2026-07-09T09:01:44+02:00
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: source /data/build_scripts/01-env.sh; cmake -S custom_int8_engine -B .deps/custom_int8_engine/build-riscv-stage38 -DCMAKE_BUILD_TYPE=RelWithDebInfo -DY26_K1X_ENABLE_IME=ON ... && cmake --build ...
+
+## command 2026-07-09T09:03:27+02:00
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: board anchor, mkdir board dir, scp bench+fixtures, sha256sum
+
+## command 2026-07-09T09:03:47+02:00
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: ssh svt@banana cd BOARD_DIR && taskset -c 0-3 ./bench_stage23_model4_runner_cut --fixture-dir fixture --mode ime_threaded --output-quantize rvv --merge-repair branch3x3_pipelined4 --thread-branch0 4 --thread-branch1 4 --thread-model4-cv2 4 --warmup 10 --runs 100 --repeats 5 --frm-sweep --measure-im2col-pack --dump-actual stage38_replay_actual.bin
+
+## command 2026-07-09T09:07:08+02:00
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: rebuild host + ctest after Lane A candidate; rebuild riscv
+
+## command 2026-07-09T09:08:56+02:00
+cwd: /data/banana-yolo26-spacemit-demo
+cmd: scp updated bench; run Stage38 Lane A rvv_direct stable benchmark with FRM sweep
+## 2026-07-09T07:15:20Z hygiene start
+cwd=/data/banana-yolo26-spacemit-demo
+command=git diff --check
+git diff --check rc=0
+## 2026-07-09T07:15:29Z symlink scan
+cwd=/data/banana-yolo26-spacemit-demo
+command=find custom_int8_engine stages -type l -print
+symlink scan rc=0 findings=0
+## 2026-07-09T07:15:37Z changed file list
+cwd=/data/banana-yolo26-spacemit-demo
+command=git status --porcelain=v1
+31 /data/ncnn-logs/ai-team/2026-07-09_08-54-07/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE38-POST-3X3-PIPELINED-BOTTLENECK-GATE-001/run_logs/changed_files_pre_commit.txt
+## 2026-07-09T07:15:54Z secret-like scan
+cwd=/data/banana-yolo26-spacemit-demo
+command=rg secret-like patterns over changed files
+secret-like scan normalized_rc=123 findings=0
+## 2026-07-09T07:16:09Z secret-like scan retry without xargs rc 123
+cwd=/data/banana-yolo26-spacemit-demo
+command=while-read rg secret-like patterns over changed files
+secret-like retry scan rc=0 findings=0
+## 2026-07-09T07:16:26Z path/control hygiene scan
+cwd=/data/banana-yolo26-spacemit-demo
+path hygiene rc=0 sensitive_findings=0 changed_path_ascii_control_findings=0
+## 2026-07-09T07:16:52Z sync commands into stage dir
+cwd=/data/banana-yolo26-spacemit-demo
+command=cp LOG_DIR/commands.txt STAGE_DIR/commands.txt
+final git diff --check rc=0
+## 2026-07-09T07:17:03Z git add and cached check
+cwd=/data/banana-yolo26-spacemit-demo
+command=git add custom_int8_engine stages && git diff --cached --check

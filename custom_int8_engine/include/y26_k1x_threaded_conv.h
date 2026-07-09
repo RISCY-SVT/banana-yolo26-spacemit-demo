@@ -48,6 +48,7 @@ struct Y26ThreadedConvTimingUs {
     double total_us;
     double worker_max_us;
     double worker_min_us;
+    double worker_im2col_pack_us;
     double worker_compute_us;
     double worker_correction_us;
     double worker_copy_us;
