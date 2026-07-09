@@ -32,6 +32,7 @@ enum ThreadTaskKind {
     kThreadTaskConv = 0,
     kThreadTaskActivationRvvF32 = 1,
     kThreadTaskConvU8S8FusedCorrection = 2,
+    kThreadTaskConvStage36PipelinedCv2 = 3,
 };
 
 int output_dim(int input, int kernel, int stride, int pad) {
@@ -126,6 +127,7 @@ struct Y26ThreadedConvWorkspace {
     const std::int8_t* current_input = nullptr;
     std::int32_t* current_output = nullptr;
     int task_kind = kThreadTaskConv;
+    int stage36_accumulator_groups = 4;
     Y26ActivationRequantParams activation_params {};
     const std::int32_t* activation_input_i32 = nullptr;
     const std::int8_t* activation_lut_s8 = nullptr;
@@ -235,6 +237,36 @@ int run_worker_once(ThreadWorker& worker,
     return status;
 }
 
+int run_worker_stage36_pipelined_once(ThreadWorker& worker,
+                                      const std::int8_t* input_s8,
+                                      std::int32_t* output_i32,
+                                      int accumulator_groups) {
+    const auto begin = Clock::now();
+    const std::int8_t* local_input =
+        input_s8 + static_cast<std::size_t>(worker.plan.input_row_begin) *
+                       static_cast<std::size_t>(worker.root_cfg.params.input_w) *
+                       static_cast<std::size_t>(worker.root_cfg.params.input_c);
+    int status = y26_conv2d_i8s8s32_nhwc_ime_prepacked_stage36_pipelined_v1(
+        local_input,
+        worker.weights,
+        worker.raw.data(),
+        worker.cfg.input_storage_zero_point_s8,
+        worker.conv_workspace,
+        accumulator_groups,
+        Y26_CONV_LOOP_ORDER_M_MAJOR);
+    const auto correction_begin = Clock::now();
+    if (status == Y26_CONV_STATUS_SUCCESS) {
+        status = apply_worker_correction_to_output(worker, output_i32);
+    }
+    const auto correction_end = Clock::now();
+    worker.copy_us = 0.0;
+    const auto end = Clock::now();
+    worker.total_us = elapsed_us(begin, end);
+    worker.compute_us = elapsed_us(begin, correction_begin);
+    worker.correction_us = elapsed_us(correction_begin, correction_end);
+    return status;
+}
+
 int run_worker_u8s8_fused_once(ThreadWorker& worker,
                                const std::int8_t* input_s8_storage,
                                std::int32_t* output_i32) {
@@ -308,6 +340,11 @@ void worker_loop(Y26ThreadedConvWorkspace* workspace, std::size_t worker_index) 
         } else if (workspace->task_kind == kThreadTaskConvU8S8FusedCorrection) {
             worker.status =
                 run_worker_u8s8_fused_once(worker, workspace->current_input, workspace->current_output);
+        } else if (workspace->task_kind == kThreadTaskConvStage36PipelinedCv2) {
+            worker.status = run_worker_stage36_pipelined_once(worker,
+                                                              workspace->current_input,
+                                                              workspace->current_output,
+                                                              workspace->stage36_accumulator_groups);
         } else {
             worker.status = run_worker_once(worker, workspace->current_input, workspace->current_output);
         }
@@ -550,6 +587,73 @@ extern "C" int y26_threaded_conv_run_ime_cluster0_u8s8_fused_correction(
             timing->worker_correction_us = 0.0;
             timing->worker_copy_us = copy_max;
             const double worker_attributed = critical_worker->compute_us + critical_worker->copy_us;
+            timing->worker_other_us = std::max(0.0, critical_worker->total_us - worker_attributed);
+        }
+    }
+    return status;
+}
+
+extern "C" int y26_threaded_conv_run_ime_cluster0_stage36_pipelined_cv2(
+    const Y26ThreadedConvWorkspace* const_workspace,
+    const std::int8_t* input_nhwc_s8,
+    std::int32_t* corrected_output_nhwc,
+    int accumulator_groups,
+    Y26ThreadedConvTimingUs* timing) {
+    if (const_workspace == nullptr || input_nhwc_s8 == nullptr || corrected_output_nhwc == nullptr ||
+        (accumulator_groups != 4 && accumulator_groups != 6)) {
+        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    }
+    if (!y26_vmadot_4x4x8_ime_available_buildtime()) {
+        return Y26_CONV_STATUS_NOT_BUILT_WITH_IME;
+    }
+    Y26ThreadedConvWorkspace* workspace = const_cast<Y26ThreadedConvWorkspace*>(const_workspace);
+    if (timing != nullptr) {
+        std::memset(timing, 0, sizeof(*timing));
+    }
+    workspace->current_input = input_nhwc_s8;
+    workspace->current_output = corrected_output_nhwc;
+    workspace->task_kind = kThreadTaskConvStage36PipelinedCv2;
+    workspace->stage36_accumulator_groups = accumulator_groups;
+    for (ThreadWorker& worker : workspace->workers) {
+        worker.status = Y26_CONV_STATUS_SUCCESS;
+        worker.total_us = 0.0;
+        worker.compute_us = 0.0;
+        worker.correction_us = 0.0;
+        worker.copy_us = 0.0;
+    }
+    const auto begin = Clock::now();
+    workspace->start_barrier->arrive_and_wait();
+    workspace->done_barrier->arrive_and_wait();
+    const auto end = Clock::now();
+
+    int status = Y26_CONV_STATUS_SUCCESS;
+    double worker_max = 0.0;
+    double worker_min = workspace->workers.empty() ? 0.0 : workspace->workers.front().total_us;
+    double correction_max = 0.0;
+    const ThreadWorker* critical_worker = nullptr;
+    for (const ThreadWorker& worker : workspace->workers) {
+        if (worker.status != Y26_CONV_STATUS_SUCCESS && status == Y26_CONV_STATUS_SUCCESS) {
+            status = worker.status;
+        }
+        if (worker.total_us >= worker_max) {
+            worker_max = worker.total_us;
+            critical_worker = &worker;
+        }
+        worker_min = std::min(worker_min, worker.total_us);
+        correction_max = std::max(correction_max, worker.correction_us);
+    }
+    if (timing != nullptr) {
+        timing->total_us = elapsed_us(begin, end);
+        timing->conv_us = timing->total_us;
+        timing->worker_max_us = worker_max;
+        timing->worker_min_us = worker_min;
+        timing->correction_us = correction_max;
+        if (critical_worker != nullptr) {
+            timing->worker_compute_us = critical_worker->compute_us;
+            timing->worker_correction_us = critical_worker->correction_us;
+            timing->worker_copy_us = critical_worker->copy_us;
+            const double worker_attributed =
+                critical_worker->compute_us + critical_worker->correction_us + critical_worker->copy_us;
             timing->worker_other_us = std::max(0.0, critical_worker->total_us - worker_attributed);
         }
     }

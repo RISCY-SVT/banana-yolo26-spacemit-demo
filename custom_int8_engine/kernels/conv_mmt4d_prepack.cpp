@@ -331,6 +331,314 @@ int run_c_tile(const std::int8_t* a_tiles,
     return Y26_CONV_STATUS_SUCCESS;
 }
 
+#if defined(Y26_K1X_ENABLE_IME_ASM) && defined(__riscv)
+int run_c_tiles_stage36_pipelined4(const std::int8_t* a_tiles,
+                                   const std::int8_t* packed_b_mmt4d,
+                                   std::int32_t* raw_output_nhwc,
+                                   const Y26Conv2DParams& params,
+                                   int output_m,
+                                   int m0,
+                                   int n0,
+                                   int k_tiles,
+                                   std::array<std::int32_t, 16 * 4>& c_tiles) {
+    if (n0 + 16 > params.output_c) {
+        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    }
+    std::fill(c_tiles.begin(), c_tiles.end(), 0);
+    const int n_tile = n0 / 4;
+    const std::int8_t* a_ptr = a_tiles;
+    const std::int8_t* b0 = packed_b_mmt4d + (n_tile * k_tiles) * 32;
+    const std::int8_t* b1 = packed_b_mmt4d + ((n_tile + 1) * k_tiles) * 32;
+    const std::int8_t* b2 = packed_b_mmt4d + ((n_tile + 2) * k_tiles) * 32;
+    const std::int8_t* b3 = packed_b_mmt4d + ((n_tile + 3) * k_tiles) * 32;
+    int kt = k_tiles;
+    std::int32_t* c0 = c_tiles.data();
+    std::int32_t* c1 = c_tiles.data() + 16;
+    std::int32_t* c2 = c_tiles.data() + 32;
+    std::int32_t* c3 = c_tiles.data() + 48;
+    __asm__ volatile(
+        "vsetvli      t0, zero, e32, m2       \n\t"
+        "vxor.vv      v20, v20, v20           \n\t"
+        "vxor.vv      v22, v22, v22           \n\t"
+        "vxor.vv      v24, v24, v24           \n\t"
+        "vxor.vv      v26, v26, v26           \n\t"
+        "1:                                      \n\t"
+        "vsetvli      t0, zero, e8, m1        \n\t"
+        "vle8.v       v0, (%[A])              \n\t"
+        "vle8.v       v1, (%[B0])             \n\t"
+        "vle8.v       v2, (%[B1])             \n\t"
+        "vle8.v       v3, (%[B2])             \n\t"
+        "vle8.v       v4, (%[B3])             \n\t"
+        "smt.vmadot   v20, v0, v1             \n\t"
+        "smt.vmadot   v22, v0, v2             \n\t"
+        "smt.vmadot   v24, v0, v3             \n\t"
+        "smt.vmadot   v26, v0, v4             \n\t"
+        "addi         %[A], %[A], 32           \n\t"
+        "addi         %[B0], %[B0], 32         \n\t"
+        "addi         %[B1], %[B1], 32         \n\t"
+        "addi         %[B2], %[B2], 32         \n\t"
+        "addi         %[B3], %[B3], 32         \n\t"
+        "addi         %[KT], %[KT], -1         \n\t"
+        "bnez         %[KT], 1b                \n\t"
+        "vsetvli      t0, zero, e32, m2       \n\t"
+        "vse32.v      v20, (%[C0])            \n\t"
+        "vse32.v      v22, (%[C1])            \n\t"
+        "vse32.v      v24, (%[C2])            \n\t"
+        "vse32.v      v26, (%[C3])            \n\t"
+        : [A] "+r"(a_ptr), [B0] "+r"(b0), [B1] "+r"(b1), [B2] "+r"(b2), [B3] "+r"(b3), [KT] "+r"(kt)
+        : [C0] "r"(c0), [C1] "r"(c1), [C2] "r"(c2), [C3] "r"(c3)
+        : "cc",
+          "memory",
+          "t0",
+          "v0",
+          "v1",
+          "v2",
+          "v3",
+          "v4",
+          "v20",
+          "v21",
+          "v22",
+          "v23",
+          "v24",
+          "v25",
+          "v26",
+          "v27");
+    for (int m = 0; m < 4; ++m) {
+        const int flat_m = m0 + m;
+        if (flat_m >= output_m) {
+            continue;
+        }
+        for (int group = 0; group < 4; ++group) {
+            const std::int32_t* tile = c_tiles.data() + static_cast<std::size_t>(group) * 16U;
+            for (int n = 0; n < 4; ++n) {
+                const int oc = n0 + group * 4 + n;
+                raw_output_nhwc[flat_m * params.output_c + oc] = tile[m * 4 + n];
+            }
+        }
+    }
+    return Y26_CONV_STATUS_SUCCESS;
+}
+
+int run_c_tiles_stage36_pipelined6(const std::int8_t* a_tiles,
+                                   const std::int8_t* packed_b_mmt4d,
+                                   std::int32_t* raw_output_nhwc,
+                                   const Y26Conv2DParams& params,
+                                   int output_m,
+                                   int m0,
+                                   int n0,
+                                   int k_tiles,
+                                   std::array<std::int32_t, 16 * 6>& c_tiles) {
+    if (n0 + 24 > params.output_c) {
+        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    }
+    std::fill(c_tiles.begin(), c_tiles.end(), 0);
+    const int n_tile = n0 / 4;
+    const std::int8_t* a_ptr = a_tiles;
+    const std::int8_t* b0 = packed_b_mmt4d + (n_tile * k_tiles) * 32;
+    const std::int8_t* b1 = packed_b_mmt4d + ((n_tile + 1) * k_tiles) * 32;
+    const std::int8_t* b2 = packed_b_mmt4d + ((n_tile + 2) * k_tiles) * 32;
+    const std::int8_t* b3 = packed_b_mmt4d + ((n_tile + 3) * k_tiles) * 32;
+    const std::int8_t* b4 = packed_b_mmt4d + ((n_tile + 4) * k_tiles) * 32;
+    const std::int8_t* b5 = packed_b_mmt4d + ((n_tile + 5) * k_tiles) * 32;
+    int kt = k_tiles;
+    std::int32_t* c0 = c_tiles.data();
+    std::int32_t* c1 = c_tiles.data() + 16;
+    std::int32_t* c2 = c_tiles.data() + 32;
+    std::int32_t* c3 = c_tiles.data() + 48;
+    std::int32_t* c4 = c_tiles.data() + 64;
+    std::int32_t* c5 = c_tiles.data() + 80;
+    __asm__ volatile(
+        "vsetvli      t0, zero, e32, m2       \n\t"
+        "vxor.vv      v16, v16, v16           \n\t"
+        "vxor.vv      v18, v18, v18           \n\t"
+        "vxor.vv      v20, v20, v20           \n\t"
+        "vxor.vv      v22, v22, v22           \n\t"
+        "vxor.vv      v24, v24, v24           \n\t"
+        "vxor.vv      v26, v26, v26           \n\t"
+        "1:                                      \n\t"
+        "vsetvli      t0, zero, e8, m1        \n\t"
+        "vle8.v       v0, (%[A])              \n\t"
+        "vle8.v       v1, (%[B0])             \n\t"
+        "vle8.v       v2, (%[B1])             \n\t"
+        "vle8.v       v3, (%[B2])             \n\t"
+        "vle8.v       v4, (%[B3])             \n\t"
+        "vle8.v       v5, (%[B4])             \n\t"
+        "vle8.v       v6, (%[B5])             \n\t"
+        "smt.vmadot   v16, v0, v1             \n\t"
+        "smt.vmadot   v18, v0, v2             \n\t"
+        "smt.vmadot   v20, v0, v3             \n\t"
+        "smt.vmadot   v22, v0, v4             \n\t"
+        "smt.vmadot   v24, v0, v5             \n\t"
+        "smt.vmadot   v26, v0, v6             \n\t"
+        "addi         %[A], %[A], 32           \n\t"
+        "addi         %[B0], %[B0], 32         \n\t"
+        "addi         %[B1], %[B1], 32         \n\t"
+        "addi         %[B2], %[B2], 32         \n\t"
+        "addi         %[B3], %[B3], 32         \n\t"
+        "addi         %[B4], %[B4], 32         \n\t"
+        "addi         %[B5], %[B5], 32         \n\t"
+        "addi         %[KT], %[KT], -1         \n\t"
+        "bnez         %[KT], 1b                \n\t"
+        "vsetvli      t0, zero, e32, m2       \n\t"
+        "vse32.v      v16, (%[C0])            \n\t"
+        "vse32.v      v18, (%[C1])            \n\t"
+        "vse32.v      v20, (%[C2])            \n\t"
+        "vse32.v      v22, (%[C3])            \n\t"
+        "vse32.v      v24, (%[C4])            \n\t"
+        "vse32.v      v26, (%[C5])            \n\t"
+        : [A] "+r"(a_ptr),
+          [B0] "+r"(b0),
+          [B1] "+r"(b1),
+          [B2] "+r"(b2),
+          [B3] "+r"(b3),
+          [B4] "+r"(b4),
+          [B5] "+r"(b5),
+          [KT] "+r"(kt)
+        : [C0] "r"(c0), [C1] "r"(c1), [C2] "r"(c2), [C3] "r"(c3), [C4] "r"(c4), [C5] "r"(c5)
+        : "cc",
+          "memory",
+          "t0",
+          "v0",
+          "v1",
+          "v2",
+          "v3",
+          "v4",
+          "v5",
+          "v6",
+          "v16",
+          "v17",
+          "v18",
+          "v19",
+          "v20",
+          "v21",
+          "v22",
+          "v23",
+          "v24",
+          "v25",
+          "v26",
+          "v27");
+    for (int m = 0; m < 4; ++m) {
+        const int flat_m = m0 + m;
+        if (flat_m >= output_m) {
+            continue;
+        }
+        for (int group = 0; group < 6; ++group) {
+            const std::int32_t* tile = c_tiles.data() + static_cast<std::size_t>(group) * 16U;
+            for (int n = 0; n < 4; ++n) {
+                const int oc = n0 + group * 4 + n;
+                raw_output_nhwc[flat_m * params.output_c + oc] = tile[m * 4 + n];
+            }
+        }
+    }
+    return Y26_CONV_STATUS_SUCCESS;
+}
+#endif
+
+int conv1x1_stage36_pipelined_core(const std::int8_t* input_nhwc_s8,
+                                   const std::int8_t* packed_b_mmt4d,
+                                   std::int32_t* raw_output_nhwc,
+                                   const Y26Conv2DParams* params,
+                                   int input_storage_zero_point_s8,
+                                   std::int8_t* a_workspace_tiles,
+                                   std::size_t workspace_bytes,
+                                   int accumulator_groups,
+                                   int loop_order) {
+    if (input_nhwc_s8 == nullptr || packed_b_mmt4d == nullptr || raw_output_nhwc == nullptr ||
+        a_workspace_tiles == nullptr || !y26_k1x::kernels::conv_params_valid(params) ||
+        !storage_zero_point_valid(input_storage_zero_point_s8) || !loop_order_valid(loop_order) ||
+        (accumulator_groups != 4 && accumulator_groups != 6)) {
+        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    }
+    if (loop_order != Y26_CONV_LOOP_ORDER_M_MAJOR) {
+        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    }
+    if (!y26_vmadot_4x4x8_ime_available_buildtime()) {
+        return Y26_CONV_STATUS_NOT_BUILT_WITH_IME;
+    }
+    if (!y26_k1x_ime_hotpath_allowed_on_current_cpu()) {
+        const auto snapshot = y26_k1x_ime_runtime_state_snapshot();
+        return y26_k1x::kernels::conv_status_from_vmadot_status(snapshot.probe_status);
+    }
+    const int output_h = y26_conv1x1_output_h(params);
+    const int output_w = y26_conv1x1_output_w(params);
+    if (output_h <= 0 || output_w <= 0 || params->input_c % 8 != 0 || params->output_c % 4 != 0) {
+        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    }
+    const int kernel_k = params->input_c;
+    const int k_padded = align_up(kernel_k, 8);
+    const int k_tiles = k_padded / 8;
+    if (workspace_bytes < static_cast<std::size_t>(4 * k_padded)) {
+        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    }
+
+    const int output_m = output_h * output_w;
+    std::array<std::int32_t, 16> c_tile {};
+#if defined(Y26_K1X_ENABLE_IME_ASM) && defined(__riscv)
+    std::array<std::int32_t, 16 * 4> c4 {};
+    std::array<std::int32_t, 16 * 6> c6 {};
+#endif
+    for (int m0 = 0; m0 < output_m; m0 += 4) {
+        pack_a_panel_4xk_tile_contiguous(input_nhwc_s8,
+                                         *params,
+                                         1,
+                                         1,
+                                         output_w,
+                                         output_m,
+                                         m0,
+                                         k_padded,
+                                         static_cast<std::int8_t>(input_storage_zero_point_s8),
+                                         a_workspace_tiles);
+        int n0 = 0;
+#if defined(Y26_K1X_ENABLE_IME_ASM) && defined(__riscv)
+        if (accumulator_groups == 6) {
+            for (; n0 + 24 <= params->output_c; n0 += 24) {
+                const int status = run_c_tiles_stage36_pipelined6(a_workspace_tiles,
+                                                                  packed_b_mmt4d,
+                                                                  raw_output_nhwc,
+                                                                  *params,
+                                                                  output_m,
+                                                                  m0,
+                                                                  n0,
+                                                                  k_tiles,
+                                                                  c6);
+                if (status != Y26_CONV_STATUS_SUCCESS) {
+                    return status;
+                }
+            }
+        }
+        for (; n0 + 16 <= params->output_c; n0 += 16) {
+            const int status = run_c_tiles_stage36_pipelined4(a_workspace_tiles,
+                                                              packed_b_mmt4d,
+                                                              raw_output_nhwc,
+                                                              *params,
+                                                              output_m,
+                                                              m0,
+                                                              n0,
+                                                              k_tiles,
+                                                              c4);
+            if (status != Y26_CONV_STATUS_SUCCESS) {
+                return status;
+            }
+        }
+#endif
+        for (; n0 < params->output_c; n0 += 4) {
+            const int status = run_c_tile(a_workspace_tiles,
+                                          packed_b_mmt4d,
+                                          raw_output_nhwc,
+                                          *params,
+                                          output_m,
+                                          m0,
+                                          n0,
+                                          k_tiles,
+                                          c_tile);
+            if (status != Y26_CONV_STATUS_SUCCESS) {
+                return status;
+            }
+        }
+    }
+    return Y26_CONV_STATUS_SUCCESS;
+}
+
 int run_c_tile_u8s8_fused_correction(const std::uint8_t* a_tiles_u8,
                                       const std::int8_t* packed_b_mmt4d,
                                       const std::int32_t* bias_oc,
@@ -828,6 +1136,33 @@ extern "C" int y26_conv2d_i8s8s32_nhwc_ime_prepacked_v1(const std::int8_t* input
                                    workspace->a_tiles,
                                    workspace->bytes,
                                    loop_order);
+}
+
+extern "C" int y26_conv2d_i8s8s32_nhwc_ime_prepacked_stage36_pipelined_v1(
+    const std::int8_t* input_nhwc_s8,
+    const Y26PrepackedConvWeights* weights,
+    std::int32_t* raw_output_nhwc,
+    int input_storage_zero_point_s8,
+    Y26ConvWorkspace* workspace,
+    int accumulator_groups,
+    int loop_order) {
+    if (weights == nullptr || workspace == nullptr || weights->packed_b_mmt4d == nullptr ||
+        workspace->a_tiles == nullptr || weights->kernel_h != 1 || weights->kernel_w != 1 ||
+        workspace->kernel_h != 1 || workspace->kernel_w != 1 ||
+        weights->params.input_h != workspace->params.input_h || weights->params.input_w != workspace->params.input_w ||
+        weights->params.input_c != workspace->params.input_c ||
+        weights->params.output_c != workspace->params.output_c) {
+        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    }
+    return conv1x1_stage36_pipelined_core(input_nhwc_s8,
+                                          weights->packed_b_mmt4d,
+                                          raw_output_nhwc,
+                                          &weights->params,
+                                          input_storage_zero_point_s8,
+                                          workspace->a_tiles,
+                                          workspace->bytes,
+                                          accumulator_groups,
+                                          loop_order);
 }
 
 extern "C" int y26_conv2d_u8s8s32_nhwc_ime_prepacked_fused_correction_v1(

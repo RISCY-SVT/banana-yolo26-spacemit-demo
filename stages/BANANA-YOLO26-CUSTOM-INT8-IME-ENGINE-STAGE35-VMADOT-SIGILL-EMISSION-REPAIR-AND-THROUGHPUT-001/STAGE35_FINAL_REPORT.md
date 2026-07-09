@@ -5,7 +5,7 @@ stage_id: `BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE35-VMADOT-SIGILL-EMISSION-R
 repo: `/data/banana-yolo26-spacemit-demo`
 branch: `yolo26-custom-int8-engine`
 start_head: `71a89f40daf39e4a6675ef6dfc2c8485d2671fc7`
-end_head: `pending-local-commit-see-final-response`
+end_head: `a8b76072f19ff792bc5afc33ab93a022f2c26eb6`
 pushed: `false`
 full_engine_implemented: `false`
 ncnn_source_mutated: `false`
