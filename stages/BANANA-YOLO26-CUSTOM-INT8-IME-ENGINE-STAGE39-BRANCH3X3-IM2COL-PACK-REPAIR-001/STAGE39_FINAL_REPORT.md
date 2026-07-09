@@ -5,7 +5,7 @@ stage_id: BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE39-BRANCH3X3-IM2COL-PACK-REP
 repo: /data/banana-yolo26-spacemit-demo
 branch: yolo26-custom-int8-engine
 start_head: 11675ccfbdf905bef92b5fd69f75d08a541a549c
-end_head: pending-local-commit-see-final-response
+end_head: 57ad1bf94d9322108fdca453e03a340e1ce0b1f2
 pushed: false
 full_engine_implemented: false
 ncnn_source_mutated: false

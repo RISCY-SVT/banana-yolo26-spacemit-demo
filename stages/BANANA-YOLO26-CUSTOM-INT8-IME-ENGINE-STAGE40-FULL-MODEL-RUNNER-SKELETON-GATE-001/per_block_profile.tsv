@@ -1,0 +1,5 @@
+block	fallback_vs_custom	mean_us	boundary_bytes	note
+full_ort_reference	ORT_CPU	198259.272	4915200	skeleton_total_latency_not_model_fps
+prefix_images_to_model4_input	ORT_CPU	56796.029	409600	cut timing
+model4_cut_all_ort	ORT_CPU	9466.208	819200	cut timing
+suffix_model4_output_to_output0	ORT_CPU	129572.132	819200	cut timing
