@@ -1,0 +1,4 @@
+objective	candidate	board_evidence	correctness_contract	benefit	limitation	decision
+A_reusable_c2f_proof	model.16	oracle-ready;not-isolated-board-profiled	fixed-host semantic+quantized oracle	model4-like 9-Conv C2f reuse	island is non-contiguous with model4	preserve-as-ready-side-lane
+B_contiguous_acceleration	model.5-model.8	board suffix=554052.102166us;67.08pct of custom pipeline	new fixed-host boundary oracles required	adjacent to current model4 island;20 Conv total	model.9 MaxPool and model.10 attention are later blockers	selected-next-objective
+C_prefix_acceleration	model.0-model.3	board prefix=229662.287042us;27.80pct of custom pipeline	fixed-host boundary oracles required	second-largest measured region	new shapes and first-layer contract	defer-after-contiguous-island-gate

@@ -1,0 +1,91 @@
+30128-   29944:	2f8c0c57          	vxor.vv	v24,v24,v24
+30129-   29948:	2fad0d57          	vxor.vv	v26,v26,v26
+30130-   2994c:	000072d7          	vsetvli	t0,zero,e8,m1,tu,mu
+30131-   29950:	02050007          	vle8.v	v0,(a0)
+30132-   29954:	02070087          	vle8.v	v1,(a4)
+30133-   29958:	02080107          	vle8.v	v2,(a6)
+30134-   2995c:	02058187          	vle8.v	v3,(a1)
+30135-   29960:	02068207          	vle8.v	v4,(a3)
+30136:   29964:	e2103a2b          	smt.vmadot	v20,v0,v1
+30137:   29968:	e2203b2b          	smt.vmadot	v22,v0,v2
+30138:   2996c:	e2303c2b          	smt.vmadot	v24,v0,v3
+30139:   29970:	e2403d2b          	smt.vmadot	v26,v0,v4
+30140-   29974:	02050513          	addi	a0,a0,32
+30141-   29978:	02070713          	addi	a4,a4,32
+30142-   2997c:	02080813          	addi	a6,a6,32
+30143-   29980:	02058593          	addi	a1,a1,32
+30144-   29984:	02068693          	addi	a3,a3,32
+30145-   29988:	137d                	addi	t1,t1,-1
+30146-   2998a:	fc0311e3          	bnez	t1,2994c <(anonymous namespace)::run_c_tiles_stage36_pipelined4(signed char const*, signed char const*, int*, Y26Conv2DParams const&, int, int, int, int, std::array<int, 64ul>&)+0x90>
+30147-   2998e:	011072d7          	vsetvli	t0,zero,e32,m2,tu,mu
+--
+30370-   29bfe:	000072d7          	vsetvli	t0,zero,e8,m1,tu,mu
+30371-   29c02:	02050007          	vle8.v	v0,(a0)
+30372-   29c06:	02058087          	vle8.v	v1,(a1)
+30373-   29c0a:	020f0107          	vle8.v	v2,(t5)
+30374-   29c0e:	020f8187          	vle8.v	v3,(t6)
+30375-   29c12:	02038207          	vle8.v	v4,(t2)
+30376-   29c16:	02068287          	vle8.v	v5,(a3)
+30377-   29c1a:	02070307          	vle8.v	v6,(a4)
+30378:   29c1e:	e210382b          	smt.vmadot	v16,v0,v1
+30379:   29c22:	e220392b          	smt.vmadot	v18,v0,v2
+30380:   29c26:	e2303a2b          	smt.vmadot	v20,v0,v3
+30381:   29c2a:	e2403b2b          	smt.vmadot	v22,v0,v4
+30382:   29c2e:	e2503c2b          	smt.vmadot	v24,v0,v5
+30383:   29c32:	e2603d2b          	smt.vmadot	v26,v0,v6
+30384-   29c36:	02050513          	addi	a0,a0,32
+30385-   29c3a:	02058593          	addi	a1,a1,32
+30386-   29c3e:	020f0f13          	addi	t5,t5,32
+30387-   29c42:	020f8f93          	addi	t6,t6,32
+30388-   29c46:	02038393          	addi	t2,t2,32
+30389-   29c4a:	02068693          	addi	a3,a3,32
+30390-   29c4e:	02070713          	addi	a4,a4,32
+30391-   29c52:	17fd                	addi	a5,a5,-1
+--
+39360-
+39361-0000000000030770 <(anonymous namespace)::y26_vmadot_4x4x8_ime_unguarded(signed char const*, signed char const*, int*, bool)>:
+39362-   30770:	c295                	beqz	a3,30794 <(anonymous namespace)::y26_vmadot_4x4x8_ime_unguarded(signed char const*, signed char const*, int*, bool)+0x24>
+39363-   30772:	011072d7          	vsetvli	t0,zero,e32,m2,tu,mu
+39364-   30776:	02066e07          	vle32.v	v28,(a2)
+39365-   3077a:	000072d7          	vsetvli	t0,zero,e8,m1,tu,mu
+39366-   3077e:	02050007          	vle8.v	v0,(a0)
+39367-   30782:	02058087          	vle8.v	v1,(a1)
+39368:   30786:	e2103e2b          	smt.vmadot	v28,v0,v1
+39369-   3078a:	011072d7          	vsetvli	t0,zero,e32,m2,tu,mu
+39370-   3078e:	02066e27          	vse32.v	v28,(a2)
+39371-   30792:	8082                	ret
+39372-   30794:	011072d7          	vsetvli	t0,zero,e32,m2,tu,mu
+39373-   30798:	2fce0e57          	vxor.vv	v28,v28,v28
+39374-   3079c:	000072d7          	vsetvli	t0,zero,e8,m1,tu,mu
+39375-   307a0:	02050007          	vle8.v	v0,(a0)
+39376-   307a4:	02058087          	vle8.v	v1,(a1)
+39377:   307a8:	e2103e2b          	smt.vmadot	v28,v0,v1
+39378-   307ac:	011072d7          	vsetvli	t0,zero,e32,m2,tu,mu
+39379-   307b0:	02066e27          	vse32.v	v28,(a2)
+39380-   307b4:	8082                	ret
+39381-
+39382-00000000000307b6 <(anonymous namespace)::y26_vmadotus_4x4x8_ime_unguarded(unsigned char const*, signed char const*, int*, bool)>:
+39383-   307b6:	c295                	beqz	a3,307da <(anonymous namespace)::y26_vmadotus_4x4x8_ime_unguarded(unsigned char const*, signed char const*, int*, bool)+0x24>
+39384-   307b8:	011072d7          	vsetvli	t0,zero,e32,m2,tu,mu
+39385-   307bc:	02066e07          	vle32.v	v28,(a2)
+39386-   307c0:	000072d7          	vsetvli	t0,zero,e8,m1,tu,mu
+39387-   307c4:	02050007          	vle8.v	v0,(a0)
+39388-   307c8:	02058087          	vle8.v	v1,(a1)
+39389:   307cc:	e2101e2b          	smt.vmadotus	v28,v0,v1
+39390-   307d0:	011072d7          	vsetvli	t0,zero,e32,m2,tu,mu
+39391-   307d4:	02066e27          	vse32.v	v28,(a2)
+39392-   307d8:	8082                	ret
+39393-   307da:	011072d7          	vsetvli	t0,zero,e32,m2,tu,mu
+39394-   307de:	2fce0e57          	vxor.vv	v28,v28,v28
+39395-   307e2:	000072d7          	vsetvli	t0,zero,e8,m1,tu,mu
+39396-   307e6:	02050007          	vle8.v	v0,(a0)
+39397-   307ea:	02058087          	vle8.v	v1,(a1)
+39398:   307ee:	e2101e2b          	smt.vmadotus	v28,v0,v1
+39399-   307f2:	011072d7          	vsetvli	t0,zero,e32,m2,tu,mu
+39400-   307f6:	02066e27          	vse32.v	v28,(a2)
+39401-   307fa:	8082                	ret
+39402-
+39403-00000000000307fc <(anonymous namespace)::y26_vmadot_sigill_handler(int, siginfo_t*, void*)>:
+39404-   307fc:	1141                	addi	sp,sp,-16
+39405-   307fe:	4585                	li	a1,1
+39406-   30800:	34818513          	addi	a0,gp,840 # 59e80 <(anonymous namespace)::g_sigill_jump>

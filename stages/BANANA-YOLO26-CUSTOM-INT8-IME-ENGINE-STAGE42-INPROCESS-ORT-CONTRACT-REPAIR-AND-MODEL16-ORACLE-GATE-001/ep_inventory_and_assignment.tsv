@@ -1,0 +1,4 @@
+runtime	provider	registered	explicitly_appended	priority	node_assignment_observed	fallback_observed	evidence
+host_ort_1_27	AzureExecutionProvider	1	0	none	no	unknown	provider inventory only
+host_ort_1_27	CPUExecutionProvider	1	0	default	no	unknown	provider inventory only
+board_spacemit_ort_1_20_2	CPUExecutionProvider	1	0	default	yes-model0-six-node-cut	no-on-probed-cut	verbose initialization and per-kernel execution logs plus ORT profile

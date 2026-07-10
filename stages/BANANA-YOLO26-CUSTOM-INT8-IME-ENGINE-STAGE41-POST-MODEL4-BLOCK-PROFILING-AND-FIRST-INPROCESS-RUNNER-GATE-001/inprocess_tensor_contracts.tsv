@@ -1,0 +1,5 @@
+tensor_name	dtype	shape	layout	producer	consumer	metadata_policy
+images	float32	1x3x640x640	NCHW	input_fixture	ORT prefix session	loaded before measured path; no per-block file I/O
+/model.4/cv1/conv/Conv_output_0_QuantizeLinear_Output	uint8	1x128x80x80	NCHW in ORT, NHWC adapter for custom runner	ORT prefix session	custom /model.4 C++ runner	scale/zp from ONNX Q/DQ; adapter timed separately
+/model.4/cv2/conv/Conv_output_0_QuantizeLinear_Output	uint8	1x128x80x80	NHWC from custom runner, NCHW for ORT suffix	custom /model.4 C++ runner	ORT suffix session	scale/zp from ONNX Q/DQ; adapter timed separately
+output0	float32	1x300x6	contiguous final tensor	ORT suffix session	comparison/reporting	byte-exact target against ORT CPU reference where runtime contract matches

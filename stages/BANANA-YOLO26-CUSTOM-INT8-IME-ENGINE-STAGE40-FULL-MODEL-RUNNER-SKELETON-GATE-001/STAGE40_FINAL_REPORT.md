@@ -5,7 +5,7 @@ stage_id: BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE40-FULL-MODEL-RUNNER-SKELETO
 repo: /data/banana-yolo26-spacemit-demo
 branch: yolo26-custom-int8-engine
 start_head: 57ad1bf94d9322108fdca453e03a340e1ce0b1f2
-end_head: pending-local-commit-see-final-response
+end_head: 6559e2a4a146e96df9db37bf748808896d08e147
 pushed: false
 full_engine_implemented: false
 ncnn_source_mutated: false

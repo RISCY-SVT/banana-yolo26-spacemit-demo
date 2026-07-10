@@ -11,6 +11,8 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 option(Y26_K1X_ENABLE_TESTS "Build custom INT8 engine tests" ON)
 option(Y26_K1X_ENABLE_IME "Build the guarded Stage 1 smt.vmadot IME path" OFF)
 option(Y26_K1X_BUILD_TOOLS "Build custom INT8 engine helper tools" ON)
+set(Y26_K1X_ORT_INCLUDE_DIR "" CACHE PATH "Optional ONNX Runtime include directory for in-process scaffold tools")
+set(Y26_K1X_ORT_LIBRARY "" CACHE FILEPATH "Optional ONNX Runtime library for in-process scaffold tools")
 
 add_library(y26_k1x_custom_int8_engine
     kernels/activation_requant.cpp
@@ -38,6 +40,7 @@ add_library(y26_k1x_custom_int8_engine
     src/next_c2f_runner.cpp
     src/model4_branch_runner.cpp
     src/model4_c2f_runner.cpp
+    src/stage42_runner_support.cpp
 )
 
 target_include_directories(y26_k1x_custom_int8_engine
@@ -357,6 +360,27 @@ if(Y26_K1X_BUILD_TOOLS)
     target_compile_options(bench_stage35_vmadot_sigill PRIVATE -Wall -Wextra -Wpedantic)
     if(Y26_K1X_ENABLE_IME)
         target_compile_definitions(bench_stage35_vmadot_sigill PRIVATE Y26_K1X_ENABLE_IME_ASM=1)
+    endif()
+
+    if(Y26_K1X_ORT_INCLUDE_DIR AND Y26_K1X_ORT_LIBRARY)
+        add_executable(bench_stage42_inprocess_runner
+            tools/bench_stage41_inprocess_runner.cpp
+        )
+        target_link_libraries(bench_stage42_inprocess_runner
+            PRIVATE
+                y26_k1x_custom_int8_engine
+                Threads::Threads
+                "${Y26_K1X_ORT_LIBRARY}"
+        )
+        target_include_directories(bench_stage42_inprocess_runner
+            PRIVATE
+                "${CMAKE_CURRENT_SOURCE_DIR}/tests"
+                "${Y26_K1X_ORT_INCLUDE_DIR}"
+        )
+        target_compile_options(bench_stage42_inprocess_runner PRIVATE -Wall -Wextra -Wpedantic)
+        if(Y26_K1X_ENABLE_IME)
+            target_compile_definitions(bench_stage42_inprocess_runner PRIVATE Y26_K1X_ENABLE_IME_ASM=1)
+        endif()
     endif()
 endif()
 

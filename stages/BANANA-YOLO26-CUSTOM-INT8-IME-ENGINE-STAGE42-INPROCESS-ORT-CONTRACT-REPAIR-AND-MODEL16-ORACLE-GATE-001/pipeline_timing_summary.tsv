@@ -1,0 +1,11 @@
+measurement	mean_us	stddev_us	cv_pct	min_us	max_us	median_us	p90_us	p95_us	correctness_authority	status
+custom_pipeline	826008.582826	1095.337938	0.132606	824754.582680	827250.432360	826075.843880	827109.092240	827179.762300	fixed-host-oracle-boundaries;board-final-diagnostic	diagnostic-scaffold-no-reference-in-hot-loop
+full_board_ort	796866.390970	653.341854	0.081989	796515.638370	798029.875900	796601.540380	797483.839584	797756.857742	board-integration-runtime-only	diagnostic
+board_ort_model4_same_input	37072.764532	27.809221	0.075013	37027.395960	37092.499330	37089.629390	37091.440698	37091.970014	board-integration-runtime-only	mismatch-vs-host-oracle
+board_custom_ime_same_input	26815.626798	121.702623	0.453850	26704.721810	26979.150680	26769.519080	26950.448384	26964.799532	fixed-host-oracle	byte-exact
+board_custom_scalar_same_input	378322.274994	165.597470	0.043772	378196.557300	378519.890410	378204.273970	378506.524658	378513.207534	fixed-host-oracle	byte-exact
+pipeline_prefix_component	229662.287042	NA	NA	NA	NA	NA	NA	NA	board-operational-contract	inside-custom-pipeline
+pipeline_layout_in_component	5293.200918	NA	NA	NA	NA	NA	NA	NA	fixed-adapter	inside-custom-pipeline
+pipeline_custom_model4_component	25149.098496	NA	NA	NA	NA	NA	NA	NA	fixed-host-oracle-route	inside-custom-pipeline
+pipeline_layout_out_component	11838.504756	NA	NA	NA	NA	NA	NA	NA	fixed-adapter	inside-custom-pipeline
+pipeline_suffix_component	554052.102166	NA	NA	NA	NA	NA	NA	NA	board-operational-contract	inside-custom-pipeline

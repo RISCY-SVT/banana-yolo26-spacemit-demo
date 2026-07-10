@@ -1,0 +1,5 @@
+contract_id	machine	ort_version	opt_level	execution_mode	intra_threads	inter_threads	memory_pattern	cpu_arena	thread_spinning	provider_intent	full_output_reference	model4_same_input_reference	status
+host_operational_all	host	1.27.0	all	sequential	1	1	1	1	1	CPU-default	mismatches=0;max_abs_diff=0	mismatches=0;max_abs_diff=0	accepted-host-oracle
+host_diagnostic_disable	host	1.27.0	disable	sequential	1	1	0	0	0	CPU-default	vs_accepted_all:mismatches=1509;max_abs_diff=635.707154751	vs_fixed_all:mismatches=1;max_abs_diff=1	diagnostic-only
+board_operational_all	board	1.20.2+spacemit	all	sequential	1	1	1	1	1	CPU-default	vs_fixed_host_all:mismatches=1597;max_abs_diff=635.707154751	vs_fixed_host_all:mismatches=77196;max_abs_diff=2	integration-and-timing-only
+board_diagnostic_disable	board	1.20.2+spacemit	disable	sequential	1	1	0	0	0	CPU-default	vs_host_disable:mismatches=1711;max_abs_diff=637.887696743	vs_fixed_host_all:mismatches=3;max_abs_diff=1	diagnostic-only

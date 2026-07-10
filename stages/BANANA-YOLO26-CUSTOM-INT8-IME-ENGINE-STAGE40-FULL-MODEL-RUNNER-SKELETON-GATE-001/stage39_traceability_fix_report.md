@@ -5,7 +5,7 @@ stage_id: BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE40-FULL-MODEL-RUNNER-SKELETO
 Stage39 repo-local `STAGE39_FINAL_REPORT.md` still contained:
 
 ```text
-end_head: pending-local-commit-see-final-response
+end_head: 6559e2a4a146e96df9db37bf748808896d08e147
 ```
 
 Stage40 patched that field to the accepted Stage39 commit:
