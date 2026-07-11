@@ -40,12 +40,16 @@ add_library(y26_k1x_custom_int8_engine
     src/next_c2f_runner.cpp
     src/model4_branch_runner.cpp
     src/model4_c2f_runner.cpp
+    src/model4_fixture_config.cpp
+    src/model5_island.cpp
     src/stage42_runner_support.cpp
 )
 
 target_include_directories(y26_k1x_custom_int8_engine
     PUBLIC
         "${CMAKE_CURRENT_SOURCE_DIR}/include"
+    PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}/tests"
 )
 
 target_compile_options(y26_k1x_custom_int8_engine
@@ -362,6 +366,15 @@ if(Y26_K1X_BUILD_TOOLS)
         target_compile_definitions(bench_stage35_vmadot_sigill PRIVATE Y26_K1X_ENABLE_IME_ASM=1)
     endif()
 
+    add_executable(bench_stage43_model5_island
+        tools/bench_stage43_model5_island.cpp
+    )
+    target_link_libraries(bench_stage43_model5_island PRIVATE y26_k1x_custom_int8_engine Threads::Threads)
+    target_compile_options(bench_stage43_model5_island PRIVATE -Wall -Wextra -Wpedantic)
+    if(Y26_K1X_ENABLE_IME)
+        target_compile_definitions(bench_stage43_model5_island PRIVATE Y26_K1X_ENABLE_IME_ASM=1)
+    endif()
+
     if(Y26_K1X_ORT_INCLUDE_DIR AND Y26_K1X_ORT_LIBRARY)
         add_executable(bench_stage42_inprocess_runner
             tools/bench_stage41_inprocess_runner.cpp
@@ -374,9 +387,9 @@ if(Y26_K1X_BUILD_TOOLS)
         )
         target_include_directories(bench_stage42_inprocess_runner
             PRIVATE
-                "${CMAKE_CURRENT_SOURCE_DIR}/tests"
                 "${Y26_K1X_ORT_INCLUDE_DIR}"
         )
+        set_target_properties(bench_stage42_inprocess_runner PROPERTIES SKIP_BUILD_RPATH TRUE)
         target_compile_options(bench_stage42_inprocess_runner PRIVATE -Wall -Wextra -Wpedantic)
         if(Y26_K1X_ENABLE_IME)
             target_compile_definitions(bench_stage42_inprocess_runner PRIVATE Y26_K1X_ENABLE_IME_ASM=1)

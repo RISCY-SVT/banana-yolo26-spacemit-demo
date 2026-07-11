@@ -1,0 +1,5 @@
+logical_name	logical_dtype	logical_shape	logical_layout	scale	zero_point	physical_dtype	physical_layout	alignment	owner	lifetime	consumer
+/model.4/cv2/conv/Conv_output_0_QuantizeLinear_Output	uint8	1x128x80x80	NCHW	0.06606466323137283	142	uint8	NHWC	vector-owned	custom_model4	model4_output_to_model4_postact	model5_island_postact_LUT
+/model.4/cv2/act/Mul_output_0_QuantizeLinear_Output	uint8	1x128x80x80	NCHW	0.030298452824354172	9	int8_code_minus_128	NHWC	64	model5_island_workspace	model4_postact_to_model5_conv	model5_conv
+/model.5/conv/Conv_output_0_corrected_accumulator	int32_internal	1x128x40x40	NCHW-logical	per-channel input_x_weight	not-applicable	int32	NHWC	64	model5_island_workspace	model5_conv_to_postact	model5_fixed_requant_LUT
+/model.5/act/Mul_output_0_QuantizeLinear_Output	uint8	1x128x40x40	NCHW	0.027727888897061348	10	int8_code_minus_128	NHWC	caller	custom_island_output	model5_output_to_island_exit	exit_adapter_or_future_model6

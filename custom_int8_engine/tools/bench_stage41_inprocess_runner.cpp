@@ -1,6 +1,4 @@
-#define Y26_STAGE16_NO_TEST_MAIN 1
-#include "../tests/test_stage16_model4_c2f_runner.cpp"
-
+#include "y26_k1x_model4_fixture_config.h"
 #include "y26_stage42_runner_support.h"
 
 #include <onnxruntime_c_api.h>
@@ -661,19 +659,36 @@ Tensor copy_output_tensor(OrtValue* output) {
     return tensor;
 }
 
+struct OrtOneOutputTiming {
+    double input_wrap_us = 0.0;
+    double ort_run_us = 0.0;
+    double output_copy_us = 0.0;
+};
+
 Tensor run_one_output(OrtSession* session,
                       OrtMemoryInfo* memory_info,
                       const char* input_name,
                       const Tensor& input,
-                      const char* output_name) {
+                      const char* output_name,
+                      OrtOneOutputTiming* timing = nullptr) {
+    const auto input_begin = Clock::now();
     OrtValueHolder input_value(make_input_value(input, memory_info));
+    const auto run_begin = Clock::now();
     OrtValueHolder output_value;
     const char* input_names[] = {input_name};
     const char* output_names[] = {output_name};
     OrtStatus* status =
         g_ort->Run(session, nullptr, input_names, &input_value.value, 1, output_names, 1, &output_value.value);
     check_status(status, "OrtRun");
-    return copy_output_tensor(output_value.value);
+    const auto copy_begin = Clock::now();
+    Tensor output = copy_output_tensor(output_value.value);
+    const auto copy_end = Clock::now();
+    if (timing != nullptr) {
+        timing->input_wrap_us += std::chrono::duration<double, std::micro>(run_begin - input_begin).count();
+        timing->ort_run_us += std::chrono::duration<double, std::micro>(copy_begin - run_begin).count();
+        timing->output_copy_us += std::chrono::duration<double, std::micro>(copy_end - copy_begin).count();
+    }
+    return output;
 }
 
 void nchw_u8_to_nhwc(const Tensor& tensor, std::vector<std::uint8_t>& out) {
@@ -729,9 +744,16 @@ void nhwc_u8_to_nchw(const std::vector<std::uint8_t>& bytes, Tensor& tensor) {
 }
 
 Y26Stage16Model4C2fConfig fullshape_config(int activation_mode) {
-    const auto& fixture = y26_stage16_model4_c2f_fixture::kSyntheticSeededFixture;
-    Y26Stage16Model4C2fConfig cfg = stage16_config_from_fixture(
-        fixture, activation_mode, Y26_STAGE16_MERGE_MODE_STAGE39_BRANCH3X3_FAST_PACK);
+    Y26Stage16Model4C2fConfig cfg {};
+    Y26Model4FixtureView view {};
+    const int status = y26_model4_fixture_make(Y26_MODEL4_FIXTURE_SYNTHETIC_SEEDED,
+                                                activation_mode,
+                                                Y26_STAGE16_MERGE_MODE_STAGE39_BRANCH3X3_FAST_PACK,
+                                                &cfg,
+                                                &view);
+    if (status != Y26_CONV_STATUS_SUCCESS) {
+        throw std::runtime_error("failed to create model4 fixture config");
+    }
     constexpr int kFullH = 80;
     constexpr int kFullW = 80;
     cfg.stage15.stage14.model4_cv1.params.input_h = kFullH;
@@ -1070,37 +1092,58 @@ int main(int argc, char** argv) {
                      "CreateCpuMemoryInfo");
 
         if (options.mode == "ort-only") {
+            const auto session_begin = Clock::now();
             OrtSessionHolder session = create_session(env.env, options.model_path, options, "ort_only");
+            const auto session_end = Clock::now();
+            const auto input_load_begin = Clock::now();
             Tensor input = load_npy(options.input_npy);
-            auto run_once = [&]() {
+            const auto input_load_end = Clock::now();
+            auto run_once = [&](OrtOneOutputTiming* timing = nullptr) {
                 return run_one_output(session.session,
                                       memory.info,
                                       options.ort_input_name.c_str(),
                                       input,
-                                      options.ort_output_name.c_str());
+                                      options.ort_output_name.c_str(),
+                                      timing);
             };
+            OrtOneOutputTiming first_components {};
+            const auto first_begin = Clock::now();
+            Tensor output = run_once(&first_components);
+            const auto first_end = Clock::now();
             for (int i = 0; i < options.warmup; ++i) {
                 (void)run_once();
             }
-            Tensor output;
             std::vector<double> repeat_us;
+            std::vector<double> input_wrap_repeat_us;
+            std::vector<double> ort_run_repeat_us;
+            std::vector<double> output_copy_repeat_us;
             for (int repeat = 0; repeat < options.repeats; ++repeat) {
+                OrtOneOutputTiming components {};
                 const auto begin = Clock::now();
                 for (int run = 0; run < options.runs; ++run) {
-                    output = run_once();
+                    output = run_once(&components);
                 }
                 const auto end = Clock::now();
+                const double denom = static_cast<double>(options.runs);
                 const double mean_us =
-                    std::chrono::duration<double, std::micro>(end - begin).count() /
-                    static_cast<double>(options.runs);
+                    std::chrono::duration<double, std::micro>(end - begin).count() / denom;
                 repeat_us.push_back(mean_us);
+                input_wrap_repeat_us.push_back(components.input_wrap_us / denom);
+                ort_run_repeat_us.push_back(components.ort_run_us / denom);
+                output_copy_repeat_us.push_back(components.output_copy_us / denom);
                 std::cout << std::fixed << std::setprecision(6)
                           << "stage42_ort_only_repeat"
                           << " repeat=" << repeat
                           << " mean_us=" << mean_us
+                          << " input_wrap_us=" << input_wrap_repeat_us.back()
+                          << " ort_run_us=" << ort_run_repeat_us.back()
+                          << " output_copy_us=" << output_copy_repeat_us.back()
                           << "\n";
             }
             const MetricStats ort_timing = stats_from_values(repeat_us);
+            const MetricStats input_wrap_timing = stats_from_values(input_wrap_repeat_us);
+            const MetricStats ort_run_timing = stats_from_values(ort_run_repeat_us);
+            const MetricStats output_copy_timing = stats_from_values(output_copy_repeat_us);
             bool pass = true;
             if (!options.expected_output_npy.empty()) {
                 const Tensor expected = load_npy(options.expected_output_npy);
@@ -1123,6 +1166,15 @@ int main(int argc, char** argv) {
                       << " repeats=" << options.repeats
                       << " reference_comparison_in_hot_loop=0"
                       << " file_io_in_hot_loop=0"
+                      << " session_init_us="
+                      << std::chrono::duration<double, std::micro>(session_end - session_begin).count()
+                      << " input_file_load_us="
+                      << std::chrono::duration<double, std::micro>(input_load_end - input_load_begin).count()
+                      << " first_run_us="
+                      << std::chrono::duration<double, std::micro>(first_end - first_begin).count()
+                      << " first_input_wrap_us=" << first_components.input_wrap_us
+                      << " first_ort_run_us=" << first_components.ort_run_us
+                      << " first_output_copy_us=" << first_components.output_copy_us
                       << " mean_us=" << ort_timing.mean
                       << " stddev_us=" << ort_timing.stddev
                       << " cv_pct=" << ort_timing.cv_pct
@@ -1131,6 +1183,9 @@ int main(int argc, char** argv) {
                       << " median_us=" << ort_timing.median
                       << " p90_us=" << ort_timing.p90
                       << " p95_us=" << ort_timing.p95
+                      << " mean_input_wrap_us=" << input_wrap_timing.mean
+                      << " mean_ort_run_us=" << ort_run_timing.mean
+                      << " mean_output_copy_us=" << output_copy_timing.mean
                       << "\n";
             return pass && dumped ? 0 : 1;
         }

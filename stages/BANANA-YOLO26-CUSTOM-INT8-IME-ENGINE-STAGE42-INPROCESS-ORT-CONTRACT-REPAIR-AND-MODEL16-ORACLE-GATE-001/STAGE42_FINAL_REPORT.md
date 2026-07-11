@@ -3,7 +3,7 @@
 classification: stage42-host-oracle-policy-selected-model16-oracle-ready
 run_attempt: 2
 start_head: 6559e2a4a146e96df9db37bf748808896d08e147
-end_head: pending-local-commit-see-final-response
+end_head: 7a9b679f4b352c7894c9176539f1765d894daa73
 workspace_inheritance_mode: task-local-continuation
 workspace_inheritance_status: stage41-uncommitted-input
 push: false

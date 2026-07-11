@@ -1,0 +1,93 @@
+model_path=.deps/models/yolo26/int8_rt204_forensics/manual_ort/manual_e2e_rep_conv_matmul_qdq.onnx
+30a94e4738606673b5e0a73499cbc977167f046f8fa8637d6040ce744f429c0c  .deps/models/yolo26/int8_rt204_forensics/manual_ort/manual_e2e_rep_conv_matmul_qdq.onnx
+generator=custom_int8_engine/tools/stage43_model5_8_oracle.py
+ff9793799cc997bcc0aa33cf12972eae1e1f9eb90f0f2e012f1245a7c7355965  custom_int8_engine/tools/stage43_model5_8_oracle.py
+python=Python 3.12.3
+onnxruntime_version=1.27.0
+onnx_version=1.22.0
+numpy_version=2.5.0
+opencv_version=4.13.0
+providers=AzureExecutionProvider,CPUExecutionProvider
+platform=Linux-6.12.0-211.28.1.el10_2.x86_64-x86_64-with-glibc2.39
+python_executable=/data/banana-yolo26-spacemit-demo/.deps/venvs/ultralytics_latest/bin/python
+onnxruntime_module=/data/banana-yolo26-spacemit-demo/.deps/venvs/ultralytics_latest/lib/python3.12/site-packages/onnxruntime/__init__.py
+onnxruntime_module_sha256=de6adfd9864ecb210dd535fc1d3655b768463f10950fd18e0c8ce827ce64c086
+session_correctness_semantic=ORT_DISABLE_ALL,sequential,intra1,inter1,CPUExecutionProvider
+session_operational=ORT_ENABLE_ALL,sequential,intra1,inter1,CPUExecutionProvider
+host_optimized_graph_sha256=ce83c4d92dab9a1a39b7a5c6d996f68b87df96dbd9d981df95b442d9d92ddbbe
+Linux bf3-ncnn 6.12.0-211.28.1.el10_2.x86_64 #1 SMP PREEMPT_DYNAMIC Wed Jun 24 21:41:56 EDT 2026 x86_64 x86_64 x86_64 GNU/Linux
+Architecture:                            x86_64
+CPU op-mode(s):                          32-bit, 64-bit
+Address sizes:                           45 bits physical, 48 bits virtual
+Byte Order:                              Little Endian
+CPU(s):                                  8
+On-line CPU(s) list:                     0-7
+Vendor ID:                               GenuineIntel
+Model name:                              Intel(R) Xeon(R) CPU E5-2696 v4 @ 2.20GHz
+CPU family:                              6
+Model:                                   79
+Thread(s) per core:                      1
+Core(s) per socket:                      8
+Socket(s):                               1
+Stepping:                                1
+BogoMIPS:                                4407.64
+Flags:                                   fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss ht syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon nopl xtopology tsc_reliable nonstop_tsc cpuid tsc_known_freq pni pclmulqdq ssse3 fma cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand hypervisor lahf_lm abm 3dnowprefetch pti ssbd ibrs ibpb stibp fsgsbase tsc_adjust bmi1 avx2 smep bmi2 invpcid rdseed adx smap xsaveopt arat flush_l1d arch_capabilities
+Hypervisor vendor:                       VMware
+Virtualization type:                     full
+L1d cache:                               256 KiB (8 instances)
+L1i cache:                               256 KiB (8 instances)
+L2 cache:                                2 MiB (8 instances)
+L3 cache:                                55 MiB (1 instance)
+NUMA node(s):                            1
+NUMA node0 CPU(s):                       0-7
+Vulnerability Gather data sampling:      Not affected
+Vulnerability Indirect target selection: Mitigation; Aligned branch/return thunks
+Vulnerability Itlb multihit:             KVM: Mitigation: VMX unsupported
+Vulnerability L1tf:                      Mitigation; PTE Inversion
+Vulnerability Mds:                       Vulnerable: Clear CPU buffers attempted, no microcode; SMT Host state unknown
+Vulnerability Meltdown:                  Mitigation; PTI
+Vulnerability Mmio stale data:           Vulnerable: Clear CPU buffers attempted, no microcode; SMT Host state unknown
+Vulnerability Old microcode:             Not affected
+Name: onnxruntime
+Version: 1.27.0
+Summary: ONNX Runtime is a runtime accelerator for Machine Learning models
+Home-page: https://onnxruntime.ai
+Author: Microsoft Corporation
+Author-email: onnxruntime@microsoft.com
+License: MIT License
+Location: /data/banana-yolo26-spacemit-demo/.deps/venvs/ultralytics_latest/lib/python3.12/site-packages
+Requires: flatbuffers, numpy, packaging, protobuf
+Required-by:
+---
+Name: onnx
+Version: 1.22.0
+Summary: Open Neural Network Exchange
+Home-page: https://onnx.ai/
+Author:
+Author-email: ONNX Contributors <onnx-technical-discuss@lists.lfaidata.foundation>
+License-Expression: Apache-2.0
+Location: /data/banana-yolo26-spacemit-demo/.deps/venvs/ultralytics_latest/lib/python3.12/site-packages
+Requires: ml_dtypes, numpy, protobuf, typing_extensions
+Required-by: onnxconverter-common, onnxslim
+---
+Name: numpy
+Version: 2.5.0
+Summary: Fundamental package for array computing in Python
+Home-page: https://numpy.org
+Author: Travis E. Oliphant et al.
+Author-email:
+License-Expression: BSD-3-Clause AND 0BSD AND MIT AND Zlib AND CC0-1.0
+Location: /data/banana-yolo26-spacemit-demo/.deps/venvs/ultralytics_latest/lib/python3.12/site-packages
+Requires:
+Required-by: contourpy, matplotlib, ml_dtypes, onnx, onnxconverter-common, onnxruntime, opencv-python, opencv-python-headless, pandas, torchvision, ultralytics, ultralytics-thop
+---
+Name: opencv-python-headless
+Version: 4.13.0.92
+Summary: Wrapper package for OpenCV python bindings.
+Home-page: https://github.com/opencv/opencv-python
+Author:
+Author-email:
+License: Apache 2.0
+Location: /data/banana-yolo26-spacemit-demo/.deps/venvs/ultralytics_latest/lib/python3.12/site-packages
+Requires: numpy
+Required-by:

@@ -1,0 +1,8 @@
+surface	mean_us	status
+model4_final_activation_only	2589.904000	measured
+model5_custom_internal_conv_plus_postact	26579.802000	measured_exact_semantic_oracle
+model5_board_ort_equivalent_segment	17862.861218	measured_diagnostic_runtime
+model5_custom_vs_board_ort_delta	8716.940782	48.799241% slower
+model4_to_model5_full_custom_island	not-measured	compute_gate_short_circuit
+stage42_paired_scaffold	not-run	compute_gate_short_circuit
+stage43_paired_scaffold	not-run	compute_gate_short_circuit

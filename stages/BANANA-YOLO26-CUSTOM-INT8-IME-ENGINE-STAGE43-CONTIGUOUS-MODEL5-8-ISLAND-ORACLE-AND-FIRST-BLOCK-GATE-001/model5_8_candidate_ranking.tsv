@@ -1,0 +1,5 @@
+rank	block	isolated_board_ort_mean_us	adjacent_to_model4	authorized_stage43	reuse	risk	decision
+1	model5	17814.501646	yes	yes	3x3_conv_stage37_pipeline	low	implemented_exact_but_compute_rejected
+2	model6	29571.055772	no_after_model5	no	C2f_model4_like	medium	oracle_profile_only
+3	model8	17360.697342	no	no	C2f_model4_like	medium	oracle_profile_only
+4	model7	7545.483960	no	no	3x3_conv	low	oracle_profile_only

@@ -1,0 +1,7 @@
+event_name	node_index	op_name	provider
+images_QuantizeLinear_kernel_time	0	QuantizeLinear	CPUExecutionProvider
+images_DequantizeLinear_kernel_time	3	DequantizeLinear	CPUExecutionProvider
+model.0.conv.weight_DequantizeLinear_kernel_time	2	DequantizeLinear	CPUExecutionProvider
+model.0.conv.bias_DequantizeLinear_kernel_time	1	DequantizeLinear	CPUExecutionProvider
+/model.0/conv/Conv_kernel_time	4	Conv	CPUExecutionProvider
+/model.0/conv/Conv_output_0_QuantizeLinear_kernel_time	5	QuantizeLinear	CPUExecutionProvider

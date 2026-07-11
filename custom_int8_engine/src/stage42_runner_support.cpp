@@ -54,7 +54,7 @@ std::size_t element_size(ElementType type) {
 
 std::size_t checked_element_count(const std::vector<std::int64_t>& shape) {
     if (shape.empty()) {
-        throw std::invalid_argument("tensor shape must not be empty");
+        return 1;
     }
     std::size_t count = 1;
     for (std::int64_t dim : shape) {

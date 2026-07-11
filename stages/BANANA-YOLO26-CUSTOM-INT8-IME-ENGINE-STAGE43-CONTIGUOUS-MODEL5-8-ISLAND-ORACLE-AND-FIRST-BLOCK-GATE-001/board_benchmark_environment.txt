@@ -1,0 +1,34 @@
+protocol=taskset_CPU0-3,warmup10,runs100,repeats5
+ime_cpu_policy=CPU0-3_only
+rdcycle_used=false
+bf3
+Linux bf3 6.6.63 #2.2.7.2 SMP PREEMPT Fri Aug 15 12:32:44 UTC 2025 riscv64 riscv64 riscv64 GNU/Linux
+90be7592-f6d9-4d69-ae40-a6c9d25a51ab
+Architecture:        riscv64
+Byte Order:          Little Endian
+CPU(s):              8
+On-line CPU(s) list: 0-7
+Model name:          Spacemit(R) X60
+Thread(s) per core:  1
+Core(s) per socket:  8
+Socket(s):           1
+CPU(s) scaling MHz:  100%
+CPU max MHz:         1600.0000
+CPU min MHz:         614.4000
+L1d cache:           256 KiB (8 instances)
+L1i cache:           256 KiB (8 instances)
+L2 cache:            1 MiB (2 instances)
+online=0-7
+governor=performance
+cur_freq=1600000
+min_freq=614400
+max_freq=1600000
+ 08:10:55 up 12 days, 14:02,  2 users,  load average: 2.00, 2.09, 2.09
+               total        used        free      shared  buff/cache   available
+Mem:            15Gi       1.2Gi        10Gi        15Mi       4.3Gi        14Gi
+Swap:             0B          0B          0B
+1cd6817d9723bf2e4dcd97dbd83d5c407e1b84d03bfd15bbf4edbe1788585837  /home/svt/stage43_model5_8_2026-07-11_05-05-08/model5/weights_ohwi_s8.bin
+524e2bfe43681e9ec3dcf8a2f0fcbdaf82f6a7814b89a376adca30b92cf4ac76  /home/svt/stage43_model5_8_2026-07-11_05-05-08/model5/bench_stage43_model5_island
+63d8afbf988eaa60310e791542ac86724f4973e124beed0ca653b270bbce4b5d  /home/svt/stage43_model5_8_2026-07-11_05-05-08/model5/bias_i32.bin
+6c528a7ef3521fbd910e35aeb2a1efe38f7bcb365a9496761dd7bf7e09ef3a33  /home/svt/stage43_model5_8_2026-07-11_05-05-08/model5/weight_scales_f32.bin
+ae3ee976dad8c640c6357d43c4810c8fd07103e1627ced0ae4d125446bd485d4  /home/svt/stage43_model5_8_2026-07-11_05-05-08/model5/host_model4_input_primary.bin

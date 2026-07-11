@@ -1,0 +1,11 @@
+surface	repeat	wall_mean_us	model4_postact_us	model5_conv_us	model5_compute_us	model5_correction_us	model5_thread_overhead_us	model5_postact_us	model5_internal_us
+custom_model5_acc4_semantic_exact	0	29362.7	2591.08	21577.6	21166.3	102.79	308.006	5185.49	26763.090000
+custom_model5_acc4_semantic_exact	1	29151.5	2592.95	21370.6	20927.2	100.888	341.892	5179.54	26550.140000
+custom_model5_acc4_semantic_exact	2	29094.8	2587.2	21311.9	21016	103.369	191.984	5187.32	26499.220000
+custom_model5_acc4_semantic_exact	3	29173.5	2586.69	21390.8	21043.9	102.966	243.423	5187.59	26578.390000
+custom_model5_acc4_semantic_exact	4	29108.1	2591.6	21315.6	21043.2	99.934	171.929	5192.57	26508.170000
+board_ort_model5_same_session_diagnostic	0	17874.207060	not-applicable	not-isolated	not-isolated	not-isolated	not-isolated	not-isolated	17874.207060
+board_ort_model5_same_session_diagnostic	1	17858.362170	not-applicable	not-isolated	not-isolated	not-isolated	not-isolated	not-isolated	17858.362170
+board_ort_model5_same_session_diagnostic	2	17858.883170	not-applicable	not-isolated	not-isolated	not-isolated	not-isolated	not-isolated	17858.883170
+board_ort_model5_same_session_diagnostic	3	17869.867430	not-applicable	not-isolated	not-isolated	not-isolated	not-isolated	not-isolated	17869.867430
+board_ort_model5_same_session_diagnostic	4	17852.986260	not-applicable	not-isolated	not-isolated	not-isolated	not-isolated	not-isolated	17852.986260

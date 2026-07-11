@@ -23,6 +23,7 @@ bool throws(Fn&& fn) {
 
 int main() {
     int failures = 0;
+    failures += y26_stage42::checked_element_count({}) != 1;
     failures += !throws([] { (void)y26_stage42::checked_element_count({1, -1, 80, 80}); });
     failures += !throws([] {
         (void)y26_stage42::checked_element_count(
@@ -40,6 +41,15 @@ int main() {
     failures += integer_cmp.mismatch_count != 2;
     failures += integer_cmp.max_abs_diff != 1.0;
     failures += !integer_cmp.first_mismatch_index.has_value() || *integer_cmp.first_mismatch_index != 1;
+    failures += integer_cmp.signed_difference_histogram.at(-1) != 1;
+    failures += integer_cmp.signed_difference_histogram.at(0) != 2;
+    failures += integer_cmp.signed_difference_histogram.at(1) != 1;
+    failures += integer_cmp.p50_abs_diff != 0.5;
+    failures += integer_cmp.p90_abs_diff < 0.99 || integer_cmp.p90_abs_diff > 1.0;
+
+    const y26_stage42::TensorView null_data{
+        y26_stage42::ElementType::UINT8, {1, 4}, nullptr, lhs.size()};
+    failures += y26_stage42::compare_tensors(null_data, rhs_view).structural_error != "null tensor data";
 
     const y26_stage42::TensorView bad_shape{
         y26_stage42::ElementType::UINT8, {2, 2}, rhs.data(), rhs.size()};
@@ -70,6 +80,23 @@ int main() {
     const y26_stage42::Comparison float_cmp = y26_stage42::compare_tensors(float_lhs_view, float_rhs_view);
     failures += float_cmp.mismatch_count != 1;
     failures += float_cmp.lhs.nonfinite_count != 3 || float_cmp.rhs.nonfinite_count != 3;
+    failures += !std::isinf(float_cmp.max_abs_diff) || !std::isinf(float_cmp.mean_abs_diff) ||
+                !std::isinf(float_cmp.rmse);
+
+    const std::vector<float> finite_lhs = {1.0F, 2.0F, 3.0F, 4.0F};
+    const std::vector<float> finite_rhs = {1.0F, 1.5F, 4.0F, 2.0F};
+    const y26_stage42::TensorView finite_lhs_view{y26_stage42::ElementType::FLOAT32,
+                                                  {4},
+                                                  finite_lhs.data(),
+                                                  finite_lhs.size() * sizeof(float)};
+    const y26_stage42::TensorView finite_rhs_view{y26_stage42::ElementType::FLOAT32,
+                                                  {4},
+                                                  finite_rhs.data(),
+                                                  finite_rhs.size() * sizeof(float)};
+    const y26_stage42::Comparison finite_cmp = y26_stage42::compare_tensors(finite_lhs_view, finite_rhs_view);
+    failures += finite_cmp.mismatch_count != 3;
+    failures += std::abs(finite_cmp.mean_abs_diff - 0.875) > 1.0e-12;
+    failures += std::abs(finite_cmp.rmse - std::sqrt(1.3125)) > 1.0e-12;
 
     failures += y26_stage42::parse_ort_optimization_level("disable") !=
                 y26_stage42::OrtOptimizationLevel::DISABLE;
@@ -89,6 +116,7 @@ int main() {
                     y26_stage42::parse_reference_policy("matched-runtime")) != "matched-runtime";
     failures += !throws([] { (void)y26_stage42::parse_ort_optimization_level("invalid"); });
     failures += !throws([] { (void)y26_stage42::parse_ort_execution_mode("invalid"); });
+    failures += !throws([] { (void)y26_stage42::parse_reference_policy("invalid"); });
 
     std::cout << "stage42_runner_support failures=" << failures << "\n";
     return failures == 0 ? 0 : 1;

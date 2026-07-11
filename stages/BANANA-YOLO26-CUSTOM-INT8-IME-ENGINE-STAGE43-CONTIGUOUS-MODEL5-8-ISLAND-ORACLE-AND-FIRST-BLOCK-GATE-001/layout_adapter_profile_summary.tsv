@@ -1,0 +1,3 @@
+adapter	mean_us	stddev_us	bytes_read_write	effective_gb_s
+island_entry_nchw_u8_to_nhwc_u8_1x64x80x80	3079.934000	102.167227	819200	0.265980
+island_exit_nhwc_s8_to_nchw_u8_1x128x40x40	801.231600	2.209600	409600	0.511213

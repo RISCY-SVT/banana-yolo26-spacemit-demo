@@ -1,14 +1,10 @@
+#if defined(Y26_STAGE16_NO_TEST_MAIN)
+
 #define Y26_STAGE15_NO_TEST_MAIN 1
 #include "test_stage15_model4_branch_runner.cpp"
 
 #include "stage16_model4_c2f_fixture.h"
 #include "y26_k1x_model4_c2f_runner.h"
-#include "y26_k1x_vmadot.h"
-
-#include <cstddef>
-#include <cstdint>
-#include <iostream>
-#include <vector>
 
 namespace {
 
@@ -64,7 +60,9 @@ Y26Stage16Model4C2fConfig stage16_config_from_fixture(
                                      merge_mode};
 }
 
-std::size_t mismatches_i32_stage16(const std::int32_t* actual, const std::int32_t* expected, std::size_t count) {
+std::size_t mismatches_i32_stage16(const std::int32_t* actual,
+                                   const std::int32_t* expected,
+                                   std::size_t count) {
     std::size_t mismatches = 0;
     for (std::size_t i = 0; i < count; ++i) {
         mismatches += actual[i] != expected[i] ? 1U : 0U;
@@ -72,7 +70,9 @@ std::size_t mismatches_i32_stage16(const std::int32_t* actual, const std::int32_
     return mismatches;
 }
 
-std::size_t mismatches_i8_stage16(const std::int8_t* actual, const std::int8_t* expected, std::size_t count) {
+std::size_t mismatches_i8_stage16(const std::int8_t* actual,
+                                  const std::int8_t* expected,
+                                  std::size_t count) {
     std::size_t mismatches = 0;
     for (std::size_t i = 0; i < count; ++i) {
         mismatches += actual[i] != expected[i] ? 1U : 0U;
@@ -80,11 +80,49 @@ std::size_t mismatches_i8_stage16(const std::int8_t* actual, const std::int8_t* 
     return mismatches;
 }
 
-[[maybe_unused]] int verify_stage16_mode(const y26_stage16_model4_c2f_fixture::Model4C2fFixture& fixture,
-                                         int activation_mode,
-                                         const char* label,
-                                         bool use_ime) {
-    Y26Stage16Model4C2fConfig cfg = stage16_config_from_fixture(fixture, activation_mode);
+}  // namespace
+
+#else
+
+#include "y26_k1x_model4_fixture_config.h"
+#include "y26_k1x_vmadot.h"
+
+#include <cstddef>
+#include <cstdint>
+#include <iostream>
+#include <vector>
+
+namespace {
+
+std::size_t mismatches_i32(const std::int32_t* actual, const std::int32_t* expected, std::size_t count) {
+    std::size_t mismatches = 0;
+    for (std::size_t i = 0; i < count; ++i) {
+        mismatches += actual[i] != expected[i] ? 1U : 0U;
+    }
+    return mismatches;
+}
+
+std::size_t mismatches_i8(const std::int8_t* actual, const std::int8_t* expected, std::size_t count) {
+    std::size_t mismatches = 0;
+    for (std::size_t i = 0; i < count; ++i) {
+        mismatches += actual[i] != expected[i] ? 1U : 0U;
+    }
+    return mismatches;
+}
+
+int verify_mode(int fixture_id, int activation_mode, const char* label, bool use_ime) {
+    Y26Stage16Model4C2fConfig cfg {};
+    Y26Model4FixtureView fixture {};
+    const int fixture_status = y26_model4_fixture_make(fixture_id,
+                                                        activation_mode,
+                                                        Y26_STAGE16_MERGE_MODE_A2_FUSED_QDQ_NHWC,
+                                                        &cfg,
+                                                        &fixture);
+    if (fixture_status != Y26_CONV_STATUS_SUCCESS) {
+        std::cerr << "stage16 fixture factory failed id=" << fixture_id << "\n";
+        return 1;
+    }
+
     Y26Stage16Model4C2fWorkspace ws {};
     const int prepare_status = y26_stage16_model4_c2f_prepare(&cfg, &ws);
     if (prepare_status != Y26_CONV_STATUS_SUCCESS) {
@@ -95,19 +133,21 @@ std::size_t mismatches_i8_stage16(const std::int8_t* actual, const std::int8_t* 
 
     std::vector<std::int32_t> output(y26_stage16_model4_c2f_output_count(&cfg), 0);
     Y26Stage16TimingUs timing {};
-    const std::int8_t* input = fixture.stage15_fixture->stage14_fixture->stage12_fixture->stage11_fixture
-                                   ->stage10_fixture->stage9_fixture->input_nhwc_s8;
-    const int status =
-        use_ime ? y26_stage16_model4_c2f_run_ime_cluster0_hotpath(&cfg, &ws, input, output.data(), &timing)
-                : y26_stage16_model4_c2f_run_scalar(&cfg, &ws, input, output.data(), &timing);
-    const std::size_t branch1_mismatches = mismatches_i32_stage16(
-        y26_stage16_model4_c2f_branch1_i32(&ws), fixture.expected_branch1_i32_nhwc, fixture.expected_branch1_count);
+    const int status = use_ime
+                           ? y26_stage16_model4_c2f_run_ime_cluster0_hotpath(
+                                 &cfg, &ws, fixture.input_nhwc_s8, output.data(), &timing)
+                           : y26_stage16_model4_c2f_run_scalar(
+                                 &cfg, &ws, fixture.input_nhwc_s8, output.data(), &timing);
+    const std::size_t branch1_mismatches =
+        mismatches_i32(y26_stage16_model4_c2f_branch1_i32(&ws),
+                       fixture.expected_branch1_i32_nhwc,
+                       fixture.expected_branch1_count);
     const std::size_t concat_mismatches =
-        mismatches_i8_stage16(y26_stage16_model4_c2f_concat_s8(&ws),
-                              fixture.expected_concat_s8_nhwc,
-                              fixture.expected_concat_count);
+        mismatches_i8(y26_stage16_model4_c2f_concat_s8(&ws),
+                      fixture.expected_concat_s8_nhwc,
+                      fixture.expected_concat_count);
     const std::size_t model4_cv2_mismatches =
-        mismatches_i32_stage16(output.data(), fixture.expected_model4_cv2_i32_nhwc, fixture.expected_model4_cv2_count);
+        mismatches_i32(output.data(), fixture.expected_model4_cv2_i32_nhwc, fixture.expected_model4_cv2_count);
     std::cout << "stage16_model4_c2f fixture=" << fixture.label << " mode=" << label << " status=" << status
               << " branch1_mismatches=" << branch1_mismatches
               << " concat_mismatches=" << concat_mismatches
@@ -116,8 +156,7 @@ std::size_t mismatches_i8_stage16(const std::int8_t* actual, const std::int8_t* 
               << " conv_us=" << timing.conv_us
               << " activation_requant_us=" << timing.activation_requant_us
               << " merge_us=" << timing.merge_us
-              << " post_qdq_us=" << timing.post_qdq_us
-              << "\n";
+              << " post_qdq_us=" << timing.post_qdq_us << "\n";
     y26_stage16_model4_c2f_release(&ws);
     return status == Y26_CONV_STATUS_SUCCESS && branch1_mismatches == 0 && concat_mismatches == 0 &&
                    model4_cv2_mismatches == 0
@@ -127,19 +166,22 @@ std::size_t mismatches_i8_stage16(const std::int8_t* actual, const std::int8_t* 
 
 }  // namespace
 
-#if !defined(Y26_STAGE16_NO_TEST_MAIN)
 int main() {
     int failures = 0;
-    for (const auto* fixture : y26_stage16_model4_c2f_fixture::kFixtures) {
-        failures += verify_stage16_mode(*fixture, Y26_ACTIVATION_MODE_INT8_LUT, "scalar_int8_lut", false);
+    for (int fixture_id = 0; fixture_id < y26_model4_fixture_count(); ++fixture_id) {
+        failures += verify_mode(fixture_id, Y26_ACTIVATION_MODE_INT8_LUT, "scalar_int8_lut", false);
 #if defined(__riscv_vector)
-        failures += verify_stage16_mode(*fixture, Y26_ACTIVATION_MODE_STAGE9_RVV_F32_LUT, "rvv_f32_lut", false);
+        failures += verify_mode(fixture_id, Y26_ACTIVATION_MODE_STAGE9_RVV_F32_LUT, "rvv_f32_lut", false);
 #endif
         if (y26_vmadot_4x4x8_ime_available_buildtime()) {
             (void)y26_k1x_ime_probe_once();
-            failures += verify_stage16_mode(*fixture, Y26_ACTIVATION_MODE_STAGE9_RVV_F32_LUT, "ime_rvv_f32_lut", true);
+            failures += verify_mode(fixture_id,
+                                    Y26_ACTIVATION_MODE_STAGE9_RVV_F32_LUT,
+                                    "ime_rvv_f32_lut",
+                                    true);
         }
     }
     return failures == 0 ? 0 : 1;
 }
+
 #endif

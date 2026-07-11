@@ -58,8 +58,11 @@ bool supported_config(const Y26Stage7ConvNodeConfig* cfg, int thread_count) {
                                cfg->params.pad_h == 1 && cfg->params.pad_w == 1;
     const bool supported_1x1 = cfg->kernel_h == 1 && cfg->kernel_w == 1 &&
                                cfg->params.pad_h == 0 && cfg->params.pad_w == 0;
+    const bool supported_stride = cfg->params.stride_h == cfg->params.stride_w &&
+                                  (cfg->params.stride_h == 1 ||
+                                   (cfg->params.stride_h == 2 && supported_3x3));
     if (cfg->params.input_h <= 0 || cfg->params.input_w <= 0 || cfg->params.input_c <= 0 ||
-        cfg->params.output_c <= 0 || cfg->params.stride_h != 1 || cfg->params.stride_w != 1 ||
+        cfg->params.output_c <= 0 || !supported_stride ||
         (!supported_3x3 && !supported_1x1) || cfg->weights_ohwi_s8 == nullptr ||
         cfg->bias_i32 == nullptr || cfg->weight_scales == nullptr) {
         return false;
@@ -175,7 +178,7 @@ int apply_worker_correction_to_output(const ThreadWorker& worker, std::int32_t* 
         y26_prepacked_conv_weights_sums(worker.weights) == nullptr || worker.plan.output_rows_written <= 0) {
         return Y26_CONV_STATUS_INVALID_ARGUMENT;
     }
-    const int output_w = worker.cfg.params.input_w;
+    const int output_w = output_w_for(worker.root_cfg);
     const int output_c = worker.cfg.params.output_c;
     const std::int32_t* weight_sums_oc = y26_prepacked_conv_weights_sums(worker.weights);
     const std::int64_t correction_offset = 128 - static_cast<std::int64_t>(worker.cfg.activation_zero_point_u8);
@@ -204,7 +207,7 @@ int copy_worker_rows_to_output(const ThreadWorker& worker, std::int32_t* output_
     if (output_i32 == nullptr || worker.plan.output_rows_written <= 0) {
         return Y26_CONV_STATUS_INVALID_ARGUMENT;
     }
-    const int output_w = worker.cfg.params.input_w;
+    const int output_w = output_w_for(worker.root_cfg);
     const int output_c = worker.cfg.params.output_c;
     const std::size_t row_values = static_cast<std::size_t>(output_w) * static_cast<std::size_t>(output_c);
     const std::int32_t* src =
@@ -369,7 +372,7 @@ int run_worker_activation_once(ThreadWorker& worker,
                                const std::int32_t* input_i32,
                                const std::int8_t* lut_s8,
                                std::int8_t* output_s8) {
-    const int output_w = worker.plan.output_rows_written > 0 ? worker.root_cfg.params.input_w : 0;
+    const int output_w = worker.plan.output_rows_written > 0 ? output_w_for(worker.root_cfg) : 0;
     const int channels = params.channels;
     if (worker.plan.output_rows_written == 0) {
         worker.total_us = 0.0;
@@ -452,11 +455,31 @@ bool configure_workers(Y26ThreadedConvWorkspace* workspace, const Y26Stage7ConvN
         const bool needs_halo = cfg.kernel_h > 1 || cfg.params.pad_h > 0;
         const bool top_chunk = row_begin == 0;
         const bool bottom_chunk = row_end == output_h;
-        const int input_row_begin =
-            !needs_halo || thread_count == 1 ? row_begin : std::max(0, row_begin - 1);
-        const int input_row_end =
-            !needs_halo || thread_count == 1 ? row_end : std::min(cfg.params.input_h, row_end + 1);
-        const int symmetric_pad_h = needs_halo && (top_chunk || bottom_chunk) ? cfg.params.pad_h : 0;
+        int input_row_begin = 0;
+        int input_row_end = cfg.params.input_h;
+        int symmetric_pad_h = cfg.params.pad_h;
+        int local_output_offset = 0;
+        if (cfg.params.stride_h == 2) {
+            if (bottom_chunk && !top_chunk) {
+                input_row_begin = std::max(0, (row_begin - 1) * cfg.params.stride_h);
+                input_row_end = cfg.params.input_h;
+                symmetric_pad_h = cfg.params.pad_h;
+                local_output_offset = 1;
+            } else {
+                const int first_required = row_begin * cfg.params.stride_h - cfg.params.pad_h;
+                const int last_required_exclusive =
+                    (row_end - 1) * cfg.params.stride_h - cfg.params.pad_h + cfg.kernel_h;
+                input_row_begin = std::max(0, first_required);
+                input_row_end = std::min(cfg.params.input_h, last_required_exclusive);
+                symmetric_pad_h = std::max(0, -first_required);
+            }
+        } else {
+            input_row_begin = !needs_halo || thread_count == 1 ? row_begin : std::max(0, row_begin - 1);
+            input_row_end =
+                !needs_halo || thread_count == 1 ? row_end : std::min(cfg.params.input_h, row_end + 1);
+            symmetric_pad_h = needs_halo && (top_chunk || bottom_chunk) ? cfg.params.pad_h : 0;
+            local_output_offset = needs_halo && !top_chunk && bottom_chunk ? 1 : 0;
+        }
 
         ThreadWorker worker {};
         worker.root_cfg = cfg;
@@ -465,7 +488,7 @@ bool configure_workers(Y26ThreadedConvWorkspace* workspace, const Y26Stage7ConvN
         worker.plan.row_end = row_end;
         worker.plan.input_row_begin = input_row_begin;
         worker.plan.input_row_end = input_row_end;
-        worker.plan.local_output_offset = needs_halo && !top_chunk && bottom_chunk ? 1 : 0;
+        worker.plan.local_output_offset = local_output_offset;
         worker.plan.output_rows_written = row_end - row_begin;
         worker.cfg = cfg;
         worker.cfg.params.input_h = input_row_end - input_row_begin;
