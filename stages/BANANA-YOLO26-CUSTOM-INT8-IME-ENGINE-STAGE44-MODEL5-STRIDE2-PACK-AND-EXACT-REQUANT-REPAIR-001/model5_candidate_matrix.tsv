@@ -1,0 +1,7 @@
+candidate	implemented	exact	model5_mean_us	decision
+R0_stage43_reference	yes	yes	24636.0_paired	continuity_only
+R1_shared_prepack	no	not_run	not_measured	deferred_after_fair_baseline
+R2a_stride2_chunk_fastpack	yes	yes_F0_F7	24157.4_paired	experimental_not_selected
+R2_full_LUT_fused_gather	no	not_run	not_measured	not_justified_by_upper_bound
+R3_fused_output_pipeline	no	not_run	not_measured	not_authorized_after_negative_net_gate
+R4_RVV_exact_requant	no	not_run	not_measured	not_authorized_after_negative_net_gate

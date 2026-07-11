@@ -9,6 +9,11 @@
 
 extern "C" {
 
+enum {
+    Y26_MODEL5_DATAFLOW_STAGE43_R0 = 0,
+    Y26_MODEL5_DATAFLOW_STAGE44_STRIDE2_FASTPACK = 1,
+};
+
 struct Y26Model5IslandConfig {
     Y26Stage7ConvNodeConfig model5_conv;
     float model4_preact_scale;
@@ -18,6 +23,7 @@ struct Y26Model5IslandConfig {
     float model5_postact_scale;
     int model5_postact_zero_point_u8;
     int ime_accumulator_groups;
+    int dataflow_mode;
 };
 
 struct Y26Model5IslandTimingUs {
@@ -32,6 +38,8 @@ struct Y26Model5IslandTimingUs {
 };
 
 struct Y26Model5IslandWorkspace {
+    std::uint32_t lifecycle_magic;
+    std::uint32_t lifecycle_version;
     Y26Stage5Block0Workspace scalar_conv;
     Y26ThreadedConvWorkspace* threaded_conv;
     std::int8_t* model4_postact_nhwc_s8;
@@ -45,6 +53,8 @@ struct Y26Model5IslandWorkspace {
     std::size_t workspace_bytes;
     int prepared;
 };
+
+int y26_model5_island_workspace_init(Y26Model5IslandWorkspace* workspace);
 
 int y26_model5_island_prepare(const Y26Model5IslandConfig* cfg,
                               int thread_count,

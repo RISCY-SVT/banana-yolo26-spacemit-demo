@@ -1,0 +1,5 @@
+workers	reported_workspace_bytes	model4_postact_bytes	global_model5_i32_bytes	model5_output_bytes	comment
+1	3584512	819200	819200	204800	R0/R2a retain materialized postact and corrected i32
+2	3757568	819200	819200	204800	persistent workers
+3	3910144	819200	819200	204800	selected measurement worker count
+4	4062720	819200	819200	204800	persistent workers

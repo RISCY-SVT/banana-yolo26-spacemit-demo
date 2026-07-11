@@ -1,0 +1,4 @@
+path	mean_us	stddev_us	cv_pct	process_cpu_mean_us
+stage42_model4_only_A	512301.648390	322.241617	0.062901	1234213.256116
+stage43_model4_to_model5_R0_B	521603.205250	148.271914	0.028426	1234814.976102
+paired_delta_B_minus_A	9301.556860	451.288699	1.815641_pct	601.719986

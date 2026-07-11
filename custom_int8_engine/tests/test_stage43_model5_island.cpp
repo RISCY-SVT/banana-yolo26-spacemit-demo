@@ -2,13 +2,30 @@
 
 #include <algorithm>
 #include <array>
+#include <cfenv>
 #include <cmath>
 #include <cstddef>
 #include <cstdint>
+#include <cstring>
 #include <iostream>
 #include <vector>
 
 namespace {
+
+class ScopedRoundToNearest {
+public:
+    ScopedRoundToNearest() : saved_(std::fegetround()), active_(std::fesetround(FE_TONEAREST) == 0) {}
+    ~ScopedRoundToNearest() {
+        if (active_ && saved_ != -1) {
+            (void)std::fesetround(saved_);
+        }
+    }
+    bool active() const { return active_; }
+
+private:
+    int saved_ = -1;
+    bool active_ = false;
+};
 
 std::uint8_t quantize(float value, float scale, int zero_point) {
     const long rounded = std::lrint(static_cast<double>(value) / static_cast<double>(scale));
@@ -20,6 +37,11 @@ float silu(float value) {
 }
 
 int run_test() {
+    ScopedRoundToNearest rounding;
+    if (!rounding.active()) {
+        std::cerr << "failed to set FE_TONEAREST\n";
+        return 1;
+    }
     constexpr int input_h = 5;
     constexpr int input_w = 5;
     constexpr int input_c = 8;
@@ -70,7 +92,19 @@ int run_test() {
     config.model5_postact_zero_point_u8 = post5_zp;
     config.ime_accumulator_groups = 4;
 
+    Y26Model5IslandWorkspace invalid_workspace;
+    std::memset(&invalid_workspace, 0xa5, sizeof(invalid_workspace));
+    if (y26_model5_island_prepare(&config, 2, &invalid_workspace) != Y26_CONV_STATUS_INVALID_ARGUMENT) {
+        std::cerr << "prepare accepted a workspace without explicit init\n";
+        return 1;
+    }
+    y26_model5_island_release(&invalid_workspace);
+
     Y26Model5IslandWorkspace workspace {};
+    if (y26_model5_island_workspace_init(&workspace) != Y26_CONV_STATUS_SUCCESS) {
+        std::cerr << "workspace init failed\n";
+        return 1;
+    }
     int status = y26_model5_island_prepare(&config, 2, &workspace);
     if (status != Y26_CONV_STATUS_SUCCESS) {
         std::cerr << "prepare status=" << status << "\n";

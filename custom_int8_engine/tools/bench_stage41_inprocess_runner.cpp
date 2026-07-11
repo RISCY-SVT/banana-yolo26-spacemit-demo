@@ -1,4 +1,5 @@
 #include "y26_k1x_model4_fixture_config.h"
+#include "y26_k1x_model5_island.h"
 #include "y26_stage42_runner_support.h"
 
 #include <onnxruntime_c_api.h>
@@ -11,6 +12,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
+#include <ctime>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
@@ -31,8 +33,18 @@ constexpr const char* kInputName = "images";
 constexpr const char* kFinalOutputName = "output0";
 constexpr const char* kModel4InputName = "/model.4/cv1/conv/Conv_output_0_QuantizeLinear_Output";
 constexpr const char* kModel4OutputName = "/model.4/cv2/conv/Conv_output_0_QuantizeLinear_Output";
+constexpr const char* kModel4PostactName = "/model.4/cv2/act/Mul_output_0_QuantizeLinear_Output";
+constexpr const char* kModel5PostactName = "/model.5/act/Mul_output_0_QuantizeLinear_Output";
 
 using Clock = std::chrono::steady_clock;
+
+double process_cpu_us() {
+    timespec value {};
+    if (clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &value) != 0) {
+        throw std::runtime_error("clock_gettime(CLOCK_PROCESS_CPUTIME_ID) failed");
+    }
+    return static_cast<double>(value.tv_sec) * 1.0e6 + static_cast<double>(value.tv_nsec) / 1.0e3;
+}
 
 struct Options {
     std::string mode = "validate";
@@ -50,6 +62,12 @@ struct Options {
     std::string dump_ort_model4_nchw;
     std::string dump_model4_input_nchw;
     std::string dump_final_output;
+    std::string dump_paired_a_output;
+    std::string dump_paired_b_output;
+    std::string model5_weights;
+    std::string model5_weight_scales;
+    std::string model5_bias;
+    std::string model5_dataflow = "r0";
     std::string custom_mode = "ime_threaded";
     std::string ort_opt_level = "disable";
     std::string ort_execution_mode = "sequential";
@@ -68,6 +86,7 @@ struct Options {
     int thread_branch0 = 4;
     int thread_branch1 = 4;
     int thread_model4_cv2 = 4;
+    int model5_threads = 3;
 };
 
 struct Tensor {
@@ -138,6 +157,34 @@ struct Summary {
     std::vector<PipelineTiming> repeat_timings;
 };
 
+struct Model5PairedTiming {
+    double prefix_us = 0.0;
+    double layout_in_us = 0.0;
+    double custom_model4_us = 0.0;
+    double model4_postact_us = 0.0;
+    double model5_conv_us = 0.0;
+    double model5_im2col_pack_us = 0.0;
+    double model5_compute_us = 0.0;
+    double model5_correction_us = 0.0;
+    double model5_thread_overhead_us = 0.0;
+    double model5_postact_us = 0.0;
+    double layout_out_us = 0.0;
+    double suffix_us = 0.0;
+    double total_us = 0.0;
+    double process_cpu_us = 0.0;
+};
+
+struct Model5PairedSummary {
+    MetricStats path_a_total;
+    MetricStats path_b_total;
+    MetricStats paired_delta;
+    Model5PairedTiming path_a_mean;
+    Model5PairedTiming path_b_mean;
+    Tensor path_a_output;
+    Tensor path_b_output;
+    int affinity_ok = 0;
+};
+
 const OrtApi* g_ort = nullptr;
 
 void check_status(OrtStatus* status, const char* context) {
@@ -191,6 +238,18 @@ Options parse_options(int argc, char** argv) {
             options.dump_model4_input_nchw = require_value(i, argc, argv, "--dump-model4-input-nchw");
         } else if (arg == "--dump-final-output") {
             options.dump_final_output = require_value(i, argc, argv, "--dump-final-output");
+        } else if (arg == "--dump-paired-a-output") {
+            options.dump_paired_a_output = require_value(i, argc, argv, "--dump-paired-a-output");
+        } else if (arg == "--dump-paired-b-output") {
+            options.dump_paired_b_output = require_value(i, argc, argv, "--dump-paired-b-output");
+        } else if (arg == "--model5-weights") {
+            options.model5_weights = require_value(i, argc, argv, "--model5-weights");
+        } else if (arg == "--model5-weight-scales") {
+            options.model5_weight_scales = require_value(i, argc, argv, "--model5-weight-scales");
+        } else if (arg == "--model5-bias") {
+            options.model5_bias = require_value(i, argc, argv, "--model5-bias");
+        } else if (arg == "--model5-dataflow") {
+            options.model5_dataflow = require_value(i, argc, argv, "--model5-dataflow");
         } else if (arg == "--custom-mode") {
             options.custom_mode = require_value(i, argc, argv, "--custom-mode");
         } else if (arg == "--ort-opt-level") {
@@ -228,13 +287,17 @@ Options parse_options(int argc, char** argv) {
         } else if (arg == "--thread-model4-cv2") {
             options.thread_model4_cv2 =
                 std::max(0, std::stoi(require_value(i, argc, argv, "--thread-model4-cv2")));
+        } else if (arg == "--model5-threads") {
+            options.model5_threads = std::clamp(std::stoi(require_value(i, argc, argv, "--model5-threads")), 1, 4);
         } else {
             throw std::runtime_error("unknown argument: " + arg);
         }
     }
-    const std::array<std::string, 5> valid_modes = {"validate", "benchmark", "profile", "same-input-model4", "ort-only"};
+    const std::array<std::string, 6> valid_modes = {
+        "validate", "benchmark", "benchmark-model5-paired", "profile", "same-input-model4", "ort-only"};
     if (std::find(valid_modes.begin(), valid_modes.end(), options.mode) == valid_modes.end()) {
-        throw std::runtime_error("--mode must be validate, benchmark, profile, same-input-model4, or ort-only");
+        throw std::runtime_error(
+            "--mode must be validate, benchmark, benchmark-model5-paired, profile, same-input-model4, or ort-only");
     }
     if (options.custom_mode != "ime_threaded" && options.custom_mode != "scalar") {
         throw std::runtime_error("--custom-mode must be ime_threaded or scalar");
@@ -261,6 +324,13 @@ Options parse_options(int argc, char** argv) {
     } else if (options.cut_dir.empty() || options.input_npy.empty()) {
         throw std::runtime_error("validate/benchmark/profile require --cut-dir and --input-npy");
     }
+    if (options.mode == "benchmark-model5-paired" &&
+        (options.model5_weights.empty() || options.model5_weight_scales.empty() || options.model5_bias.empty())) {
+        throw std::runtime_error("benchmark-model5-paired requires model5 weights, scales, and bias");
+    }
+    if (options.model5_dataflow != "r0" && options.model5_dataflow != "r2-fastpack") {
+        throw std::runtime_error("--model5-dataflow must be r0 or r2-fastpack");
+    }
     return options;
 }
 
@@ -270,6 +340,17 @@ std::vector<char> read_file(const std::string& path) {
         throw std::runtime_error("failed to open " + path);
     }
     return std::vector<char>((std::istreambuf_iterator<char>(in)), std::istreambuf_iterator<char>());
+}
+
+template <typename T>
+std::vector<T> read_raw_exact(const std::string& path, std::size_t count) {
+    const std::vector<char> bytes = read_file(path);
+    if (bytes.size() != count * sizeof(T)) {
+        throw std::runtime_error("unexpected raw byte count for " + path);
+    }
+    std::vector<T> values(count);
+    std::memcpy(values.data(), bytes.data(), bytes.size());
+    return values;
 }
 
 std::string parse_header_string(const std::vector<char>& data, std::size_t& offset) {
@@ -691,6 +772,31 @@ Tensor run_one_output(OrtSession* session,
     return output;
 }
 
+Tensor run_two_inputs_one_output(OrtSession* session,
+                                 OrtMemoryInfo* memory_info,
+                                 const char* input0_name,
+                                 const Tensor& input0,
+                                 const char* input1_name,
+                                 const Tensor& input1,
+                                 const char* output_name) {
+    OrtValueHolder input0_value(make_input_value(input0, memory_info));
+    OrtValueHolder input1_value(make_input_value(input1, memory_info));
+    std::array<OrtValue*, 2> input_values {input0_value.value, input1_value.value};
+    const std::array<const char*, 2> input_names {input0_name, input1_name};
+    const char* output_names[] = {output_name};
+    OrtValueHolder output_value;
+    check_status(g_ort->Run(session,
+                            nullptr,
+                            input_names.data(),
+                            input_values.data(),
+                            input_names.size(),
+                            output_names,
+                            1,
+                            &output_value.value),
+                 "OrtRun two-input suffix");
+    return copy_output_tensor(output_value.value);
+}
+
 void nchw_u8_to_nhwc(const Tensor& tensor, std::vector<std::uint8_t>& out) {
     if (tensor.type != ONNX_TENSOR_ELEMENT_DATA_TYPE_UINT8 || tensor.shape.size() != 4) {
         throw std::runtime_error("expected uint8 NCHW tensor");
@@ -737,6 +843,28 @@ void nhwc_u8_to_nchw(const std::vector<std::uint8_t>& bytes, Tensor& tensor) {
                     const std::size_t src = ((static_cast<std::size_t>(bn) * h + y) * w + x) * c + ch;
                     const std::size_t dst = ((static_cast<std::size_t>(bn) * c + ch) * h + y) * w + x;
                     tensor.bytes[dst] = bytes[src];
+                }
+            }
+        }
+    }
+}
+
+void nhwc_s8_code_to_nchw_u8(const std::int8_t* bytes, std::size_t byte_count, Tensor& tensor) {
+    if (bytes == nullptr || tensor.shape.size() != 4 || tensor.type != ONNX_TENSOR_ELEMENT_DATA_TYPE_UINT8 ||
+        tensor.bytes.size() != byte_count || tensor.element_count() != byte_count) {
+        throw std::runtime_error("signed-code NHWC to NCHW buffer size/type mismatch");
+    }
+    const int n = static_cast<int>(tensor.shape[0]);
+    const int c = static_cast<int>(tensor.shape[1]);
+    const int h = static_cast<int>(tensor.shape[2]);
+    const int w = static_cast<int>(tensor.shape[3]);
+    for (int bn = 0; bn < n; ++bn) {
+        for (int y = 0; y < h; ++y) {
+            for (int x = 0; x < w; ++x) {
+                for (int ch = 0; ch < c; ++ch) {
+                    const std::size_t src = ((static_cast<std::size_t>(bn) * h + y) * w + x) * c + ch;
+                    const std::size_t dst = ((static_cast<std::size_t>(bn) * c + ch) * h + y) * w + x;
+                    tensor.bytes[dst] = static_cast<std::uint8_t>(static_cast<int>(bytes[src]) + 128);
                 }
             }
         }
@@ -810,6 +938,19 @@ public:
                       double* layout_in_us,
                       double* layout_out_us,
                       double* custom_us) {
+        (void)run_nhwc(model4_input_nchw, layout_in_us, custom_us);
+        const auto layout_begin = Clock::now();
+        nhwc_u8_to_nchw(output_nhwc_, output_nchw_);
+        const auto layout_end = Clock::now();
+        if (layout_out_us != nullptr) {
+            *layout_out_us += std::chrono::duration<double, std::micro>(layout_end - layout_begin).count();
+        }
+        return output_nchw_;
+    }
+
+    const std::vector<std::uint8_t>& run_nhwc(const Tensor& model4_input_nchw,
+                                               double* layout_in_us,
+                                               double* custom_us) {
         const auto layout_begin = Clock::now();
         nchw_u8_to_nhwc(model4_input_nchw, input_nhwc_);
         const auto layout_mid = Clock::now();
@@ -826,19 +967,13 @@ public:
         if (status != Y26_CONV_STATUS_SUCCESS) {
             throw std::runtime_error("model4 custom run failed");
         }
-        const auto custom_end = Clock::now();
-        nhwc_u8_to_nchw(output_nhwc_, output_nchw_);
-        const auto layout_end = Clock::now();
         if (layout_in_us != nullptr) {
             *layout_in_us += std::chrono::duration<double, std::micro>(layout_mid - layout_begin).count();
-        }
-        if (layout_out_us != nullptr) {
-            *layout_out_us += std::chrono::duration<double, std::micro>(layout_end - custom_end).count();
         }
         if (custom_us != nullptr) {
             *custom_us += timing.total_us;
         }
-        return output_nchw_;
+        return output_nhwc_;
     }
 
     int affinity_ok() const {
@@ -858,6 +993,96 @@ private:
     std::vector<std::uint8_t> input_nhwc_;
     std::vector<std::uint8_t> output_nhwc_;
     Tensor output_nchw_;
+};
+
+class Model5Runner {
+public:
+    explicit Model5Runner(const Options& options)
+        : weights_(read_raw_exact<std::int8_t>(options.model5_weights, 128U * 3U * 3U * 128U)),
+          weight_scales_(read_raw_exact<float>(options.model5_weight_scales, 128U)),
+          bias_(read_raw_exact<std::int32_t>(options.model5_bias, 128U)),
+          output_nhwc_s8_(40U * 40U * 128U) {
+        cfg_.model5_conv.node_name = "/model.5/conv/Conv";
+        cfg_.model5_conv.params = Y26Conv2DParams{80, 80, 128, 128, 2, 2, 1, 1};
+        cfg_.model5_conv.kernel_h = 3;
+        cfg_.model5_conv.kernel_w = 3;
+        cfg_.model5_conv.activation_zero_point_u8 = 9;
+        cfg_.model5_conv.input_storage_zero_point_s8 = -119;
+        cfg_.model5_conv.input_scale = 0.030298452824354172F;
+        cfg_.model5_conv.output_scale = 0.057099778205156326F;
+        cfg_.model5_conv.output_zero_point_u8 = 136;
+        cfg_.model5_conv.weight_scales = weight_scales_.data();
+        cfg_.model5_conv.weight_scale_count = weight_scales_.size();
+        cfg_.model5_conv.weights_ohwi_s8 = weights_.data();
+        cfg_.model5_conv.weight_count = weights_.size();
+        cfg_.model5_conv.bias_i32 = bias_.data();
+        cfg_.model5_conv.bias_count = bias_.size();
+        cfg_.model4_preact_scale = 0.066064663231372833F;
+        cfg_.model4_preact_zero_point_u8 = 142;
+        cfg_.model4_postact_scale = 0.030298452824354172F;
+        cfg_.model4_postact_zero_point_u8 = 9;
+        cfg_.model5_postact_scale = 0.027727888897061348F;
+        cfg_.model5_postact_zero_point_u8 = 10;
+        cfg_.ime_accumulator_groups = 4;
+        cfg_.dataflow_mode = options.model5_dataflow == "r2-fastpack"
+                                 ? Y26_MODEL5_DATAFLOW_STAGE44_STRIDE2_FASTPACK
+                                 : Y26_MODEL5_DATAFLOW_STAGE43_R0;
+        if (y26_model5_island_workspace_init(&ws_) != Y26_CONV_STATUS_SUCCESS) {
+            throw std::runtime_error("model5 island workspace init failed");
+        }
+        const int status = y26_model5_island_prepare(&cfg_, options.model5_threads, &ws_);
+        if (status != Y26_CONV_STATUS_SUCCESS) {
+            throw std::runtime_error("model5 island prepare failed");
+        }
+        model4_postact_nchw_.type = ONNX_TENSOR_ELEMENT_DATA_TYPE_UINT8;
+        model4_postact_nchw_.shape = {1, 128, 80, 80};
+        model4_postact_nchw_.bytes.resize(80U * 80U * 128U);
+        model5_postact_nchw_.type = ONNX_TENSOR_ELEMENT_DATA_TYPE_UINT8;
+        model5_postact_nchw_.shape = {1, 128, 40, 40};
+        model5_postact_nchw_.bytes.resize(output_nhwc_s8_.size());
+    }
+
+    Model5Runner(const Model5Runner&) = delete;
+    Model5Runner& operator=(const Model5Runner&) = delete;
+
+    ~Model5Runner() {
+        y26_model5_island_release(&ws_);
+    }
+
+    void run(const std::vector<std::uint8_t>& model4_preact_nhwc,
+             Y26Model5IslandTimingUs* timing,
+             double* layout_out_us) {
+        if (model4_preact_nhwc.size() != ws_.model4_element_count) {
+            throw std::runtime_error("model4/model5 NHWC handoff size mismatch");
+        }
+        const int status = y26_model5_island_run_ime_cluster0(
+            &cfg_, &ws_, model4_preact_nhwc.data(), output_nhwc_s8_.data(), timing);
+        if (status != Y26_CONV_STATUS_SUCCESS) {
+            throw std::runtime_error("model5 custom run failed");
+        }
+        const auto layout_begin = Clock::now();
+        nhwc_s8_code_to_nchw_u8(
+            ws_.model4_postact_nhwc_s8, ws_.model4_element_count, model4_postact_nchw_);
+        nhwc_s8_code_to_nchw_u8(output_nhwc_s8_.data(), output_nhwc_s8_.size(), model5_postact_nchw_);
+        const auto layout_end = Clock::now();
+        if (layout_out_us != nullptr) {
+            *layout_out_us += std::chrono::duration<double, std::micro>(layout_end - layout_begin).count();
+        }
+    }
+
+    const Tensor& model4_postact_nchw() const { return model4_postact_nchw_; }
+    const Tensor& model5_postact_nchw() const { return model5_postact_nchw_; }
+    int affinity_ok() const { return y26_model5_island_worker_affinity_ok(&ws_); }
+
+private:
+    std::vector<std::int8_t> weights_;
+    std::vector<float> weight_scales_;
+    std::vector<std::int32_t> bias_;
+    std::vector<std::int8_t> output_nhwc_s8_;
+    Y26Model5IslandConfig cfg_ {};
+    Y26Model5IslandWorkspace ws_ {};
+    Tensor model4_postact_nchw_;
+    Tensor model5_postact_nchw_;
 };
 
 struct ProfileCut {
@@ -1006,6 +1231,192 @@ Summary run_pipeline_benchmark(OrtSession* prefix,
     return summary;
 }
 
+void add_model5_paired_timing(Model5PairedTiming& sum, const Model5PairedTiming& value) {
+    sum.prefix_us += value.prefix_us;
+    sum.layout_in_us += value.layout_in_us;
+    sum.custom_model4_us += value.custom_model4_us;
+    sum.model4_postact_us += value.model4_postact_us;
+    sum.model5_conv_us += value.model5_conv_us;
+    sum.model5_im2col_pack_us += value.model5_im2col_pack_us;
+    sum.model5_compute_us += value.model5_compute_us;
+    sum.model5_correction_us += value.model5_correction_us;
+    sum.model5_thread_overhead_us += value.model5_thread_overhead_us;
+    sum.model5_postact_us += value.model5_postact_us;
+    sum.layout_out_us += value.layout_out_us;
+    sum.suffix_us += value.suffix_us;
+    sum.total_us += value.total_us;
+    sum.process_cpu_us += value.process_cpu_us;
+}
+
+void divide_model5_paired_timing(Model5PairedTiming& timing, double divisor) {
+    timing.prefix_us /= divisor;
+    timing.layout_in_us /= divisor;
+    timing.custom_model4_us /= divisor;
+    timing.model4_postact_us /= divisor;
+    timing.model5_conv_us /= divisor;
+    timing.model5_im2col_pack_us /= divisor;
+    timing.model5_compute_us /= divisor;
+    timing.model5_correction_us /= divisor;
+    timing.model5_thread_overhead_us /= divisor;
+    timing.model5_postact_us /= divisor;
+    timing.layout_out_us /= divisor;
+    timing.suffix_us /= divisor;
+    timing.total_us /= divisor;
+    timing.process_cpu_us /= divisor;
+}
+
+Model5PairedSummary run_model5_paired_benchmark(OrtSession* prefix,
+                                                OrtSession* suffix_a,
+                                                OrtSession* suffix_b,
+                                                OrtMemoryInfo* memory,
+                                                Model4Runner& custom_model4,
+                                                Model5Runner& custom_model5,
+                                                const Tensor& input,
+                                                const Options& options) {
+    auto run_path_a = [&](Model5PairedTiming* timing) -> Tensor {
+        const double process_begin_us = process_cpu_us();
+        const auto total_begin = Clock::now();
+        const auto prefix_begin = Clock::now();
+        Tensor model4_input = run_one_output(prefix, memory, kInputName, input, kModel4InputName);
+        const auto prefix_end = Clock::now();
+        double layout_in_us = 0.0;
+        double layout_out_us = 0.0;
+        double model4_us = 0.0;
+        const Tensor& model4_output =
+            custom_model4.run(model4_input, &layout_in_us, &layout_out_us, &model4_us);
+        const auto suffix_begin = Clock::now();
+        Tensor output = run_one_output(suffix_a, memory, kModel4OutputName, model4_output, kFinalOutputName);
+        const auto suffix_end = Clock::now();
+        const double process_end_us = process_cpu_us();
+        if (timing != nullptr) {
+            timing->prefix_us += std::chrono::duration<double, std::micro>(prefix_end - prefix_begin).count();
+            timing->layout_in_us += layout_in_us;
+            timing->custom_model4_us += model4_us;
+            timing->layout_out_us += layout_out_us;
+            timing->suffix_us += std::chrono::duration<double, std::micro>(suffix_end - suffix_begin).count();
+            timing->total_us += std::chrono::duration<double, std::micro>(suffix_end - total_begin).count();
+            timing->process_cpu_us += process_end_us - process_begin_us;
+        }
+        return output;
+    };
+
+    auto run_path_b = [&](Model5PairedTiming* timing) -> Tensor {
+        const double process_begin_us = process_cpu_us();
+        const auto total_begin = Clock::now();
+        const auto prefix_begin = Clock::now();
+        Tensor model4_input = run_one_output(prefix, memory, kInputName, input, kModel4InputName);
+        const auto prefix_end = Clock::now();
+        double layout_in_us = 0.0;
+        double model4_us = 0.0;
+        const std::vector<std::uint8_t>& model4_preact =
+            custom_model4.run_nhwc(model4_input, &layout_in_us, &model4_us);
+        Y26Model5IslandTimingUs model5_timing {};
+        double layout_out_us = 0.0;
+        custom_model5.run(model4_preact, &model5_timing, &layout_out_us);
+        const auto suffix_begin = Clock::now();
+        Tensor output = run_two_inputs_one_output(suffix_b,
+                                                  memory,
+                                                  kModel4PostactName,
+                                                  custom_model5.model4_postact_nchw(),
+                                                  kModel5PostactName,
+                                                  custom_model5.model5_postact_nchw(),
+                                                  kFinalOutputName);
+        const auto suffix_end = Clock::now();
+        const double process_end_us = process_cpu_us();
+        if (timing != nullptr) {
+            timing->prefix_us += std::chrono::duration<double, std::micro>(prefix_end - prefix_begin).count();
+            timing->layout_in_us += layout_in_us;
+            timing->custom_model4_us += model4_us;
+            timing->model4_postact_us += model5_timing.model4_postact_us;
+            timing->model5_conv_us += model5_timing.model5_conv_us;
+            timing->model5_im2col_pack_us += model5_timing.model5_im2col_pack_us;
+            timing->model5_compute_us += model5_timing.model5_compute_us;
+            timing->model5_correction_us += model5_timing.model5_correction_us;
+            timing->model5_thread_overhead_us += model5_timing.model5_thread_overhead_us;
+            timing->model5_postact_us += model5_timing.model5_postact_us;
+            timing->layout_out_us += layout_out_us;
+            timing->suffix_us += std::chrono::duration<double, std::micro>(suffix_end - suffix_begin).count();
+            timing->total_us += std::chrono::duration<double, std::micro>(suffix_end - total_begin).count();
+            timing->process_cpu_us += process_end_us - process_begin_us;
+        }
+        return output;
+    };
+
+    for (int warmup = 0; warmup < options.warmup; ++warmup) {
+        if ((warmup & 1) == 0) {
+            (void)run_path_a(nullptr);
+            (void)run_path_b(nullptr);
+        } else {
+            (void)run_path_b(nullptr);
+            (void)run_path_a(nullptr);
+        }
+    }
+
+    std::vector<double> path_a_totals;
+    std::vector<double> path_b_totals;
+    std::vector<double> paired_deltas;
+    Model5PairedTiming path_a_sum {};
+    Model5PairedTiming path_b_sum {};
+    for (int repeat = 0; repeat < options.repeats; ++repeat) {
+        Model5PairedTiming path_a {};
+        Model5PairedTiming path_b {};
+        for (int run = 0; run < options.runs; ++run) {
+            if (((repeat + run) & 1) == 0) {
+                (void)run_path_a(&path_a);
+                (void)run_path_b(&path_b);
+            } else {
+                (void)run_path_b(&path_b);
+                (void)run_path_a(&path_a);
+            }
+        }
+        const double runs = static_cast<double>(options.runs);
+        divide_model5_paired_timing(path_a, runs);
+        divide_model5_paired_timing(path_b, runs);
+        add_model5_paired_timing(path_a_sum, path_a);
+        add_model5_paired_timing(path_b_sum, path_b);
+        path_a_totals.push_back(path_a.total_us);
+        path_b_totals.push_back(path_b.total_us);
+        paired_deltas.push_back(path_b.total_us - path_a.total_us);
+        std::cout << std::fixed << std::setprecision(6)
+                  << "stage44_model5_paired_repeat"
+                  << " repeat=" << repeat
+                  << " path_a_total_us=" << path_a.total_us
+                  << " path_b_total_us=" << path_b.total_us
+                  << " paired_delta_us=" << paired_deltas.back()
+                  << " path_a_process_cpu_us=" << path_a.process_cpu_us
+                  << " path_b_process_cpu_us=" << path_b.process_cpu_us
+                  << " path_a_prefix_us=" << path_a.prefix_us
+                  << " path_b_prefix_us=" << path_b.prefix_us
+                  << " path_a_layout_in_us=" << path_a.layout_in_us
+                  << " path_b_layout_in_us=" << path_b.layout_in_us
+                  << " path_a_model4_us=" << path_a.custom_model4_us
+                  << " path_b_model4_us=" << path_b.custom_model4_us
+                  << " path_b_model4_postact_us=" << path_b.model4_postact_us
+                  << " path_b_model5_conv_us=" << path_b.model5_conv_us
+                  << " path_b_model5_postact_us=" << path_b.model5_postact_us
+                  << " path_a_layout_out_us=" << path_a.layout_out_us
+                  << " path_b_layout_out_us=" << path_b.layout_out_us
+                  << " path_a_suffix_us=" << path_a.suffix_us
+                  << " path_b_suffix_us=" << path_b.suffix_us
+                  << " order=" << ((repeat & 1) == 0 ? "ABBA" : "BAAB")
+                  << "\n";
+    }
+    const double repeats = static_cast<double>(options.repeats);
+    divide_model5_paired_timing(path_a_sum, repeats);
+    divide_model5_paired_timing(path_b_sum, repeats);
+
+    Model5PairedSummary summary {};
+    summary.path_a_total = stats_from_values(path_a_totals);
+    summary.path_b_total = stats_from_values(path_b_totals);
+    summary.paired_delta = stats_from_values(paired_deltas);
+    summary.path_a_mean = path_a_sum;
+    summary.path_b_mean = path_b_sum;
+    summary.path_a_output = run_path_a(nullptr);
+    summary.path_b_output = run_path_b(nullptr);
+    summary.affinity_ok = custom_model4.affinity_ok() == 1 && custom_model5.affinity_ok() == 1 ? 1 : 0;
+    return summary;
+}
+
 MetricStats profile_cut(OrtEnv* env,
                         OrtMemoryInfo* memory,
                         const ProfileCut& cut,
@@ -1114,20 +1525,24 @@ int main(int argc, char** argv) {
                 (void)run_once();
             }
             std::vector<double> repeat_us;
+            std::vector<double> process_cpu_repeat_us;
             std::vector<double> input_wrap_repeat_us;
             std::vector<double> ort_run_repeat_us;
             std::vector<double> output_copy_repeat_us;
             for (int repeat = 0; repeat < options.repeats; ++repeat) {
                 OrtOneOutputTiming components {};
                 const auto begin = Clock::now();
+                const double process_cpu_begin_us = process_cpu_us();
                 for (int run = 0; run < options.runs; ++run) {
                     output = run_once(&components);
                 }
+                const double process_cpu_end_us = process_cpu_us();
                 const auto end = Clock::now();
                 const double denom = static_cast<double>(options.runs);
                 const double mean_us =
                     std::chrono::duration<double, std::micro>(end - begin).count() / denom;
                 repeat_us.push_back(mean_us);
+                process_cpu_repeat_us.push_back((process_cpu_end_us - process_cpu_begin_us) / denom);
                 input_wrap_repeat_us.push_back(components.input_wrap_us / denom);
                 ort_run_repeat_us.push_back(components.ort_run_us / denom);
                 output_copy_repeat_us.push_back(components.output_copy_us / denom);
@@ -1135,12 +1550,14 @@ int main(int argc, char** argv) {
                           << "stage42_ort_only_repeat"
                           << " repeat=" << repeat
                           << " mean_us=" << mean_us
+                          << " process_cpu_mean_us=" << process_cpu_repeat_us.back()
                           << " input_wrap_us=" << input_wrap_repeat_us.back()
                           << " ort_run_us=" << ort_run_repeat_us.back()
                           << " output_copy_us=" << output_copy_repeat_us.back()
                           << "\n";
             }
             const MetricStats ort_timing = stats_from_values(repeat_us);
+            const MetricStats process_cpu_timing = stats_from_values(process_cpu_repeat_us);
             const MetricStats input_wrap_timing = stats_from_values(input_wrap_repeat_us);
             const MetricStats ort_run_timing = stats_from_values(ort_run_repeat_us);
             const MetricStats output_copy_timing = stats_from_values(output_copy_repeat_us);
@@ -1183,6 +1600,8 @@ int main(int argc, char** argv) {
                       << " median_us=" << ort_timing.median
                       << " p90_us=" << ort_timing.p90
                       << " p95_us=" << ort_timing.p95
+                      << " process_cpu_mean_us=" << process_cpu_timing.mean
+                      << " process_cpu_stddev_us=" << process_cpu_timing.stddev
                       << " mean_input_wrap_us=" << input_wrap_timing.mean
                       << " mean_ort_run_us=" << ort_run_timing.mean
                       << " mean_output_copy_us=" << output_copy_timing.mean
@@ -1193,6 +1612,8 @@ int main(int argc, char** argv) {
         const std::string prefix_path = options.cut_dir + "/prefix_images_to_model4_input.onnx";
         const std::string model4_path = options.cut_dir + "/model4_input_to_model4_output.onnx";
         const std::string suffix_path = options.cut_dir + "/suffix_model4_output_to_output0.onnx";
+        const std::string suffix_model5_path =
+            options.cut_dir + "/suffix_model4_postact_model5_output_to_output0.onnx";
         Model4Runner custom_model4(options);
 
         if (options.mode == "same-input-model4") {
@@ -1326,6 +1747,114 @@ int main(int argc, char** argv) {
         if (input.type != ONNX_TENSOR_ELEMENT_DATA_TYPE_FLOAT ||
             input.shape != std::vector<std::int64_t>({1, 3, 640, 640})) {
             throw std::runtime_error("full input must be float32 NCHW 1x3x640x640");
+        }
+
+        if (options.mode == "benchmark-model5-paired") {
+            OrtSessionHolder prefix = create_session(env.env, prefix_path, options, "model5_paired_prefix");
+            OrtSessionHolder suffix_a = create_session(env.env, suffix_path, options, "model5_paired_suffix_a");
+            OrtSessionHolder suffix_b =
+                create_session(env.env, suffix_model5_path, options, "model5_paired_suffix_b");
+            Model5Runner custom_model5(options);
+            const Model5PairedSummary summary = run_model5_paired_benchmark(prefix.session,
+                                                                            suffix_a.session,
+                                                                            suffix_b.session,
+                                                                            memory.info,
+                                                                            custom_model4,
+                                                                            custom_model5,
+                                                                            input,
+                                                                            options);
+            const CompareResult output_comparison =
+                compare_tensors(summary.path_b_output, summary.path_a_output);
+            print_comparison("model5_paired_path_b_vs_path_a_output0",
+                             summary.path_b_output,
+                             summary.path_a_output,
+                             output_comparison);
+            const bool dump_a = write_file(options.dump_paired_a_output, summary.path_a_output.bytes);
+            const bool dump_b = write_file(options.dump_paired_b_output, summary.path_b_output.bytes);
+            const double delta_pct = summary.path_a_total.mean > 0.0
+                                         ? 100.0 * summary.paired_delta.mean / summary.path_a_total.mean
+                                         : 0.0;
+            const double path_a_attributed = summary.path_a_mean.prefix_us +
+                                             summary.path_a_mean.layout_in_us +
+                                             summary.path_a_mean.custom_model4_us +
+                                             summary.path_a_mean.layout_out_us +
+                                             summary.path_a_mean.suffix_us;
+            const double path_b_attributed = summary.path_b_mean.prefix_us +
+                                             summary.path_b_mean.layout_in_us +
+                                             summary.path_b_mean.custom_model4_us +
+                                             summary.path_b_mean.model4_postact_us +
+                                             summary.path_b_mean.model5_conv_us +
+                                             summary.path_b_mean.model5_postact_us +
+                                             summary.path_b_mean.layout_out_us +
+                                             summary.path_b_mean.suffix_us;
+            std::cout << std::fixed << std::setprecision(6)
+                      << "stage44_model5_paired_summary"
+                      << " warmup=" << options.warmup
+                      << " runs=" << options.runs
+                      << " repeats=" << options.repeats
+                      << " alternating_order=1"
+                      << " reference_in_hot_loop=0"
+                      << " file_io_in_hot_loop=0"
+                      << " internal_model4_to_model5_transposes=0"
+                      << " model5_workers=" << options.model5_threads
+                      << " model5_dataflow=" << options.model5_dataflow
+                      << " affinity_ok=" << summary.affinity_ok
+                      << " path_a_mean_us=" << summary.path_a_total.mean
+                      << " path_a_stddev_us=" << summary.path_a_total.stddev
+                      << " path_a_cv_pct=" << summary.path_a_total.cv_pct
+                      << " path_a_min_us=" << summary.path_a_total.min
+                      << " path_a_max_us=" << summary.path_a_total.max
+                      << " path_a_median_us=" << summary.path_a_total.median
+                      << " path_a_p90_us=" << summary.path_a_total.p90
+                      << " path_a_p95_us=" << summary.path_a_total.p95
+                      << " path_b_mean_us=" << summary.path_b_total.mean
+                      << " path_b_stddev_us=" << summary.path_b_total.stddev
+                      << " path_b_cv_pct=" << summary.path_b_total.cv_pct
+                      << " path_b_min_us=" << summary.path_b_total.min
+                      << " path_b_max_us=" << summary.path_b_total.max
+                      << " path_b_median_us=" << summary.path_b_total.median
+                      << " path_b_p90_us=" << summary.path_b_total.p90
+                      << " path_b_p95_us=" << summary.path_b_total.p95
+                      << " paired_delta_mean_us=" << summary.paired_delta.mean
+                      << " paired_delta_stddev_us=" << summary.paired_delta.stddev
+                      << " paired_delta_pct=" << delta_pct
+                      << " path_a_process_cpu_us=" << summary.path_a_mean.process_cpu_us
+                      << " path_b_process_cpu_us=" << summary.path_b_mean.process_cpu_us
+                      << " path_a_prefix_us=" << summary.path_a_mean.prefix_us
+                      << " path_b_prefix_us=" << summary.path_b_mean.prefix_us
+                      << " path_a_layout_in_us=" << summary.path_a_mean.layout_in_us
+                      << " path_b_layout_in_us=" << summary.path_b_mean.layout_in_us
+                      << " path_a_model4_us=" << summary.path_a_mean.custom_model4_us
+                      << " path_b_model4_us=" << summary.path_b_mean.custom_model4_us
+                      << " path_b_model4_postact_us=" << summary.path_b_mean.model4_postact_us
+                      << " path_b_model5_conv_us=" << summary.path_b_mean.model5_conv_us
+                      << " path_b_model5_im2col_pack_us=" << summary.path_b_mean.model5_im2col_pack_us
+                      << " path_b_model5_compute_us=" << summary.path_b_mean.model5_compute_us
+                      << " path_b_model5_correction_us=" << summary.path_b_mean.model5_correction_us
+                      << " path_b_model5_thread_overhead_us="
+                      << summary.path_b_mean.model5_thread_overhead_us
+                      << " path_b_model5_postact_us=" << summary.path_b_mean.model5_postact_us
+                      << " path_a_layout_out_us=" << summary.path_a_mean.layout_out_us
+                      << " path_b_layout_out_us=" << summary.path_b_mean.layout_out_us
+                      << " path_a_suffix_us=" << summary.path_a_mean.suffix_us
+                      << " path_b_suffix_us=" << summary.path_b_mean.suffix_us
+                      << " path_a_attribution_pct="
+                      << (summary.path_a_total.mean > 0.0
+                              ? 100.0 * path_a_attributed / summary.path_a_total.mean
+                              : 0.0)
+                      << " path_b_attribution_pct="
+                      << (summary.path_b_total.mean > 0.0
+                              ? 100.0 * path_b_attributed / summary.path_b_total.mean
+                              : 0.0)
+                      << " path_a_checksum=" << checksum_bytes(summary.path_a_output.bytes)
+                      << " path_b_checksum=" << checksum_bytes(summary.path_b_output.bytes)
+                      << " output0_diagnostic_mismatches=" << output_comparison.mismatch_count
+                      << " output0_diagnostic_max_abs_diff=" << output_comparison.max_abs_diff
+                      << " dump_a_ok=" << (dump_a ? 1 : 0)
+                      << " dump_b_ok=" << (dump_b ? 1 : 0)
+                      << " note=hybrid_scaffold_timing_not_model_fps"
+                      << "\n";
+            return summary.affinity_ok == 1 && dump_a && dump_b ? 0 : 1;
         }
 
         if (options.mode == "benchmark") {

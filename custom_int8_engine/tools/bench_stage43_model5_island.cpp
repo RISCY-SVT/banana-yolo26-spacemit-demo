@@ -1,4 +1,5 @@
 #include "y26_k1x_model5_island.h"
+#include "y26_k1x_conv_kernels.h"
 
 #include <algorithm>
 #include <array>
@@ -7,6 +8,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
+#include <ctime>
 #include <fstream>
 #include <iostream>
 #include <numeric>
@@ -15,6 +17,14 @@
 #include <vector>
 
 namespace {
+
+double process_cpu_us() {
+    timespec value {};
+    if (clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &value) != 0) {
+        throw std::runtime_error("clock_gettime(CLOCK_PROCESS_CPUTIME_ID) failed");
+    }
+    return static_cast<double>(value.tv_sec) * 1.0e6 + static_cast<double>(value.tv_nsec) / 1.0e3;
+}
 
 struct Options {
     std::string mode = "ime";
@@ -32,6 +42,8 @@ struct Options {
     int runs = 100;
     int repeats = 5;
     int accumulators = 4;
+    int pack_timing = 0;
+    int dataflow_mode = Y26_MODEL5_DATAFLOW_STAGE43_R0;
 };
 
 template <typename T>
@@ -212,6 +224,7 @@ Y26Model5IslandConfig make_config(Context& context) {
     config.model5_postact_scale = 0.027727888897061348F;
     config.model5_postact_zero_point_u8 = 10;
     config.ime_accumulator_groups = context.options.accumulators;
+    config.dataflow_mode = context.options.dataflow_mode;
     return config;
 }
 
@@ -231,6 +244,9 @@ Context make_context(const Options& options) {
     context.expected_model5_nhwc = nchw_u8_to_nhwc_s8(expected_model5, 40, 40, 128);
     context.actual_model5_nhwc.resize(model5_count);
     context.config = make_config(context);
+    if (y26_model5_island_workspace_init(&context.workspace) != Y26_CONV_STATUS_SUCCESS) {
+        throw std::runtime_error("model5 workspace init failed");
+    }
     const int status = y26_model5_island_prepare(&context.config, options.threads, &context.workspace);
     if (status != Y26_CONV_STATUS_SUCCESS) {
         throw std::runtime_error("model5 prepare failed status=" + std::to_string(status));
@@ -293,9 +309,11 @@ int benchmark(Context& context, bool use_ime, const char* label) {
         }
     }
     std::vector<double> repeat_means;
+    std::vector<double> process_cpu_repeat_means;
     for (int repeat = 0; repeat < context.options.repeats; ++repeat) {
         Y26Model5IslandTimingUs sums {};
         const auto begin = std::chrono::steady_clock::now();
+        const double process_cpu_begin_us = process_cpu_us();
         for (int run = 0; run < context.options.runs; ++run) {
             Y26Model5IslandTimingUs timing {};
             if (run_once(context, use_ime, &timing) != Y26_CONV_STATUS_SUCCESS) {
@@ -310,14 +328,17 @@ int benchmark(Context& context, bool use_ime, const char* label) {
             sums.model5_postact_us += timing.model5_postact_us;
             sums.total_us += timing.total_us;
         }
+        const double process_cpu_end_us = process_cpu_us();
         const auto end = std::chrono::steady_clock::now();
         const double divisor = static_cast<double>(context.options.runs);
         const double wall_mean = static_cast<double>(
                                      std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count()) /
                                  1000.0 / divisor;
         repeat_means.push_back(wall_mean);
+        process_cpu_repeat_means.push_back((process_cpu_end_us - process_cpu_begin_us) / divisor);
         std::cout << "stage43_model5_repeat route=" << label << " repeat=" << repeat
                   << " runs=" << context.options.runs << " wall_mean_us=" << wall_mean
+                  << " process_cpu_mean_us=" << process_cpu_repeat_means.back()
                   << " model4_postact_mean_us=" << sums.model4_postact_us / divisor
                   << " model5_conv_mean_us=" << sums.model5_conv_us / divisor
                   << " model5_im2col_pack_mean_us=" << sums.model5_im2col_pack_us / divisor
@@ -341,8 +362,92 @@ int benchmark(Context& context, bool use_ime, const char* label) {
               << " max_us=" << *std::max_element(repeat_means.begin(), repeat_means.end())
               << " median_us=" << percentile(repeat_means, 0.5)
               << " p90_us=" << percentile(repeat_means, 0.9)
-              << " p95_us=" << percentile(repeat_means, 0.95) << "\n";
+              << " p95_us=" << percentile(repeat_means, 0.95)
+              << " process_cpu_mean_us="
+              << std::accumulate(process_cpu_repeat_means.begin(), process_cpu_repeat_means.end(), 0.0) /
+                     static_cast<double>(process_cpu_repeat_means.size())
+              << " process_cpu_median_us=" << percentile(process_cpu_repeat_means, 0.5)
+              << " pack_timing_enabled=" << context.options.pack_timing
+              << " dataflow_mode=" << context.options.dataflow_mode << "\n";
     return 0;
+}
+
+int benchmark_dataflow_pair(Context& context) {
+    context.config.dataflow_mode = Y26_MODEL5_DATAFLOW_STAGE43_R0;
+    if (validate(context, true, "r0-paired-control") != 0) {
+        return 1;
+    }
+    context.config.dataflow_mode = Y26_MODEL5_DATAFLOW_STAGE44_STRIDE2_FASTPACK;
+    if (validate(context, true, "r2-fastpack-paired-control") != 0) {
+        return 1;
+    }
+    auto run_mode = [&](int mode) -> double {
+        context.config.dataflow_mode = mode;
+        const auto begin = std::chrono::steady_clock::now();
+        if (run_once(context, true, nullptr) != Y26_CONV_STATUS_SUCCESS) {
+            throw std::runtime_error("paired dataflow run failed");
+        }
+        const auto end = std::chrono::steady_clock::now();
+        return std::chrono::duration<double, std::micro>(end - begin).count();
+    };
+    for (int warmup = 0; warmup < context.options.warmup; ++warmup) {
+        if ((warmup & 1) == 0) {
+            (void)run_mode(Y26_MODEL5_DATAFLOW_STAGE43_R0);
+            (void)run_mode(Y26_MODEL5_DATAFLOW_STAGE44_STRIDE2_FASTPACK);
+        } else {
+            (void)run_mode(Y26_MODEL5_DATAFLOW_STAGE44_STRIDE2_FASTPACK);
+            (void)run_mode(Y26_MODEL5_DATAFLOW_STAGE43_R0);
+        }
+    }
+    std::vector<double> r0_means;
+    std::vector<double> r2_means;
+    std::vector<double> deltas;
+    for (int repeat = 0; repeat < context.options.repeats; ++repeat) {
+        double r0_sum = 0.0;
+        double r2_sum = 0.0;
+        for (int run = 0; run < context.options.runs; ++run) {
+            if (((repeat + run) & 1) == 0) {
+                r0_sum += run_mode(Y26_MODEL5_DATAFLOW_STAGE43_R0);
+                r2_sum += run_mode(Y26_MODEL5_DATAFLOW_STAGE44_STRIDE2_FASTPACK);
+            } else {
+                r2_sum += run_mode(Y26_MODEL5_DATAFLOW_STAGE44_STRIDE2_FASTPACK);
+                r0_sum += run_mode(Y26_MODEL5_DATAFLOW_STAGE43_R0);
+            }
+        }
+        const double divisor = static_cast<double>(context.options.runs);
+        r0_means.push_back(r0_sum / divisor);
+        r2_means.push_back(r2_sum / divisor);
+        deltas.push_back(r2_means.back() - r0_means.back());
+        std::cout << "stage44_model5_dataflow_pair_repeat repeat=" << repeat
+                  << " r0_mean_us=" << r0_means.back()
+                  << " r2_fastpack_mean_us=" << r2_means.back()
+                  << " delta_us=" << deltas.back()
+                  << " order=" << ((repeat & 1) == 0 ? "ABBA" : "BAAB") << "\n";
+    }
+    const auto mean_of = [](const std::vector<double>& values) {
+        return std::accumulate(values.begin(), values.end(), 0.0) / static_cast<double>(values.size());
+    };
+    const double r0_mean = mean_of(r0_means);
+    const double r2_mean = mean_of(r2_means);
+    const double delta_mean = mean_of(deltas);
+    double delta_variance = 0.0;
+    for (const double delta : deltas) {
+        delta_variance += (delta - delta_mean) * (delta - delta_mean);
+    }
+    delta_variance /= static_cast<double>(deltas.size());
+    std::cout << "stage44_model5_dataflow_pair_summary"
+              << " warmup=" << context.options.warmup
+              << " runs=" << context.options.runs
+              << " repeats=" << context.options.repeats
+              << " r0_mean_us=" << r0_mean
+              << " r2_fastpack_mean_us=" << r2_mean
+              << " delta_mean_us=" << delta_mean
+              << " delta_pct=" << (r0_mean > 0.0 ? 100.0 * delta_mean / r0_mean : 0.0)
+              << " delta_stddev_us=" << std::sqrt(delta_variance)
+              << " affinity_ok=" << y26_model5_island_worker_affinity_ok(&context.workspace)
+              << " exact_controls=1"
+              << " alternating_order=1\n";
+    return y26_model5_island_worker_affinity_ok(&context.workspace) == 1 ? 0 : 1;
 }
 
 int benchmark_adapters(Context& context) {
@@ -469,12 +574,25 @@ Options parse_options(int argc, char** argv) {
         else if (argument == "--runs") options.runs = std::stoi(next());
         else if (argument == "--repeats") options.repeats = std::stoi(next());
         else if (argument == "--accumulators") options.accumulators = std::stoi(next());
+        else if (argument == "--pack-timing") options.pack_timing = std::stoi(next());
+        else if (argument == "--dataflow") {
+            const std::string value = next();
+            if (value == "r0") options.dataflow_mode = Y26_MODEL5_DATAFLOW_STAGE43_R0;
+            else if (value == "r2-fastpack") {
+                options.dataflow_mode = Y26_MODEL5_DATAFLOW_STAGE44_STRIDE2_FASTPACK;
+            } else {
+                throw std::runtime_error("--dataflow must be r0 or r2-fastpack");
+            }
+        }
         else throw std::runtime_error("unknown argument " + argument);
     }
     if (options.model4_preact_path.empty() || options.expected_model4_postact_path.empty() ||
         options.expected_model5_path.empty() || options.weights_path.empty() ||
         options.weight_scales_path.empty() || options.bias_path.empty()) {
         throw std::runtime_error("missing required tensor or asset argument");
+    }
+    if (options.pack_timing != 0 && options.pack_timing != 1) {
+        throw std::runtime_error("--pack-timing must be 0 or 1");
     }
     return options;
 }
@@ -484,16 +602,19 @@ Options parse_options(int argc, char** argv) {
 int main(int argc, char** argv) {
     try {
         const Options options = parse_options(argc, argv);
+        y26_conv_mmt4d_set_stage38_pack_timing_enabled(options.pack_timing);
         Context context = make_context(options);
         int result = 1;
         if (options.mode == "scalar") result = validate(context, false, "scalar");
         else if (options.mode == "ime") result = validate(context, true, "ime");
         else if (options.mode == "benchmark-scalar") result = benchmark(context, false, "scalar");
         else if (options.mode == "benchmark-ime") result = benchmark(context, true, "ime");
+        else if (options.mode == "benchmark-dataflow-pair") result = benchmark_dataflow_pair(context);
         else if (options.mode == "frm-sweep") result = frm_sweep(context);
         else if (options.mode == "benchmark-adapters") result = benchmark_adapters(context);
         else throw std::runtime_error("unsupported mode " + options.mode);
         y26_model5_island_release(&context.workspace);
+        y26_conv_mmt4d_set_stage38_pack_timing_enabled(0);
         return result;
     } catch (const std::exception& error) {
         std::cerr << "stage43_model5_error " << error.what() << "\n";

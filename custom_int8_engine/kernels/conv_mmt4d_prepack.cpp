@@ -219,6 +219,16 @@ bool pack_conv3x3_a_panel_fast_chunks_supported(const Y26Conv2DParams& params,
            m0 + 3 < output_m && (m0 % output_w) + 3 < output_w;
 }
 
+bool pack_conv3x3s2_a_panel_fast_chunks_supported(const Y26Conv2DParams& params,
+                                                  int output_w,
+                                                  int output_m,
+                                                  int m0,
+                                                  int k_padded) {
+    return params.stride_h == 2 && params.stride_w == 2 && params.pad_h == 1 && params.pad_w == 1 &&
+           params.input_c > 0 && params.input_c % 8 == 0 && k_padded == 9 * params.input_c &&
+           m0 + 3 < output_m && (m0 % output_w) + 3 < output_w;
+}
+
 void pack_conv3x3_a_panel_fast_chunks(const std::int8_t* input_nhwc_s8,
                                       const Y26Conv2DParams& params,
                                       int output_w,
@@ -265,6 +275,44 @@ void pack_conv3x3_a_panel_fast_chunks(const std::int8_t* input_nhwc_s8,
     }
 }
 
+void pack_conv3x3s2_a_panel_fast_chunks(const std::int8_t* input_nhwc_s8,
+                                        const Y26Conv2DParams& params,
+                                        int output_w,
+                                        int m0,
+                                        std::int8_t input_storage_zero_point_s8,
+                                        std::int8_t* a_tiles) {
+    const int oh = m0 / output_w;
+    const int ow0 = m0 - oh * output_w;
+    const int input_y0 = oh * 2 - 1;
+    const int input_x0 = ow0 * 2 - 1;
+    const bool interior = input_y0 >= 0 && input_y0 + 2 < params.input_h && input_x0 >= 0 &&
+                          input_x0 + 2 * 3 + 2 < params.input_w;
+    int flat_k_base = 0;
+    for (int kh = 0; kh < 3; ++kh) {
+        const int ih = input_y0 + kh;
+        const bool valid_h = ih >= 0 && ih < params.input_h;
+        for (int kw = 0; kw < 3; ++kw) {
+            const int iw0 = input_x0 + kw;
+            for (int m = 0; m < 4; ++m) {
+                const int iw = iw0 + 2 * m;
+                const bool inside = interior || (valid_h && iw >= 0 && iw < params.input_w);
+                const std::int8_t* src =
+                    inside ? input_nhwc_s8 + (static_cast<std::size_t>(ih) * params.input_w + iw) *
+                                                       static_cast<std::size_t>(params.input_c)
+                           : nullptr;
+                for (int ic = 0; ic < params.input_c; ic += 8) {
+                    if (inside) {
+                        store_a_8_values(a_tiles, m, flat_k_base + ic, src + ic);
+                    } else {
+                        fill_a_8_values(a_tiles, m, flat_k_base + ic, input_storage_zero_point_s8);
+                    }
+                }
+            }
+            flat_k_base += params.input_c;
+        }
+    }
+}
+
 void pack_a_panel_4xk_tile_contiguous(const std::int8_t* input_nhwc_s8,
                                       const Y26Conv2DParams& params,
                                       int kernel_h,
@@ -295,6 +343,12 @@ void pack_a_panel_4xk_tile_contiguous_stage39_fastpack(const std::int8_t* input_
                                                        int k_padded,
                                                        std::int8_t input_storage_zero_point_s8,
                                                        std::int8_t* a_tiles) {
+    if (kernel_h == 3 && kernel_w == 3 &&
+        pack_conv3x3s2_a_panel_fast_chunks_supported(params, output_w, output_m, m0, k_padded)) {
+        pack_conv3x3s2_a_panel_fast_chunks(
+            input_nhwc_s8, params, output_w, m0, input_storage_zero_point_s8, a_tiles);
+        return;
+    }
     if (kernel_h == 3 && kernel_w == 3 &&
         pack_conv3x3_a_panel_fast_chunks_supported(params, output_w, output_m, m0, k_padded)) {
         pack_conv3x3_a_panel_fast_chunks(

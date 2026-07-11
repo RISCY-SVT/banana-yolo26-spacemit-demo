@@ -14,6 +14,19 @@ namespace {
 
 using Clock = std::chrono::steady_clock;
 constexpr std::size_t kAlignment = 64;
+constexpr std::uint32_t kWorkspaceMagic = 0x59323557U;
+constexpr std::uint32_t kWorkspaceVersion = 1U;
+
+bool workspace_initialized(const Y26Model5IslandWorkspace* workspace) {
+    return workspace != nullptr && workspace->lifecycle_magic == kWorkspaceMagic &&
+           workspace->lifecycle_version == kWorkspaceVersion;
+}
+
+void reset_initialized_workspace(Y26Model5IslandWorkspace* workspace) {
+    std::memset(workspace, 0, sizeof(*workspace));
+    workspace->lifecycle_magic = kWorkspaceMagic;
+    workspace->lifecycle_version = kWorkspaceVersion;
+}
 
 double elapsed_us(Clock::time_point begin, Clock::time_point end) {
     return static_cast<double>(std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count()) / 1000.0;
@@ -40,7 +53,9 @@ bool config_valid(const Y26Model5IslandConfig* cfg) {
         cfg->model5_conv.weights_ohwi_s8 == nullptr || cfg->model5_conv.weight_scales == nullptr ||
         cfg->model5_conv.bias_i32 == nullptr || cfg->model4_preact_scale <= 0.0F ||
         cfg->model4_postact_scale <= 0.0F || cfg->model5_postact_scale <= 0.0F ||
-        (cfg->ime_accumulator_groups != 4 && cfg->ime_accumulator_groups != 6)) {
+        (cfg->ime_accumulator_groups != 4 && cfg->ime_accumulator_groups != 6) ||
+        (cfg->dataflow_mode != Y26_MODEL5_DATAFLOW_STAGE43_R0 &&
+         cfg->dataflow_mode != Y26_MODEL5_DATAFLOW_STAGE44_STRIDE2_FASTPACK)) {
         return false;
     }
     const auto valid_zp = [](int value) { return value >= 0 && value <= 255; };
@@ -101,8 +116,16 @@ void reset_timing(Y26Model5IslandTimingUs* timing) {
 
 }  // namespace
 
-extern "C" void y26_model5_island_release(Y26Model5IslandWorkspace* workspace) {
+extern "C" int y26_model5_island_workspace_init(Y26Model5IslandWorkspace* workspace) {
     if (workspace == nullptr) {
+        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    }
+    reset_initialized_workspace(workspace);
+    return Y26_CONV_STATUS_SUCCESS;
+}
+
+extern "C" void y26_model5_island_release(Y26Model5IslandWorkspace* workspace) {
+    if (!workspace_initialized(workspace)) {
         return;
     }
     y26_stage5_block0_release(&workspace->scalar_conv);
@@ -110,13 +133,13 @@ extern "C" void y26_model5_island_release(Y26Model5IslandWorkspace* workspace) {
     free_aligned(workspace->model4_postact_nhwc_s8);
     free_aligned(workspace->model5_corrected_nhwc_i32);
     free_aligned(workspace->model5_fixed_requant);
-    std::memset(workspace, 0, sizeof(*workspace));
+    reset_initialized_workspace(workspace);
 }
 
 extern "C" int y26_model5_island_prepare(const Y26Model5IslandConfig* cfg,
                                            int thread_count,
                                            Y26Model5IslandWorkspace* workspace) {
-    if (!config_valid(cfg) || workspace == nullptr || thread_count < 1 || thread_count > 4) {
+    if (!config_valid(cfg) || !workspace_initialized(workspace) || thread_count < 1 || thread_count > 4) {
         return Y26_CONV_STATUS_INVALID_ARGUMENT;
     }
     y26_model5_island_release(workspace);
@@ -205,7 +228,7 @@ extern "C" int y26_model5_island_apply_model4_postact(const Y26Model5IslandConfi
                                                         const Y26Model5IslandWorkspace* workspace,
                                                         const std::uint8_t* model4_preact_nhwc_u8,
                                                         std::int8_t* model4_postact_nhwc_s8) {
-    if (!config_valid(cfg) || workspace == nullptr || workspace->prepared != 1) {
+    if (!config_valid(cfg) || !workspace_initialized(workspace) || workspace->prepared != 1) {
         return Y26_CONV_STATUS_INVALID_ARGUMENT;
     }
     return apply_direct_lut(model4_preact_nhwc_u8,
@@ -219,7 +242,7 @@ extern "C" int y26_model5_island_run_scalar(const Y26Model5IslandConfig* cfg,
                                               const std::uint8_t* model4_preact_nhwc_u8,
                                               std::int8_t* model5_postact_nhwc_s8,
                                               Y26Model5IslandTimingUs* timing) {
-    if (!config_valid(cfg) || workspace == nullptr || workspace->prepared != 1 ||
+    if (!config_valid(cfg) || !workspace_initialized(workspace) || workspace->prepared != 1 ||
         model4_preact_nhwc_u8 == nullptr || model5_postact_nhwc_s8 == nullptr) {
         return Y26_CONV_STATUS_INVALID_ARGUMENT;
     }
@@ -263,7 +286,7 @@ extern "C" int y26_model5_island_run_ime_cluster0(const Y26Model5IslandConfig* c
                                                     const std::uint8_t* model4_preact_nhwc_u8,
                                                     std::int8_t* model5_postact_nhwc_s8,
                                                     Y26Model5IslandTimingUs* timing) {
-    if (!config_valid(cfg) || workspace == nullptr || workspace->prepared != 1 ||
+    if (!config_valid(cfg) || !workspace_initialized(workspace) || workspace->prepared != 1 ||
         workspace->threaded_conv == nullptr || model4_preact_nhwc_u8 == nullptr ||
         model5_postact_nhwc_s8 == nullptr) {
         return Y26_CONV_STATUS_INVALID_ARGUMENT;
@@ -275,11 +298,21 @@ extern "C" int y26_model5_island_run_ime_cluster0(const Y26Model5IslandConfig* c
     const auto post4_end = Clock::now();
     Y26ThreadedConvTimingUs conv_timing {};
     if (status == Y26_CONV_STATUS_SUCCESS) {
-        status = y26_threaded_conv_run_ime_cluster0_stage37_pipelined(workspace->threaded_conv,
-                                                                      workspace->model4_postact_nhwc_s8,
-                                                                      workspace->model5_corrected_nhwc_i32,
-                                                                      cfg->ime_accumulator_groups,
-                                                                      &conv_timing);
+        if (cfg->dataflow_mode == Y26_MODEL5_DATAFLOW_STAGE44_STRIDE2_FASTPACK) {
+            status = y26_threaded_conv_run_ime_cluster0_stage39_fastpack(
+                workspace->threaded_conv,
+                workspace->model4_postact_nhwc_s8,
+                workspace->model5_corrected_nhwc_i32,
+                cfg->ime_accumulator_groups,
+                &conv_timing);
+        } else {
+            status = y26_threaded_conv_run_ime_cluster0_stage37_pipelined(
+                workspace->threaded_conv,
+                workspace->model4_postact_nhwc_s8,
+                workspace->model5_corrected_nhwc_i32,
+                cfg->ime_accumulator_groups,
+                &conv_timing);
+        }
     }
     const auto activation_begin = Clock::now();
     if (status == Y26_CONV_STATUS_SUCCESS) {
@@ -305,13 +338,13 @@ extern "C" int y26_model5_island_run_ime_cluster0(const Y26Model5IslandConfig* c
 }
 
 extern "C" int y26_model5_island_worker_affinity_ok(const Y26Model5IslandWorkspace* workspace) {
-    return workspace != nullptr && workspace->threaded_conv != nullptr
+    return workspace_initialized(workspace) && workspace->threaded_conv != nullptr
                ? y26_threaded_conv_worker_affinity_ok(workspace->threaded_conv)
                : 0;
 }
 
 extern "C" int y26_model5_island_thread_count(const Y26Model5IslandWorkspace* workspace) {
-    return workspace != nullptr && workspace->threaded_conv != nullptr
+    return workspace_initialized(workspace) && workspace->threaded_conv != nullptr
                ? y26_threaded_conv_thread_count(workspace->threaded_conv)
                : 0;
 }

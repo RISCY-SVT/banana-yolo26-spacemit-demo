@@ -1,0 +1,9 @@
+property	ncnn_684074c_route	yolo26_model5	disposition	risk
+input_layout	planar NCHW pack1 int8	NHWC signed-code int8	not directly transferable	high
+stride2_load	vlseg2/vlse over adjacent output positions	channel-contiguous small MMT4D panels	algorithmic idea only	medium
+A_reuse	two output channels share loaded A	four spatial positions and 4/6 accumulator groups already share A	already represented differently	low
+padding	materialized bordered planar tensor	per-tile zero-point fill	algorithmic edge split only	medium
+weights	OC-major direct scalar weights	prepacked MMT4D B tiles	not directly transferable	high
+output	float output, no int8 requant, activation_type=0	exact per-channel fixed requant plus SiLU LUT to signed code	not transferable	high
+threading	OpenMP OC pairs	persistent CPU0-3 spatial-row workers	concept only	medium
+accepted_result	13.016 percent route-specific reduction	no authorization transfer	evidence context only	low

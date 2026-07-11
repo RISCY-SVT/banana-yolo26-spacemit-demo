@@ -1,0 +1,6 @@
+surface	mean_us	stddev_us	delta_vs_reference_us	delta_pct	status
+ORT_model5_intra1	18169.770948	25.129083	0	0	continuity_baseline
+ORT_model5_intra4	11701.121842	31.218416	0	0	resource_matched_baseline
+custom_R0_paired	24636.0	not_reported	12934.878158	110.5456	not_competitive
+custom_R2a_paired	24157.4	not_reported	12456.278158	106.4537	not_competitive
+R2a_minus_R0_paired	-478.655	12.4319	-478.655	-1.94291	local_positive_only

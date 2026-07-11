@@ -1,0 +1,5 @@
+mode	wall_mean_us	pack_mean_us	model4_postact_mean_us	correction_mean_us	thread_overhead_mean_us	model5_postact_mean_us	headline_authority
+R0_diagnostic	23643.2	4634.976	2660.356	146.738	181.307	5128.502	no
+R2a_diagnostic	24812.4	4052.580	2655.230	135.041	176.818	5127.484	no
+R0_headline_paired	24636.0	not_enabled	not_split	not_split	not_split	not_split	yes
+R2a_headline_paired	24157.4	not_enabled	not_split	not_split	not_split	not_split	yes

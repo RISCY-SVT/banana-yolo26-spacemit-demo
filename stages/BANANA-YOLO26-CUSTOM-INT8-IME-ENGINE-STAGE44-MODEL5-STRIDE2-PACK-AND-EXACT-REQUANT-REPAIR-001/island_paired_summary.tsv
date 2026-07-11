@@ -1,0 +1,3 @@
+phase	path_a_mean_us	path_a_stddev_us	path_b_mean_us	path_b_stddev_us	delta_mean_us	delta_stddev_us	delta_pct
+pre_repair_R0	512301.648390	322.241617	521603.205250	148.271914	9301.556860	451.288699	1.815641
+final_R2a	510864.440692	396.409212	515063.225590	245.618531	4198.784898	631.138511	0.821898
