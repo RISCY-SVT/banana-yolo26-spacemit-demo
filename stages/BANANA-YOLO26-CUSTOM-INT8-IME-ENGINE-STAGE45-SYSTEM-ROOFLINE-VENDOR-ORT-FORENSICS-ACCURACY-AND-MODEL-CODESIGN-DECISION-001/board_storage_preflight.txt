@@ -1,0 +1,15 @@
+hostname=bf3
+board_stage_root=/data/k1x-stage-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE45-SYSTEM-ROOFLINE-VENDOR-ORT-FORENSICS-ACCURACY-AND-MODEL-CODESIGN-DECISION-001
+data_source=/dev/nvme0n1p1
+data_fstype=ext4
+data_mount_options=rw,noatime
+data_filesystem_size=469G
+data_available=438G
+root_source=/dev/mmcblk2p6
+root_storage_class=eMMC
+data_exists=1
+data_writable=1
+preflight_status=pass
+governor=performance
+cpu0_frequency_hz=1600000000
+boot_id=90be7592-f6d9-4d69-ae40-a6c9d25a51ab

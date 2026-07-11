@@ -1,0 +1,7 @@
+candidate	resolution	projected_macs_g	predicted_pure_model_ms	basis	accuracy_risk	decision
+YOLO26n_640_current_graph	640	2.740154	105-130	measured-LUT conservative	current semantic INT8 -3.603 AP points on subset	not credible for 45ms
+YOLO26n_512_resolution_only	512	1.753698	55-75	quadratic spatial scaling plus measured-LUT	accuracy unknown and likely lower	not robustly <=45ms
+YOLO26n_416_resolution_only	416	1.157715	36-51	quadratic spatial scaling plus measured-LUT	accuracy unknown/high risk	borderline, graph overhead retained
+K1X_student_512	512	1.0-1.35	35-50	tile-aligned Conv-only student projection	requires distillation+QAT	accuracy-first fallback
+K1X_student_416	416	0.65-0.90	24-38	tile-aligned Conv-only student projection	requires distillation+QAT; highest accuracy risk	credible latency envelope
+K1X_two_scale_student_416	416	0.55-0.78	22-34	two-scale/simple-head projection	small-object AP risk	domain/research candidate

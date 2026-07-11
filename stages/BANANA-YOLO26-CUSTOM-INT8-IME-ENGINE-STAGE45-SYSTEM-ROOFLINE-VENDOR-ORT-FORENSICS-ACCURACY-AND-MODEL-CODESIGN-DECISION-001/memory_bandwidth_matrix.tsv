@@ -1,0 +1,13 @@
+primitive	working_set_bytes	mean_us	contract_gb_per_s	interpretation
+sequential_read	32768	36.096865	0.907780	scalar checksum loop
+sequential_write	32768	2.137243	15.331902	write contract
+memcpy	32768	3.281438	19.971730	read+write contract
+sequential_read	524288	594.105679	0.882483	scalar checksum loop
+sequential_write	524288	63.031999	8.317807	write contract
+memcpy	524288	163.839014	6.400039	read+write contract
+sequential_read	8388608	9736.487867	0.861564	scalar checksum loop
+sequential_write	8388608	1129.347329	7.427837	write contract
+memcpy	8388608	3321.761184	5.050699	read+write contract
+sequential_read	33554432	38702.380800	0.866986	scalar checksum loop
+sequential_write	33554432	4570.396778	7.341689	write contract
+memcpy	33554432	13300.168029	5.045716	read+write contract

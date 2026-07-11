@@ -366,6 +366,15 @@ if(Y26_K1X_BUILD_TOOLS)
         target_compile_definitions(bench_stage35_vmadot_sigill PRIVATE Y26_K1X_ENABLE_IME_ASM=1)
     endif()
 
+    add_executable(bench_stage45_k1x_roofline
+        tools/bench_stage45_k1x_roofline.cpp
+    )
+    target_link_libraries(bench_stage45_k1x_roofline PRIVATE y26_k1x_custom_int8_engine)
+    target_compile_options(bench_stage45_k1x_roofline PRIVATE -Wall -Wextra -Wpedantic)
+    if(Y26_K1X_ENABLE_IME)
+        target_compile_definitions(bench_stage45_k1x_roofline PRIVATE Y26_K1X_ENABLE_IME_ASM=1)
+    endif()
+
     add_executable(bench_stage43_model5_island
         tools/bench_stage43_model5_island.cpp
     )

@@ -1,0 +1,5 @@
+surface	evidence	status	classification
+runtime	/home/svt/spacemit-ort.riscv64.2.0.1/lib/libonnxruntime.so.1.20.2+spacemit	5a28c8128a7b1ed9cb29357f42eb7a2a45eb1b23d8791c2fee1eaf0151546238	loaded
+model5_profile	QLinearConv+Transpose+activation events	CPUExecutionProvider	execution_observed_at_operator_level
+vmadot_code	192 .text words matching accepted vmadot mask	localized near SQ4BitGemm spacemit IME symbols	code_present
+model5_inner_kernel	perf command absent; no call graph	unresolved	code-present-but-execution-unknown

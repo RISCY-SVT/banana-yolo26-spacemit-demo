@@ -1,0 +1,3 @@
+target	command	exit_code	status	stderr
+model5	perf stat ... bench_stage42_inprocess_runner	127	unavailable	zsh: command not found: perf
+full_model	perf stat ... bench_stage42_inprocess_runner	127	unavailable	zsh: command not found: perf

@@ -1,0 +1,2 @@
+PASS: valid front matter and required K1X board storage policy
+PASS: system skill validator: Skill is valid!

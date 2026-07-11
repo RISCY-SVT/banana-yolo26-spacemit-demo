@@ -1,0 +1,59 @@
+--- a/k1x_board_storage_policy/SKILL.md
++++ b/k1x_board_storage_policy/SKILL.md
+@@ -0,0 +1,56 @@
++---
++name: k1x-board-storage-policy
++description: Validate and use the Banana-Pi K1X board NVMe /data workspace for builds, deployments, benchmarks, profiles, and raw artifacts without silently writing bulky data to eMMC.
++metadata:
++  short-description: Keep K1X board artifacts on NVMe
++---
++
++# K1X Board Storage Policy
++
++## When to use
++
++Use this before a task writes binaries, models, inputs, outputs, logs, profiles, perf data, temporary files, or caches on a Banana-Pi BPI-F3/K1X board.
++
++## Preflight
++
++Before the first board write, record:
++
++```bash
++hostname
++findmnt -T /data
++df -hT /data /
++lsblk -o NAME,TYPE,FSTYPE,SIZE,MOUNTPOINTS
++test -d /data
++test -w /data
++```
++
++Require `/data` to be writable, backed by a non-`mmcblk` filesystem, and to have enough free space for the stage. If this fails, stop board writes. Do not silently fall back to eMMC.
++
++## Stage Root
++
++Use one stage-owned root:
++
++```bash
++BOARD_STAGE_ROOT="/data/k1x-stage-runs/$STAGE_ID"
++mkdir -p "$BOARD_STAGE_ROOT"/{bin,models,inputs,outputs,logs,profiles,perf,objdump,tmp,cache}
++export TMPDIR="$BOARD_STAGE_ROOT/tmp"
++export XDG_CACHE_HOME="$BOARD_STAGE_ROOT/cache"
++```
++
++Deploy new runners and stage data only below this root. Reuse installed shared libraries in place when appropriate instead of duplicating them.
++
++## eMMC Exceptions
++
++Do not put bulky or persistent stage artifacts under `/home`, `/tmp`, `/var/tmp`, or `/root`. A small technically unavoidable exception must record path, bytes, reason, why `/data` could not be used, and cleanup/disposition.
++
++## Cleanup Safety
++
++Never clean broad board directories. Remove only the exact stage-owned root, only after its artifacts are hashed and copied, and only when the task or operator explicitly requests cleanup.
++
++## Required Evidence
++
++Report the storage preflight, stage-root manifest, and eMMC exceptions. Keep board and host artifact hashes with the task's normal raw-evidence log.
++
++## Validation
++
++Run `scripts/selftest.sh` after editing this skill.

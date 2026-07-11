@@ -1,0 +1,7 @@
+strategy	latency	accuracy	effort	dependency_risk	evidence	decision
+unchanged_graph_full_aot	105-130ms	current semantic subset 0.410683	very_high	medium	strong roofline; no 45ms path	reject
+vendor_ort_reuse	461.603ms current	operational subset 0.373479	medium	high stripped-runtime dependency	operator execution proven, inner kernel unknown	diagnostic only
+k1x_student_512_plus_aot	35-50ms projected	unknown until training	high	training/export	measured-LUT projection	accuracy fallback
+k1x_student_416_plus_aot	24-38ms projected	unknown until training	high	training/export	measured-LUT projection	selected primary proof
+gpu_opencl	unknown	unknown	high	driver/kernel	no Stage45 measurement	defer
+detector_tracker_or_roi	display throughput only	domain-specific	medium	application assumptions	does not meet pure detector target	separate lane

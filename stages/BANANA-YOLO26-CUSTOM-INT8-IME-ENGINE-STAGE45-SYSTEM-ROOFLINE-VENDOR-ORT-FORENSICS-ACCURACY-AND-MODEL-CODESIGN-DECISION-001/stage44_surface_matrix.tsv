@@ -1,0 +1,9 @@
+surface	start_boundary	end_boundary	threads	mean_us	kind	comparability_note
+stage44_ort_model5_intra1	model4_postactivation_q	model5_postactivation_q	1	18169.770948	measured	isolated ORT model5
+stage44_ort_model5_intra4	model4_postactivation_q	model5_postactivation_q	4	11701.121842	measured	resource-matched isolated ORT model5
+stage44_custom_r2a	model4_preactivation_q	model5_postactivation_q	3	24157.400000	measured	includes model4 final activation/requant
+stage44_model4_postactivation	model4_preactivation_q	model4_postactivation_q	3	2660.000000	diagnostic	phase timer; approximate
+stage44_custom_model5_residual	model4_postactivation_q	model5_postactivation_q	3	21497.400000	derived_diagnostic	subtraction of non-identical instrumentation surfaces
+stage44_scaffold_path_a	images	output0	4	510864.440692	measured	model4-only hybrid scaffold
+stage44_scaffold_path_b	images	output0	4	515063.225590	measured	model4-model5 hybrid scaffold
+stage44_full_board_ort_intra4	images	output0	4	462144.181262	measured	historical stable surface

@@ -1,0 +1,7 @@
+case	macs	assumed_gmacs	pure_model_ms	evidence	assumptions
+tiny_l1_m12_compute_only	2740153600	86.826544	31.558939	diagnostic optimistic	tiny L1 packed shape; excludes all non-MAC work
+model5_geometry_m12_compute_only	2740153600	54.360135	50.407410	measured-delivery optimistic	assumes every MAC maps to M12xN16 and zero overhead
+model5_geometry_m8_compute_only	2740153600	43.395240	63.144105	measured-delivery	assumes all shapes map to M8xN16
+current_m4n16_compute_only	2740153600	24.746637	110.728322	measured-delivery	current four-acc shape; excludes all non-MAC work
+conservative_aot_current_graph	2740153600	35.0	105-130	analytical range	78.29ms MAC floor plus 27-52ms fused QDQ/layout/head/memory
+current_board_ort	2740153600	effective 5.936	461.603297	measured	full manual-QDQ graph

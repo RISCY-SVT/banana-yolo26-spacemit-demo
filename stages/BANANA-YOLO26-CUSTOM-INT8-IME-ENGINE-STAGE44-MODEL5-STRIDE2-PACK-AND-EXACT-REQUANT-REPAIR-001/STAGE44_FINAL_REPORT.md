@@ -8,7 +8,7 @@
 - branch: `yolo26-custom-int8-engine`
 - precheckpoint_head: `7a9b679f4b352c7894c9176539f1765d894daa73`
 - stage43_checkpoint_commit: `f363c84ea39a8b6219ecec331b54e7deb892cf6a`
-- stage44_end_head: `pending-local-commit-see-final-response-and-result-packet`
+- stage44_end_head: `bdefd89cc4247cb9e0ddac6fd06b561b05d29c87`
 - pushed: `false`
 
 ## Proven

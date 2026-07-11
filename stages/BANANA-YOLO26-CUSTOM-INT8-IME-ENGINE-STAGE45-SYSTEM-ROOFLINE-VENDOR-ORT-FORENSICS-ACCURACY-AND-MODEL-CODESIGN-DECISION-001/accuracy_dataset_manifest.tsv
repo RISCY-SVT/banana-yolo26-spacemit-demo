@@ -1,0 +1,5 @@
+surface	path_or_contract	sha256	count	note
+dataset	/data/datasets/coco2017/val2017	55304dfa58b86399878b2c054e6abc394df909366979b85ca5c3f2ea039fe86d	5000	sorted local image inventory
+annotations	/data/datasets/coco2017/annotations/instances_val2017.json	e8c7f7908f1d7278341fae127d0da654f102f11bd7b21d8aeefa635b8c810b6f	5000	COCO val2017
+subset	first 500 sorted image IDs	53226f8407aac28102f838e38fc937aa279f1b18846e17d09a32ff558915637e	500	directional deterministic gate
+preprocess	letterbox_114_rgb_nchw_float32_div255_opencv_linear	implementation_in_stage45_system_audit.py	500	OpenCV 4.13.0

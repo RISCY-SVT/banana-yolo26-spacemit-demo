@@ -1,0 +1,8 @@
+sqnbitgemm_spacemit_ime::SQ4BitGemmPackQuantBDataAndBlkSum(unsigned long, unsigned long, unsigned long, MLAS_QNBIT_GEMM_COMPUTE_TYPE, MLAS_QNBIT_GEMM_SCALE_TYPE, std::byte const*, float const*, bool, std::byte const*, PackedQuantBDataStruct<float>&, onnxruntime::concurrency::ThreadPool*)
+??:?
+sqnbitgemm_spacemit_ime::SQ4BitGemmPackQuantBDataAndBlkSum(unsigned long, unsigned long, unsigned long, MLAS_QNBIT_GEMM_COMPUTE_TYPE, MLAS_QNBIT_GEMM_SCALE_TYPE, std::byte const*, float const*, bool, std::byte const*, PackedQuantBDataStruct<float>&, onnxruntime::concurrency::ThreadPool*)
+??:?
+sqnbitgemm_spacemit_ime::SQ4BitGemmPackQuantBDataAndBlkSum(unsigned long, unsigned long, unsigned long, MLAS_QNBIT_GEMM_COMPUTE_TYPE, MLAS_QNBIT_GEMM_SCALE_TYPE, std::byte const*, float const*, bool, std::byte const*, PackedQuantBDataStruct<float>&, onnxruntime::concurrency::ThreadPool*)
+??:?
+sqnbitgemm_spacemit_ime::SQ4BitGemmPackQuantBDataAndBlkSum(unsigned long, unsigned long, unsigned long, MLAS_QNBIT_GEMM_COMPUTE_TYPE, MLAS_QNBIT_GEMM_SCALE_TYPE, std::byte const*, float const*, bool, std::byte const*, PackedQuantBDataStruct<float>&, onnxruntime::concurrency::ThreadPool*)
+??:?
