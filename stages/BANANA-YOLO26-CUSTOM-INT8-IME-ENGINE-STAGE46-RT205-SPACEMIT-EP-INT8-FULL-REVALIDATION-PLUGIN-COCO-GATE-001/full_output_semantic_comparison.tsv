@@ -1,0 +1,11 @@
+comparison	opt	fixture	mismatches	max_abs_diff	status	interpretation
+host1.27 vs RT204 CPU	disable	F0/F5/F6/F7	0	0	pass	semantic contract matched
+host1.27 vs RT205 CPU	disable	F0/F5/F6/F7	0	0	pass	semantic contract matched
+host1.27 vs RT204 CPU	all	F0	1660	637.2356567382812	diagnostic mismatch	cross-runtime optimized graph
+host1.27 vs RT205 CPU	all	F0	1660	637.2356567382812	diagnostic mismatch	same as RT204 board CPU
+RT205 CPU vs RT205 EP	all	F0			not-runnable	EP aborts at first Conv
+RT204 QOperator CPU vs EP	all	F0	1773	642.2642860412598	fail	diagnostic QOperator candidate is not same-runtime parity
+host FP32 vs RT205 FP32 EP	all	F0	1681	634.9085507392883	diagnostic mismatch	discontinuous e2e output; no semantic acceptance
+RT205 FP32 CPU vs EP	all	F0	1685	634.9085488319397	diagnostic mismatch	placement/timing control only
+host FP16 vs RT205 FP16 EP	all	F0	1423	635.6875	diagnostic mismatch	discontinuous e2e output; no semantic acceptance
+RT205 FP16 CPU vs EP	all	F0	1405	635.21484375	diagnostic mismatch	placement/timing control only

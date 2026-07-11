@@ -1,0 +1,9 @@
+hostname=bf3
+/data_source=/dev/nvme0n1p1
+/data_fstype=ext4
+/data_size=469G
+/data_free_at_preflight=438G
+/data_writable=true
+/_source=/dev/mmcblk2p6
+board_stage_root=/data/k1x-stage-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE46-RT205-SPACEMIT-EP-INT8-FULL-REVALIDATION-PLUGIN-COCO-GATE-001
+storage_policy_status=pass

@@ -1,0 +1,8 @@
+surface	runtime	provider	mean_us	stddev_us	cv_pct	min_us	max_us	median_us	p90_us	p95_us	process_cpu_mean_us	status
+primary QDQ	B120	CPU	461603.297250	not-restated	not-restated	not-restated	not-restated	not-restated	not-restated	not-restated	not-restated	Stage45 accepted mean only
+primary QDQ	RT204	CPU	1023677.578412	317.786422	0.031044	1023279.917080	1024042.688460	1023600.817040	1024008.238136	1024025.463298	2802766.104240	pass
+primary QDQ	RT205	CPU	1024818.557872	620.595993	0.060557	1023987.544420	1025720.094870	1024866.612880	1025382.979198	1025551.537034	2805228.922020	pass
+primary QDQ	RT204	SpacemiT	not-runnable									clip-minmax blocker
+primary QDQ	RT205	SpacemiT	not-runnable									clip-minmax then abort
+FP32 e2e diagnostic	RT205	SpacemiT	445504.354768	1375.491892	0.308749	444165.711080	447285.131940	444817.598350	447031.938096	447158.535018	2215147.202580	timing pass; semantic diagnostic only
+FP16 body/head diagnostic	RT205	SpacemiT	368527.093944	2284.576367	0.619921	365315.965010	371483.132110	368176.396780	370770.720302	371126.926206	1830238.293980	timing pass; semantic diagnostic only

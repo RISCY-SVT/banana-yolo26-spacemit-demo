@@ -1,0 +1,3 @@
+plugin	model_sha256	expected_sha256	load	execution	mismatches	status
+stage46_u8_xor	7aedfb16959a079f52e14ea05fc0982e8e5af946fbf6890496f1349ba4963f9a	8f04c27407f8082faf5e54b853caf7889a5fccca357e8f653799ab5a10d0d114	fail unresolved symbol	not reached	n/a	fail
+official sample	n/a	n/a	ldd -r unresolved public API	not reached	n/a	fail

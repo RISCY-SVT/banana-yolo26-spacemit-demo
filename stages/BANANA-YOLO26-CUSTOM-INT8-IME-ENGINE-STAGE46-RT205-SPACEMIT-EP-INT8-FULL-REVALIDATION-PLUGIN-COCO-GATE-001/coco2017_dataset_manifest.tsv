@@ -1,0 +1,3 @@
+artifact	host_path	board_path	sha256	count	status
+val2017 sorted image inventory	/data/datasets/coco2017/val2017	/data/k1x-stage-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE46-RT205-SPACEMIT-EP-INT8-FULL-REVALIDATION-PLUGIN-COCO-GATE-001/datasets/coco-val2017/val2017	55304dfa58b86399878b2c054e6abc394df909366979b85ca5c3f2ea039fe86d	5000	verified
+instances_val2017.json	/data/datasets/coco2017/annotations/instances_val2017.json	not copied; host evaluation	e8c7f7908f1d7278341fae127d0da654f102f11bd7b21d8aeefa635b8c810b6f	5000	verified

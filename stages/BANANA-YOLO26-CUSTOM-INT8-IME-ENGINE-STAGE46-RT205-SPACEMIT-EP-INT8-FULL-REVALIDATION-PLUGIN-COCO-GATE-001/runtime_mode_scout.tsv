@@ -1,0 +1,15 @@
+surface	runtime	provider	opt	status	placement	note
+tiny QDQ Conv no kernel_shape	RT205	SpacemiT	disable	pass exact	EP subgraph observed	bounded positive control
+tiny QDQ Conv kernel_shape	RT205	SpacemiT	disable/all	abort	compile attempted	historical bug persists
+primary QDQ	RT205	CPU	disable/all	pass	CPU	disable exact host on F0/F5-F7
+primary QDQ	RT205	SpacemiT	all	abort	first Conv compile failure	not runnable
+stripped-kernel-shape QDQ	RT205	SpacemiT	all	core dump	first blocker bypassed	follow-on runtime failure
+attention/MatMul minimal control	RT205	SpacemiT	disable	SIGILL	assignment not completed	new regression
+primary QDQ broad filter	RT205	SpacemiT+CPU	all	SIGILL/core	disabled QDQ/Conv/MatMul/Add	fallback workaround regressed
+QOperator e2e	RT204	SpacemiT	all	pass but non-parity	subgraph evidence	not accepted
+QOperator e2e	RT205	SpacemiT	all	SIGILL	unknown before crash	new regression
+manual e2e small QDQ	RT205	SpacemiT	all	abort	first Conv compile failure	CPU-good candidate rejected
+manual traditional Conv+MatMul QDQ	RT205	SpacemiT	all	abort	first Conv compile failure	CPU-good candidate rejected
+manual traditional Conv-only QDQ	RT205	SpacemiT	all	abort	first Conv compile failure	CPU-good candidate rejected
+FP32 e2e	RT205	SpacemiT	all	runs	EP subgraph	diagnostic output not cross-runtime exact
+FP16 body/head	RT205	SpacemiT	all	runs	EP subgraph	diagnostic output not cross-runtime exact

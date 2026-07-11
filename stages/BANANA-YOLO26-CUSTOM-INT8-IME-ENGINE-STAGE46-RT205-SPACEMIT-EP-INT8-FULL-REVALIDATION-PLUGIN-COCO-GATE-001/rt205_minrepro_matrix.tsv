@@ -1,0 +1,9 @@
+case	runtime	provider	opt	status	detail
+15_kernel_shape	RT205	cpu	disable	pass	byte-exact RT204 CPU
+15_kernel_shape	RT205	spacemit	disable	abort	same clip minmax then uncaught runtime abort
+07_real_first_conv	RT205	spacemit	disable	abort	same clip minmax then abort
+03_qdq_no_kernel_shape	RT205	spacemit	disable	pass	EP subgraph, CPU/EP byte exact
+08_qlinearconv	RT204	spacemit	disable	pass	exact control
+08_qlinearconv	RT205	spacemit	disable	SIGILL/core	new regression
+10_qlinearmatmul	RT204	spacemit	disable	pass	exact control
+10_qlinearmatmul	RT205	spacemit	disable	SIGILL	exit 132; new regression

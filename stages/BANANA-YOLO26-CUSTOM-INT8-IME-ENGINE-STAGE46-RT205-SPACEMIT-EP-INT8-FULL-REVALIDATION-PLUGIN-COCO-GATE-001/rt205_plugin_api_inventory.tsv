@@ -1,0 +1,18 @@
+mechanism	artifact	sha256_or_symbol	status
+SpacemiT EP plugin	include/spacemit_ort_plugin.h	acb5767a3b7d15b383d1d0bc799126ea673bfe7797b979a9c956b68c12e346dc	present
+SpacemiT EP plugin	samples/plugin	official source sample	present and builds
+standard ORT custom op	RegisterCustomOps	exported by task plugin	schema registration only
+SpacemiT EP plugin	SpacemitPluginInit	exported by task and official plugins	present
+SpacemiT EP plugin	SpacemitPluginGetAbiVersion/Metadata	version/metadata entry points	present in official API
+SpacemiT EP plugin	SPACEMIT_EP_PLUGIN_LIB	provider option carrying plugin path	documented
+SpacemiT EP plugin	AddOperator	full custom operator track	documented
+SpacemiT EP plugin	AddDispatch	built-in operator dispatch overlay track	documented
+tensor contract	DataType	float32,uint8,int8,uint16,int16,int32,int64,string,bool,float16,double,uint32,uint64,complex,bfloat16	declared
+tensor contract	SpinePluginTensor	shape/data/mutable-data/count/byte-size	declared
+threading	SpinePluginContext	EP thread index/count/offset	declared
+allocator	plugin API	no independent allocator contract exposed	not-exposed
+lifetime	SetCustomDispatch	framework accepts dispatch ownership	documented
+license	header/sample	MIT header; package license preserved	present
+SpacemiT EP plugin ABI	SpinePluginTensor::GetDataType	undefined at dlopen	broken
+independent plugin binary	libstage46_u8_xor_plugin.so	e5e790663d26caed18472fcb28f08aab430c393010a2a8b320dc3afd9bfc4fd8	built; load fails
+official sample binary	libcustom_plugin.so	d86beb3d9957b3c47caea4e9ddf0c537715f72c49d3eed5e140d0746909ef98a	built; ldd -r unresolved

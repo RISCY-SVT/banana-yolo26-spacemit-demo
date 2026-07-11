@@ -13,6 +13,7 @@ option(Y26_K1X_ENABLE_IME "Build the guarded Stage 1 smt.vmadot IME path" OFF)
 option(Y26_K1X_BUILD_TOOLS "Build custom INT8 engine helper tools" ON)
 set(Y26_K1X_ORT_INCLUDE_DIR "" CACHE PATH "Optional ONNX Runtime include directory for in-process scaffold tools")
 set(Y26_K1X_ORT_LIBRARY "" CACHE FILEPATH "Optional ONNX Runtime library for in-process scaffold tools")
+set(Y26_K1X_SPACEMIT_EP_LIBRARY "" CACHE FILEPATH "Optional SpacemiT EP library for Stage46 runtime probes")
 
 add_library(y26_k1x_custom_int8_engine
     kernels/activation_requant.cpp
@@ -402,6 +403,25 @@ if(Y26_K1X_BUILD_TOOLS)
         target_compile_options(bench_stage42_inprocess_runner PRIVATE -Wall -Wextra -Wpedantic)
         if(Y26_K1X_ENABLE_IME)
             target_compile_definitions(bench_stage42_inprocess_runner PRIVATE Y26_K1X_ENABLE_IME_ASM=1)
+        endif()
+
+        if(Y26_K1X_SPACEMIT_EP_LIBRARY)
+            add_executable(bench_stage46_ort_runtime
+                tools/bench_stage46_ort_runtime.cpp
+            )
+            target_link_libraries(bench_stage46_ort_runtime
+                PRIVATE
+                    Threads::Threads
+                    "${Y26_K1X_ORT_LIBRARY}"
+                    "${Y26_K1X_SPACEMIT_EP_LIBRARY}"
+                    ${CMAKE_DL_LIBS}
+            )
+            target_include_directories(bench_stage46_ort_runtime
+                PRIVATE
+                    "${Y26_K1X_ORT_INCLUDE_DIR}"
+            )
+            set_target_properties(bench_stage46_ort_runtime PROPERTIES SKIP_BUILD_RPATH TRUE)
+            target_compile_options(bench_stage46_ort_runtime PRIVATE -Wall -Wextra -Wpedantic)
         endif()
     endif()
 endif()

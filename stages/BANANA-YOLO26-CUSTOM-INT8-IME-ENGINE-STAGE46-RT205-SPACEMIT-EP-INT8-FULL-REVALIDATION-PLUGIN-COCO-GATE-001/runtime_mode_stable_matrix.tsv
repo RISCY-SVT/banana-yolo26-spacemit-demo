@@ -1,0 +1,10 @@
+surface	runtime	provider	opt	cpuset	threads	warmup	runs	repeats	mean_us	stddev_us	cv_pct	status
+primary QDQ pure graph scout	RT204	CPU	all	0-3	1	3	20	2	2490869.192150	1638.153361	0.065766	pass
+primary QDQ pure graph scout	RT204	CPU	all	0-3	2	3	20	2	1508708.831175	67.084528	0.004446	pass
+primary QDQ pure graph	RT204	CPU	all	0-3	4	10	100	5	1023677.578412	317.786422	0.031044	pass
+primary QDQ pure graph scout	RT205	CPU	all	0-3	1	3	20	2	2485203.749075	125.307418	0.005042	pass
+primary QDQ pure graph scout	RT205	CPU	all	0-3	2	3	20	2	1510556.013500	685.152247	0.045358	pass
+primary QDQ pure graph	RT205	CPU	all	0-3	4	10	100	5	1024818.557872	620.595993	0.060557	pass
+primary QDQ pure graph	RT205	SpacemiT	all	0-3	4	0	1	1				not-runnable
+FP32 e2e diagnostic	RT205	SpacemiT	all	0-3	4	10	100	5	445504.354768	1375.491892	0.308749	pass timing; output not cross-runtime exact
+FP16 body/head diagnostic	RT205	SpacemiT	all	0-3	4	10	100	5	368527.093944	2284.576367	0.619921	pass timing; output not cross-runtime exact

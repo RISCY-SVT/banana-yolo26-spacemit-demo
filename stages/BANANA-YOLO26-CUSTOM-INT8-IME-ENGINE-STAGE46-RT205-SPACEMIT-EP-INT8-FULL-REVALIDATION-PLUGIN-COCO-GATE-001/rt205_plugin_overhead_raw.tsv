@@ -1,0 +1,3 @@
+case	calls	mean_us	status
+plugin registration	0		unavailable: loader failure
+per-call	0		unavailable: no execution

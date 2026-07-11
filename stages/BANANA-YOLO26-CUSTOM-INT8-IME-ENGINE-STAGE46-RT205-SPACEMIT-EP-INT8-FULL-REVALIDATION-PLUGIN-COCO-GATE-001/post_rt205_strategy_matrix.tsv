@@ -1,0 +1,7 @@
+strategy	runtime_evidence	accuracy_risk	engineering_risk	disposition
+stock RT205 INT8 EP	first Conv blocker plus QOperator SIGILL/core	unmeasurable EP COCO	high	reject
+RT205 plugin mixed route	package ABI prevents plugin load	unknown	high	defer until vendor ABI repair
+K1X student 416	latency-primary analytical hypothesis	must train and measure	medium-high	preserve
+K1X student 512	accuracy-fallback analytical hypothesis	must train and measure	medium-high	preserve
+bounded multicore AOT salvage	custom exact kernels exist but prior islands no net win	fixed-host oracle available	high	secondary
+FP16/RVV mainline	RT205 INT8 vendor lane regressed	FP32/FP16 accuracy surface available	medium	fallback option

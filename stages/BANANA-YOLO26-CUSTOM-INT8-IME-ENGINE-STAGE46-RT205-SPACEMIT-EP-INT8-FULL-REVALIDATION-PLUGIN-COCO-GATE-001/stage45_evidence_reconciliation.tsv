@@ -1,0 +1,9 @@
+item	stage45_value	stage46_interpretation	artifact_sha256	status
+M12 projection	50.407 ms	single-core prepacked compute-only	n/a	superseded-label
+current graph envelope	105-130 ms	analytical	n/a	preserved
+student416	24-38 ms	analytical untrained hypothesis	n/a	preserved
+student512	35-50 ms	analytical untrained hypothesis	n/a	preserved
+FP32 accuracy	ENABLE_ALL only	Stage46 adds disable/all	n/a	closed
+candidate_model_latency_predictions.tsv	non-empty	analytical	f44b892339cdfbfbe99ef10d06232929aeff27bb2e0b5152d88fcda9b55a83a8	hash-preserved
+strategy_decision_matrix.tsv	non-empty	analytical	2209635f27b3d09d63f85430e4c6bbcc0daa90c52ac2146bfcf769676bc9c2ee	hash-preserved
+STAGE45_FINAL_REPORT.md	pending end-head marker	traceability addendum records actual head	178596f64738ec1202bc00897bd1f420f355e9f229e5c53f1961fb1db91eb16d	preserved

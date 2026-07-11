@@ -1,0 +1,4 @@
+comparison	metric	delta	ci_low	ci_high	status
+host INT8 disable - host FP32 disable	mAP50-95	-0.028985430907	not-computed	not-computed	complete deterministic full-set delta
+host INT8 all - host INT8 disable	mAP50-95	-0.038838263918	not-computed	not-computed	complete deterministic full-set delta
+RT205 EP - host semantic INT8	mAP50-95	not-runnable	not-runnable	not-runnable	EP produces no full-model output

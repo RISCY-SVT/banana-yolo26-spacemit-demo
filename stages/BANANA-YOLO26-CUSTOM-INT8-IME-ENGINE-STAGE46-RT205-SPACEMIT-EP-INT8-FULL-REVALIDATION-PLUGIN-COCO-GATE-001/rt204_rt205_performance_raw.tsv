@@ -1,0 +1,25 @@
+surface	runtime	provider	opt	cpuset	intra	warmup	runs	repeat	wall_mean_us	process_cpu_mean_us	status
+primary QDQ	RT204	CPU	all	0-3	4	10	100	0	1023507.90683	2802424.09109	pass
+primary QDQ	RT204	CPU	all	0-3	4	10	100	1	1023600.81704	2802859.09401	pass
+primary QDQ	RT204	CPU	all	0-3	4	10	100	2	1023279.91708	2801278.16475	pass
+primary QDQ	RT204	CPU	all	0-3	4	10	100	3	1024042.68846	2802780.4443	pass
+primary QDQ	RT204	CPU	all	0-3	4	10	100	4	1023956.56265	2804488.72705	pass
+primary QDQ	RT205	CPU	all	0-3	4	10	100	0	1024641.2315	2804853.27208	pass
+primary QDQ	RT205	CPU	all	0-3	4	10	100	1	1023987.54442	2803824.3722	pass
+primary QDQ	RT205	CPU	all	0-3	4	10	100	2	1024866.61288	2805968.63711	pass
+primary QDQ	RT205	CPU	all	0-3	4	10	100	3	1025720.09487	2806104.20089	pass
+primary QDQ	RT205	CPU	all	0-3	4	10	100	4	1024877.30569	2805394.12782	pass
+primary QDQ	RT204	SpacemiT	all	0-3	4	0	1	0			not-runnable: clip-minmax
+primary QDQ	RT205	SpacemiT	all	0-3	4	0	1	0			not-runnable: clip-minmax then abort
+QOperator diagnostic	RT204	SpacemiT	all	0-3	4	0	1	0	about 1030000	not-captured	non-parity diagnostic
+QOperator diagnostic	RT205	SpacemiT	all	0-3	4	0	1	0			SIGILL
+FP32 e2e diagnostic	RT205	SpacemiT	all	0-3	4	10	100	0	444817.59835	2211702.60861	diagnostic output not cross-runtime exact
+FP32 e2e diagnostic	RT205	SpacemiT	all	0-3	4	10	100	1	446652.14733	2220636.27188	diagnostic output not cross-runtime exact
+FP32 e2e diagnostic	RT205	SpacemiT	all	0-3	4	10	100	2	444165.71108	2208575.83637	diagnostic output not cross-runtime exact
+FP32 e2e diagnostic	RT205	SpacemiT	all	0-3	4	10	100	3	447285.13194	2224089.10926	diagnostic output not cross-runtime exact
+FP32 e2e diagnostic	RT205	SpacemiT	all	0-3	4	10	100	4	444601.18514	2210732.18678	diagnostic output not cross-runtime exact
+FP16 body/head diagnostic	RT205	SpacemiT	all	0-3	4	10	100	0	368176.39678	1828582.44713	diagnostic output not cross-runtime exact
+FP16 body/head diagnostic	RT205	SpacemiT	all	0-3	4	10	100	1	365315.96501	1814152.0631	diagnostic output not cross-runtime exact
+FP16 body/head diagnostic	RT205	SpacemiT	all	0-3	4	10	100	2	367957.87323	1827404.10742	diagnostic output not cross-runtime exact
+FP16 body/head diagnostic	RT205	SpacemiT	all	0-3	4	10	100	3	369702.10259	1836041.163	diagnostic output not cross-runtime exact
+FP16 body/head diagnostic	RT205	SpacemiT	all	0-3	4	10	100	4	371483.13211	1845011.68925	diagnostic output not cross-runtime exact

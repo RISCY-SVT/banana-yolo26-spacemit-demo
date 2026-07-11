@@ -1,0 +1,4 @@
+case	runtime	provider	opt	status	detail
+15_kernel_shape	RT204	cpu	disable	pass	byte-exact historical CPU output
+15_kernel_shape	RT204	spacemit	disable	fail	output_type not implemented for clip minmax
+07_real_first_conv	RT204	spacemit	disable	fail	same clip minmax blocker

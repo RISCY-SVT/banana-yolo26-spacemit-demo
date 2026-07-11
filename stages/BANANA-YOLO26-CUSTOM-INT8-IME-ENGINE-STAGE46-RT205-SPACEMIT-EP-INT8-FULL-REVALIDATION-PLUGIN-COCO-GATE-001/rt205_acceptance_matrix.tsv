@@ -1,0 +1,16 @@
+axis	status	evidence
+historical_clip_minmax_bug	fail	same explicit-kernel_shape compiler error under RT205
+attention_matmul_followon	fail	QLinearMatMul control SIGILL; stripped full model aborts
+full_model_session_creation	fail	primary EP session/run cannot complete
+full_model_stability	fail	abort/SIGILL paths
+CPU_oracle	pass	RT205 CPU disable exact on F0/F5/F6/F7
+SpacemiT_EP_placement	partial	tiny no-kernel-shape QDQ Conv only
+integer_boundary_exactness	partial	tiny positive control exact; full EP unavailable
+fixed_fixture_semantics	partial	CPU passes; EP unavailable
+full_COCO_accuracy	partial	host and package CPU complete; EP not-runnable
+pure_inference_latency	partial	CPU stable; EP not-runnable
+full_pipeline_latency	partial	CPU dataset path measured; EP not-runnable
+plugin_load	fail	unresolved public plugin ABI symbols
+plugin_execution	fail	not reached
+plugin_partition_preservation	unknown	plugin cannot load
+plugin_overhead	unknown	not measurable

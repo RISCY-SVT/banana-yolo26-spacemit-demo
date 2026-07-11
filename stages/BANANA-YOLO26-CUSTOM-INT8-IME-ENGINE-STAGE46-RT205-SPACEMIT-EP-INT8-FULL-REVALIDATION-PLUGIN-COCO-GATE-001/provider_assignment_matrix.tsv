@@ -1,0 +1,6 @@
+surface	runtime	provider_registered	provider_appended	assignment_evidence	status
+03 QDQ Conv	RT205	CPU listed; EP external	1	SpineSubgraph dump contains intended QDQ Conv	observed
+15 QDQ Conv attr	RT205	CPU listed; EP external	1	compiler names Conv_token_1 before abort	attempted-failed
+primary QDQ	RT205	CPU listed; EP external	1	compiler names /model.0/conv/Conv_token_21	attempted-failed
+primary CPU	RT205	CPU listed	0	explicit CPU session	observed
+plugin	RT205	EP external	1	dlopen fails before assignment	not-observed
