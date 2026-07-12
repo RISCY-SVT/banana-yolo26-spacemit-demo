@@ -1,0 +1,2 @@
+resolution	kind	optimistic_ms	central_ms	conservative_ms	assumption
+512	analytical_pre_architecture_envelope	144.146168	747.625312	817.638029	resolution-only scaling of current graph; no trained student architecture or accuracy claim

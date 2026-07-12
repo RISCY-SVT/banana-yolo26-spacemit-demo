@@ -1,0 +1,49 @@
+bf3
+TARGET SOURCE         FSTYPE OPTIONS
+/data  /dev/nvme0n1p1 ext4   rw,noatime
+Filesystem     Type  Size  Used Avail Use% Mounted on
+/dev/nvme0n1p1 ext4  469G  8.3G  437G   2% /data
+/dev/mmcblk2p6 ext4  115G   23G   86G  22% /
+NAME         TYPE FSTYPE   SIZE MOUNTPOINTS
+mmcblk2      disk        116.5G
+├─mmcblk2p1  part          256K
+├─mmcblk2p2  part           64K
+├─mmcblk2p3  part            1M
+├─mmcblk2p4  part            2M
+├─mmcblk2p5  part ext4     256M /boot
+└─mmcblk2p6  part ext4   116.2G /
+mmcblk2boot0 disk            4M
+mmcblk2boot1 disk            4M
+nvme0n1      disk        476.9G
+└─nvme0n1p1  part ext4   476.9G /data
+41M	/data/k1x-stage-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE47-EXECUTOR-FIRST-MULTICORE-INTEGRATED-LUT-AND-RESIDENT-INT8-AOT-GATE-001
+307200	/data/k1x-stage-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE47-EXECUTOR-FIRST-MULTICORE-INTEGRATED-LUT-AND-RESIDENT-INT8-AOT-GATE-001/oracles/stage47_generated/model4_8_aot_package/oracles/F4/tensor_015_nchw_u8.bin
+307200	/data/k1x-stage-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE47-EXECUTOR-FIRST-MULTICORE-INTEGRATED-LUT-AND-RESIDENT-INT8-AOT-GATE-001/oracles/stage47_generated/model4_8_aot_package/oracles/F5/tensor_015_nchw_u8.bin
+307200	/data/k1x-stage-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE47-EXECUTOR-FIRST-MULTICORE-INTEGRATED-LUT-AND-RESIDENT-INT8-AOT-GATE-001/oracles/stage47_generated/model4_8_aot_package/oracles/F6/tensor_015_nchw_u8.bin
+307200	/data/k1x-stage-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE47-EXECUTOR-FIRST-MULTICORE-INTEGRATED-LUT-AND-RESIDENT-INT8-AOT-GATE-001/oracles/stage47_generated/model4_8_aot_package/oracles/F7/tensor_015_nchw_u8.bin
+389152	/data/k1x-stage-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE47-EXECUTOR-FIRST-MULTICORE-INTEGRATED-LUT-AND-RESIDENT-INT8-AOT-GATE-001/bin/bench_stage42_inprocess_runner
+409600	/data/k1x-stage-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE47-EXECUTOR-FIRST-MULTICORE-INTEGRATED-LUT-AND-RESIDENT-INT8-AOT-GATE-001/oracles/stage47_generated/integrated_kernel_cases/case_01_model.3__conv__Conv/expected_nchw_u8.bin
+614400	/data/k1x-stage-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE47-EXECUTOR-FIRST-MULTICORE-INTEGRATED-LUT-AND-RESIDENT-INT8-AOT-GATE-001/oracles/stage47_generated/integrated_kernel_cases/case_02_model.4__cv2__conv__Conv/input_nchw_u8.bin
+819200	/data/k1x-stage-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE47-EXECUTOR-FIRST-MULTICORE-INTEGRATED-LUT-AND-RESIDENT-INT8-AOT-GATE-001/oracles/stage47_generated/integrated_kernel_cases/case_02_model.4__cv2__conv__Conv/expected_nchw_u8.bin
+819200	/data/k1x-stage-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE47-EXECUTOR-FIRST-MULTICORE-INTEGRATED-LUT-AND-RESIDENT-INT8-AOT-GATE-001/oracles/stage47_generated/integrated_kernel_cases/case_04_model.5__conv__Conv/input_nchw_u8.bin
+819200	/data/k1x-stage-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE47-EXECUTOR-FIRST-MULTICORE-INTEGRATED-LUT-AND-RESIDENT-INT8-AOT-GATE-001/oracles/stage47_generated/model4_8_aot_package/oracles/F0/tensor_000_nchw_u8.bin
+819200	/data/k1x-stage-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE47-EXECUTOR-FIRST-MULTICORE-INTEGRATED-LUT-AND-RESIDENT-INT8-AOT-GATE-001/oracles/stage47_generated/model4_8_aot_package/oracles/F0/tensor_001_nchw_u8.bin
+819200	/data/k1x-stage-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE47-EXECUTOR-FIRST-MULTICORE-INTEGRATED-LUT-AND-RESIDENT-INT8-AOT-GATE-001/oracles/stage47_generated/model4_8_aot_package/oracles/F1/tensor_000_nchw_u8.bin
+819200	/data/k1x-stage-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE47-EXECUTOR-FIRST-MULTICORE-INTEGRATED-LUT-AND-RESIDENT-INT8-AOT-GATE-001/oracles/stage47_generated/model4_8_aot_package/oracles/F1/tensor_001_nchw_u8.bin
+819200	/data/k1x-stage-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE47-EXECUTOR-FIRST-MULTICORE-INTEGRATED-LUT-AND-RESIDENT-INT8-AOT-GATE-001/oracles/stage47_generated/model4_8_aot_package/oracles/F2/tensor_000_nchw_u8.bin
+819200	/data/k1x-stage-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE47-EXECUTOR-FIRST-MULTICORE-INTEGRATED-LUT-AND-RESIDENT-INT8-AOT-GATE-001/oracles/stage47_generated/model4_8_aot_package/oracles/F2/tensor_001_nchw_u8.bin
+819200	/data/k1x-stage-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE47-EXECUTOR-FIRST-MULTICORE-INTEGRATED-LUT-AND-RESIDENT-INT8-AOT-GATE-001/oracles/stage47_generated/model4_8_aot_package/oracles/F3/tensor_000_nchw_u8.bin
+819200	/data/k1x-stage-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE47-EXECUTOR-FIRST-MULTICORE-INTEGRATED-LUT-AND-RESIDENT-INT8-AOT-GATE-001/oracles/stage47_generated/model4_8_aot_package/oracles/F3/tensor_001_nchw_u8.bin
+819200	/data/k1x-stage-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE47-EXECUTOR-FIRST-MULTICORE-INTEGRATED-LUT-AND-RESIDENT-INT8-AOT-GATE-001/oracles/stage47_generated/model4_8_aot_package/oracles/F4/tensor_000_nchw_u8.bin
+819200	/data/k1x-stage-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE47-EXECUTOR-FIRST-MULTICORE-INTEGRATED-LUT-AND-RESIDENT-INT8-AOT-GATE-001/oracles/stage47_generated/model4_8_aot_package/oracles/F4/tensor_001_nchw_u8.bin
+819200	/data/k1x-stage-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE47-EXECUTOR-FIRST-MULTICORE-INTEGRATED-LUT-AND-RESIDENT-INT8-AOT-GATE-001/oracles/stage47_generated/model4_8_aot_package/oracles/F5/tensor_000_nchw_u8.bin
+819200	/data/k1x-stage-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE47-EXECUTOR-FIRST-MULTICORE-INTEGRATED-LUT-AND-RESIDENT-INT8-AOT-GATE-001/oracles/stage47_generated/model4_8_aot_package/oracles/F5/tensor_001_nchw_u8.bin
+819200	/data/k1x-stage-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE47-EXECUTOR-FIRST-MULTICORE-INTEGRATED-LUT-AND-RESIDENT-INT8-AOT-GATE-001/oracles/stage47_generated/model4_8_aot_package/oracles/F6/tensor_000_nchw_u8.bin
+819200	/data/k1x-stage-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE47-EXECUTOR-FIRST-MULTICORE-INTEGRATED-LUT-AND-RESIDENT-INT8-AOT-GATE-001/oracles/stage47_generated/model4_8_aot_package/oracles/F6/tensor_001_nchw_u8.bin
+819200	/data/k1x-stage-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE47-EXECUTOR-FIRST-MULTICORE-INTEGRATED-LUT-AND-RESIDENT-INT8-AOT-GATE-001/oracles/stage47_generated/model4_8_aot_package/oracles/F7/tensor_000_nchw_u8.bin
+819200	/data/k1x-stage-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE47-EXECUTOR-FIRST-MULTICORE-INTEGRATED-LUT-AND-RESIDENT-INT8-AOT-GATE-001/oracles/stage47_generated/model4_8_aot_package/oracles/F7/tensor_001_nchw_u8.bin
+819328	/data/k1x-stage-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE47-EXECUTOR-FIRST-MULTICORE-INTEGRATED-LUT-AND-RESIDENT-INT8-AOT-GATE-001/bin/F0_model4_preact_nchw_u8.npy
+975768	/data/k1x-stage-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE47-EXECUTOR-FIRST-MULTICORE-INTEGRATED-LUT-AND-RESIDENT-INT8-AOT-GATE-001/oracles/stage47_generated/model4_8_aot_package/cuts/model4_preact_to_model8_disable_all.onnx
+1228800	/data/k1x-stage-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE47-EXECUTOR-FIRST-MULTICORE-INTEGRATED-LUT-AND-RESIDENT-INT8-AOT-GATE-001/oracles/stage47_generated/integrated_kernel_cases/case_00_model.0__conv__Conv/input_nchw_u8.bin
+1638400	/data/k1x-stage-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE47-EXECUTOR-FIRST-MULTICORE-INTEGRATED-LUT-AND-RESIDENT-INT8-AOT-GATE-001/oracles/stage47_generated/integrated_kernel_cases/case_00_model.0__conv__Conv/expected_nchw_u8.bin
+1638400	/data/k1x-stage-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE47-EXECUTOR-FIRST-MULTICORE-INTEGRATED-LUT-AND-RESIDENT-INT8-AOT-GATE-001/oracles/stage47_generated/integrated_kernel_cases/case_01_model.3__conv__Conv/input_nchw_u8.bin

@@ -1,0 +1,10 @@
+surface	node_name	fixtures	scalar_vs_host_ort	board_ime_vs_host_case	ties	saturation	frm_independent	status
+case_0	/model.0/conv/Conv	deterministic_graph_case	exact	exact	covered_by_existing_fixed_requant_tests	covered	see board FRM sweep	pass
+case_1	/model.3/conv/Conv	deterministic_graph_case	exact	exact	covered_by_existing_fixed_requant_tests	covered	see board FRM sweep	pass
+case_2	/model.4/cv2/conv/Conv	deterministic_graph_case	exact	exact	covered_by_existing_fixed_requant_tests	covered	see board FRM sweep	pass
+case_3	/model.4/m.0/cv1/conv/Conv	deterministic_graph_case	exact	exact	covered_by_existing_fixed_requant_tests	covered	see board FRM sweep	pass
+case_4	/model.5/conv/Conv	deterministic_graph_case	exact	exact	covered_by_existing_fixed_requant_tests	covered	see board FRM sweep	pass
+case_5	/model.7/conv/Conv	deterministic_graph_case	exact	exact	covered_by_existing_fixed_requant_tests	covered	see board FRM sweep	pass
+case_6	/model.8/cv2/conv/Conv	deterministic_graph_case	exact	exact	covered_by_existing_fixed_requant_tests	covered	see board FRM sweep	pass
+case_7	/model.10/m/m.0/attn/proj/conv/Conv	deterministic_graph_case	exact	exact	covered_by_existing_fixed_requant_tests	covered	see board FRM sweep	pass
+case_8	/model.23/one2one_cv2.0/one2one_cv2.0.2/Conv	deterministic_graph_case	exact	exact	covered_by_existing_fixed_requant_tests	covered	see board FRM sweep	pass

@@ -1,0 +1,5 @@
+case_id	node_name	kernel	workers	mean_us	gmacs	speedup_vs_1worker	parallel_efficiency_pct	affinity	accepted
+4	/model.5/conv/Conv	m12n16	1	95943.333086	2.459052	1.000000	100.000000	CPU0-3	1
+4	/model.5/conv/Conv	m12n16	2	48878.583092	4.826850	1.962891	98.144552	CPU0-3	1
+4	/model.5/conv/Conv	m12n16	3	34102.830190	6.918182	2.813354	93.778466	CPU0-3	1
+4	/model.5/conv/Conv	m12n16	4	26388.005044	8.940790	3.635869	90.896728	CPU0-3	1

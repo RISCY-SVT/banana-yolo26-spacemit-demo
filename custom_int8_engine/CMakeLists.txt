@@ -24,6 +24,7 @@ add_library(y26_k1x_custom_int8_engine
     kernels/conv_mmt4d_prepack.cpp
     kernels/conv_threaded.cpp
     kernels/pack_mmt4d.cpp
+    kernels/stage47_integrated_conv.cpp
     kernels/vmadot_4x4x8_ime.cpp
     kernels/vmadot_4x4x8_scalar.cpp
     kernels/vmadot123_direct_conv.cpp
@@ -44,6 +45,7 @@ add_library(y26_k1x_custom_int8_engine
     src/model4_fixture_config.cpp
     src/model5_island.cpp
     src/stage42_runner_support.cpp
+    src/stage47_aot_executor.cpp
 )
 
 target_include_directories(y26_k1x_custom_int8_engine
@@ -375,6 +377,20 @@ if(Y26_K1X_BUILD_TOOLS)
     if(Y26_K1X_ENABLE_IME)
         target_compile_definitions(bench_stage45_k1x_roofline PRIVATE Y26_K1X_ENABLE_IME_ASM=1)
     endif()
+
+    add_executable(bench_stage47_executor
+        tools/bench_stage47_executor.cpp
+    )
+    target_link_libraries(bench_stage47_executor PRIVATE y26_k1x_custom_int8_engine Threads::Threads)
+    target_compile_options(bench_stage47_executor PRIVATE -Wall -Wextra -Wpedantic)
+    if(Y26_K1X_ENABLE_IME)
+        target_compile_definitions(bench_stage47_executor PRIVATE Y26_K1X_ENABLE_IME_ASM=1)
+    endif()
+
+    add_executable(stage47_perf_event_probe
+        tools/stage47_perf_event_probe.cpp
+    )
+    target_compile_options(stage47_perf_event_probe PRIVATE -Wall -Wextra -Wpedantic)
 
     add_executable(bench_stage43_model5_island
         tools/bench_stage43_model5_island.cpp

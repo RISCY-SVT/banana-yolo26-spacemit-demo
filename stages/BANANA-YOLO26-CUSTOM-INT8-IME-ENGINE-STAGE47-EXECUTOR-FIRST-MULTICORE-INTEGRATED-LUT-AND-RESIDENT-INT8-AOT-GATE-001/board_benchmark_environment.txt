@@ -1,0 +1,30 @@
+hostname=bf3
+Linux bf3 6.6.63 #2.2.7.2 SMP PREEMPT Fri Aug 15 12:32:44 UTC 2025 riscv64 riscv64 riscv64 GNU/Linux
+boot_id=90be7592-f6d9-4d69-ae40-a6c9d25a51ab
+Architecture:        riscv64
+Byte Order:          Little Endian
+CPU(s):              8
+On-line CPU(s) list: 0-7
+Model name:          Spacemit(R) X60
+Thread(s) per core:  1
+Core(s) per socket:  8
+Socket(s):           1
+CPU(s) scaling MHz:  100%
+CPU max MHz:         1600.0000
+CPU min MHz:         614.4000
+L1d cache:           256 KiB (8 instances)
+L1i cache:           256 KiB (8 instances)
+L2 cache:            1 MiB (2 instances)
+online=0-7
+governor=performance
+current_freq=1600000
+min_freq=614400
+max_freq=1600000
+ 13:08:46 up 13 days, 19:00,  3 users,  load average: 2.00, 2.26, 2.71
+               total        used        free      shared  buff/cache   available
+Mem:            15Gi       1.1Gi       9.0Gi        15Mi       5.6Gi        14Gi
+Swap:             0B          0B          0B
+pid 154482's current affinity list: 0-7
+643df1b1e793cc2d705287add29651b2a295f467f0fa844f85899be5ea368dcb  /data/k1x-stage-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE47-EXECUTOR-FIRST-MULTICORE-INTEGRATED-LUT-AND-RESIDENT-INT8-AOT-GATE-001/bin/bench_stage47_executor
+532cb5ace9379e12baa3eb041b6214bd54232309ad832db21b38acdf9b5df52a  /data/k1x-stage-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE47-EXECUTOR-FIRST-MULTICORE-INTEGRATED-LUT-AND-RESIDENT-INT8-AOT-GATE-001/bin/stage47_perf_event_probe
+278ebb95e610dc2f9c1d443f5f165dec0f66d49660c0b2b3f9c2f414b92bbc99  /data/k1x-stage-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE47-EXECUTOR-FIRST-MULTICORE-INTEGRATED-LUT-AND-RESIDENT-INT8-AOT-GATE-001/oracles/stage47_generated/model4_8_aot_package/cuts/model4_preact_to_model8_disable_all.onnx

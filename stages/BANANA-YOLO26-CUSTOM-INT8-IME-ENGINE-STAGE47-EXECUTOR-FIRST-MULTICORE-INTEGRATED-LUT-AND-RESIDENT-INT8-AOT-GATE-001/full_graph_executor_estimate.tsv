@@ -1,0 +1,4 @@
+band	compute_ms	nonmac_ms	pure_model_ms	mac_coverage_pct	nonmac_coverage_pct	assumption
+optimistic	205.228387	20.000000	225.228387	97.268007	100.000000	all MACs at best measured integrated fullshape rate
+central	1103.164550	65.000000	1168.164550	97.268007	100.000000	nearest fullshape shape-class mapping plus measured/conservative non-MAC
+conservative	1147.559421	130.000000	1277.559421	97.268007	100.000000	p95 fullshape mapping and conservative unsupported/non-MAC allowance
