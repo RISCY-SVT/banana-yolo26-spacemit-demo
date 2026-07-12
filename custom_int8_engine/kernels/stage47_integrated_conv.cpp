@@ -2,6 +2,7 @@
 
 #include "y26_k1x_activation.h"
 #include "y26_k1x_conv_kernels.h"
+#include "y26_k1x_int8_v1.h"
 #include "y26_k1x_vmadot.h"
 
 #include <algorithm>
@@ -30,8 +31,6 @@ using Clock = std::chrono::steady_clock;
 constexpr int kMaximumWorkers = 4;
 constexpr int kNBlock = 16;
 constexpr int kExactMultiplierBits = 62;
-__extension__ typedef __int128 SignedInt128;
-__extension__ typedef unsigned __int128 UnsignedInt128;
 
 struct ExactRequantParams {
     std::int64_t multiplier_q62 = 0;
@@ -101,32 +100,20 @@ ExactRequantParams exact_requant_params(double multiplier, int output_zero_point
     return result;
 }
 
-std::int64_t round_shift_right_even_128(SignedInt128 value, int shift) {
-    if (shift <= 0) {
-        return static_cast<std::int64_t>(value << -shift);
+std::uint8_t exact_requant(std::int32_t value, const ExactRequantParams& params) {
+    std::int64_t rounded = 0;
+    if (!int8_v1::round_product_right_even(
+            value, params.multiplier_q62, kExactMultiplierBits - params.exponent, &rounded)) {
+        rounded = value < 0 ? std::numeric_limits<std::int64_t>::min()
+                            : std::numeric_limits<std::int64_t>::max();
     }
-    const bool negative = value < 0;
-    const UnsignedInt128 magnitude = negative ? static_cast<UnsignedInt128>(-value)
-                                               : static_cast<UnsignedInt128>(value);
-    if (shift >= 127) {
+    if (rounded <= -static_cast<std::int64_t>(params.output_zero_point_u8)) {
         return 0;
     }
-    UnsignedInt128 quotient = magnitude >> shift;
-    const UnsignedInt128 mask = (static_cast<UnsignedInt128>(1) << shift) - 1;
-    const UnsignedInt128 remainder = magnitude & mask;
-    const UnsignedInt128 half = static_cast<UnsignedInt128>(1) << (shift - 1);
-    if (remainder > half || (remainder == half && (quotient & 1U) != 0)) {
-        ++quotient;
+    if (rounded >= 255 - static_cast<std::int64_t>(params.output_zero_point_u8)) {
+        return 255;
     }
-    const std::int64_t signed_value = static_cast<std::int64_t>(quotient);
-    return negative ? -signed_value : signed_value;
-}
-
-std::uint8_t exact_requant(std::int32_t value, const ExactRequantParams& params) {
-    const SignedInt128 product = static_cast<SignedInt128>(value) * params.multiplier_q62;
-    const std::int64_t rounded = round_shift_right_even_128(product, kExactMultiplierBits - params.exponent);
-    return static_cast<std::uint8_t>(std::clamp<std::int64_t>(
-        rounded + params.output_zero_point_u8, 0, 255));
+    return static_cast<std::uint8_t>(rounded + params.output_zero_point_u8);
 }
 
 void scalar_block(const std::int8_t* a,

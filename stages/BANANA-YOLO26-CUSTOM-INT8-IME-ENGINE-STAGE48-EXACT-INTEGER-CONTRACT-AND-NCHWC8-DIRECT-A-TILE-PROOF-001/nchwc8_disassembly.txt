@@ -1,0 +1,185 @@
+10147-   1a562:	020e8f13          	addi	t5,t4,32
+10148-   1a566:	020f0187          	vle8.v	v3,(t5)
+10149-   1a56a:	040e8f13          	addi	t5,t4,64
+10150-   1a56e:	020f0207          	vle8.v	v4,(t5)
+10151-   1a572:	060e8f13          	addi	t5,t4,96
+10152-   1a576:	020f0287          	vle8.v	v5,(t5)
+10153:   1a57a:	e220382b          	smt.vmadot	v16,v0,v2
+10154:   1a57e:	e230392b          	smt.vmadot	v18,v0,v3
+10155:   1a582:	e2403a2b          	smt.vmadot	v20,v0,v4
+10156:   1a586:	e2503b2b          	smt.vmadot	v22,v0,v5
+10157-   1a58a:	020e0e13          	addi	t3,t3,32
+10158-   1a58e:	080e8e93          	addi	t4,t4,128
+10159-   1a592:	137d                	addi	t1,t1,-1
+10160-   1a594:	fc0313e3          	bnez	t1,1a55a <y26_stage48_kernel_m4n16+0x1e>
+10161-   1a598:	011072d7          	vsetvli	t0,zero,e32,m2,tu,mu
+10162-   1a59c:	83b6                	mv	t2,a3
+--
+10191-   1a5fe:	020e8f13          	addi	t5,t4,32
+10192-   1a602:	020f0187          	vle8.v	v3,(t5)
+10193-   1a606:	040e8f13          	addi	t5,t4,64
+10194-   1a60a:	020f0207          	vle8.v	v4,(t5)
+10195-   1a60e:	060e8f13          	addi	t5,t4,96
+10196-   1a612:	020f0287          	vle8.v	v5,(t5)
+10197:   1a616:	e220382b          	smt.vmadot	v16,v0,v2
+10198:   1a61a:	e220b92b          	smt.vmadot	v18,v1,v2
+10199:   1a61e:	e2303a2b          	smt.vmadot	v20,v0,v3
+10200:   1a622:	e230bb2b          	smt.vmadot	v22,v1,v3
+10201:   1a626:	e2403c2b          	smt.vmadot	v24,v0,v4
+10202:   1a62a:	e240bd2b          	smt.vmadot	v26,v1,v4
+10203:   1a62e:	e2503e2b          	smt.vmadot	v28,v0,v5
+10204:   1a632:	e250bf2b          	smt.vmadot	v30,v1,v5
+10205-   1a636:	040e0e13          	addi	t3,t3,64
+10206-   1a63a:	080e8e93          	addi	t4,t4,128
+10207-   1a63e:	137d                	addi	t1,t1,-1
+10208-   1a640:	fa0317e3          	bnez	t1,1a5ee <y26_stage48_kernel_m8n16+0x2e>
+10209-   1a644:	011072d7          	vsetvli	t0,zero,e32,m2,tu,mu
+10210-   1a648:	83b6                	mv	t2,a3
+--
+10253-   1a6e2:	020e8f13          	addi	t5,t4,32
+10254-   1a6e6:	020f0287          	vle8.v	v5,(t5)
+10255-   1a6ea:	040e8f13          	addi	t5,t4,64
+10256-   1a6ee:	020f0307          	vle8.v	v6,(t5)
+10257-   1a6f2:	060e8f13          	addi	t5,t4,96
+10258-   1a6f6:	020f0387          	vle8.v	v7,(t5)
+10259:   1a6fa:	e240342b          	smt.vmadot	v8,v0,v4
+10260:   1a6fe:	e240b52b          	smt.vmadot	v10,v1,v4
+10261:   1a702:	e241362b          	smt.vmadot	v12,v2,v4
+10262:   1a706:	e250372b          	smt.vmadot	v14,v0,v5
+10263:   1a70a:	e250b82b          	smt.vmadot	v16,v1,v5
+10264:   1a70e:	e251392b          	smt.vmadot	v18,v2,v5
+10265:   1a712:	e2603a2b          	smt.vmadot	v20,v0,v6
+10266:   1a716:	e260bb2b          	smt.vmadot	v22,v1,v6
+10267:   1a71a:	e2613c2b          	smt.vmadot	v24,v2,v6
+10268:   1a71e:	e2703d2b          	smt.vmadot	v26,v0,v7
+10269:   1a722:	e270be2b          	smt.vmadot	v28,v1,v7
+10270:   1a726:	e2713f2b          	smt.vmadot	v30,v2,v7
+10271-   1a72a:	060e0e13          	addi	t3,t3,96
+10272-   1a72e:	080e8e93          	addi	t4,t4,128
+10273-   1a732:	137d                	addi	t1,t1,-1
+10274-   1a734:	f8031be3          	bnez	t1,1a6ca <y26_stage48_kernel_m12n16+0x3e>
+10275-   1a738:	011072d7          	vsetvli	t0,zero,e32,m2,tu,mu
+10276-   1a73c:	83b6                	mv	t2,a3
+--
+10297-   1a78e:	0203ee27          	vse32.v	v28,(t2)
+10298-   1a792:	04038393          	addi	t2,t2,64
+10299-   1a796:	0203ef27          	vse32.v	v30,(t2)
+10300-   1a79a:	04038393          	addi	t2,t2,64
+10301-   1a79e:	8082                	ret
+10302-
+10303:000000000001a7a0 <y26_stage48_load_vlse64_4>:
+10304-   1a7a0:	cd8272d7          	vsetivli	t0,4,e64,m1,ta,ma
+10305-   1a7a4:	4341                	li	t1,16
+10306:   1a7a6:	0a657007          	vlse64.v	v0,(a0),t1
+10307-   1a7aa:	0205f027          	vse64.v	v0,(a1)
+10308-   1a7ae:	8082                	ret
+10309-
+10310:000000000001a7b0 <y26_stage48_load_vlseg2e64_4>:
+10311-   1a7b0:	cd8272d7          	vsetivli	t0,4,e64,m1,ta,ma
+10312:   1a7b4:	22057007          	vlseg2e64.v	v0,(a0)
+10313-   1a7b8:	0205f027          	vse64.v	v0,(a1)
+10314-   1a7bc:	8082                	ret
+10315-
+10316-000000000001a7be <y26::stage48::(anonymous namespace)::run_worker(void*, int, y26::stage48::(anonymous namespace)::WorkerScratch&)>:
+10317-   1a7be:	7141                	addi	sp,sp,-496
+10318-   1a7c0:	f75e                	sd	s7,424(sp)
+--
+11132-   1b156:	020e00a7          	vse8.v	v1,(t3)
+11133-   1b15a:	008cb703          	ld	a4,8(s9)
+11134-   1b15e:	0705                	addi	a4,a4,1
+11135-   1b160:	00ecb423          	sd	a4,8(s9)
+11136-   1b164:	b7b5                	j	1b0d0 <y26::stage48::(anonymous namespace)::run_worker(void*, int, y26::stage48::(anonymous namespace)::WorkerScratch&)+0x912>
+11137-   1b166:	85da                	mv	a1,s6
+11138:   1b168:	e48ff0ef          	jal	1a7b0 <y26_stage48_load_vlseg2e64_4>
+11139-   1b16c:	666667b7          	lui	a5,0x66666
+11140-   1b170:	63f00313          	li	t1,1599
+11141-   1b174:	16010893          	addi	a7,sp,352
+11142-   1b178:	66778813          	addi	a6,a5,1639 # 66666667 <__global_pointer$+0x6663fb57>
+11143-   1b17c:	000c8e63          	beqz	s9,1b198 <y26::stage48::(anonymous namespace)::run_worker(void*, int, y26::stage48::(anonymous namespace)::WorkerScratch&)+0x9da>
+11144-   1b180:	000cb703          	ld	a4,0(s9)
+--
+11154-   1b1a4:	b041                	j	1aa24 <y26::stage48::(anonymous namespace)::run_worker(void*, int, y26::stage48::(anonymous namespace)::WorkerScratch&)+0x266>
+11155-   1b1a6:	02070087          	vle8.v	v1,(a4)
+11156-   1b1aa:	020e00a7          	vse8.v	v1,(t3)
+11157-   1b1ae:	020500a7          	vse8.v	v1,(a0)
+11158-   1b1b2:	b769                	j	1b13c <y26::stage48::(anonymous namespace)::run_worker(void*, int, y26::stage48::(anonymous namespace)::WorkerScratch&)+0x97e>
+11159-   1b1b4:	85da                	mv	a1,s6
+11160:   1b1b6:	deaff0ef          	jal	1a7a0 <y26_stage48_load_vlse64_4>
+11161-   1b1ba:	666667b7          	lui	a5,0x66666
+11162-   1b1be:	63f00313          	li	t1,1599
+11163-   1b1c2:	16010893          	addi	a7,sp,352
+11164-   1b1c6:	66778813          	addi	a6,a5,1639 # 66666667 <__global_pointer$+0x6663fb57>
+11165-   1b1ca:	bf4d                	j	1b17c <y26::stage48::(anonymous namespace)::run_worker(void*, int, y26::stage48::(anonymous namespace)::WorkerScratch&)+0x9be>
+11166-   1b1cc:	86be                	mv	a3,a5
+--
+11926-   1badc:	4501                	li	a0,0
+11927-   1bade:	60ae                	ld	ra,200(sp)
+11928-   1bae0:	640e                	ld	s0,192(sp)
+11929-   1bae2:	6169                	addi	sp,sp,208
+11930-   1bae4:	8082                	ret
+11931-   1bae6:	85da                	mv	a1,s6
+11932:   1bae8:	cc9fe0ef          	jal	1a7b0 <y26_stage48_load_vlseg2e64_4>
+11933-   1baec:	cc747057          	vsetivli	zero,8,e8,mf2,ta,ma
+11934-   1baf0:	bf45                	j	1baa0 <y26::stage48::Model5DirectConv::debug_pack_a(signed char const*, int, y26::stage48::MBlock, y26::stage48::LoadStrategy, signed char*, unsigned long) const+0x198>
+11935-   1baf2:	86ea                	mv	a3,s10
+11936-   1baf4:	865a                	mv	a2,s6
+11937-   1baf6:	67a2                	ld	a5,8(sp)
+11938-   1baf8:	41f6d71b          	sraiw	a4,a3,0x1f
+--
+11972-   1bb5c:	02078087          	vle8.v	v1,(a5)
+11973-   1bb60:	08bc                	addi	a5,sp,88
+11974-   1bb62:	020780a7          	vse8.v	v1,(a5)
+11975-   1bb66:	020600a7          	vse8.v	v1,(a2)
+11976-   1bb6a:	b7dd                	j	1bb50 <y26::stage48::Model5DirectConv::debug_pack_a(signed char const*, int, y26::stage48::MBlock, y26::stage48::LoadStrategy, signed char*, unsigned long) const+0x248>
+11977-   1bb6c:	85da                	mv	a1,s6
+11978:   1bb6e:	c33fe0ef          	jal	1a7a0 <y26_stage48_load_vlse64_4>
+11979-   1bb72:	cc747057          	vsetivli	zero,8,e8,mf2,ta,ma
+11980-   1bb76:	b72d                	j	1baa0 <y26::stage48::Model5DirectConv::debug_pack_a(signed char const*, int, y26::stage48::MBlock, y26::stage48::LoadStrategy, signed char*, unsigned long) const+0x198>
+11981-   1bb78:	4511                	li	a0,4
+11982-   1bb7a:	8082                	ret
+11983-
+11984-000000000001bb7c <y26::stage48::Model5DirectConv::input_bytes() const>:
+--
+17869-   1fe48:	c295                	beqz	a3,1fe6c <(anonymous namespace)::y26_vmadot_4x4x8_ime_unguarded(signed char const*, signed char const*, int*, bool)+0x24>
+17870-   1fe4a:	011072d7          	vsetvli	t0,zero,e32,m2,tu,mu
+17871-   1fe4e:	02066e07          	vle32.v	v28,(a2)
+17872-   1fe52:	000072d7          	vsetvli	t0,zero,e8,m1,tu,mu
+17873-   1fe56:	02050007          	vle8.v	v0,(a0)
+17874-   1fe5a:	02058087          	vle8.v	v1,(a1)
+17875:   1fe5e:	e2103e2b          	smt.vmadot	v28,v0,v1
+17876-   1fe62:	011072d7          	vsetvli	t0,zero,e32,m2,tu,mu
+17877-   1fe66:	02066e27          	vse32.v	v28,(a2)
+17878-   1fe6a:	8082                	ret
+17879-   1fe6c:	011072d7          	vsetvli	t0,zero,e32,m2,tu,mu
+17880-   1fe70:	2fce0e57          	vxor.vv	v28,v28,v28
+17881-   1fe74:	000072d7          	vsetvli	t0,zero,e8,m1,tu,mu
+17882-   1fe78:	02050007          	vle8.v	v0,(a0)
+17883-   1fe7c:	02058087          	vle8.v	v1,(a1)
+17884:   1fe80:	e2103e2b          	smt.vmadot	v28,v0,v1
+17885-   1fe84:	011072d7          	vsetvli	t0,zero,e32,m2,tu,mu
+17886-   1fe88:	02066e27          	vse32.v	v28,(a2)
+17887-   1fe8c:	8082                	ret
+17888-
+17889-000000000001fe8e <(anonymous namespace)::y26_vmadotus_4x4x8_ime_unguarded(unsigned char const*, signed char const*, int*, bool)>:
+17890-   1fe8e:	c295                	beqz	a3,1feb2 <(anonymous namespace)::y26_vmadotus_4x4x8_ime_unguarded(unsigned char const*, signed char const*, int*, bool)+0x24>
+17891-   1fe90:	011072d7          	vsetvli	t0,zero,e32,m2,tu,mu
+17892-   1fe94:	02066e07          	vle32.v	v28,(a2)
+17893-   1fe98:	000072d7          	vsetvli	t0,zero,e8,m1,tu,mu
+17894-   1fe9c:	02050007          	vle8.v	v0,(a0)
+17895-   1fea0:	02058087          	vle8.v	v1,(a1)
+17896:   1fea4:	e2101e2b          	smt.vmadotus	v28,v0,v1
+17897-   1fea8:	011072d7          	vsetvli	t0,zero,e32,m2,tu,mu
+17898-   1feac:	02066e27          	vse32.v	v28,(a2)
+17899-   1feb0:	8082                	ret
+17900-   1feb2:	011072d7          	vsetvli	t0,zero,e32,m2,tu,mu
+17901-   1feb6:	2fce0e57          	vxor.vv	v28,v28,v28
+17902-   1feba:	000072d7          	vsetvli	t0,zero,e8,m1,tu,mu
+17903-   1febe:	02050007          	vle8.v	v0,(a0)
+17904-   1fec2:	02058087          	vle8.v	v1,(a1)
+17905:   1fec6:	e2101e2b          	smt.vmadotus	v28,v0,v1
+17906-   1feca:	011072d7          	vsetvli	t0,zero,e32,m2,tu,mu
+17907-   1fece:	02066e27          	vse32.v	v28,(a2)
+17908-   1fed2:	8082                	ret
+17909-
+17910-000000000001fed4 <(anonymous namespace)::y26_vmadot_sigill_handler(int, siginfo_t*, void*)>:
+17911-   1fed4:	1141                	addi	sp,sp,-16

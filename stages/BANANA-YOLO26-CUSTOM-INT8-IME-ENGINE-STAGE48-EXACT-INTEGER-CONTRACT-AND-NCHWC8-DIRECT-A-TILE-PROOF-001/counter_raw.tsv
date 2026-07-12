@@ -1,0 +1,17 @@
+privilege	event	status	errno	error	count
+unprivileged	task_clock	unavailable	13	Permission denied	0
+unprivileged	cycles	unavailable	13	Permission denied	0
+unprivileged	instructions	unavailable	13	Permission denied	0
+unprivileged	cache_references	unavailable	13	Permission denied	0
+unprivileged	cache_misses	unavailable	13	Permission denied	0
+unprivileged	branches	unavailable	13	Permission denied	0
+unprivileged	branch_misses	unavailable	13	Permission denied	0
+unprivileged	context_switches	unavailable	13	Permission denied	0
+sudo_nonpersistent	task_clock	available	0	ok	62691458
+sudo_nonpersistent	cycles	available	0	ok	100316681
+sudo_nonpersistent	instructions	available	0	ok	140129797
+sudo_nonpersistent	cache_references	available	0	ok	0
+sudo_nonpersistent	cache_misses	available	0	ok	0
+sudo_nonpersistent	branches	available	0	ok	20011157
+sudo_nonpersistent	branch_misses	available	0	ok	1518
+sudo_nonpersistent	context_switches	available	0	ok	1

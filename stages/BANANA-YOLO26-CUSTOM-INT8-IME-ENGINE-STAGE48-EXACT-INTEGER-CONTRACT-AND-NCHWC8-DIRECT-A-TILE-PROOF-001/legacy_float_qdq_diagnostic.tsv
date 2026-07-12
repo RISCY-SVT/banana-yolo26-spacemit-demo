@@ -1,0 +1,9 @@
+fixture	mismatches	max_abs_diff	first_mismatch	integer_code	legacy_qdq_code	policy
+F0	0	0	204800	-1	-1	diagnostic-only
+F1	2516	76	1888	0	1	diagnostic-only
+F2	2595	64	1919	5	4	diagnostic-only
+F3	0	0	204800	-1	-1	diagnostic-only
+F4	16342	71	4801	10	9	diagnostic-only
+F5	0	0	204800	-1	-1	diagnostic-only
+F6	0	0	204800	-1	-1	diagnostic-only
+F7	1	1	48730	16	17	diagnostic-only

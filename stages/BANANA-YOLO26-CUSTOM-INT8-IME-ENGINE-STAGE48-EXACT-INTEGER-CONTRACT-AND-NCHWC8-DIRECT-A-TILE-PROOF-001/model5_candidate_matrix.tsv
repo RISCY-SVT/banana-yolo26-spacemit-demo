@@ -1,0 +1,5 @@
+candidate	layout	load_strategy	kernel	partition	workers	mean_us	evidence	correctness	decision
+R0	NHWC-s8	generic_scalar_pack_a	m12n16	spatial	4	26388.005044	Stage47	exact	baseline
+R1	NCHWc8_SPATIAL_INNER_V1	rvv_vlseg2e64_c8x4	m4n16	spatial	4	9600.702940	Stage48 10/100/5	exact	retained
+R2	NCHWc8_SPATIAL_INNER_V1	rvv_vlseg2e64_c8x4	m8n16	spatial	4	7064.936314	Stage48 10/100/5	exact	retained
+R3	NCHWc8_SPATIAL_INNER_V1	rvv_vlseg2e64_c8x4	m12n16	spatial	4	6516.213018	Stage48 10/100/5	exact	selected

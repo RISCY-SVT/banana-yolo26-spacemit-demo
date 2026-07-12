@@ -1,0 +1,20 @@
+2026-07-12T15:24:22Z
+bf3
+Linux bf3 6.6.63 #2.2.7.2 SMP PREEMPT Fri Aug 15 12:32:44 UTC 2025 riscv64 riscv64 riscv64 GNU/Linux
+boot_id	90be7592-f6d9-4d69-ae40-a6c9d25a51ab
+online	0-7
+governor	performance
+cur_freq	1600000
+min_freq	614400
+max_freq	1600000
+related_cpus	0 1 2 3 4 5 6 7
+loadavg	2.07 2.15 2.23 1/630 157922
+               total        used        free      shared  buff/cache   available
+Mem:     16656588800  1247617024  9661681664    15839232  6025773056 15408971776
+Swap:              0           0           0
+perf_event_paranoid	2
+CapInh:	0000000000000000
+CapPrm:	0000000000000000
+CapEff:	0000000000000000
+CapBnd:	000001ffffffffff
+CapAmb:	0000000000000000

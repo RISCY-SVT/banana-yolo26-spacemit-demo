@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "K1X_INT8_V1",
+  "title": "K1X_INT8_V1 integer asset package",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_id",
+    "profile_id",
+    "layout_id",
+    "byte_order",
+    "model_sha256",
+    "node_name",
+    "input_tensor",
+    "conv_output_tensor",
+    "output_tensor",
+    "multiplier_encoding",
+    "activation",
+    "generator_sha256"
+  ],
+  "properties": {
+    "contract_id": {"const": "K1X_INT8_V1"},
+    "profile_id": {
+      "enum": ["K1X_INT8_V1_GENERAL", "K1X_INT8_V1_SYMMETRIC"]
+    },
+    "layout_id": {"type": "string", "minLength": 1},
+    "byte_order": {"const": "little-endian"},
+    "model_path": {"type": "string"},
+    "model_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "node_name": {"type": "string", "minLength": 1},
+    "input_tensor": {"type": "string", "minLength": 1},
+    "conv_output_tensor": {"type": "string", "minLength": 1},
+    "output_tensor": {"type": "string", "minLength": 1},
+    "multiplier_encoding": {
+      "const": "signed_i64_multiplier_plus_nonnegative_right_shift_rne"
+    },
+    "activation": {"const": "authoritative_256_entry_s8_LUT"},
+    "generator": {"type": "string"},
+    "generator_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "numpy_version": {"type": "string"},
+    "onnx_version": {"type": "string"}
+  }
+}

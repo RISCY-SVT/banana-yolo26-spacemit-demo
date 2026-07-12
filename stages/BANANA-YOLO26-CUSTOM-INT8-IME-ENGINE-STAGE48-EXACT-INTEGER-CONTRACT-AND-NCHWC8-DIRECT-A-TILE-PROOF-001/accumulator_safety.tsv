@@ -1,0 +1,2 @@
+node	K	activation_zero_point	max_abs_activation	max_abs_weight	max_abs_bias	absolute_bound	int32_limit	int32_safe	policy
+/model.5/conv/Conv	1152	9	246	128	included-per-channel	36074272	2147483647	1	reject-package-unless-proven
