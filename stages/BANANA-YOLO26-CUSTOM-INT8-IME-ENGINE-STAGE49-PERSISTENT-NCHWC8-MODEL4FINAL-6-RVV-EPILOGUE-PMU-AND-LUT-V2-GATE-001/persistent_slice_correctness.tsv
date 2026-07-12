@@ -1,0 +1,2 @@
+surface	input	output	fixtures	boundaries	mismatches	internal_conversions	float_materializations	status
+resident_NCHWc8_model4final_to_model6	/model.4/cv2/conv/Conv_output_0_QuantizeLinear_Output	/model.6/cv2/act/Mul_output_0_QuantizeLinear_Output	F0-F7	17	0	0	0	exact

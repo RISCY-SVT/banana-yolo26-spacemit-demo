@@ -1,0 +1,10 @@
+class	implementation	evidence	status	next_action
+3x3_stride2_NCHWc8	M12/P3/E1	stable model5	measured-selected	reuse
+1x1_NCHWc8	M12/M8 exact	persistent slice profile	implemented-profiled	stable shape rows
+3x3_stride1_NCHWc8	M12/M8 exact	persistent slice profile	implemented-profiled	stable border/interior rows
+activation_epilogue	package LUT plus E1 Q62	stable model5 and slice	measured-selected	reuse
+Add	256x256 exact LUT	slice profile	measured-exact	optimize table delivery
+Concat	package rescale/direct placement	slice profile	measured-exact	view/placement specialization
+RGB_RGBX_stem	none	none	unsupported	bounded stem proof
+N4_N8_output	M-tail only	correctness	implemented-not-stable-LUT	measure small-N kernels
+N16_output	selected	stable model5	measured-selected	reuse

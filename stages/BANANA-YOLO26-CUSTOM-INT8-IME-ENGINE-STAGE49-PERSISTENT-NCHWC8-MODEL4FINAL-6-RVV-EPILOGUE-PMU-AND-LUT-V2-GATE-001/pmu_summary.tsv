@@ -1,0 +1,12 @@
+metric	value	scope	status
+task_clock	7909597344	CPU-wide CPU0-3 command envelope	available
+cycles	732112483	CPU-wide CPU0-3 command envelope	available
+instructions	509498786	CPU-wide CPU0-3 command envelope	available
+branches	71648027	CPU-wide CPU0-3 command envelope	available
+branch_misses	4175893	CPU-wide CPU0-3 command envelope	available
+context_switches	445	CPU-wide CPU0-3 command envelope	available
+ipc	0.695930	derived from separate command envelopes	diagnostic-only
+cache_references	NA	CPU0-3	unmapped-or-unsupported-time_running-zero
+cache_misses	NA	CPU0-3	unmapped-or-unsupported-time_running-zero
+frontend_stall	NA	X60 named event	unavailable
+backend_stall	NA	X60 named event	unavailable

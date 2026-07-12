@@ -1,0 +1,6 @@
+surface	warmup	runs	repeats	mean_us	stddev_us	cv_pct	median_us	p90_us	p95_us	process_cpu_mean_us	exact_authority
+custom_internal	10	100	5	26710.414338	422.027729	1.580012	26667.288000	26775.840300	26845.251100	73945.224668	K1X_INT8_V1-exact
+B120_ORT_diagnostic	10	100	5	42036.659040	38.496028	0.091577	42030.366720	42076.298966	42078.047838	168040.397022	diagnostic-only
+entry_adapter	10	100	5	30184.610616	304.988061	1.010409	30157.483000	NA	30510.147100	NA	exact-conversion
+exit_adapter	10	100	5	7855.612998	187.483679	2.386621	7857.276000	NA	7964.369050	NA	exact-conversion
+custom_with_adapters	derived	NA	NA	64750.637952	NA	NA	NA	NA	NA	NA	diagnostic-sum

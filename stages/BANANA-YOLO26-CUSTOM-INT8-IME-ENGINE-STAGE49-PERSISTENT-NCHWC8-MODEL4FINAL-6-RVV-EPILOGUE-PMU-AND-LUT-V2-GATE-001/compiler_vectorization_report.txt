@@ -1,0 +1,10 @@
+Selected source compiler dumps:
+  /data/ncnn-logs/ai-team/2026-07-12/2026-07-12_18-30-23__contcodex__BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE49-PERSISTENT-NCHWC8-MODEL4FINAL-6-RVV-EPILOGUE-PMU-AND-LUT-V2-GATE-001__stage49-persistent-nchwc8/artifacts/compiler_dumps/stage49_vec_all.txt
+  /data/ncnn-logs/ai-team/2026-07-12/2026-07-12_18-30-23__contcodex__BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE49-PERSISTENT-NCHWC8-MODEL4FINAL-6-RVV-EPILOGUE-PMU-AND-LUT-V2-GATE-001__stage49-persistent-nchwc8/artifacts/compiler_dumps/stage49_persistent_slice.cpp.311r.sched1
+  /data/ncnn-logs/ai-team/2026-07-12/2026-07-12_18-30-23__contcodex__BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE49-PERSISTENT-NCHWC8-MODEL4FINAL-6-RVV-EPILOGUE-PMU-AND-LUT-V2-GATE-001__stage49-persistent-nchwc8/artifacts/compiler_dumps/stage49_persistent_slice.cpp.335r.sched2
+
+Exact Q62 loop vectorizer evidence:
+custom_int8_engine/tools/stage49_q62_vectorization_probe.cpp:27:31: missed: couldn't vectorize loop
+custom_int8_engine/tools/stage49_q62_vectorization_probe.cpp:28:30: missed: not vectorized: no vectype for stmt: _36 = *_35;
+
+Disassembly uses scalar mul/mulh for the exact signed 64x64->128 product. E2 was therefore rejected; no Q31 or floating approximation was substituted.

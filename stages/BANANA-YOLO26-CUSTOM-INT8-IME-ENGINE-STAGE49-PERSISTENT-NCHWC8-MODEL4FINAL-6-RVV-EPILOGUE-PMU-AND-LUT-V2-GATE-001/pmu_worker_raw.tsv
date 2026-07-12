@@ -1,0 +1,2 @@
+event	worker	status	reason
+all	0-3	unavailable	per-worker attribution not added; CPU-wide bounded probe only

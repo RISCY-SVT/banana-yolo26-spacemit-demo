@@ -1,0 +1,10 @@
+event	source	status	note
+task_clock	software	available	time_running equals time_enabled
+cycles	generic hardware	available	CPU-wide only
+instructions	generic hardware	available	CPU-wide only
+branches	generic hardware	available	CPU-wide only
+branch_misses	generic hardware	available	CPU-wide only
+context_switches	software	available	CPU-wide only
+cache_references	generic hardware	unmapped-or-unsupported	time_running=0; not reported as zero activity
+cache_misses	generic hardware	unmapped-or-unsupported	time_running=0; not reported as zero activity
+u_mode_cycle/issued_inst/vector_inst/X60 stalls	X60 named	unavailable	no matching perf event table/tool

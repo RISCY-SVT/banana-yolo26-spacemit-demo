@@ -1,0 +1,15 @@
+case	mutation	expected	result
+baseline	none	accept	pass
+packed_weight	one byte	reject	pass
+bias	one byte	reject	pass
+multiplier	one byte	reject	pass
+shift	one byte	reject	pass
+LUT	one byte	reject	pass
+metadata	one byte	reject	pass
+package_json	one byte	reject	pass
+weight_sums	one byte	reject	pass
+asset_hashes	one byte with external trusted hash unchanged	reject	pass
+unexpected_file	extra.bin	reject	pass
+executable_asset	owner execute bit	reject	pass
+overlap	partial overlap	reject	pass
+adjacent_ranges	non-overlap	accept	pass

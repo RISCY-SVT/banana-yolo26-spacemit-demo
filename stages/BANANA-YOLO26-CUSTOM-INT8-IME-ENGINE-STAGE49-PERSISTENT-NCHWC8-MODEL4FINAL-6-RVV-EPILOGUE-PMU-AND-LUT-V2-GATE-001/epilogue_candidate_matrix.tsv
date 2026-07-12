@@ -1,0 +1,4 @@
+id	description	status	exact	selected
+E0	generic scalar Q62 with per-element checks	implemented	yes	no
+E1	prepared corrected bias plus inline exact scalar Q62 and contiguous C8 store	implemented	yes	yes
+E2	exact RVV Q62 64x64-to-128	blocked-by-vector-ISA/compiler	not-implemented	no

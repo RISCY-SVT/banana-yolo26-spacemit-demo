@@ -1,0 +1,4 @@
+kernel	load	epilogue	partition	mean_us	median_us	p95_us	exact
+M12	P3	E0	spatial	8248.018550	8240.988500	8370.342700	yes
+M12	P3	E1	spatial	4824.669833	4804.608000	4996.385950	yes
+M8	P3	E1	spatial	5428.987967	5376.511000	5557.637500	yes

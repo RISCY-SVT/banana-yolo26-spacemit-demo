@@ -26,6 +26,7 @@ add_library(y26_k1x_custom_int8_engine
     kernels/pack_mmt4d.cpp
     kernels/stage47_integrated_conv.cpp
     kernels/stage48_nchwc8_model5.cpp
+    kernels/stage49_persistent_slice.cpp
     kernels/vmadot_4x4x8_ime.cpp
     kernels/vmadot_4x4x8_scalar.cpp
     kernels/vmadot123_direct_conv.cpp
@@ -40,6 +41,7 @@ add_library(y26_k1x_custom_int8_engine
     src/block_runner.cpp
     src/multiblock_runner.cpp
     src/model_format.cpp
+    src/package_loader.cpp
     src/quant_metadata.cpp
     src/next_c2f_runner.cpp
     src/model4_branch_runner.cpp
@@ -402,6 +404,25 @@ if(Y26_K1X_BUILD_TOOLS)
     if(Y26_K1X_ENABLE_IME)
         target_compile_definitions(bench_stage48_nchwc8 PRIVATE Y26_K1X_ENABLE_IME_ASM=1)
     endif()
+
+    add_executable(bench_stage49_slice
+        tools/bench_stage49_slice.cpp
+    )
+    target_link_libraries(bench_stage49_slice PRIVATE y26_k1x_custom_int8_engine Threads::Threads)
+    target_compile_options(bench_stage49_slice PRIVATE -Wall -Wextra -Wpedantic)
+    if(Y26_K1X_ENABLE_IME)
+        target_compile_definitions(bench_stage49_slice PRIVATE Y26_K1X_ENABLE_IME_ASM=1)
+    endif()
+
+    add_executable(stage49_perf_exec
+        tools/stage49_perf_exec.cpp
+    )
+    target_compile_options(stage49_perf_exec PRIVATE -Wall -Wextra -Wpedantic)
+
+    add_executable(stage49_q62_vectorization_probe
+        tools/stage49_q62_vectorization_probe.cpp
+    )
+    target_compile_options(stage49_q62_vectorization_probe PRIVATE -Wall -Wextra -Wpedantic)
 
     add_executable(bench_stage43_model5_island
         tools/bench_stage43_model5_island.cpp

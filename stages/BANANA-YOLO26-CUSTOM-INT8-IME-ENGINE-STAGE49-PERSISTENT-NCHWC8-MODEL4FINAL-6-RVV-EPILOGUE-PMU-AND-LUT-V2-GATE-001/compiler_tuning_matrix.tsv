@@ -1,0 +1,8 @@
+arm	flags	parser	build	exact	mean_us	median_us	p95_us	selected
+T0	-march=rv64gcv_zvfh -mabi=lp64d	pass	pass	pass	5215.780700	5086.903000	6613.938650	no
+T1	T0 -mtune=spacemit-x60	pass	pass	pass	5019.790367	4937.380500	5054.154500	no
+T2	-mcpu=spacemit-x60 -mabi=lp64d	pass	pass	pass	4892.174200	4902.692500	4979.986450	no
+T3	T1 -march=rv64gcv_zvfh_zvl256b -mrvv-vector-bits=zvl	pass	pass	pass	4928.451067	4876.671000	4982.258000	no
+T4	T3 -mrvv-max-lmul=m8	pass	pass	pass	4872.753650	4865.442000	4983.487100	no
+T5	T1 -flto	pass	pass	pass	4896.637417	4901.630000	4993.612400	no
+T6	T1 -funroll-loops	pass	pass	pass	4841.922017	4839.941500	4919.234650	yes

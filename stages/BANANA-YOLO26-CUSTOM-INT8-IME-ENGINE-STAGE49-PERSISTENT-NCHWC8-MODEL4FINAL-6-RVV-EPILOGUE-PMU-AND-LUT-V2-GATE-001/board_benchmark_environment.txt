@@ -1,0 +1,42 @@
+2026-07-12T19:45:00Z
+bf3
+Linux bf3 6.6.63 #2.2.7.2 SMP PREEMPT Fri Aug 15 12:32:44 UTC 2025 riscv64 riscv64 riscv64 GNU/Linux
+boot_id=90be7592-f6d9-4d69-ae40-a6c9d25a51ab
+online_cpus=0-7
+loadavg=2.06 2.07 2.09 1/635 166154
+               total        used        free      shared  buff/cache   available
+Mem:           15884        1195        9134          15        5820       14689
+Swap:              0           0           0
+Architecture:        riscv64
+Byte Order:          Little Endian
+CPU(s):              8
+On-line CPU(s) list: 0-7
+Model name:          Spacemit(R) X60
+Thread(s) per core:  1
+Core(s) per socket:  8
+Socket(s):           1
+CPU(s) scaling MHz:  100%
+CPU max MHz:         1600.0000
+CPU min MHz:         614.4000
+L1d cache:           256 KiB (8 instances)
+L1i cache:           256 KiB (8 instances)
+L2 cache:            1 MiB (2 instances)
+/sys/devices/system/cpu/cpufreq/policy0/scaling_governor=performance
+/sys/devices/system/cpu/cpufreq/policy0/scaling_cur_freq=1600000
+/sys/devices/system/cpu/cpufreq/policy0/cpuinfo_min_freq=614400
+/sys/devices/system/cpu/cpufreq/policy0/cpuinfo_max_freq=1600000
+/sys/class/thermal/thermal_zone0/temp=54000
+/sys/class/thermal/thermal_zone1/temp=55000
+/sys/class/thermal/thermal_zone2/temp=56000
+/sys/class/thermal/thermal_zone3/temp=56000
+perf_event_paranoid=2
+OMP_NUM_THREADS=
+GOMP_CPU_AFFINITY=
+OMP_PROC_BIND=
+OMP_PLACES=
+f3b8bd6448bb196de76da24b0ca1dff029bf4472b566c4e83ceafdda6b2b0c25  /data/k1x-stage-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE49-PERSISTENT-NCHWC8-MODEL4FINAL-6-RVV-EPILOGUE-PMU-AND-LUT-V2-GATE-001/bin/bench_stage49_t6
+0d3c3d49abdc8dd83857af223ea63bcb7a31058be4bcdb7cd7e6ccdf35659bac  /data/k1x-stage-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE49-PERSISTENT-NCHWC8-MODEL4FINAL-6-RVV-EPILOGUE-PMU-AND-LUT-V2-GATE-001/packages/model4final_model6/asset_hashes.tsv
+9bd77fc0820d26a413519d5f1db4f9096a28502022eb46bdfae56e3435ff7d29  /data/k1x-stage-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE49-PERSISTENT-NCHWC8-MODEL4FINAL-6-RVV-EPILOGUE-PMU-AND-LUT-V2-GATE-001/packages/model4_preact_to_model6_output_b120_timing.onnx
+7019146c02569b0bbf6283e9d6d0b210363e1aeee7fd36e6339a26c02dd4f02f  /data/k1x-stage-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE49-PERSISTENT-NCHWC8-MODEL4FINAL-6-RVV-EPILOGUE-PMU-AND-LUT-V2-GATE-001/bin/bench_stage42_inprocess_runner_b120
+5a28c8128a7b1ed9cb29357f42eb7a2a45eb1b23d8791c2fee1eaf0151546238  /home/svt/spacemit-ort.riscv64.2.0.1/lib/libonnxruntime.so.1
+75678c5218eb05a319d9fcea4114e0b17a3de5d0e4c5b6f846ba7a99c1762d2a  /data/k1x-stage-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE49-PERSISTENT-NCHWC8-MODEL4FINAL-6-RVV-EPILOGUE-PMU-AND-LUT-V2-GATE-001/logs/board_environment_final.txt

@@ -1,0 +1,4 @@
+candidate	fixtures	channels	ties	saturation	tails	workers	status
+E0	F0-F7	all-128	positive-and-negative	pass	M4/M8/M12	1/2/3/4	exact
+E1	F0-F7	all-128	positive-and-negative	pass	M4/M8/M12	1/2/3/4	exact
+E2	N/A	N/A	N/A	N/A	N/A	N/A	blocked-no-exact-vector-product

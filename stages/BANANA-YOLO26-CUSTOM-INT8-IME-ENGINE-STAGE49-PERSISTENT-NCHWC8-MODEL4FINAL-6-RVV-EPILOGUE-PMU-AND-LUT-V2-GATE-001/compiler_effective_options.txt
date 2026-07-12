@@ -1,0 +1,6 @@
+compiler=/opt/riscv/bin/riscv64-unknown-linux-gnu-g++
+compiler_version=SpacemiT GCC 14.3.0 g56971dcbea2
+selected_arm=T6
+selected_compile=/opt/riscv/bin/riscv64-unknown-linux-gnu-g++ -DY26_K1X_ENABLE_IME_ASM=1 -Icustom_int8_engine/include -march=rv64gcv_zvfh -mabi=lp64d -mtune=spacemit-x60 -funroll-loops -O3 -DNDEBUG -std=c++20 -Wall -Wextra -Wpedantic
+selected_binary_sha256=f3b8bd6448bb196de76da24b0ca1dff029bf4472b566c4e83ceafdda6b2b0c25
+T2_effective_note=-mcpu accepted and exposed an expanded X60 ISA including Zvl256b, but was not selected.

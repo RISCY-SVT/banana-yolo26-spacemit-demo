@@ -1,0 +1,6 @@
+id	strategy	uses_both_segment_fields	full_im2col	status	selected
+P0	four_u64	no	no	implemented-exact	no
+P1	vlse64	no	no	implemented-exact	no
+P2	vlseg2_even	no	no	implemented-exact	no
+P3	vlseg2_pair_vlse	yes	no	implemented-exact	yes
+P4	vlseg2_pair_shift	yes	no	implemented-exact	no

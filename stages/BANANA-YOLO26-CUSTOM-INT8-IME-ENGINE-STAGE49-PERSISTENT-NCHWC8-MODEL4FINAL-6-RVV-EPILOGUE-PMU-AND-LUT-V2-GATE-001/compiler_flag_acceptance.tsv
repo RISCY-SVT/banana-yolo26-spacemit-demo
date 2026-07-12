@@ -1,0 +1,9 @@
+arm	option	status	effective_contract	note
+T0	-march=rv64gcv_zvfh -mabi=lp64d	accepted	explicit	Stage48 continuity baseline
+T1	-mtune=spacemit-x60	accepted	explicit ISA retained	positive scout
+T2	-mcpu=spacemit-x60	accepted	implicit expanded ISA	not selected because it replaces the explicit ISA surface
+T3	-march=rv64gcv_zvfh_zvl256b -mrvv-vector-bits=zvl	accepted	explicit Zvl256b	board VLEN and execution passed
+T4	-mrvv-max-lmul=m8	accepted	explicit Zvl256b	no decisive advantage
+T5	-flto	accepted	explicit ISA retained	no decisive advantage
+T6	-funroll-loops	accepted	explicit ISA retained	selected fastest exact scout
+invalid_syntax_control	-mrvv-vector-bits=256	rejected	none	not used

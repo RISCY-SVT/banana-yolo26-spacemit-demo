@@ -1,0 +1,9 @@
+kernel=Linux 6.6.63 Bianbu 2.2.1 riscv64
+cpu=Spacemit X60
+perf_event_paranoid=2
+event_sources=cpu,software,tracepoint,uprobe
+installed_perf=unavailable
+matching_x60_perf_source=unavailable
+stage_local_perf_build=not-attempted-no-matching-authoritative-source
+sudo_policy=bounded sudo -n only; no sysctl/capability/global install changes
+board_root=/data/k1x-stage-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE49-PERSISTENT-NCHWC8-MODEL4FINAL-6-RVV-EPILOGUE-PMU-AND-LUT-V2-GATE-001

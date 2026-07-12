@@ -1,0 +1,11 @@
+fixture	python_arbitrary_precision	portable_cpp_scalar	board_scalar	board_ime	integer_boundaries	status
+F0	exact	exact	exact	exact	17/17	pass
+F1	exact	exact	exact	exact	17/17	pass
+F2	exact	exact	exact	exact	17/17	pass
+F3	exact	exact	exact	exact	17/17	pass
+F4	exact	exact	exact	exact	17/17	pass
+F5	exact	exact	exact	exact	17/17	pass
+F6	exact	exact	exact	exact	17/17	pass
+F7	exact	exact	exact	exact	17/17	pass
+adversarial_ties	exact	exact	exact	exact	focused	pass
+FRM_RNE_RTZ_RDN_RUP_RMM	NA	NA	NA	exact-and-restored	all	pass
