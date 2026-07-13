@@ -1,5 +1,6 @@
 #include "y26_k1x_stage51_q62.h"
 
+#include <algorithm>
 #include <cstdint>
 
 namespace y26::stage51 {
@@ -60,6 +61,45 @@ void q62_vsmul_m63_i64x4(const std::int64_t* values,
         // M63 is exactly 2 * the package's Q62 multiplier.
         rounded[lane] = round_shift_right_even(
             static_cast<Signed128>(values[lane]) * static_cast<Signed128>(multipliers_m63[lane]), 63U);
+    }
+#endif
+}
+
+void q62_vsmul_m63_i64x4_to_s8(const std::int64_t* values,
+                               const std::int64_t* multipliers_m63,
+                               std::int64_t output_zero_point,
+                               std::int8_t* output_s8) noexcept {
+#if defined(__riscv)
+    const std::int64_t maximum = 255;
+    const std::int64_t signed_offset = -128;
+    asm volatile(
+        "vsetivli zero, 4, e64, m1, ta, ma\n\t"
+        "vle64.v v0, (%[values])\n\t"
+        "vle64.v v1, (%[multipliers])\n\t"
+        "vsmul.vv v2, v0, v1\n\t"
+        "vadd.vx v2, v2, %[zero_point]\n\t"
+        "vmax.vx v2, v2, zero\n\t"
+        "vmin.vx v2, v2, %[maximum]\n\t"
+        "vadd.vx v2, v2, %[signed_offset]\n\t"
+        "vsetivli zero, 4, e32, mf2, ta, ma\n\t"
+        "vnclip.wi v4, v2, 0\n\t"
+        "vsetivli zero, 4, e16, mf4, ta, ma\n\t"
+        "vnclip.wi v6, v4, 0\n\t"
+        "vsetivli zero, 4, e8, mf8, ta, ma\n\t"
+        "vnclip.wi v8, v6, 0\n\t"
+        "vse8.v v8, (%[output])\n\t"
+        :
+        : [values] "r"(values), [multipliers] "r"(multipliers_m63),
+          [zero_point] "r"(output_zero_point), [maximum] "r"(maximum),
+          [signed_offset] "r"(signed_offset), [output] "r"(output_s8)
+        : "v0", "v1", "v2", "v4", "v6", "v8", "memory");
+#else
+    std::int64_t rounded[4] {};
+    q62_vsmul_m63_i64x4(values, multipliers_m63, rounded);
+    for (int lane = 0; lane < 4; ++lane) {
+        const std::int64_t code = std::clamp(rounded[lane] + output_zero_point,
+                                             std::int64_t {0}, std::int64_t {255});
+        output_s8[lane] = static_cast<std::int8_t>(code - 128);
     }
 #endif
 }

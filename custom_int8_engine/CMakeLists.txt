@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.20)
 project(y26_k1x_custom_int8_engine VERSION 0.0.0 LANGUAGES CXX)
 
 find_package(Threads REQUIRED)
+include(GNUInstallDirs)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -14,6 +15,7 @@ option(Y26_K1X_BUILD_TOOLS "Build custom INT8 engine helper tools" ON)
 set(Y26_K1X_ORT_INCLUDE_DIR "" CACHE PATH "Optional ONNX Runtime include directory for in-process scaffold tools")
 set(Y26_K1X_ORT_LIBRARY "" CACHE FILEPATH "Optional ONNX Runtime library for in-process scaffold tools")
 set(Y26_K1X_SPACEMIT_EP_LIBRARY "" CACHE FILEPATH "Optional SpacemiT EP library for Stage46 runtime probes")
+set(Y26_K1X_OPENCV_DIR "" CACHE PATH "Optional OpenCV package directory for the Stage52 COCO predictor")
 
 add_library(y26_k1x_custom_int8_engine
     kernels/activation_requant.cpp
@@ -51,6 +53,8 @@ add_library(y26_k1x_custom_int8_engine
     src/model5_island.cpp
     src/stage42_runner_support.cpp
     src/stage47_aot_executor.cpp
+    src/stage52_c_api.cpp
+    src/stage52_full_executor.cpp
 )
 
 target_include_directories(y26_k1x_custom_int8_engine
@@ -70,6 +74,23 @@ target_compile_options(y26_k1x_custom_int8_engine
 target_link_libraries(y26_k1x_custom_int8_engine
     PUBLIC
         Threads::Threads
+)
+
+set_target_properties(y26_k1x_custom_int8_engine PROPERTIES
+    OUTPUT_NAME y26_k1x_int8_executor
+)
+
+install(TARGETS y26_k1x_custom_int8_engine
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
+install(FILES
+    include/y26_k1x_executor.h
+    include/y26_k1x_full_executor.h
+    include/y26_k1x_int8_v1.h
+    include/y26_k1x_package.h
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
 
 if(Y26_K1X_ENABLE_IME)
@@ -450,6 +471,57 @@ if(Y26_K1X_BUILD_TOOLS)
     )
     target_link_libraries(stage51_q62_vsmul_probe PRIVATE y26_k1x_custom_int8_engine)
     target_compile_options(stage51_q62_vsmul_probe PRIVATE -Wall -Wextra -Wpedantic)
+
+    add_executable(yolo26_k1x_int8
+        tools/yolo26_k1x_int8.cpp
+    )
+    target_link_libraries(yolo26_k1x_int8 PRIVATE y26_k1x_custom_int8_engine Threads::Threads)
+    target_compile_options(yolo26_k1x_int8 PRIVATE -Wall -Wextra -Wpedantic)
+    install(TARGETS yolo26_k1x_int8 RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+    if(Y26_K1X_ENABLE_IME)
+        target_compile_definitions(yolo26_k1x_int8 PRIVATE Y26_K1X_ENABLE_IME_ASM=1)
+    endif()
+
+    if(Y26_K1X_OPENCV_DIR)
+        set(OpenCV_DIR "${Y26_K1X_OPENCV_DIR}")
+        find_package(OpenCV QUIET COMPONENTS core imgproc imgcodecs)
+        if(OpenCV_FOUND)
+            target_link_libraries(yolo26_k1x_int8 PRIVATE ${OpenCV_LIBS})
+            target_include_directories(yolo26_k1x_int8 PRIVATE ${OpenCV_INCLUDE_DIRS})
+            target_compile_definitions(yolo26_k1x_int8 PRIVATE Y26_K1X_HAVE_OPENCV=1)
+            set_target_properties(yolo26_k1x_int8 PROPERTIES
+                BUILD_RPATH "$ORIGIN/../lib;$ORIGIN/../opencv/lib"
+                INSTALL_RPATH "$ORIGIN/../lib;$ORIGIN/../opencv/lib"
+            )
+            add_executable(stage52_coco_predict
+                tools/stage52_coco_predict.cpp
+            )
+            target_link_libraries(stage52_coco_predict
+                PRIVATE
+                    y26_k1x_custom_int8_engine
+                    Threads::Threads
+                    ${OpenCV_LIBS}
+            )
+            target_include_directories(stage52_coco_predict PRIVATE ${OpenCV_INCLUDE_DIRS})
+            target_compile_options(stage52_coco_predict PRIVATE -Wall -Wextra -Wpedantic)
+            set_target_properties(stage52_coco_predict PROPERTIES
+                BUILD_RPATH "$ORIGIN/../opencv/lib"
+                INSTALL_RPATH "$ORIGIN/../opencv/lib"
+            )
+        endif()
+    endif()
+
+    add_executable(stage52_boundary_dump
+        tools/stage52_boundary_dump.cpp
+    )
+    target_link_libraries(stage52_boundary_dump PRIVATE y26_k1x_custom_int8_engine Threads::Threads)
+    target_compile_options(stage52_boundary_dump PRIVATE -Wall -Wextra -Wpedantic)
+
+    add_executable(stage52_core_bridge_dump
+        tools/stage52_core_bridge_dump.cpp
+    )
+    target_link_libraries(stage52_core_bridge_dump PRIVATE y26_k1x_custom_int8_engine Threads::Threads)
+    target_compile_options(stage52_core_bridge_dump PRIVATE -Wall -Wextra -Wpedantic)
 
     add_executable(bench_stage43_model5_island
         tools/bench_stage43_model5_island.cpp

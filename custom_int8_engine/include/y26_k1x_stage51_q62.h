@@ -23,6 +23,13 @@ void q62_vsmul_m63_i64x4(const std::int64_t* values,
                          const std::int64_t* multipliers_m63,
                          std::int64_t* rounded) noexcept;
 
+// Stage52 E2c2 sidecar: exact vector multiply, output-zero-point add,
+// clamp, signed-storage conversion, narrow, and contiguous C4 store.
+void q62_vsmul_m63_i64x4_to_s8(const std::int64_t* values,
+                               const std::int64_t* multipliers_m63,
+                               std::int64_t output_zero_point,
+                               std::int8_t* output_s8) noexcept;
+
 VectorFixedPointResult end_q62_vector_rne(VectorFixedPointState* state) noexcept;
 
 // Test/diagnostic wrapper that brackets one vector operation and restores vcsr.

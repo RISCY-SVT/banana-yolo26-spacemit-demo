@@ -1,5 +1,15 @@
 # banana-yolo26-spacemit-demo
 
+## K1X Standalone INT8 Executor
+
+The `yolo26-custom-int8-engine` branch contains an experimental standalone
+YOLO26n-640 `K1X_INT8_V1` executor for Banana-Pi BPI-F3 / SpacemiT K1X. It does
+not use ONNX Runtime or Python in the measured graph path. Build, deployment,
+API, correctness, accuracy, performance, and handoff documentation starts at
+[`docs/README_K1X_INT8_EXECUTOR.md`](docs/README_K1X_INT8_EXECUTOR.md).
+
+This is an experimental handoff surface, not a production or 20 FPS claim.
+
 Isolated R&D workspace for Banana Pi BPI-F3 / SpacemiT K1X YOLO26
 experiments using SpacemiT ONNX Runtime.
 
