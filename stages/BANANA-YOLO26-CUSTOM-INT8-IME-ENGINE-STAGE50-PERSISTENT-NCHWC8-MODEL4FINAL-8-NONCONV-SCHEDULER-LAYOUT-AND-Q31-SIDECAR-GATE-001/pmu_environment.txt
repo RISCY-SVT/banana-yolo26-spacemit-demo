@@ -1,0 +1,31 @@
+2026-07-13T06:33:16Z
+Linux bf3 6.6.63 #2.2.7.2 SMP PREEMPT Fri Aug 15 12:32:44 UTC 2025 riscv64 riscv64 riscv64 GNU/Linux
+PRETTY_NAME="Bianbu 2.2.1"
+NAME="Bianbu"
+VERSION_ID="2.2.1"
+VERSION="2.2.1 (Noble Numbat)"
+VERSION_CODENAME=noble
+ID=bianbu
+ID_LIKE=debian
+HOME_URL="https://bianbu.spacemit.com"
+SUPPORT_URL="https://bianbu.spacemit.com"
+BUG_REPORT_URL="https://ticket.spacemit.com"
+PRIVACY_POLICY_URL="https://www.spacemit.com/privacy-policy"
+UBUNTU_CODENAME=noble
+LOGO=bianbu-logo
+perf_event_paranoid=2
+kptr_restrict=1
+perf_user_access=absent
+total 0
+drwxr-xr-x 2 root root 0 Jul 13 08:33 .
+drwxr-xr-x 4 root root 0 Jun 28 18:08 ..
+lrwxrwxrwx 1 root root 0 Jun 28 18:08 cpu -> ../../../devices/cpu
+lrwxrwxrwx 1 root root 0 Jun 28 18:08 software -> ../../../devices/software
+lrwxrwxrwx 1 root root 0 Jun 28 18:08 tracepoint -> ../../../devices/tracepoint
+lrwxrwxrwx 1 root root 0 Jun 28 18:08 uprobe -> ../../../devices/uprobe
+sudo: perf: command not found
+sudo: perf: command not found
+
+After restoration:
+2
+1

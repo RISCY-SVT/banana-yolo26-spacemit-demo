@@ -1,0 +1,77 @@
+[dev] glibc: ldd (Ubuntu GLIBC 2.39-0ubuntu8.7) 2.39
+[dev] node : /usr/bin/node  v24.15.0 | npm: 12.0.0
+[dev] codex: /home/svt/.npm-global/bin/codex
+[dev] claude: /home/svt/.npm-global/bin/claude
+[dev] riscv default: /opt/riscv -> /opt/SpacemiT
+ARM=T6 FLAGS=-march=rv64gcv_zvfh -mabi=lp64d -mtune=spacemit-x60 -funroll-loops
+  --print-supported-extensions 		-march=help
+  -march=                     		rv64imafdcv_zicsr_zifencei_zaamo_zalrsc_zfhmin_zve32f_zve32x_zve64d_zve64f_zve64x_zvfh_zvl128b_zvl32b_zvl64b
+  -march=help                 		[disabled]
+  -mcpu=PROCESSOR
+  -mrvv-max-lmul=<string>     		m1
+  -mrvv-vector-bits=<string>  		scalable
+  -mtune=PROCESSOR            		spacemit-x60
+  -print-supported-extensions 		-march=help
+  The RVV possible LMUL (-mrvv-max-lmul=):
+  Known valid arguments for -mcpu= option:
+  Known valid arguments for -mtune= option:
+effective_status=0
+#define __riscv_zvfh 1000000
+#define __riscv_v_intrinsic 12000
+#define __riscv_v_min_vlen 128
+#define __riscv_vector 1
+macro_status=0
+ARM=T7 FLAGS=-mcpu=spacemit-x60 -march=rv64gcv_zvfh -mabi=lp64d -mtune=spacemit-x60 -funroll-loops
+  --print-supported-extensions 		-march=help
+  -march=                     		rv64imafdcv_zicsr_zifencei_zaamo_zalrsc_zfhmin_zve32f_zve32x_zve64d_zve64f_zve64x_zvfh_zvl128b_zvl32b_zvl64b
+  -march=help                 		[disabled]
+  -mcpu=PROCESSOR             		spacemit-x60
+  -mrvv-max-lmul=<string>     		m1
+  -mrvv-vector-bits=<string>  		scalable
+  -mtune=PROCESSOR            		spacemit-x60
+  -print-supported-extensions 		-march=help
+  The RVV possible LMUL (-mrvv-max-lmul=):
+  Known valid arguments for -mcpu= option:
+  Known valid arguments for -mtune= option:
+effective_status=0
+#define __riscv_zvfh 1000000
+#define __riscv_v_intrinsic 12000
+#define __riscv_v_min_vlen 128
+#define __riscv_vector 1
+macro_status=0
+ARM=T8 FLAGS=-mcpu=spacemit-x60 -march=rv64gcv_zvfh_zvl256b -mabi=lp64d -mtune=spacemit-x60 -mrvv-vector-bits=zvl -funroll-loops
+  --print-supported-extensions 		-march=help
+  -march=                     		rv64imafdcv_zicsr_zifencei_zaamo_zalrsc_zfhmin_zve32f_zve32x_zve64d_zve64f_zve64x_zvfh_zvl128b_zvl256b_zvl32b_zvl64b
+  -march=help                 		[disabled]
+  -mcpu=PROCESSOR             		spacemit-x60
+  -mrvv-max-lmul=<string>     		m1
+  -mrvv-vector-bits=<string>  		zvl
+  -mtune=PROCESSOR            		spacemit-x60
+  -print-supported-extensions 		-march=help
+  The RVV possible LMUL (-mrvv-max-lmul=):
+  Known valid arguments for -mcpu= option:
+  Known valid arguments for -mtune= option:
+effective_status=0
+#define __riscv_zvfh 1000000
+#define __riscv_v_intrinsic 12000
+#define __riscv_v_min_vlen 256
+#define __riscv_vector 1
+macro_status=0
+ARM=T9 FLAGS=-mcpu=spacemit-x60 -march=rv64gcv_zvfh_zvl256b -mabi=lp64d -mtune=spacemit-x60 -mrvv-vector-bits=zvl -mrvv-max-lmul=m8 -funroll-loops
+  --print-supported-extensions 		-march=help
+  -march=                     		rv64imafdcv_zicsr_zifencei_zaamo_zalrsc_zfhmin_zve32f_zve32x_zve64d_zve64f_zve64x_zvfh_zvl128b_zvl256b_zvl32b_zvl64b
+  -march=help                 		[disabled]
+  -mcpu=PROCESSOR             		spacemit-x60
+  -mrvv-max-lmul=<string>     		m8
+  -mrvv-vector-bits=<string>  		zvl
+  -mtune=PROCESSOR            		spacemit-x60
+  -print-supported-extensions 		-march=help
+  The RVV possible LMUL (-mrvv-max-lmul=):
+  Known valid arguments for -mcpu= option:
+  Known valid arguments for -mtune= option:
+effective_status=0
+#define __riscv_zvfh 1000000
+#define __riscv_v_intrinsic 12000
+#define __riscv_v_min_vlen 256
+#define __riscv_vector 1
+macro_status=0

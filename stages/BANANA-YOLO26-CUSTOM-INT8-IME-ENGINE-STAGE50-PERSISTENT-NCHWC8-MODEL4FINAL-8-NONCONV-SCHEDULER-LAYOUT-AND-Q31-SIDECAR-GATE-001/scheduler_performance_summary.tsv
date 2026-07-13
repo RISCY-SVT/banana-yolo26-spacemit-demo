@@ -1,0 +1,4 @@
+scheduler	nonconv	scout_mean_us	decision
+all	serial	34714.3958	baseline
+active	parallel	29903.944375	retained
+active	rvv_lut	27037.54185	selected

@@ -1,0 +1,4 @@
+component	explicit_vector	status
+64x64 limb product	yes	exact
+quotient/remainder and signed RNE	no	blocked
+complete E2b	no	not-selected

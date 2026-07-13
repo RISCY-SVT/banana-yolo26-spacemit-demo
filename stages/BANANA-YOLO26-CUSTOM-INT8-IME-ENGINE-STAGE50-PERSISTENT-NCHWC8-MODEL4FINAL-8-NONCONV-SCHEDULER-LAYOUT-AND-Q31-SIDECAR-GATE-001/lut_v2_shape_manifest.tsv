@@ -1,0 +1,5 @@
+op	mapping	class	kernel	load	workers	partition	mean_us	median_us	p95_us
+op1	model5	3x3s2	M12xN16	P3	4	spatial	4763.8	4772.5925	4854.92
+op2	model6 cv1	1x1 large-M	M12xN16	direct	4	spatial	2525.64	2515.5485	2548.56
+op5	model6 3x3s1	3x3s1	M12xN16	P3	4	spatial	954.351	933.8725	960.762
+op17	model8 small-N	1x1 small-N	M12xN16	direct	4	spatial	390.468	384.966	416.652

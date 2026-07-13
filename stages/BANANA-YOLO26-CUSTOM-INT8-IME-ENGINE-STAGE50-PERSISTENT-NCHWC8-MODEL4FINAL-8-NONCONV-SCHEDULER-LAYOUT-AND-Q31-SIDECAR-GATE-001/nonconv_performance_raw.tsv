@@ -1,0 +1,4 @@
+candidate	surface	mean_us	protocol	raw_evidence
+L2	op0 LUT	494.662	10/100/5	commands/0163
+A1	op7 Add	220.072	10/100/5	commands/0167
+C1/C3	op13 Concat rescale	102.277	10/100/5	commands/0168

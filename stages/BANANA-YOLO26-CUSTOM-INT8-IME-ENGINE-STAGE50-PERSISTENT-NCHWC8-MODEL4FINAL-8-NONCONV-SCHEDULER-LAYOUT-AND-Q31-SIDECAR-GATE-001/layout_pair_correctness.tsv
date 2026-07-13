@@ -1,0 +1,5 @@
+layout	fixtures	tensors	roundtrip_mismatches	persistent_pair_kernel
+NCHWc8	F0	32	0	yes-selected
+M4C8_KMAJOR	F0	32	0	not-implemented
+NCHWc16	F0	32	0	not-implemented
+NHWC16	F0	32	0	not-implemented

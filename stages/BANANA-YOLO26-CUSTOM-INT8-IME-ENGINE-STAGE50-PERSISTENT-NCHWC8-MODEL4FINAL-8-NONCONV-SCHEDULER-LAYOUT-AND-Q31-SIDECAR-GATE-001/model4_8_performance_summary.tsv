@@ -1,0 +1,6 @@
+surface	mean_us	stddev_us	median_us	p90_us	p95_us	max_us	process_cpu_mean_us	status
+custom_internal	27174.621676	769.594597	27098.299	27232.8032	27269.38565	42606.257	102276.423722	headline
+entry_adapter	31673.135126	see-raw	31468.365	see-raw	35479.66065	see-raw	see-raw	diagnostic
+exit_adapter	4072.86955	see-raw	4074.672	see-raw	4138.53725	see-raw	see-raw	diagnostic
+custom_with_adapters	62920.62635200001	not-paired	62641.336	not-paired	66887.58355	not-paired	not-paired	diagnostic-sum
+B120_ORT_intra4	57909.967262	102.764482	57911.32932	58016.294836	58031.158848	58046.02286	231570.030146	diagnostic

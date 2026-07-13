@@ -1,0 +1,3 @@
+surface	event	status	raw_evidence
+model5	cycles,instructions	available-envelope-only	commands/0090_board_pmu_cpuwide_stage50.stdout.txt
+cache	cache-references,cache-misses	unmapped-or-unsupported	time_running=0

@@ -414,6 +414,21 @@ if(Y26_K1X_BUILD_TOOLS)
         target_compile_definitions(bench_stage49_slice PRIVATE Y26_K1X_ENABLE_IME_ASM=1)
     endif()
 
+    add_executable(bench_stage50_slice
+        tools/bench_stage49_slice.cpp
+    )
+    target_link_libraries(bench_stage50_slice PRIVATE y26_k1x_custom_int8_engine Threads::Threads)
+    target_compile_options(bench_stage50_slice PRIVATE -Wall -Wextra -Wpedantic)
+    if(Y26_K1X_ENABLE_IME)
+        target_compile_definitions(bench_stage50_slice PRIVATE Y26_K1X_ENABLE_IME_ASM=1)
+    endif()
+
+    add_executable(bench_stage50_layout_adapter
+        tools/bench_stage50_layout_adapter.cpp
+    )
+    target_link_libraries(bench_stage50_layout_adapter PRIVATE y26_k1x_custom_int8_engine)
+    target_compile_options(bench_stage50_layout_adapter PRIVATE -Wall -Wextra -Wpedantic)
+
     add_executable(stage49_perf_exec
         tools/stage49_perf_exec.cpp
     )
@@ -423,6 +438,11 @@ if(Y26_K1X_BUILD_TOOLS)
         tools/stage49_q62_vectorization_probe.cpp
     )
     target_compile_options(stage49_q62_vectorization_probe PRIVATE -Wall -Wextra -Wpedantic)
+
+    add_executable(stage50_integer_vector_sidecar
+        tools/stage50_integer_vector_sidecar.cpp
+    )
+    target_compile_options(stage50_integer_vector_sidecar PRIVATE -Wall -Wextra -Wpedantic)
 
     add_executable(bench_stage43_model5_island
         tools/bench_stage43_model5_island.cpp

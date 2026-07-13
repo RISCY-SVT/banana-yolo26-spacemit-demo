@@ -33,9 +33,11 @@ using y26::stage49::ComputeRoute;
 using y26::stage49::EpilogueStrategy;
 using y26::stage49::KernelShape;
 using y26::stage49::LoadStrategy;
+using y26::stage49::NonConvStrategy;
 using y26::stage49::PartitionPolicy;
 using y26::stage49::PersistentSlice;
 using y26::stage49::RunOptions;
+using y26::stage49::SchedulerStrategy;
 using y26::stage49::SliceTiming;
 
 struct Options {
@@ -48,6 +50,8 @@ struct Options {
     int runs = 100;
     int repeats = 5;
     int controller_cpu = -1;
+    int operation_index = -1;
+    std::string integer_contract = "v1";
 };
 
 struct Statistics {
@@ -83,6 +87,10 @@ Options parse_options(int argc, char** argv) {
         else if (key == "--package") options.package = value;
         else if (key == "--trusted-manifest-sha256") options.trusted_manifest = value;
         else if (key == "--fixture") options.fixture = value;
+        else if (key == "--integer-contract") {
+            if (value != "v1" && value != "q31") fail("invalid integer contract: " + value);
+            options.integer_contract = value;
+        }
         else if (key == "--route") {
             if (value == "scalar") options.run.route = ComputeRoute::scalar;
             else if (value == "ime") options.run.route = ComputeRoute::ime;
@@ -108,11 +116,22 @@ Options parse_options(int argc, char** argv) {
             if (value == "spatial") options.run.partition = PartitionPolicy::spatial;
             else if (value == "output_channel") options.run.partition = PartitionPolicy::output_channel;
             else fail("invalid partition: " + value);
-        } else if (key == "--workers") options.run.workers = parse_int(value, "workers");
+        } else if (key == "--nonconv") {
+            if (value == "serial") options.run.nonconv = NonConvStrategy::serial_scalar;
+            else if (value == "parallel") options.run.nonconv = NonConvStrategy::parallel_scalar;
+            else if (value == "rvv_lut") options.run.nonconv = NonConvStrategy::explicit_rvv_lut;
+            else fail("invalid non-Conv strategy: " + value);
+        } else if (key == "--scheduler") {
+            if (value == "all") options.run.scheduler = SchedulerStrategy::all_workers_complete;
+            else if (value == "active") options.run.scheduler = SchedulerStrategy::active_workers_complete;
+            else fail("invalid scheduler strategy: " + value);
+        } else if (key == "--counter-event") options.run.counter_event = value;
+        else if (key == "--workers") options.run.workers = parse_int(value, "workers");
         else if (key == "--warmup") options.warmup = parse_int(value, "warmup");
         else if (key == "--runs") options.runs = parse_int(value, "runs");
         else if (key == "--repeats") options.repeats = parse_int(value, "repeats");
         else if (key == "--controller-cpu") options.controller_cpu = parse_int(value, "controller-cpu");
+        else if (key == "--operation-index") options.operation_index = parse_int(value, "operation-index");
         else fail("unknown option: " + key);
     }
     if (options.package.empty() || options.trusted_manifest.size() != 64) {
@@ -199,8 +218,9 @@ std::uint64_t fnv1a64(const std::vector<std::int8_t>& bytes) {
 }
 
 void print_contract(const Options& options, const PersistentSlice& executor) {
-    std::cout << "contract_id=K1X_INT8_V1\n"
-              << "profile_id=K1X_INT8_V1_GENERAL\n"
+    const bool q31 = options.integer_contract == "q31";
+    std::cout << "contract_id=" << (q31 ? "K1X_INT8_V2_Q31_CANDIDATE" : "K1X_INT8_V1") << '\n'
+              << "profile_id=" << (q31 ? "K1X_INT8_V2_Q31_CANDIDATE_GENERAL" : "K1X_INT8_V1_GENERAL") << '\n'
               << "layout_id=NCHWc8_SPATIAL_INNER_V1\n"
               << "manifest_sha256=" << executor.manifest_sha256() << '\n'
               << "fixture=" << options.fixture << '\n'
@@ -209,6 +229,8 @@ void print_contract(const Options& options, const PersistentSlice& executor) {
               << "load=" << y26::stage49::load_strategy_name(options.run.load) << '\n'
               << "epilogue=" << y26::stage49::epilogue_strategy_name(options.run.epilogue) << '\n'
               << "partition=" << y26::stage49::partition_policy_name(options.run.partition) << '\n'
+              << "nonconv=" << y26::stage49::nonconv_strategy_name(options.run.nonconv) << '\n'
+              << "scheduler=" << y26::stage49::scheduler_strategy_name(options.run.scheduler) << '\n'
               << "workers=" << options.run.workers << '\n'
               << "controller_cpu=" << options.controller_cpu << '\n'
               << "arena_bytes=" << executor.arena_bytes() << '\n'
@@ -237,8 +259,8 @@ int run_once(PersistentSlice& executor, const std::string& surface, const RunOpt
 }
 
 int validate(PersistentSlice& executor, const Options& options, bool slice, bool boundaries) {
-    const int input_id = slice ? 0 : 1;
-    const int output_id = slice ? 16 : 2;
+    const int input_id = slice ? executor.input_tensor_id() : executor.operation_input_tensor_id(1, 0);
+    const int output_id = slice ? executor.output_tensor_id() : executor.model5_output_tensor_id();
     auto input = read_bytes(oracle_path(options, input_id), executor.tensor_bytes(input_id));
     auto expected = read_bytes(oracle_path(options, output_id), executor.tensor_bytes(output_id));
     std::vector<std::int8_t> actual(expected.size());
@@ -274,8 +296,8 @@ int validate(PersistentSlice& executor, const Options& options, bool slice, bool
 }
 
 int benchmark(PersistentSlice& executor, const Options& options, bool slice) {
-    const int input_id = slice ? 0 : 1;
-    const int output_id = slice ? 16 : 2;
+    const int input_id = slice ? executor.input_tensor_id() : executor.operation_input_tensor_id(1, 0);
+    const int output_id = slice ? executor.output_tensor_id() : executor.model5_output_tensor_id();
     auto input = read_bytes(oracle_path(options, input_id), executor.tensor_bytes(input_id));
     auto expected = read_bytes(oracle_path(options, output_id), executor.tensor_bytes(output_id));
     std::vector<std::int8_t> output(expected.size());
@@ -335,9 +357,85 @@ int benchmark(PersistentSlice& executor, const Options& options, bool slice) {
     return mismatches == 0 ? 0 : 3;
 }
 
+int benchmark_operation(PersistentSlice& executor, const Options& options) {
+    if (options.operation_index < 0 || options.operation_index >= executor.operation_count()) {
+        fail("--operation-index is required for benchmark-operation");
+    }
+    struct Input {
+        int id = -1;
+        std::vector<std::int8_t> bytes;
+    };
+    std::vector<Input> inputs;
+    for (int slot = 0; slot < 3; ++slot) {
+        const int id = executor.operation_input_tensor_id(options.operation_index, slot);
+        if (id < 0 || std::any_of(inputs.begin(), inputs.end(), [id](const Input& input) { return input.id == id; })) {
+            continue;
+        }
+        inputs.push_back({id, read_bytes(oracle_path(options, id), executor.tensor_bytes(id))});
+    }
+    const int output_id = executor.operation_output_tensor_id(options.operation_index, 0);
+    if (inputs.empty() || output_id < 0) fail("invalid operation descriptor");
+    const auto expected = read_bytes(oracle_path(options, output_id), executor.tensor_bytes(output_id));
+    const auto load_inputs = [&]() {
+        for (const Input& input : inputs) {
+            if (executor.load_tensor(input.id, input.bytes.data(), input.bytes.size()) != Y26_CONV_STATUS_SUCCESS) {
+                return false;
+            }
+        }
+        return true;
+    };
+    for (int iteration = 0; iteration < options.warmup; ++iteration) {
+        if (!load_inputs() || executor.run_operation_resident(options.operation_index, options.run, nullptr) !=
+                                  Y26_CONV_STATUS_SUCCESS) return 2;
+    }
+    std::vector<double> wall_samples;
+    std::vector<double> cpu_samples;
+    std::vector<double> repeat_means;
+    wall_samples.reserve(static_cast<std::size_t>(options.runs * options.repeats));
+    cpu_samples.reserve(wall_samples.capacity());
+    for (int repeat = 0; repeat < options.repeats; ++repeat) {
+        std::vector<double> current;
+        current.reserve(static_cast<std::size_t>(options.runs));
+        for (int run = 0; run < options.runs; ++run) {
+            if (!load_inputs()) return 2;
+            const double cpu_begin = process_cpu_us();
+            const auto begin = Clock::now();
+            const int status = executor.run_operation_resident(options.operation_index, options.run, nullptr);
+            const auto end = Clock::now();
+            const double cpu_end = process_cpu_us();
+            if (status != Y26_CONV_STATUS_SUCCESS) return 2;
+            const double wall = elapsed_us(begin, end);
+            wall_samples.push_back(wall);
+            cpu_samples.push_back(cpu_end - cpu_begin);
+            current.push_back(wall);
+            std::cout << "raw\trepeat=" << repeat << "\trun=" << run << "\twall_us=" << wall
+                      << "\tprocess_cpu_us=" << (cpu_end - cpu_begin) << '\n';
+        }
+        const auto current_stats = statistics(current);
+        repeat_means.push_back(current_stats.mean);
+        std::cout << "repeat_summary\trepeat=" << repeat << "\tmean_us=" << current_stats.mean
+                  << "\tstddev_us=" << current_stats.stddev << "\tp95_us=" << current_stats.p95 << '\n';
+    }
+    std::vector<std::int8_t> output(expected.size());
+    if (executor.copy_tensor(output_id, output.data(), output.size()) != Y26_CONV_STATUS_SUCCESS) return 2;
+    const auto wall = statistics(wall_samples);
+    const auto cpu = statistics(cpu_samples);
+    const auto repeats = statistics(repeat_means);
+    const auto mismatches = mismatch_count(output, expected);
+    std::cout << std::fixed << std::setprecision(6)
+              << "operation_index=" << options.operation_index
+              << "\nmean_us=" << wall.mean << "\nstddev_us=" << wall.stddev << "\ncv_pct=" << wall.cv_pct
+              << "\nmin_us=" << wall.minimum << "\nmax_us=" << wall.maximum << "\nmedian_us=" << wall.median
+              << "\np90_us=" << wall.p90 << "\np95_us=" << wall.p95
+              << "\nprocess_cpu_mean_us=" << cpu.mean << "\nrepeat_mean_cv_pct=" << repeats.cv_pct
+              << "\nmismatches=" << mismatches << "\noutput_hash_fnv1a64=0x" << std::hex << fnv1a64(output)
+              << std::dec << "\naffinity_ok=" << (executor.worker_affinity_ok() ? 1 : 0) << '\n';
+    return mismatches == 0 ? 0 : 3;
+}
+
 int profile(PersistentSlice& executor, const Options& options, bool slice) {
-    const int input_id = slice ? 0 : 1;
-    const int output_id = slice ? 16 : 2;
+    const int input_id = slice ? executor.input_tensor_id() : executor.operation_input_tensor_id(1, 0);
+    const int output_id = slice ? executor.output_tensor_id() : executor.model5_output_tensor_id();
     auto input = read_bytes(oracle_path(options, input_id), executor.tensor_bytes(input_id));
     auto expected = read_bytes(oracle_path(options, output_id), executor.tensor_bytes(output_id));
     std::vector<std::int8_t> output(expected.size());
@@ -352,6 +450,16 @@ int profile(PersistentSlice& executor, const Options& options, bool slice) {
                   << "\tdelivery_worker_sum_us=" << operation.delivery_worker_sum_us
                   << "\tvmadot_worker_sum_us=" << operation.vmadot_worker_sum_us
                   << "\tepilogue_worker_sum_us=" << operation.epilogue_worker_sum_us << '\n';
+    }
+    for (const auto& counter : timing.worker_counters) {
+        const double scale = counter.time_running == 0
+                                 ? 0.0
+                                 : static_cast<double>(counter.time_enabled) /
+                                       static_cast<double>(counter.time_running);
+        std::cout << "worker_counter=" << counter.worker << "\tevent=" << counter.event
+                  << "\tstatus=" << counter.status << "\terrno=" << counter.error_number
+                  << "\tcount=" << counter.count << "\ttime_enabled=" << counter.time_enabled
+                  << "\ttime_running=" << counter.time_running << "\tscale=" << scale << '\n';
     }
     std::cout << "total_us=" << timing.total_us << "\nconv_us=" << timing.conv_us << "\nlut_us=" << timing.lut_us
               << "\nadd_us=" << timing.add_us << "\nconcat_us=" << timing.concat_us
@@ -406,7 +514,11 @@ int main(int argc, char** argv) {
         const Options options = parse_options(argc, argv);
         if (!pin_controller(options.controller_cpu)) fail("controller affinity failed");
         PersistentSlice executor;
-        const int prepare_status = executor.prepare(options.package, options.trusted_manifest, 4);
+        const bool q31 = options.integer_contract == "q31";
+        const int prepare_status = q31
+            ? executor.prepare_with_contract(options.package, options.trusted_manifest, 4,
+                  "K1X_INT8_V2_Q31_CANDIDATE", "K1X_INT8_V2_Q31_CANDIDATE_GENERAL")
+            : executor.prepare(options.package, options.trusted_manifest, 4);
         if (prepare_status != Y26_CONV_STATUS_SUCCESS) {
             std::cerr << "prepare_status=" << prepare_status << " error=" << executor.last_error() << '\n';
             return 2;
@@ -418,6 +530,7 @@ int main(int argc, char** argv) {
         if (options.mode == "validate-boundaries") return validate(executor, options, true, true);
         if (options.mode == "benchmark-model5") return benchmark(executor, options, false);
         if (options.mode == "benchmark-slice") return benchmark(executor, options, true);
+        if (options.mode == "benchmark-operation") return benchmark_operation(executor, options);
         if (options.mode == "profile-model5") return profile(executor, options, false);
         if (options.mode == "profile-slice") return profile(executor, options, true);
         if (options.mode == "frm-sweep") return frm_sweep(executor, options);

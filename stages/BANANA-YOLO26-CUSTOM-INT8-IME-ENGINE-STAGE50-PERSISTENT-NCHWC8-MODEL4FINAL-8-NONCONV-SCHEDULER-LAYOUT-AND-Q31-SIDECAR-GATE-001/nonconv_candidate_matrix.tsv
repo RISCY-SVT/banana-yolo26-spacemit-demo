@@ -1,0 +1,4 @@
+candidate	description	scout_slice_mean_us	correctness	decision
+S0	serial scalar LUT/Add/Concat	34714.3958	exact	rejected
+S1	parallel scalar + active completion	29903.944375	exact	retained-baseline
+S2	explicit RVV LUT + parallel Add/Concat + active completion	27037.54185	exact	selected

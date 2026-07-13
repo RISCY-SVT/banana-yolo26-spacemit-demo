@@ -1,0 +1,5 @@
+class	M4	M8	M12_tail	partitions	status
+1x1	exact	exact	exact	spatial/output-channel	pass
+3x3s1	exact	exact	exact	spatial/output-channel	pass
+3x3s2	exact	exact	exact	spatial/output-channel	pass
+small-N	exact	exact	exact	spatial/output-channel	pass

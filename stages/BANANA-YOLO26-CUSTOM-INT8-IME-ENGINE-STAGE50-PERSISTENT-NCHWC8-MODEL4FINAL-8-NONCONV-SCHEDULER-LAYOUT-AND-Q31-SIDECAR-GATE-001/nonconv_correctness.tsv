@@ -1,0 +1,5 @@
+operator	route	fixtures	mismatches	status
+LUT	explicit RVV indexed	F0-F7	0	exact
+Add+activation	parallel scalar table	F0-F7	0	exact
+Concat identity	producer-direct/view	F0-F7	0	exact
+Concat rescale	parallel/RVV LUT materialized residual	F0-F7	0	exact

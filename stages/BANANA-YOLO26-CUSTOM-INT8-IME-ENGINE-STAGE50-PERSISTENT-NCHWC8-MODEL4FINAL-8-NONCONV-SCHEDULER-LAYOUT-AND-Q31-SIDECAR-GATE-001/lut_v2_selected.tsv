@@ -1,0 +1,5 @@
+class	kernel	load	partition	workers	epilogue	status
+1x1	M12xN16	direct	spatial	4	E1	stable-selected
+3x3s1	M12xN16	P3	spatial	4	E1	stable-selected
+3x3s2	M12xN16	P3	spatial	4	E1	stable-selected
+small-N	M12xN16	direct	spatial	4	E1	stable-selected

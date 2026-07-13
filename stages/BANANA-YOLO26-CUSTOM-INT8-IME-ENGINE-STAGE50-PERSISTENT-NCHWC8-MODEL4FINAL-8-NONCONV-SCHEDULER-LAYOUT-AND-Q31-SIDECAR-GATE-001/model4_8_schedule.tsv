@@ -1,0 +1,30 @@
+index	kind	name	inputs	outputs	selected_route
+0	lut	/model.4/cv2/final_silu	0	1	RVV/parallel/direct-placement
+1	conv	/model.5/conv/Conv	1	2	M12xN16/P3/E1 spatial
+2	conv	/model.6/cv1/conv/Conv	2	3,4	M12xN16/P3/E1 spatial
+3	conv	/model.6/m.0/cv1/conv/Conv	4	5	M12xN16/P3/E1 spatial
+4	conv	/model.6/m.0/cv2/conv/Conv	4	6	M12xN16/P3/E1 spatial
+5	conv	/model.6/m.0/m/m.0/cv1/conv/Conv	5	7	M12xN16/P3/E1 spatial
+6	conv	/model.6/m.0/m/m.0/cv2/conv/Conv	7	8	M12xN16/P3/E1 spatial
+7	add_silu	/model.6/m.0/m/m.0/Add	5,8	9	RVV/parallel/direct-placement
+8	conv	/model.6/m.0/m/m.1/cv1/conv/Conv	9	10	M12xN16/P3/E1 spatial
+9	conv	/model.6/m.0/m/m.1/cv2/conv/Conv	10	11	M12xN16/P3/E1 spatial
+10	add_silu	/model.6/m.0/m/m.1/Add	9,11	12	RVV/parallel/direct-placement
+11	concat	/model.6/m.0/Concat	12,6	13	RVV/parallel/direct-placement
+12	conv	/model.6/m.0/cv3/conv/Conv	13	14	M12xN16/P3/E1 spatial
+13	concat	/model.6/Concat	3,4,14	15	RVV/parallel/direct-placement
+14	conv	/model.6/cv2/conv/Conv	15	16	M12xN16/P3/E1 spatial
+15	conv	/model.7/conv/Conv	16	17	M12xN16/P3/E1 spatial
+16	conv	/model.8/cv1/conv/Conv	17	18,19	M12xN16/P3/E1 spatial
+17	conv	/model.8/m.0/cv1/conv/Conv	19	20	M12xN16/P3/E1 spatial
+18	conv	/model.8/m.0/cv2/conv/Conv	19	21	M12xN16/P3/E1 spatial
+19	conv	/model.8/m.0/m/m.0/cv1/conv/Conv	20	22	M12xN16/P3/E1 spatial
+20	conv	/model.8/m.0/m/m.0/cv2/conv/Conv	22	23	M12xN16/P3/E1 spatial
+21	add_silu	/model.8/m.0/m/m.0/Add	20,23	24	RVV/parallel/direct-placement
+22	conv	/model.8/m.0/m/m.1/cv1/conv/Conv	24	25	M12xN16/P3/E1 spatial
+23	conv	/model.8/m.0/m/m.1/cv2/conv/Conv	25	26	M12xN16/P3/E1 spatial
+24	add_silu	/model.8/m.0/m/m.1/Add	24,26	27	RVV/parallel/direct-placement
+25	concat	/model.8/m.0/Concat	27,21	28	RVV/parallel/direct-placement
+26	conv	/model.8/m.0/cv3/conv/Conv	28	29	M12xN16/P3/E1 spatial
+27	concat	/model.8/Concat	18,19,29	30	RVV/parallel/direct-placement
+28	conv	/model.8/cv2/conv/Conv	30	31	M12xN16/P3/E1 spatial

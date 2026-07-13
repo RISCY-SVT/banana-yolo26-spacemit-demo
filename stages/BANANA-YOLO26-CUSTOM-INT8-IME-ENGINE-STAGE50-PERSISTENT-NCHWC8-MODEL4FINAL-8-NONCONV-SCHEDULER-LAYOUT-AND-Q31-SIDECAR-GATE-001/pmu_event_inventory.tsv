@@ -1,0 +1,7 @@
+event	scope	status	reason
+cycles	per-worker	available	perf_event_open hardware event
+instructions	per-worker	available	perf_event_open hardware event
+task_clock	per-worker	available	software event
+context_switches	per-worker	available	software event
+cache_misses	per-worker	unmapped-or-unsupported	time_running=0
+X60 named events	cpuwide/per-worker	unavailable	installed perf absent and no authoritative matching pmu-events source

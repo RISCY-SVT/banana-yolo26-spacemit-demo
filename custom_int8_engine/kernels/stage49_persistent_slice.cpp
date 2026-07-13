@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <array>
 #include <atomic>
+#include <cerrno>
 #include <charconv>
 #include <chrono>
 #include <condition_variable>
@@ -23,8 +24,12 @@
 #include <vector>
 
 #if defined(__linux__)
+#include <linux/perf_event.h>
 #include <pthread.h>
 #include <sched.h>
+#include <sys/ioctl.h>
+#include <sys/syscall.h>
+#include <unistd.h>
 #endif
 
 #if defined(Y26_K1X_ENABLE_IME_ASM) && defined(__riscv)
@@ -210,7 +215,66 @@ struct WorkerScratch {
     std::array<std::int32_t, 12 * kNBlock> c_tile {};
     int observed_cpu = -1;
     bool affinity_set = false;
+    int counter_fd = -1;
+    int counter_error = 0;
+    std::string counter_event;
+    std::string counter_status = "disabled";
+    std::uint64_t counter_value = 0;
+    std::uint64_t counter_time_enabled = 0;
+    std::uint64_t counter_time_running = 0;
 };
+
+struct PerfEventSpec {
+    std::uint32_t type = 0;
+    std::uint64_t config = 0;
+};
+
+struct PerfReadValue {
+    std::uint64_t value = 0;
+    std::uint64_t time_enabled = 0;
+    std::uint64_t time_running = 0;
+};
+
+bool perf_event_spec(std::string_view name, PerfEventSpec* event) noexcept {
+#if defined(__linux__)
+    if (name == "task_clock") *event = {PERF_TYPE_SOFTWARE, PERF_COUNT_SW_TASK_CLOCK};
+    else if (name == "cycles") *event = {PERF_TYPE_HARDWARE, PERF_COUNT_HW_CPU_CYCLES};
+    else if (name == "instructions") *event = {PERF_TYPE_HARDWARE, PERF_COUNT_HW_INSTRUCTIONS};
+    else if (name == "cache_references") *event = {PERF_TYPE_HARDWARE, PERF_COUNT_HW_CACHE_REFERENCES};
+    else if (name == "cache_misses") *event = {PERF_TYPE_HARDWARE, PERF_COUNT_HW_CACHE_MISSES};
+    else if (name == "branches") *event = {PERF_TYPE_HARDWARE, PERF_COUNT_HW_BRANCH_INSTRUCTIONS};
+    else if (name == "branch_misses") *event = {PERF_TYPE_HARDWARE, PERF_COUNT_HW_BRANCH_MISSES};
+    else if (name == "context_switches") *event = {PERF_TYPE_SOFTWARE, PERF_COUNT_SW_CONTEXT_SWITCHES};
+    else return false;
+    return true;
+#else
+    (void)name;
+    (void)event;
+    return false;
+#endif
+}
+
+int open_thread_perf_event(std::string_view name) noexcept {
+#if defined(__linux__)
+    PerfEventSpec event;
+    if (!perf_event_spec(name, &event)) {
+        errno = EINVAL;
+        return -1;
+    }
+    perf_event_attr attributes {};
+    attributes.type = event.type;
+    attributes.size = sizeof(attributes);
+    attributes.config = event.config;
+    attributes.disabled = 1;
+    attributes.exclude_hv = 1;
+    attributes.read_format = PERF_FORMAT_TOTAL_TIME_ENABLED | PERF_FORMAT_TOTAL_TIME_RUNNING;
+    return static_cast<int>(syscall(__NR_perf_event_open, &attributes, 0, -1, -1, 0));
+#else
+    (void)name;
+    errno = ENOSYS;
+    return -1;
+#endif
+}
 
 class WorkerPool {
 public:
@@ -236,6 +300,11 @@ public:
         }
         start_cv_.notify_all();
         for (std::thread& thread : threads_) if (thread.joinable()) thread.join();
+#if defined(__linux__)
+        for (WorkerScratch& scratch : scratch_) {
+            if (scratch.counter_fd >= 0) close(scratch.counter_fd);
+        }
+#endif
     }
 
     WorkerPool(const WorkerPool&) = delete;
@@ -250,10 +319,47 @@ public:
         return true;
     }
 
-    void dispatch(int active, Job job, void* context) {
+    void begin_counter_collection(std::string_view event) {
+        {
+            std::lock_guard lock(mutex_);
+            counter_event_.assign(event);
+            for (WorkerScratch& scratch : scratch_) {
+                scratch.counter_value = 0;
+                scratch.counter_time_enabled = 0;
+                scratch.counter_time_running = 0;
+                scratch.counter_error = 0;
+                scratch.counter_status = event.empty() ? "disabled" : "pending";
+            }
+        }
+        if (!event.empty()) {
+            dispatch(count_, [](void*, int, WorkerScratch&) {}, nullptr,
+                     SchedulerStrategy::all_workers_complete);
+            for (WorkerScratch& scratch : scratch_) {
+                scratch.counter_value = 0;
+                scratch.counter_time_enabled = 0;
+                scratch.counter_time_running = 0;
+            }
+        }
+    }
+
+    std::vector<WorkerCounter> worker_counters() const {
+        std::vector<WorkerCounter> counters;
+        counters.reserve(scratch_.size());
+        for (std::size_t index = 0; index < scratch_.size(); ++index) {
+            const WorkerScratch& scratch = scratch_[index];
+            counters.push_back({static_cast<int>(index), scratch.counter_event, scratch.counter_status,
+                                scratch.counter_error, scratch.counter_value,
+                                scratch.counter_time_enabled, scratch.counter_time_running});
+        }
+        return counters;
+    }
+
+    void dispatch(int active, Job job, void* context, SchedulerStrategy scheduler) {
         {
             std::lock_guard lock(mutex_);
             active_ = std::clamp(active, 1, count_);
+            active_workers_only_ = scheduler == SchedulerStrategy::active_workers_complete;
+            completion_target_ = active_workers_only_ ? active_ : count_;
             job_ = job;
             context_ = context;
             completed_ = 0;
@@ -261,7 +367,7 @@ public:
         }
         start_cv_.notify_all();
         std::unique_lock lock(mutex_);
-        done_cv_.wait(lock, [this]() { return completed_ == count_; });
+        done_cv_.wait(lock, [this]() { return completed_ == completion_target_; });
     }
 
 private:
@@ -279,6 +385,8 @@ private:
             Job job = nullptr;
             void* context = nullptr;
             int active = 0;
+            bool active_workers_only = false;
+            std::string counter_event;
             {
                 std::unique_lock lock(mutex_);
                 start_cv_.wait(lock, [&]() { return generation_ != local_generation; });
@@ -287,16 +395,57 @@ private:
                 job = job_;
                 context = context_;
                 active = active_;
+                active_workers_only = active_workers_only_;
+                counter_event = counter_event_;
             }
             if (index < active && job != nullptr) {
                 scratch.observed_cpu = current_cpu();
+                const bool count = !counter_event.empty();
+                if (count && scratch.counter_event != counter_event) {
+#if defined(__linux__)
+                    if (scratch.counter_fd >= 0) close(scratch.counter_fd);
+#endif
+                    scratch.counter_fd = open_thread_perf_event(counter_event);
+                    scratch.counter_error = scratch.counter_fd < 0 ? errno : 0;
+                    scratch.counter_event = counter_event;
+                    scratch.counter_status = scratch.counter_fd < 0 ? "unavailable" : "available";
+                }
+                bool counter_started = false;
+#if defined(__linux__)
+                if (count && scratch.counter_fd >= 0) {
+                    if (ioctl(scratch.counter_fd, PERF_EVENT_IOC_RESET, 0) == 0 &&
+                        ioctl(scratch.counter_fd, PERF_EVENT_IOC_ENABLE, 0) == 0) {
+                        counter_started = true;
+                    } else {
+                        scratch.counter_error = errno;
+                        scratch.counter_status = "unavailable";
+                    }
+                }
+#endif
                 job(context, index, scratch);
+#if defined(__linux__)
+                if (counter_started) {
+                    PerfReadValue value;
+                    if (ioctl(scratch.counter_fd, PERF_EVENT_IOC_DISABLE, 0) != 0 ||
+                        read(scratch.counter_fd, &value, sizeof(value)) != static_cast<ssize_t>(sizeof(value))) {
+                        scratch.counter_error = errno;
+                        scratch.counter_status = "unavailable";
+                    } else {
+                        scratch.counter_value += value.value;
+                        scratch.counter_time_enabled += value.time_enabled;
+                        scratch.counter_time_running += value.time_running;
+                        scratch.counter_status = value.time_running == 0 ? "unmapped-or-unsupported" : "available";
+                    }
+                }
+#endif
             }
-            {
-                std::lock_guard lock(mutex_);
-                ++completed_;
+            if (!active_workers_only || index < active) {
+                {
+                    std::lock_guard lock(mutex_);
+                    ++completed_;
+                }
+                done_cv_.notify_one();
             }
-            done_cv_.notify_one();
         }
     }
 
@@ -310,10 +459,13 @@ private:
     std::uint64_t generation_ = 0;
     int active_ = 0;
     int completed_ = 0;
+    int completion_target_ = 0;
     int ready_ = 0;
     Job job_ = nullptr;
     void* context_ = nullptr;
+    bool active_workers_only_ = false;
     bool stopping_ = false;
+    std::string counter_event_;
 };
 
 void scalar_block(const std::int8_t* a, const std::int8_t* b,
@@ -720,7 +872,7 @@ int run_conv(WorkerPool& pool, const ConvAsset& conv, const std::int8_t* input,
     context.outputs = outputs;
     context.options = options;
     const auto begin = Clock::now();
-    pool.dispatch(options.workers, run_conv_worker, &context);
+    pool.dispatch(options.workers, run_conv_worker, &context, options.scheduler);
     const double wall = elapsed_us(begin, Clock::now());
     for (int worker = 0; worker < options.workers; ++worker) {
         if (context.status[static_cast<std::size_t>(worker)] != Y26_CONV_STATUS_SUCCESS) {
@@ -756,7 +908,8 @@ struct PersistentSlice::Impl {
     int model4_preact_id = 0;
     int model4_postact_id = 1;
     int model5_output_id = 2;
-    int model6_output_id = 16;
+    int model6_output_id = -1;
+    int slice_output_id = -1;
     std::string error;
     bool ready = false;
 
@@ -769,6 +922,13 @@ struct PersistentSlice::Impl {
 
     std::int8_t* data(int id) { return arena.data() + tensor(id).offset; }
     const std::int8_t* data(int id) const { return arena.data() + tensor(id).offset; }
+
+    int tensor_id_for_key(std::string_view key) const noexcept {
+        const auto found = std::find_if(tensors.begin(), tensors.end(), [&](const Tensor& tensor) {
+            return tensor.key == key;
+        });
+        return found == tensors.end() ? -1 : found->id;
+    }
 };
 
 namespace {
@@ -830,18 +990,110 @@ void validate_conv(ConvAsset& conv) {
     }
 }
 
-void run_lut(PersistentSlice::Impl& executor, const Operation& operation) {
-    const Tensor& output = executor.tensor(operation.outputs[0]);
-    const std::int8_t* source = executor.data(operation.inputs[0]);
-    std::int8_t* destination = executor.data(operation.outputs[0]);
-    if (int8_v1::ranges_overlap(source, executor.tensor(operation.inputs[0]).bytes,
-                                destination, output.bytes)) throw std::runtime_error("LUT input/output overlap");
-    for (std::size_t index = 0; index < output.bytes; ++index) {
-        destination[index] = operation.lut[int8_v1::semantic_code(source[index])];
+void transform_lut_explicit_rvv(const std::int8_t* source, std::int8_t* destination,
+                                const std::int8_t* lut, std::size_t count) noexcept {
+#if defined(Y26_K1X_ENABLE_IME_ASM) && defined(__riscv)
+    __asm__ volatile(
+        "li t1, 128\n\t"
+        "1:\n\t"
+        "beqz %[count], 2f\n\t"
+        "vsetvli t0, %[count], e8, m1, ta, ma\n\t"
+        "vle8.v v0, (%[source])\n\t"
+        "vxor.vx v0, v0, t1\n\t"
+        "vluxei8.v v1, (%[lut]), v0\n\t"
+        "vse8.v v1, (%[destination])\n\t"
+        "add %[source], %[source], t0\n\t"
+        "add %[destination], %[destination], t0\n\t"
+        "sub %[count], %[count], t0\n\t"
+        "j 1b\n\t"
+        "2:\n\t"
+        : [source] "+r"(source), [destination] "+r"(destination), [count] "+r"(count)
+        : [lut] "r"(lut)
+        : "memory", "t0", "t1", "v0", "v1");
+#else
+    for (std::size_t index = 0; index < count; ++index) {
+        destination[index] = lut[int8_v1::semantic_code(source[index])];
+    }
+#endif
+}
+
+bool identity_lut(const std::int8_t* lut) noexcept {
+    for (int code = 0; code < 256; ++code) {
+        if (lut[code] != int8_v1::signed_storage(static_cast<std::uint8_t>(code))) return false;
+    }
+    return true;
+}
+
+struct LutRunContext {
+    const std::int8_t* source = nullptr;
+    std::int8_t* destination = nullptr;
+    const std::int8_t* lut = nullptr;
+    std::size_t bytes = 0;
+    int workers = 1;
+    NonConvStrategy strategy = NonConvStrategy::parallel_scalar;
+};
+
+void run_lut_worker(void* opaque, int worker_index, WorkerScratch&) {
+    auto& context = *static_cast<LutRunContext*>(opaque);
+    const std::size_t begin = context.bytes * static_cast<std::size_t>(worker_index) /
+                              static_cast<std::size_t>(context.workers);
+    const std::size_t end = context.bytes * static_cast<std::size_t>(worker_index + 1) /
+                            static_cast<std::size_t>(context.workers);
+    if (context.strategy == NonConvStrategy::explicit_rvv_lut) {
+        transform_lut_explicit_rvv(context.source + begin, context.destination + begin,
+                                   context.lut, end - begin);
+        return;
+    }
+    for (std::size_t index = begin; index < end; ++index) {
+        context.destination[index] = context.lut[int8_v1::semantic_code(context.source[index])];
     }
 }
 
-void run_add(PersistentSlice::Impl& executor, const Operation& operation) {
+void run_lut(PersistentSlice::Impl& executor, const Operation& operation,
+             const RunOptions& options) {
+    const Tensor& input = executor.tensor(operation.inputs[0]);
+    const Tensor& output = executor.tensor(operation.outputs[0]);
+    const std::int8_t* source = executor.data(operation.inputs[0]);
+    std::int8_t* destination = executor.data(operation.outputs[0]);
+    if (input.bytes != output.bytes ||
+        int8_v1::ranges_overlap(source, input.bytes, destination, output.bytes)) {
+        throw std::runtime_error("LUT input/output contract failure");
+    }
+    if (options.nonconv == NonConvStrategy::serial_scalar) {
+        for (std::size_t index = 0; index < output.bytes; ++index) {
+            destination[index] = operation.lut[int8_v1::semantic_code(source[index])];
+        }
+        return;
+    }
+    LutRunContext context {source, destination, operation.lut.data(), output.bytes,
+                           options.workers, options.nonconv};
+    executor.pool->dispatch(options.workers, run_lut_worker, &context, options.scheduler);
+}
+
+struct AddRunContext {
+    const std::int8_t* left = nullptr;
+    const std::int8_t* right = nullptr;
+    std::int8_t* destination = nullptr;
+    const std::int8_t* lut = nullptr;
+    std::size_t bytes = 0;
+    int workers = 1;
+};
+
+void run_add_worker(void* opaque, int worker_index, WorkerScratch&) {
+    auto& context = *static_cast<AddRunContext*>(opaque);
+    const std::size_t begin = context.bytes * static_cast<std::size_t>(worker_index) /
+                              static_cast<std::size_t>(context.workers);
+    const std::size_t end = context.bytes * static_cast<std::size_t>(worker_index + 1) /
+                            static_cast<std::size_t>(context.workers);
+    for (std::size_t index = begin; index < end; ++index) {
+        context.destination[index] = context.lut[
+            static_cast<std::size_t>(int8_v1::semantic_code(context.left[index])) * 256U +
+            int8_v1::semantic_code(context.right[index])];
+    }
+}
+
+void run_add(PersistentSlice::Impl& executor, const Operation& operation,
+             const RunOptions& options) {
     const Tensor& output = executor.tensor(operation.outputs[0]);
     const Tensor& left_tensor = executor.tensor(operation.inputs[0]);
     const Tensor& right_tensor = executor.tensor(operation.inputs[1]);
@@ -855,16 +1107,49 @@ void run_add(PersistentSlice::Impl& executor, const Operation& operation) {
         int8_v1::ranges_overlap(right, right_tensor.bytes, destination, output.bytes)) {
         throw std::runtime_error("Add input/output overlap");
     }
-    for (std::size_t index = 0; index < output.bytes; ++index) {
-        destination[index] = operation.add_lut[
-            static_cast<std::size_t>(int8_v1::semantic_code(left[index])) * 256U +
-            int8_v1::semantic_code(right[index])];
+    if (options.nonconv == NonConvStrategy::serial_scalar) {
+        for (std::size_t index = 0; index < output.bytes; ++index) {
+            destination[index] = operation.add_lut[
+                static_cast<std::size_t>(int8_v1::semantic_code(left[index])) * 256U +
+                int8_v1::semantic_code(right[index])];
+        }
+        return;
+    }
+    AddRunContext context {left, right, destination, operation.add_lut.data(), output.bytes,
+                           options.workers};
+    executor.pool->dispatch(options.workers, run_add_worker, &context, options.scheduler);
+}
+
+struct ConcatRunContext {
+    const std::int8_t* source = nullptr;
+    std::int8_t* destination = nullptr;
+    const std::int8_t* lut = nullptr;
+    std::size_t bytes = 0;
+    int workers = 1;
+    NonConvStrategy strategy = NonConvStrategy::parallel_scalar;
+};
+
+void run_concat_worker(void* opaque, int worker_index, WorkerScratch&) {
+    auto& context = *static_cast<ConcatRunContext*>(opaque);
+    const std::size_t begin = context.bytes * static_cast<std::size_t>(worker_index) /
+                              static_cast<std::size_t>(context.workers);
+    const std::size_t end = context.bytes * static_cast<std::size_t>(worker_index + 1) /
+                            static_cast<std::size_t>(context.workers);
+    if (context.strategy == NonConvStrategy::explicit_rvv_lut) {
+        transform_lut_explicit_rvv(context.source + begin, context.destination + begin,
+                                   context.lut, end - begin);
+        return;
+    }
+    for (std::size_t index = begin; index < end; ++index) {
+        context.destination[index] = context.lut[int8_v1::semantic_code(context.source[index])];
     }
 }
 
-void run_concat(PersistentSlice::Impl& executor, const Operation& operation) {
+void run_concat(PersistentSlice::Impl& executor, const Operation& operation,
+                const RunOptions& options) {
     const Tensor& output = executor.tensor(operation.outputs[0]);
     std::int8_t* destination = executor.data(operation.outputs[0]);
+    const std::size_t pixels = static_cast<std::size_t>(output.h) * output.w;
     int output_block = 0;
     for (std::size_t input_index = 0; input_index < operation.inputs.size(); ++input_index) {
         const int tensor_id = operation.inputs[input_index];
@@ -874,19 +1159,27 @@ void run_concat(PersistentSlice::Impl& executor, const Operation& operation) {
             throw std::runtime_error("Concat tensor mismatch");
         }
         const std::int8_t* source = executor.data(tensor_id);
+        std::int8_t* segment_destination = destination + static_cast<std::size_t>(output_block) * pixels * 8U;
+        const bool identity = identity_lut(operation.concat_lut[input_index].data());
+        if (source == segment_destination && identity) {
+            output_block += input.c / 8;
+            continue;
+        }
         if (int8_v1::ranges_overlap(source, input.bytes, destination, output.bytes)) {
             throw std::runtime_error("Concat input/output overlap");
         }
-        const std::size_t pixels = static_cast<std::size_t>(output.h) * output.w;
-        for (int block = 0; block < input.c / 8; ++block) {
-            for (std::size_t pixel = 0; pixel < pixels; ++pixel) {
-                for (int inner = 0; inner < 8; ++inner) {
-                    const std::size_t source_offset = (static_cast<std::size_t>(block) * pixels + pixel) * 8U + inner;
-                    const std::size_t output_offset = (static_cast<std::size_t>(output_block + block) * pixels + pixel) * 8U + inner;
-                    destination[output_offset] = operation.concat_lut[input_index][
-                        int8_v1::semantic_code(source[source_offset])];
-                }
+        if (identity && options.nonconv == NonConvStrategy::serial_scalar) {
+            std::memcpy(segment_destination, source, input.bytes);
+        } else if (options.nonconv == NonConvStrategy::serial_scalar) {
+            for (std::size_t index = 0; index < input.bytes; ++index) {
+                segment_destination[index] = operation.concat_lut[input_index][
+                    int8_v1::semantic_code(source[index])];
             }
+        } else {
+            ConcatRunContext context {source, segment_destination,
+                operation.concat_lut[input_index].data(), input.bytes, options.workers,
+                options.nonconv};
+            executor.pool->dispatch(options.workers, run_concat_worker, &context, options.scheduler);
         }
         output_block += input.c / 8;
     }
@@ -903,11 +1196,20 @@ PersistentSlice& PersistentSlice::operator=(PersistentSlice&&) noexcept = defaul
 int PersistentSlice::prepare(const std::filesystem::path& package_dir,
                              const std::string& trusted_manifest_sha256,
                              int worker_capacity) {
+    return prepare_with_contract(package_dir, trusted_manifest_sha256, worker_capacity,
+                                 int8_v1::kContractId, int8_v1::kGeneralProfile);
+}
+
+int PersistentSlice::prepare_with_contract(const std::filesystem::path& package_dir,
+                                           const std::string& trusted_manifest_sha256,
+                                           int worker_capacity,
+                                           const std::string& expected_contract_id,
+                                           const std::string& expected_profile_id) {
     if (worker_capacity < 1 || worker_capacity > kMaximumWorkers) return Y26_CONV_STATUS_INVALID_ARGUMENT;
     impl_->error.clear();
     try {
         const auto integrity = int8_v1::verify_package(package_dir, trusted_manifest_sha256,
-            int8_v1::kContractId, int8_v1::kGeneralProfile, int8_v1::kNchwc8LayoutId);
+            expected_contract_id, expected_profile_id, int8_v1::kNchwc8LayoutId);
         if (!integrity.ok) throw std::runtime_error("package integrity failed: " + integrity.error);
         Impl prepared;
         prepared.package = std::filesystem::canonical(package_dir);
@@ -1006,8 +1308,15 @@ int PersistentSlice::prepare(const std::filesystem::path& package_dir,
             }
             prepared.operations.push_back(std::move(operation));
         }
-        if (prepared.tensors.size() != 17 || prepared.operations.size() != 15 || maximum_panel == 0) {
-            throw std::runtime_error("unexpected model4-final-to-model6 package surface");
+        prepared.model4_preact_id = prepared.tensor_id_for_key("model4.preact");
+        prepared.model4_postact_id = prepared.tensor_id_for_key("model4.postact");
+        prepared.model5_output_id = prepared.tensor_id_for_key("model.5.output");
+        prepared.model6_output_id = prepared.tensor_id_for_key("model.6.output");
+        prepared.slice_output_id = prepared.tensors.empty() ? -1 : prepared.tensors.back().id;
+        if (prepared.tensors.size() < 3 || prepared.operations.size() < 2 || maximum_panel == 0 ||
+            prepared.model4_preact_id < 0 || prepared.model4_postact_id < 0 ||
+            prepared.model5_output_id < 0 || prepared.slice_output_id < 0) {
+            throw std::runtime_error("unexpected persistent integer-slice package surface");
         }
         prepared.pool = std::make_unique<WorkerPool>(worker_capacity, maximum_panel);
         prepared.ready = true;
@@ -1032,6 +1341,7 @@ int execute_range(PersistentSlice::Impl& executor, int first_operation, int last
         *timing = {};
         timing->operations.reserve(static_cast<std::size_t>(last_operation - first_operation + 1));
     }
+    executor.pool->begin_counter_collection(options.counter_event);
     if (options.capture_intermediates) {
         executor.captured_tensors.clear();
         executor.captured_tensors.resize(executor.tensors.size());
@@ -1062,9 +1372,9 @@ int execute_range(PersistentSlice::Impl& executor, int first_operation, int last
             }
         } else {
             try {
-                if (operation.kind == "lut") run_lut(executor, operation);
-                else if (operation.kind == "add_silu") run_add(executor, operation);
-                else if (operation.kind == "concat") run_concat(executor, operation);
+                if (operation.kind == "lut") run_lut(executor, operation, options);
+                else if (operation.kind == "add_silu") run_add(executor, operation, options);
+                else if (operation.kind == "concat") run_concat(executor, operation, options);
             } catch (const std::exception&) {
                 status = Y26_CONV_STATUS_INVALID_ARGUMENT;
             }
@@ -1090,6 +1400,7 @@ int execute_range(PersistentSlice::Impl& executor, int first_operation, int last
     if (timing != nullptr) {
         timing->total_us = elapsed_us(total_begin, Clock::now());
         timing->affinity_ok = executor.pool->affinity_ok() ? 1 : 0;
+        timing->worker_counters = executor.pool->worker_counters();
     }
     return Y26_CONV_STATUS_SUCCESS;
 }
@@ -1114,13 +1425,13 @@ int PersistentSlice::run_slice(const std::int8_t* input, std::int8_t* output,
                                const RunOptions& options, SliceTiming* timing) {
     if (!impl_ || !impl_->ready || input == nullptr || output == nullptr) return Y26_CONV_STATUS_INVALID_ARGUMENT;
     const Tensor& input_tensor = impl_->tensor(impl_->model4_preact_id);
-    const Tensor& output_tensor = impl_->tensor(impl_->model6_output_id);
+    const Tensor& output_tensor = impl_->tensor(impl_->slice_output_id);
     if (int8_v1::ranges_overlap(input, input_tensor.bytes, output, output_tensor.bytes)) {
         return Y26_CONV_STATUS_INVALID_ARGUMENT;
     }
     std::memcpy(impl_->data(impl_->model4_preact_id), input, input_tensor.bytes);
     const int status = execute_range(*impl_, 0, static_cast<int>(impl_->operations.size()) - 1, options, timing);
-    if (status == Y26_CONV_STATUS_SUCCESS) std::memcpy(output, impl_->data(impl_->model6_output_id), output_tensor.bytes);
+    if (status == Y26_CONV_STATUS_SUCCESS) std::memcpy(output, impl_->data(impl_->slice_output_id), output_tensor.bytes);
     return status;
 }
 
@@ -1144,6 +1455,12 @@ int PersistentSlice::run_model5_resident(const RunOptions& options, SliceTiming*
 int PersistentSlice::run_slice_resident(const RunOptions& options, SliceTiming* timing) {
     if (!impl_ || !impl_->ready) return Y26_CONV_STATUS_INVALID_ARGUMENT;
     return execute_range(*impl_, 0, static_cast<int>(impl_->operations.size()) - 1, options, timing);
+}
+
+int PersistentSlice::run_operation_resident(int operation_index, const RunOptions& options,
+                                            SliceTiming* timing) {
+    if (!impl_ || !impl_->ready) return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    return execute_range(*impl_, operation_index, operation_index, options, timing);
 }
 
 int PersistentSlice::copy_tensor(int tensor_id, std::int8_t* destination, std::size_t bytes) const {
@@ -1175,6 +1492,24 @@ std::size_t PersistentSlice::tensor_bytes(int tensor_id) const noexcept {
 }
 int PersistentSlice::tensor_count() const noexcept { return impl_ ? static_cast<int>(impl_->tensors.size()) : 0; }
 int PersistentSlice::operation_count() const noexcept { return impl_ ? static_cast<int>(impl_->operations.size()) : 0; }
+int PersistentSlice::input_tensor_id() const noexcept { return impl_ ? impl_->model4_preact_id : -1; }
+int PersistentSlice::model5_output_tensor_id() const noexcept { return impl_ ? impl_->model5_output_id : -1; }
+int PersistentSlice::model6_output_tensor_id() const noexcept { return impl_ ? impl_->model6_output_id : -1; }
+int PersistentSlice::output_tensor_id() const noexcept { return impl_ ? impl_->slice_output_id : -1; }
+int PersistentSlice::operation_input_tensor_id(int operation_index, int slot) const noexcept {
+    if (!impl_ || operation_index < 0 || static_cast<std::size_t>(operation_index) >= impl_->operations.size() ||
+        slot < 0 || slot >= static_cast<int>(impl_->operations[static_cast<std::size_t>(operation_index)].inputs.size())) {
+        return -1;
+    }
+    return impl_->operations[static_cast<std::size_t>(operation_index)].inputs[static_cast<std::size_t>(slot)];
+}
+int PersistentSlice::operation_output_tensor_id(int operation_index, int slot) const noexcept {
+    if (!impl_ || operation_index < 0 || static_cast<std::size_t>(operation_index) >= impl_->operations.size() ||
+        slot < 0 || slot >= static_cast<int>(impl_->operations[static_cast<std::size_t>(operation_index)].outputs.size())) {
+        return -1;
+    }
+    return impl_->operations[static_cast<std::size_t>(operation_index)].outputs[static_cast<std::size_t>(slot)];
+}
 std::size_t PersistentSlice::arena_bytes() const noexcept { return impl_ ? impl_->arena.size() : 0; }
 std::size_t PersistentSlice::packed_weight_bytes() const noexcept { return impl_ ? impl_->total_packed_weight_bytes : 0; }
 bool PersistentSlice::worker_affinity_ok() const noexcept { return impl_ && impl_->pool && impl_->pool->affinity_ok(); }
@@ -1209,6 +1544,15 @@ const char* epilogue_strategy_name(EpilogueStrategy value) noexcept {
 }
 const char* partition_policy_name(PartitionPolicy value) noexcept {
     return value == PartitionPolicy::spatial ? "spatial" : "output_channel";
+}
+const char* nonconv_strategy_name(NonConvStrategy value) noexcept {
+    if (value == NonConvStrategy::serial_scalar) return "serial_scalar";
+    if (value == NonConvStrategy::parallel_scalar) return "parallel_scalar";
+    return "explicit_rvv_lut";
+}
+const char* scheduler_strategy_name(SchedulerStrategy value) noexcept {
+    return value == SchedulerStrategy::all_workers_complete
+        ? "all_workers_complete" : "active_workers_complete";
 }
 
 }  // namespace y26::stage49

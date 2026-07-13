@@ -1,0 +1,13 @@
+surface	worker	event	count	status	time_running_scale
+model4final_model8	0	cycles	40640355	available	1.0
+model4final_model8	1	cycles	43184569	available	1.0
+model4final_model8	2	cycles	40827782	available	1.0
+model4final_model8	3	cycles	42376116	available	1.0
+model4final_model8	0	instructions	33639286	available	1.0
+model4final_model8	1	instructions	35805922	available	1.0
+model4final_model8	2	instructions	33500304	available	1.0
+model4final_model8	3	instructions	34815112	available	1.0
+model4final_model8	0	cache_misses	0	unmapped-or-unsupported	0.0
+model4final_model8	1	cache_misses	0	unmapped-or-unsupported	0.0
+model4final_model8	2	cache_misses	0	unmapped-or-unsupported	0.0
+model4final_model8	3	cache_misses	0	unmapped-or-unsupported	0.0

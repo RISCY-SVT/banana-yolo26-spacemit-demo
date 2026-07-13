@@ -1,0 +1,1 @@
+Explicit diagnostic limb products use vwmulu.vv. Full E2b is absent. See selected_vector_disassembly.txt and raw command 0173.

@@ -1,0 +1,6 @@
+path	source_mechanism	disassembly_evidence	exactness	selection
+Conv dot	inline assembly	smt.vmadot	F0-F7 exact	selected
+P3 direct A	inline standard RVV assembly	vlseg2e64/vlse64	F0-F7 exact	selected
+LUT	explicit RVV indexed helper	vluxei8.v	F0-F7 exact	selected
+Q62 E2b sidecar	explicit RVV limb products	vwmulu.vv	product exact only	not-selected
+Q31 sidecar	explicit RVV 32x32 product	vwmul.vv	product exact only	not-selected

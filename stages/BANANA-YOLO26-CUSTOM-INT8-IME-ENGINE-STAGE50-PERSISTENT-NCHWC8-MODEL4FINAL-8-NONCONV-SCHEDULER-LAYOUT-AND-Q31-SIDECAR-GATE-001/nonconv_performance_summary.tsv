@@ -1,0 +1,4 @@
+operator	selected_route	mean_us	median_us	p95_us	selection
+LUT	L2 explicit RVV indexed	494.662	488.9885	526.26	selected
+Add+activation	A1 parallel scalar table	220.072	211.0255	232.448	selected
+Concat	C2 direct placement where compatible; C1/RVV residual	102.277	96.5435	119.481	selected-mixed

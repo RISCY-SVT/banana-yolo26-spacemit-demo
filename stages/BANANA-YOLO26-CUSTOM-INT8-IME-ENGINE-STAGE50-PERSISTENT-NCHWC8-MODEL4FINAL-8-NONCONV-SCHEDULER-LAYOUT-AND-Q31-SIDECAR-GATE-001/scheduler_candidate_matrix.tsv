@@ -1,0 +1,6 @@
+candidate	description	correctness	decision
+S0	all workers awakened and counted each op	exact	baseline
+S1	active-worker-only completion	exact	selected
+S2	epoch/spin	not-implemented	not-needed
+S3	static schedule-level barriers	bounded subset via active completion	future
+S4	2+2 branch concurrency	not-implemented	no selection evidence

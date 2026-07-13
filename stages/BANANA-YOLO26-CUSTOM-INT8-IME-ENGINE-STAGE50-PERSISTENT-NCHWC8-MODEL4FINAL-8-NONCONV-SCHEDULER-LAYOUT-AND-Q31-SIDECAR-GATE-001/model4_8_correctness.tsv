@@ -1,0 +1,2 @@
+contract	fixtures	boundaries_per_fixture	python_cpp	board_scalar	board_ime	frm	affinity	sigill
+K1X_INT8_V1	F0-F7	32	exact	exact	exact	pass-restored	CPU0-3-pass	none

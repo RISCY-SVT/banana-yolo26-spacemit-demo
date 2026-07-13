@@ -1,0 +1,6 @@
+surface	worker	cpu	role	evidence
+selected_slice	0	0	IME worker	affinity exact
+selected_slice	1	1	IME worker	affinity exact
+selected_slice	2	2	IME worker	affinity exact
+selected_slice	3	3	IME worker	affinity exact
+selected_slice	controller	4	controller/non-IME	no CPU4 IME

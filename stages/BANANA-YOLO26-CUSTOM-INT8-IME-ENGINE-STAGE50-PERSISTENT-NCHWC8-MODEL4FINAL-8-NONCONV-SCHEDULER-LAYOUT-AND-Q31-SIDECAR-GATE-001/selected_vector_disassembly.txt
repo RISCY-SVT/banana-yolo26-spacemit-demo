@@ -1,0 +1,63 @@
+Selected instruction excerpts
+   1c49c:	06040087          	vluxei8.v	v1,(s0),v0
+   1c7ec:	06040087          	vluxei8.v	v1,(s0),v0
+   1d16a:	22057007          	vlseg2e64.v	v0,(a0)
+   1d614:	eff4a5d7          	vwmul.vv	v11,v31,v9
+   1e8b6:	462130ef          	jal	31d18 <y26_stage48_load_vlseg2e64_4>
+   1e8d4:	444130ef          	jal	31d18 <y26_stage48_load_vlseg2e64_4>
+   1eb58:	1c0130ef          	jal	31d18 <y26_stage48_load_vlseg2e64_4>
+   31ae2:	e220382b          	smt.vmadot	v16,v0,v2
+   31ae6:	e230392b          	smt.vmadot	v18,v0,v3
+   31aea:	e2403a2b          	smt.vmadot	v20,v0,v4
+   31aee:	e2503b2b          	smt.vmadot	v22,v0,v5
+   31b7e:	e220382b          	smt.vmadot	v16,v0,v2
+   31b82:	e220b92b          	smt.vmadot	v18,v1,v2
+   31b86:	e2303a2b          	smt.vmadot	v20,v0,v3
+   31b8a:	e230bb2b          	smt.vmadot	v22,v1,v3
+   31b8e:	e2403c2b          	smt.vmadot	v24,v0,v4
+   31b92:	e240bd2b          	smt.vmadot	v26,v1,v4
+   31b96:	e2503e2b          	smt.vmadot	v28,v0,v5
+   31b9a:	e250bf2b          	smt.vmadot	v30,v1,v5
+   31c62:	e240342b          	smt.vmadot	v8,v0,v4
+   31c66:	e240b52b          	smt.vmadot	v10,v1,v4
+   31c6a:	e241362b          	smt.vmadot	v12,v2,v4
+   31c6e:	e250372b          	smt.vmadot	v14,v0,v5
+   31c72:	e250b82b          	smt.vmadot	v16,v1,v5
+   31c76:	e251392b          	smt.vmadot	v18,v2,v5
+   31c7a:	e2603a2b          	smt.vmadot	v20,v0,v6
+   31c7e:	e260bb2b          	smt.vmadot	v22,v1,v6
+   31c82:	e2613c2b          	smt.vmadot	v24,v2,v6
+   31c86:	e2703d2b          	smt.vmadot	v26,v0,v7
+   31c8a:	e270be2b          	smt.vmadot	v28,v1,v7
+   31c8e:	e2713f2b          	smt.vmadot	v30,v2,v7
+   31d0e:	0a657007          	vlse64.v	v0,(a0),t1
+0000000000031d18 <y26_stage48_load_vlseg2e64_4>:
+   31d1c:	22057007          	vlseg2e64.v	v0,(a0)
+   32292:	eff4a5d7          	vwmul.vv	v11,v31,v9
+   32ba4:	974ff0ef          	jal	31d18 <y26_stage48_load_vlseg2e64_4>
+   33064:	cb5fe0ef          	jal	31d18 <y26_stage48_load_vlseg2e64_4>
+   33da2:	f77fd0ef          	jal	31d18 <y26_stage48_load_vlseg2e64_4>
+   39c32:	e2103e2b          	smt.vmadot	v28,v0,v1
+   39c54:	e2103e2b          	smt.vmadot	v28,v0,v1
+   39c78:	e2101e2b          	smt.vmadotus	v28,v0,v1
+   39c9a:	e2101e2b          	smt.vmadotus	v28,v0,v1
+   10a12:	ee00a157          	vwmul.vv	v2,v0,v1
+   10c44:	e2052157          	vwmulu.vv	v2,v0,v10
+   10c48:	e205a257          	vwmulu.vv	v4,v0,v11
+   10c4c:	e2152357          	vwmulu.vv	v6,v1,v10
+   10c50:	e215a457          	vwmulu.vv	v8,v1,v11
+   10e36:	ee00a157          	vwmul.vv	v2,v0,v1
+   10e56:	ee00a157          	vwmul.vv	v2,v0,v1
+   10e72:	ee00a157          	vwmul.vv	v2,v0,v1
+   10e8e:	ee00a157          	vwmul.vv	v2,v0,v1
+   10eaa:	ee00a157          	vwmul.vv	v2,v0,v1
+   10ec6:	ee00a157          	vwmul.vv	v2,v0,v1
+   10ee2:	ee00a157          	vwmul.vv	v2,v0,v1
+   10f02:	ee00a157          	vwmul.vv	v2,v0,v1
+   10f22:	ee00a157          	vwmul.vv	v2,v0,v1
+   10f42:	ee00a157          	vwmul.vv	v2,v0,v1
+   10f62:	ee00a157          	vwmul.vv	v2,v0,v1
+   10f82:	ee00a157          	vwmul.vv	v2,v0,v1
+   10fa2:	ee00a157          	vwmul.vv	v2,v0,v1
+   10fc2:	ee00a157          	vwmul.vv	v2,v0,v1
+   10fe2:	ee00a157          	vwmul.vv	v2,v0,v1

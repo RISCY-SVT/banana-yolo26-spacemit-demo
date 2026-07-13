@@ -1,0 +1,5 @@
+arm	flags	parser	effective_isa	slice_mean_us	slice_p95_us	text_bytes	decision
+T6	-march=rv64gcv_zvfh -mabi=lp64d -mtune=spacemit-x60 -funroll-loops -O3 -DNDEBUG	pass	rv64gcv_zvfh	27123.528292	27492.0746	200107	selected
+T7	-mcpu=spacemit-x60 -march=rv64gcv_zvfh -mabi=lp64d -mtune=spacemit-x60 -funroll-loops -O3 -DNDEBUG	pass	rv64gcv_zvfh	27067.108252	27249.923	187284	not-selected-no-model5-reproducible-gain
+T8	T7 + -march=rv64gcv_zvfh_zvl256b -mrvv-vector-bits=zvl	pass	rv64gcv_zvfh_zvl256b	28100.996	scout	185584	not-selected-regression
+T9	T8 + -mrvv-max-lmul=m8	pass	rv64gcv_zvfh_zvl256b	27525.528	scout	185136	not-selected-regression

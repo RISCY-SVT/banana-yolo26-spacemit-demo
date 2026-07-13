@@ -1,0 +1,3 @@
+surface	fixtures	boundaries	mismatches_to_q31_oracle	status
+model4final_model8	F0-F7	32	0	exact-to-Q31-contract
+explicit RVV limb product	adversarial	product	0	exact-component-only

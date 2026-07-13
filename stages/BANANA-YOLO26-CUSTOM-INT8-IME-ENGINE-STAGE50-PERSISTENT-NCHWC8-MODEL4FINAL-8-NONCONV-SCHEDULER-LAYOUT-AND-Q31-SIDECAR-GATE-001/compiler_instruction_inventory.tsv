@@ -1,0 +1,5 @@
+arm	explicit_march	unexpected_instruction_status	binary_sha256
+T6	rv64gcv_zvfh	none-observed	cf46e61f678390ba31b917cdaa3fa3b8db42da859b0584357eb09863e24edd8f
+T7	rv64gcv_zvfh	none-observed	see-raw-command-0170
+T8	rv64gcv_zvfh_zvl256b	none-outside-explicit-march	see-raw-command-0170
+T9	rv64gcv_zvfh_zvl256b	none-outside-explicit-march	see-raw-command-0170
