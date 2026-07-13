@@ -175,10 +175,24 @@ def audit(package: Path) -> tuple[list[dict[str, object]], dict[str, object]]:
         softmax_count += 1
     results.append(result_row("softmax", softmax_count, "pass", "Q48 monotonic exponent tables"))
 
-    resize = [row for row in operations if row["kind"] == "resize"]
-    if any(row["branch0_resize_mode"] not in {"", "nearest"} for row in resize):
-        raise ValueError("unsupported Resize mode")
-    results.append(result_row("resize", len(resize), "pass", "frozen nearest-neighbor mapping"))
+    resize_branches: list[tuple[dict[str, str], int]] = []
+    for operation in operations:
+        if operation["kind"] == "resize":
+            resize_branches.append((operation, -1))
+        for branch in range(int(operation.get("branch_count", "0") or 0)):
+            if operation.get(f"branch{branch}_transform", "") == "resize":
+                resize_branches.append((operation, branch))
+    for operation, branch in resize_branches:
+        if branch < 0:
+            mode = operation.get("resize_mode", "nearest")
+            lut_file = operation["lut_file"]
+        else:
+            mode = operation.get(f"branch{branch}_resize_mode", "")
+            lut_file = operation.get(f"branch{branch}_lut_file", "")
+        if mode != "nearest" or not lut_file or (package / lut_file).stat().st_size != 256:
+            raise ValueError(f"Resize contract invalid: {operation['name']} branch {branch}")
+    results.append(result_row(
+        "resize", len(resize_branches), "pass", "frozen nearest-neighbor fused-branch mappings"))
 
     head_rows = read_tsv(package / "head_assets.tsv")
     if len(head_rows) != 3 or metadata["head_tie_policy"] != "score-descending-index-ascending":

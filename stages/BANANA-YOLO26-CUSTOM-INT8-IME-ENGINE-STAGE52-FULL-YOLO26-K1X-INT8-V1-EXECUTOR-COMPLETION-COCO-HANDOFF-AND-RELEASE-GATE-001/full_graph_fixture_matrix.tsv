@@ -1,0 +1,9 @@
+fixture	description	sha256	integer_boundaries	python_operator_oracle	host_scalar	host_optimized	board_scalar	board_optimized	status
+F0	real_bus_preprocessed	64d11ef4c1e470282a385f7d293607b639da2f40405c92238897253dd1e23f14	215	operator-class-pass	pass	pass	pass	pass	pass
+F1	all_zero	f824c1a8a1128713f17dd8d1190d70e6012b509606d986e7a6c81e40b628df2b	215	operator-class-pass	pass	pass	pass	pass	pass
+F2	all_one	830eadd834b9305b1472dcb60b1c7fffea53b0f0e12012fc36dc9f920fd56f2a	215	operator-class-pass	pass	pass	pass	pass	pass
+F3	letterbox_padding_114_over_255	d4e05bfc32af71b56bac53465531642c4a5824f39e042c89f34ffbc4884a7966	215	operator-class-pass	pass	pass	pass	pass	pass
+F4	checkerboard_zero_one	3d7d718198f99d505c3ca6d86bce54b14139af73102b34f007428370dbe9d198	215	operator-class-pass	pass	pass	pass	pass	pass
+F5	horizontal_ramp	85838c907232adf6f8cb97787e17ea2806a23677cae628c55cbdc5027b1a53b6	215	operator-class-pass	pass	pass	pass	pass	pass
+F6	channel_scaled_vertical_ramp	59314fb9e356deee26efcb217b82bd35da859f0bc8cb51a9161bde1d41cd7be6	215	operator-class-pass	pass	pass	pass	pass	pass
+F7	uniform_seed_52001	4b0e52af116b84892d5ffdfcfa81358258f85afc23565b14903edafa6d119659	215	operator-class-pass	pass	pass	pass	pass	pass

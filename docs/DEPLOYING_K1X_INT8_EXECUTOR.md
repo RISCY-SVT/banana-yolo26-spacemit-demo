@@ -9,6 +9,11 @@ The release bundle deploys to:
 /data/k1x-yolo26-int8-executor/
 ```
 
+`config/k1x-int8-executor-safe.conf` records the supported package root,
+worker/controller assignment, scheduler, input surface, and detector output
+schema. It is a reviewable handoff reference; the CLI still requires explicit
+arguments so deployment automation cannot silently change execution policy.
+
 Typical flow:
 
 ```bash

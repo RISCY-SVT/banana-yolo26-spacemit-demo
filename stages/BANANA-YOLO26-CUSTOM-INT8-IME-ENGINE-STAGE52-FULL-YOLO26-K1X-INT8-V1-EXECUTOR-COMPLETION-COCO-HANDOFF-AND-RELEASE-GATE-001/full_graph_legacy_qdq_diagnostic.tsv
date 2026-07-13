@@ -1,0 +1,5 @@
+surface	role	exact_authority	map50_95	status	note
+host_ort_fp32_disable_all	accuracy_reference	no	0.401438855549	accepted	Stage46 full COCO reference
+host_ort_semantic_int8_disable_all	legacy_accuracy_reference	no	0.372453424642	accepted	Float-QDQ replay is diagnostic, not integer authority
+board_b120_ort	performance_diagnostic	no		accepted	Matched resource comparison only
+k1x_int8_v1	deployment_integer_contract	yes		measured-in-stage52	Accuracy populated by full_coco_results.tsv

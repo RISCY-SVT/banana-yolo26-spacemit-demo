@@ -1,0 +1,9 @@
+operator_class	checked_surfaces	status	detail
+profile	1	pass	contract/profile/byte order exact
+conv_q62_e2c	61404	pass	8772 channels; 94 dense packed assets; int32 bounds proven
+integer_lut	87	pass	{256: 67, 65536: 20}
+matmul	4	pass	static Q62 descriptors
+softmax	2	pass	Q48 monotonic exponent tables
+resize	2	pass	frozen nearest-neighbor fused-branch mappings
+topk_gather_head	3	pass	score-descending-index-ascending
+package_integrity	1	pass	all size/SHA-256 rows exact

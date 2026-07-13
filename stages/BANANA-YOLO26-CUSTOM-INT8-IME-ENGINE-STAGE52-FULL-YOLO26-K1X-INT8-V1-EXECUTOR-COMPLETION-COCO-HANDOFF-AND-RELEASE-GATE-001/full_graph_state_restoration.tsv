@@ -1,0 +1,6 @@
+ambient_frm	ambient_vcsr	after_frm	after_vcsr	output_hash	affinity_ok	cpu4_7_ime_count	status
+RNE	0	RNE	0	0xd43f5e018b415631	1	0	pass
+RTZ	3	RTZ	3	0xd43f5e018b415631	1	0	pass
+RDN	4	RDN	4	0xd43f5e018b415631	1	0	pass
+RUP	7	RUP	7	0xd43f5e018b415631	1	0	pass
+RMM	2	RMM	2	0xd43f5e018b415631	1	0	pass

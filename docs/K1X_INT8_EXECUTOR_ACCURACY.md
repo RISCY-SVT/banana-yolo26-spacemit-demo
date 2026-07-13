@@ -11,12 +11,18 @@ Accepted comparison surfaces:
 ```text
 FP32 ORT_DISABLE_ALL:          0.401438855549 mAP50-95
 legacy semantic INT8:         0.372453424642 mAP50-95
-K1X_INT8_V1 full executor:    see Stage52 full_coco_report.md
+K1X_INT8_V1 full executor:    0.370740894439 mAP50-95
+delta versus semantic INT8:  -0.001712530203 absolute
 ```
 
-The Stage52 report records mAP50-95, mAP50, AP small/medium/large, per-class AP,
-prediction count/hash, and a fixed-seed paired bootstrap with at least 2,000
-resamples. Release handoff requires loss no larger than 0.005 absolute versus
-the accepted semantic INT8 surface.
+The K1X result passes the preferred Stage52 gate of at most 0.002 absolute loss
+versus semantic INT8. The final prediction JSON contains 721,755 rows and has
+SHA-256
+`cda5c8c7a46d61d9c90f6292001eea190cb8f6617efe647a33dc6134dd57ccda`.
+
+The fixed-seed paired bootstrap uses 2,000 resamples of a per-image
+IoU-averaged F1 proxy. It is not represented as a bootstrap confidence interval
+for COCO mAP. Complete metrics and per-class AP are in the Stage52
+`full_coco_report.md`.
 
 Intermediate exactness does not substitute for this task-level evaluation.

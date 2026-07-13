@@ -1,0 +1,5 @@
+route	implementation	operations	exact	selected	status
+D0	portable_scalar_direct	8	1	0	correctness_reference
+D1	four_worker_NCHWc8_direct_pointer_scalar_arithmetic	8	1	1	functional_selected
+D2	explicit_RVV_depthwise	0	not-tested	0	deferred_after_full_model_profile
+D3	IME_depthwise	0	not-tested	0	not_justified_by_group_geometry

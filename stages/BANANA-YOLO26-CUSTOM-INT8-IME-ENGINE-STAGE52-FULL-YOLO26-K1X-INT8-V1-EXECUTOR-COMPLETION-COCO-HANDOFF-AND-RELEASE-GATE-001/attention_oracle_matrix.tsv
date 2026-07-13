@@ -1,0 +1,7 @@
+model	operation_index	operator	output_tensor	python_arbitrary_precision	portable_cpp_scalar	board_scalar	board_optimized	fixture_scope	status
+10	76	MatMul	72	pass	pass	pass	pass	F0-F7	pass
+10	78	Softmax+Transpose	74	pass	pass	pass	pass	F0-F7	pass
+10	79	MatMul	75	pass	pass	pass	pass	F0-F7	pass
+22	187	MatMul	179	pass	pass	pass	pass	F0-F7	pass
+22	189	Softmax+Transpose	181	pass	pass	pass	pass	F0-F7	pass
+22	190	MatMul	182	pass	pass	pass	pass	F0-F7	pass

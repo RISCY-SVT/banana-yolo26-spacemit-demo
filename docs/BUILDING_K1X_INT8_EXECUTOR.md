@@ -33,6 +33,14 @@ scripts/k1x-int8-executor/build.sh \
 The wrapper builds both `BUILD_SHARED_LIBS=OFF` and `ON`. The target name is
 `y26_k1x_custom_int8_engine`; installed artifacts are
 `liby26_k1x_int8_executor.a` and `liby26_k1x_int8_executor.so`.
+The install also contains `yolo26_k1x_int8` and the C11 ABI lifecycle probe
+`y26_k1x_c_api_smoke`.
+
+The release wrapper uses origin-relative build RPATHs, strips path-bearing
+debug data, and enables deterministic archive rewriting. Independent builds
+under differently named build roots must produce byte-identical installed
+libraries, executables, and headers. Compare complete install-tree SHA-256
+inventories before publishing a handoff bundle.
 
 ## Host Tests
 

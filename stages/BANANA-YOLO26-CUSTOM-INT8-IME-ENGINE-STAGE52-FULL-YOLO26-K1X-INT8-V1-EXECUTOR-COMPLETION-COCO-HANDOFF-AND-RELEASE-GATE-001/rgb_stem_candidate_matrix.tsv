@@ -1,0 +1,6 @@
+candidate	input_surface	model0_route	implemented	exact	selected	classification
+S0	preprocessed_f32	generic_C3_in_NCHWc8_K8_tile	1	1	1	functional_safe_baseline
+S1	preprocessed_f32	dedicated_C3_direct	0	not-tested	0	deferred_optimization
+S2	rgb640_u8	direct_RGB_bytes_to_resident_input_then_S0	1	1	1	selected_rgb_API_surface
+S3	rgb640_u8	C8_padded_fused_model0	0	not-tested	0	deferred_optimization
+S4	encoded_image	decode_letterbox_RGB_then_S2	1	1	1	CLI_pipeline_outside_pure_model

@@ -6,6 +6,9 @@ input=${2:-"$root/fixtures/bus_640_nchw_f32.bin"}
 output=${3:-"$root/outputs/smoke.json"}
 mkdir -p "$(dirname "$output")"
 "$root/bin/yolo26_k1x_int8" --version
+manifest=$(sha256sum "$root/package/asset_hashes.tsv" | awk '{print $1}')
+"$root/bin/y26_k1x_c_api_smoke" \
+  "$root/package" "$manifest" "$input" d43f5e018b415631
 "$root/bin/yolo26_k1x_int8" \
   --package "$root/package" --image "$input" --input-mode preprocessed-f32 \
   --output-json "$output" --threads 4 --pin 0-3 --scheduler safe \

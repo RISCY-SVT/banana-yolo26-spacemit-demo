@@ -1,0 +1,10 @@
+surface	runs_or_images	integer_boundaries	output_or_prediction_hash	comparison	status
+F0_host_scalar_optimized_board	4	215	0xd43f5e018b415631	all boundary files byte-exact	pass
+F1_host_scalar_optimized_board	4	215	0xb75e8e0359ee5ccc	all boundary files byte-exact	pass
+F2_host_scalar_optimized_board	4	215	0x5e1593696c0b49d4	all boundary files byte-exact	pass
+F3_host_scalar_optimized_board	4	215	0xd2cfaeed3ea6b14f	all boundary files byte-exact	pass
+F4_host_scalar_optimized_board	4	215	0xd917464ca70773b5	all boundary files byte-exact	pass
+F5_host_scalar_optimized_board	4	215	0xfe8293d27da4bc67	all boundary files byte-exact	pass
+F6_host_scalar_optimized_board	4	215	0x7d0df1fa9d89722d	all boundary files byte-exact	pass
+F7_host_scalar_optimized_board	4	215	0x8b86aa75109f3f91	all boundary files byte-exact	pass
+COCO_val2017_full_repeat	5000	final_1x300x6	cda5c8c7a46d61d9c90f6292001eea190cb8f6617efe647a33dc6134dd57ccda	preliminary and final prediction JSON byte-identical	pass

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(y26_k1x_custom_int8_engine VERSION 0.0.0 LANGUAGES CXX)
+project(y26_k1x_custom_int8_engine VERSION 0.0.0 LANGUAGES C CXX)
 
 find_package(Threads REQUIRED)
 include(GNUInstallDirs)
@@ -8,6 +8,9 @@ include(GNUInstallDirs)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+set(CMAKE_C_EXTENSIONS OFF)
 
 option(Y26_K1X_ENABLE_TESTS "Build custom INT8 engine tests" ON)
 option(Y26_K1X_ENABLE_IME "Build the guarded Stage 1 smt.vmadot IME path" OFF)
@@ -482,6 +485,18 @@ if(Y26_K1X_BUILD_TOOLS)
         target_compile_definitions(yolo26_k1x_int8 PRIVATE Y26_K1X_ENABLE_IME_ASM=1)
     endif()
 
+    add_executable(y26_k1x_c_api_smoke
+        tools/stage52_c_api_smoke.c
+    )
+    target_link_libraries(y26_k1x_c_api_smoke PRIVATE y26_k1x_custom_int8_engine Threads::Threads)
+    target_compile_options(y26_k1x_c_api_smoke PRIVATE -Wall -Wextra -Wpedantic)
+    set_target_properties(y26_k1x_c_api_smoke PROPERTIES
+        LINKER_LANGUAGE CXX
+        BUILD_RPATH "$ORIGIN/../lib"
+        INSTALL_RPATH "$ORIGIN/../lib"
+    )
+    install(TARGETS y26_k1x_c_api_smoke RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+
     if(Y26_K1X_OPENCV_DIR)
         set(OpenCV_DIR "${Y26_K1X_OPENCV_DIR}")
         find_package(OpenCV QUIET COMPONENTS core imgproc imgcodecs)
@@ -508,6 +523,21 @@ if(Y26_K1X_BUILD_TOOLS)
                 BUILD_RPATH "$ORIGIN/../opencv/lib"
                 INSTALL_RPATH "$ORIGIN/../opencv/lib"
             )
+            add_executable(stage52_image_pipeline_bench
+                tools/stage52_image_pipeline_bench.cpp
+            )
+            target_link_libraries(stage52_image_pipeline_bench
+                PRIVATE
+                    y26_k1x_custom_int8_engine
+                    Threads::Threads
+                    ${OpenCV_LIBS}
+            )
+            target_include_directories(stage52_image_pipeline_bench PRIVATE ${OpenCV_INCLUDE_DIRS})
+            target_compile_options(stage52_image_pipeline_bench PRIVATE -Wall -Wextra -Wpedantic)
+            set_target_properties(stage52_image_pipeline_bench PROPERTIES
+                BUILD_RPATH "$ORIGIN/../opencv/lib"
+                INSTALL_RPATH "$ORIGIN/../opencv/lib"
+            )
         endif()
     endif()
 
@@ -522,6 +552,12 @@ if(Y26_K1X_BUILD_TOOLS)
     )
     target_link_libraries(stage52_core_bridge_dump PRIVATE y26_k1x_custom_int8_engine Threads::Threads)
     target_compile_options(stage52_core_bridge_dump PRIVATE -Wall -Wextra -Wpedantic)
+
+    add_executable(stage52_state_probe
+        tools/stage52_state_probe.cpp
+    )
+    target_link_libraries(stage52_state_probe PRIVATE y26_k1x_custom_int8_engine Threads::Threads)
+    target_compile_options(stage52_state_probe PRIVATE -Wall -Wextra -Wpedantic)
 
     add_executable(bench_stage43_model5_island
         tools/bench_stage43_model5_island.cpp

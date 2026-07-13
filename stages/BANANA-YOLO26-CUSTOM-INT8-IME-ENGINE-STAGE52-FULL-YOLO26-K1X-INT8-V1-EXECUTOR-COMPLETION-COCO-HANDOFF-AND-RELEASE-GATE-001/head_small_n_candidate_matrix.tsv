@@ -1,0 +1,6 @@
+route	output_channels	implementation	unused_channel_compute	exact	selected	status
+N4_reference	4	portable_scalar_direct	0	1	0	correctness_reference
+N4_IME_fallback	4	M12xN16_with_masked_store	12	1	1	functional_selected
+N8_reference	8	portable_scalar_direct	0	1	0	correctness_reference
+N8_IME_fallback	8	M12xN16_with_masked_store	8	1	1	functional_selected
+N16_IME	16	M12xN16	0	1	1	selected

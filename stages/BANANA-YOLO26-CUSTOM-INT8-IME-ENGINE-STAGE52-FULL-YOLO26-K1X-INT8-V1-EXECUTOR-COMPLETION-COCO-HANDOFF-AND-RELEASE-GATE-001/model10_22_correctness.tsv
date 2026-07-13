@@ -1,0 +1,6 @@
+surface	operations	integer_boundaries	fixtures	python_operator_oracle	host_scalar_vs_host_optimized	host_scalar_vs_board_scalar	host_scalar_vs_board_optimized	internal_float_fallback	status
+model10_through_model22	104	104	F0-F7	pass	pass	pass	pass	0	pass
+model10_attention	11	11	F0-F7	pass	pass	pass	pass	0	pass
+model22_attention	11	11	F0-F7	pass	pass	pass	pass	0	pass
+grouped_depthwise_attention_position_encoding	2	2	F0-F7	pass	pass	pass	pass	0	pass
+resize_branches	2	2	F0-F7	pass	pass	pass	pass	0	pass

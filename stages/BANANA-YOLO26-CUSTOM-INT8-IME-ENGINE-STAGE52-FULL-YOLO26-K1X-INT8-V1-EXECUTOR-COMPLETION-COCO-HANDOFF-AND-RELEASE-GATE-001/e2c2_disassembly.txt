@@ -1,0 +1,106 @@
+   107c6:	1d2000ef          	jal	10998 <y26::stage51::q62_vsmul_m63_i64x4_to_s8(long const*, long const*, long, signed char*)>
+   107ca:	1008                	addi	a0,sp,32
+   107cc:	212000ef          	jal	109de <y26::stage51::end_q62_vector_rne(y26::stage51::VectorFixedPointState*)>
+   107d0:	00855293          	srli	t0,a0,0x8
+   107d4:	0ff2f793          	zext.b	a5,t0
+   107d8:	84d2                	mv	s1,s4
+   107da:	cfe1                	beqz	a5,108b2 <main+0x1e2>
+   107dc:	0ff57313          	zext.b	t1,a0
+   107e0:	0c031963          	bnez	t1,108b2 <main+0x1e2>
+   107e4:	0ff00393          	li	t2,255
+   107e8:	0820                	addi	s0,sp,24
+   107ea:	02039c13          	slli	s8,t2,0x20
+   107ee:	4981                	li	s3,0
+   107f0:	895e                	mv	s2,s7
+   107f2:	03010c93          	addi	s9,sp,48
+   107f6:	0028                	addi	a0,sp,8
+   107f8:	cd717057          	vsetivli	zero,2,e32,mf2,ta,ma
+   107fc:	02056607          	vle32.v	v12,(a0)
+   10800:	00093803          	ld	a6,0(s2)
+   10804:	6088                	ld	a0,0(s1)
+   10806:	01610613          	addi	a2,sp,22
+   1080a:	102c                	addi	a1,sp,40
+   1080c:	fc62                	sd	s8,56(sp)
+   1080e:	00010b23          	sb	zero,22(sp)
+   10812:	020ce627          	vse32.v	v12,(s9)
+   10816:	f442                	sd	a6,40(sp)
+   10818:	3d6000ef          	jal	10bee <y26::int8_v1::requantize_u8(long, y26::int8_v1::RequantAsset const&, unsigned char*)>
+   1081c:	c139                	beqz	a0,10862 <main+0x192>
+   1081e:	01614503          	lbu	a0,22(sp)
+   10822:	00040d03          	lb	s10,0(s0)
+   10826:	5cc000ef          	jal	10df2 <y26::int8_v1::signed_storage(unsigned char)>
+   1082a:	02ad1e63          	bne	s10,a0,10866 <main+0x196>
+   1082e:	0985                	addi	s3,s3,1
+   10830:	0921                	addi	s2,s2,8
+   10832:	04a1                	addi	s1,s1,8
+   10834:	0405                	addi	s0,s0,1
+   10836:	fd5990e3          	bne	s3,s5,107f6 <main+0x126>
+   1083a:	020a0a13          	addi	s4,s4,32
+   1083e:	0310                	addi	a2,sp,384
+   10840:	f6ca15e3          	bne	s4,a2,107aa <main+0xda>
+   10844:	4501                	li	a0,0
+   10846:	645e                	ld	s0,464(sp)
+   10848:	60fe                	ld	ra,472(sp)
+   1084a:	6d1a                	ld	s10,384(sp)
+   1084c:	6cba                	ld	s9,392(sp)
+   1084e:	6c5a                	ld	s8,400(sp)
+   10850:	6bfa                	ld	s7,408(sp)
+   10852:	7b1a                	ld	s6,416(sp)
+   10854:	7aba                	ld	s5,424(sp)
+   10856:	7a5a                	ld	s4,432(sp)
+   10858:	79fa                	ld	s3,440(sp)
+   1085a:	691e                	ld	s2,448(sp)
+   1085c:	64be                	ld	s1,456(sp)
+   1085e:	613d                	addi	sp,sp,480
+   10860:	8082                	ret
+   10862:	450d                	li	a0,3
+   10864:	b7cd                	j	10846 <main+0x176>
+   10866:	6bcd                	lui	s7,0x13
+   10868:	030b8513          	addi	a0,s7,48 # 13030 <std::cerr@GLIBCXX_3.4>
+   1086c:	4659                	li	a2,22
+   1086e:	65c5                	lui	a1,0x11
+   10870:	ea858593          	addi	a1,a1,-344 # 10ea8 <_IO_stdin_used+0x8>
+   10874:	e4dff0ef          	jal	106c0 <std::basic_ostream<char, std::char_traits<char> >& std::__ostream_insert<char, std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*, long)@plt>
+   10878:	85ce                	mv	a1,s3
+   1087a:	030b8513          	addi	a0,s7,48
+   1087e:	e23ff0ef          	jal	106a0 <std::ostream& std::ostream::_M_insert<unsigned long>(unsigned long)@plt>
+   10882:	00053b03          	ld	s6,0(a0)
+   10886:	45a9                	li	a1,10
+   10888:	00b10ba3          	sb	a1,23(sp)
+   1088c:	fe8b3e03          	ld	t3,-24(s6)
+   10890:	01c50eb3          	add	t4,a0,t3
+   10894:	010ebf03          	ld	t5,16(t4)
+   10898:	000f0963          	beqz	t5,108aa <main+0x1da>
+   1089c:	4605                	li	a2,1
+   1089e:	01710593          	addi	a1,sp,23
+   108a2:	e1fff0ef          	jal	106c0 <std::basic_ostream<char, std::char_traits<char> >& std::__ostream_insert<char, std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*, long)@plt>
+   108a6:	4511                	li	a0,4
+   108a8:	bf79                	j	10846 <main+0x176>
+   108aa:	de7ff0ef          	jal	10690 <std::ostream::put(char)@plt>
+   108ae:	4511                	li	a0,4
+   108b0:	bf59                	j	10846 <main+0x176>
+   108b2:	4509                	li	a0,2
+   108b4:	bf49                	j	10846 <main+0x176>
+   108b6:	4505                	li	a0,1
+   108b8:	b779                	j	10846 <main+0x176>
+	...
+
+0000000000010998 <y26::stage51::q62_vsmul_m63_i64x4_to_s8(long const*, long const*, long, signed char*)>:
+   10998:	0ff00793          	li	a5,255
+   1099c:	f8000713          	li	a4,-128
+   109a0:	cd827057          	vsetivli	zero,4,e64,m1,ta,ma
+   109a4:	02057007          	vle64.v	v0,(a0)
+   109a8:	0205f087          	vle64.v	v1,(a1)
+   109ac:	9e008157          	vsmul.vv	v2,v0,v1
+   109b0:	02264157          	vadd.vx	v2,v2,a2
+   109b4:	1e204157          	vmax.vx	v2,v2,zero
+   109b8:	1627c157          	vmin.vx	v2,v2,a5
+   109bc:	02274157          	vadd.vx	v2,v2,a4
+   109c0:	cd727057          	vsetivli	zero,4,e32,mf2,ta,ma
+   109c4:	be203257          	vnclip.wi	v4,v2,0
+   109c8:	cce27057          	vsetivli	zero,4,e16,mf4,ta,ma
+   109cc:	be403357          	vnclip.wi	v6,v4,0
+   109d0:	cc527057          	vsetivli	zero,4,e8,mf8,ta,ma
+   109d4:	be603457          	vnclip.wi	v8,v6,0
+   109d8:	02068427          	vse8.v	v8,(a3)
+   109dc:	8082                	ret

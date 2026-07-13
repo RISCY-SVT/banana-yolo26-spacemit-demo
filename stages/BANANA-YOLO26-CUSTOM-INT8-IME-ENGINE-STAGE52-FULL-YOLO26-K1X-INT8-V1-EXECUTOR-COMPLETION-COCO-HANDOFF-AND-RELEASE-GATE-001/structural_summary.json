@@ -1,0 +1,22 @@
+{
+  "arena_bytes": 8192000,
+  "dense_conv_macs": 2665292800,
+  "e2c_compatible_dense_macs": 2665292800,
+  "e2c_dense_mac_pct": 100.0,
+  "integer_boundaries": 215,
+  "operation_kinds": {
+    "concat": 19,
+    "conv_dense": 94,
+    "conv_grouped": 8,
+    "input_quant": 1,
+    "lut1": 50,
+    "lut2": 20,
+    "matmul": 4,
+    "reshape": 2,
+    "reshape_split_transpose": 2,
+    "softmax_transpose": 2,
+    "split": 13
+  },
+  "operations": 215,
+  "profile_id": "K1X_INT8_V1_YOLO26N_640_FULL_GRAPH_001"
+}
