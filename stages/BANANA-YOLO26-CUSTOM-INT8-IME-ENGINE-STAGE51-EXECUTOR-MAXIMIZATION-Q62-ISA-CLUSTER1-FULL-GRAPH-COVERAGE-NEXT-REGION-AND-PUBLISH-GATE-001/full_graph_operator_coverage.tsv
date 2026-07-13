@@ -1,0 +1,16 @@
+operator_class	nodes	macs	coverage	evidence
+1x1_high_resolution	12	481689600	stable-selected	Stage51 model6 E2c full shape
+1x1_low_resolution	40	718643200	stable-selected	Stage51 low-resolution E2c rows
+3x3_stride1	31	564940800	stable-selected	Stage51 model6 E2c full shape
+3x3_stride2	7	869990400	stable-selected	Stage47 exact full-shape RGB stem
+grouped_or_depthwise_conv	8	13420800	unsupported	conservative fallback
+matmul_attention	4	61440000	unsupported	conservative fallback
+small_n_head_conv	4	30028800	unsupported	conservative fallback
+activation LUT	graph census	0	stable-selected	Stage51 explicit RVV
+Add	graph census	0	stable-selected	Stage51 exact 4-worker scalar
+Concat/view/rescale	graph census	0	stable-selected	Stage51 direct placement and measured fallback
+MaxPool/SPPF	graph census	0	stable-selected	Stage51 explicit RVV model9
+Resize	graph census	0	graph-covered	B120 conservative fallback
+Softmax	graph census	0	graph-covered	B120 conservative fallback
+TopK/Gather/head	graph census	0	graph-covered	B120 conservative fallback
+entry/final conversion	graph census	0	graph-covered	measured prior-stage adapters, conservative

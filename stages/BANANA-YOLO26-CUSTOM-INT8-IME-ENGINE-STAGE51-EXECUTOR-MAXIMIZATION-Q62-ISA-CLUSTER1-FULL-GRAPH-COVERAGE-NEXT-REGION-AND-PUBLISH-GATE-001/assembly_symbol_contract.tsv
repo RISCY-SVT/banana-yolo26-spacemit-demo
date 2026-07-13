@@ -1,0 +1,4 @@
+symbol_family	allowed_cpu_set	isa	state_contract
+stage48/49 vmadot kernels	CPU0-3	explicit smt.vmadot	no CPU4-7 dispatch
+stage51 q62 e2c	CPU0-3	RVV vsmul.e64	save/restore vcsr; vxsat checked
+cluster1 non-IME	CPU4-7	rv64gcv_zvfh	IME count zero

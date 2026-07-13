@@ -58,7 +58,7 @@ def apply_direct_concat_placement(builder: ScheduleBuilder) -> list[dict[str, An
     operations = builder.ops
     consumers: dict[int, list[int]] = {int(tensor["id"]): [] for tensor in tensors}
     for operation in operations:
-        for slot in range(3):
+        for slot in range(4):
             tensor_id = int(operation[f"input{slot}"])
             if tensor_id >= 0:
                 consumers[tensor_id].append(int(operation["index"]))
@@ -78,7 +78,7 @@ def apply_direct_concat_placement(builder: ScheduleBuilder) -> list[dict[str, An
         output_offset = int(output["arena_offset"])
         pixels = int(output["h"]) * int(output["w"])
         output_block = 0
-        for slot in range(3):
+        for slot in range(4):
             tensor_id = int(operation[f"input{slot}"])
             if tensor_id < 0:
                 continue

@@ -1,0 +1,17 @@
+fixture	route	boundaries	mismatches	status
+F0	scalar	39	0	exact
+F0	ime	39	0	exact
+F1	scalar	39	0	exact
+F1	ime	39	0	exact
+F2	scalar	39	0	exact
+F2	ime	39	0	exact
+F3	scalar	39	0	exact
+F3	ime	39	0	exact
+F4	scalar	39	0	exact
+F4	ime	39	0	exact
+F5	scalar	39	0	exact
+F5	ime	39	0	exact
+F6	scalar	39	0	exact
+F6	ime	39	0	exact
+F7	scalar	39	0	exact
+F7	ime	39	0	exact

@@ -427,6 +427,7 @@ class ScheduleBuilder:
             "input0": -1,
             "input1": -1,
             "input2": -1,
+            "input3": -1,
             "output0": -1,
             "output1": -1,
             "weights_file": "",
@@ -520,8 +521,26 @@ class ScheduleBuilder:
         self.add_op("add_silu", name, input0=lhs_id, input1=rhs_preact_id, output0=output_id)
 
     def add_concat(self, name: str, inputs: list[int], output_id: int) -> None:
-        padded = inputs + [-1] * (3 - len(inputs))
-        self.add_op("concat", name, input0=padded[0], input1=padded[1], input2=padded[2], output0=output_id)
+        if len(inputs) > 4:
+            raise ValueError("resident executor Concat supports at most four inputs")
+        padded = inputs + [-1] * (4 - len(inputs))
+        self.add_op(
+            "concat", name, input0=padded[0], input1=padded[1], input2=padded[2],
+            input3=padded[3], output0=output_id,
+        )
+
+    def add_maxpool(self, name: str, input_id: int, output_id: int) -> None:
+        node = self.index.nodes_by_name[name]
+        attrs = node_attributes(node)
+        kernel = attrs.get("kernel_shape", [1, 1])
+        strides = attrs.get("strides", [1, 1])
+        pads = attrs.get("pads", [0, 0, 0, 0])
+        self.add_op(
+            "maxpool", name, input0=input_id, output0=output_id,
+            kernel_h=int(kernel[0]), kernel_w=int(kernel[1]),
+            stride_h=int(strides[0]), stride_w=int(strides[1]),
+            pad_h=int(pads[0]), pad_w=int(pads[1]),
+        )
 
     def simple_conv_block(self, prefix: str, input_id: int, output_q_name: str) -> int:
         output_spec = self.index.qspec(output_q_name)
@@ -617,7 +636,7 @@ class ScheduleBuilder:
             tensor["first_op"] = -1 if tensor["id"] == 0 else len(self.ops)
             tensor["last_op"] = -1
         for op in self.ops:
-            for key in ("input0", "input1", "input2"):
+            for key in ("input0", "input1", "input2", "input3"):
                 tensor_id = int(op[key])
                 if tensor_id >= 0:
                     self.tensors[tensor_id]["last_op"] = max(self.tensors[tensor_id]["last_op"], op["index"])

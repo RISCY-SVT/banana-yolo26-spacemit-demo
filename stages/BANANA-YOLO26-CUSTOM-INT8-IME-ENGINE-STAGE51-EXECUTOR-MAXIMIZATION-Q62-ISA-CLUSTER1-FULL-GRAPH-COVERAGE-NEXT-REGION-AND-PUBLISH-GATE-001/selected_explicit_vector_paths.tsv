@@ -1,0 +1,5 @@
+path	implementation	instruction_evidence	correctness	selection
+Conv dot	explicit IME asm	named smt.vmadot	F0-F7 exact	selected CPU0-3
+Q62 epilogue	constrained RVV asm	vsmul.vv e64	ties/saturation/F0-F7 exact	E2c selected
+activation LUT	explicit RVV indexed load	indexed byte loads	exact	selected
+MaxPool 5x5	explicit RVV	vmaxu.vv	F0-F7 exact	next region selected

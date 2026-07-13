@@ -1,0 +1,8 @@
+arm	march	mcpu	parser	board	exact	selection
+U0	rv64gcv_zvfh	none	pass	pass	pass	selected
+U1	rv64gcv_zvfh_zba_zbb_zbs_zicond	none	pass	pass	pass	rejected-slower-scout
+U2	rv64gcv_zvfh_zba_zbb_zbs_zicond	spacemit-x60	pass	pass	pass	rejected-slower-scout
+U3	U0+zihintpause	none	pass	not-needed	not-applicable	not-global
+U4	U1+xsmtvdot	none	fail	not-run	not-applicable	retain-proven-asm
+U5	U0+zicbom+zicboz	none	pass	sidecar-only	not-applicable	not-selected
+U6	U0+zvl256b	none	pass	not-selected	pass-in-prior-stage	rejected-prior-regression

@@ -1,0 +1,2 @@
+scope	status	reason
+CPU0-3 cpu-wide	unavailable	perf CLI absent and no matching stage-local X60 perf source; per-worker helper retained

@@ -1,0 +1,270 @@
+14466-   1f060:	00063383          	ld	t2,0(a2)
+14467-   1f064:	0047ae03          	lw	t3,4(a5)
+14468-   1f068:	7f72                	ld	t5,312(sp)
+14469-   1f06a:	01b588b3          	add	a7,a1,s11
+14470-   1f06e:	007e0833          	add	a6,t3,t2
+14471-   1f072:	0504b423          	sd	a6,72(s1)
+14472-   1f076:	0008b403          	ld	s0,0(a7)
+14473-   1f07a:	01e58333          	add	t1,a1,t5
+14474-   1f07e:	478c                	lw	a1,8(a5)
+14475-   1f080:	00c7af83          	lw	t6,12(a5)
+14476-   1f084:	00858733          	add	a4,a1,s0
+14477-   1f088:	e8b8                	sd	a4,80(s1)
+14478-   1f08a:	00033783          	ld	a5,0(t1)
+14479-   1f08e:	00ff8eb3          	add	t4,t6,a5
+14480-   1f092:	05d4bc23          	sd	t4,88(s1)
+14481-   1f096:	a4af50ef          	jal	142e0 <std::chrono::_V2::steady_clock::now()@plt>
+14482-   1f09a:	75ca                	ld	a1,176(sp)
+14483-   1f09c:	842a                	mv	s0,a0
+14484-   1f09e:	752a                	ld	a0,168(sp)
+14485-   1f0a0:	8626                	mv	a2,s1
+14486:   1f0a2:	2eb0d0ef          	jal	2cb8c <y26::stage51::q62_vsmul_m63_i64x4(long const*, long const*, long*)>
+14487-   1f0a6:	a3af50ef          	jal	142e0 <std::chrono::_V2::steady_clock::now()@plt>
+14488-   1f0aa:	034ca283          	lw	t0,52(s9)
+14489-   1f0ae:	6094                	ld	a3,0(s1)
+14490-   1f0b0:	862a                	mv	a2,a0
+14491-   1f0b2:	4381                	li	t2,0
+14492-   1f0b4:	00d28533          	add	a0,t0,a3
+14493-   1f0b8:	00a05763          	blez	a0,1f0c6 <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x1cd2>
+14494-   1f0bc:	0ff00393          	li	t2,255
+14495-   1f0c0:	00ad4363          	blt	s10,a0,1f0c6 <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x1cd2>
+14496-   1f0c4:	83aa                	mv	t2,a0
+14497-   1f0c6:	0084be03          	ld	t3,8(s1)
+14498-   1f0ca:	4301                	li	t1,0
+14499-   1f0cc:	01c288b3          	add	a7,t0,t3
+14500-   1f0d0:	01105763          	blez	a7,1f0de <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x1cea>
+14501-   1f0d4:	0ff00313          	li	t1,255
+14502-   1f0d8:	011d4363          	blt	s10,a7,1f0de <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x1cea>
+14503-   1f0dc:	8346                	mv	t1,a7
+14504-   1f0de:	0104b803          	ld	a6,16(s1)
+14505-   1f0e2:	4f01                	li	t5,0
+14506-   1f0e4:	010285b3          	add	a1,t0,a6
+--
+14638-   1f290:	017808b3          	add	a7,a6,s7
+14639-   1f294:	00a70eb3          	add	t4,a4,a0
+14640-   1f298:	05d9b023          	sd	t4,64(s3)
+14641-   1f29c:	0008b283          	ld	t0,0(a7)
+14642-   1f2a0:	004fa603          	lw	a2,4(t6)
+14643-   1f2a4:	01b803b3          	add	t2,a6,s11
+14644-   1f2a8:	008fae03          	lw	t3,8(t6)
+14645-   1f2ac:	00560333          	add	t1,a2,t0
+14646-   1f2b0:	0469b423          	sd	t1,72(s3)
+14647-   1f2b4:	009806b3          	add	a3,a6,s1
+14648-   1f2b8:	0003b803          	ld	a6,0(t2)
+14649-   1f2bc:	00cfaf03          	lw	t5,12(t6)
+14650-   1f2c0:	752a                	ld	a0,168(sp)
+14651-   1f2c2:	010e05b3          	add	a1,t3,a6
+14652-   1f2c6:	04b9b823          	sd	a1,80(s3)
+14653-   1f2ca:	0006bf83          	ld	t6,0(a3)
+14654-   1f2ce:	75ca                	ld	a1,176(sp)
+14655-   1f2d0:	864e                	mv	a2,s3
+14656-   1f2d2:	01ff07b3          	add	a5,t5,t6
+14657-   1f2d6:	04f9bc23          	sd	a5,88(s3)
+14658:   1f2da:	0b30d0ef          	jal	2cb8c <y26::stage51::q62_vsmul_m63_i64x4(long const*, long const*, long*)>
+14659-   1f2de:	034ca283          	lw	t0,52(s9)
+14660-   1f2e2:	0009b503          	ld	a0,0(s3)
+14661-   1f2e6:	ff0108b7          	lui	a7,0xff010
+14662-   1f2ea:	fff88e93          	addi	t4,a7,-1 # ffffffffff00ffff <__global_pointer$+0xfffffffffefcb47f>
+14663-   1f2ee:	00a28633          	add	a2,t0,a0
+14664-   1f2f2:	7741                	lui	a4,0xffff0
+14665-   1f2f4:	0ff70393          	addi	t2,a4,255 # ffffffffffff00ff <__global_pointer$+0xfffffffffffab57f>
+14666-   1f2f8:	788e                	ld	a7,224(sp)
+14667-   1f2fa:	4801                	li	a6,0
+14668-   1f2fc:	00c05763          	blez	a2,1f30a <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x1f16>
+14669-   1f300:	0ff00813          	li	a6,255
+14670-   1f304:	00cd4363          	blt	s10,a2,1f30a <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x1f16>
+14671-   1f308:	8832                	mv	a6,a2
+14672-   1f30a:	0089b303          	ld	t1,8(s3)
+14673-   1f30e:	4681                	li	a3,0
+14674-   1f310:	00628e33          	add	t3,t0,t1
+14675-   1f314:	01c05763          	blez	t3,1f322 <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x1f2e>
+14676-   1f318:	0ff00693          	li	a3,255
+14677-   1f31c:	01cd4363          	blt	s10,t3,1f322 <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x1f2e>
+14678-   1f320:	86f2                	mv	a3,t3
+--
+15015-   1f7d8:	00de1eb3          	sll	t4,t3,a3
+15016-   1f7dc:	01585733          	srl	a4,a6,s5
+15017-   1f7e0:	00eee2b3          	or	t0,t4,a4
+15018-   1f7e4:	d22fe06f          	j	1dd06 <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x912>
+15019-   1f7e8:	68e6                	ld	a7,88(sp)
+15020-   1f7ea:	7722                	ld	a4,40(sp)
+15021-   1f7ec:	18012023          	sw	zero,384(sp)
+15022-   1f7f0:	03288e3b          	mulw	t3,a7,s2
+15023-   1f7f4:	18010223          	sb	zero,388(sp)
+15024-   1f7f8:	5b44                	lw	s1,52(a4)
+15025-   1f7fa:	4289                	li	t0,2
+15026-   1f7fc:	4b81                	li	s7,0
+15027-   1f7fe:	011e0ebb          	addw	t4,t3,a7
+15028-   1f802:	026e4f3b          	divw	t5,t3,t1
+15029-   1f806:	026ecfbb          	divw	t6,t4,t1
+15030-   1f80a:	e8fa                	sd	t5,80(sp)
+15031-   1f80c:	ecfe                	sd	t6,88(sp)
+15032-   1f80e:	00548463          	beq	s1,t0,1f816 <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x2422>
+15033-   1f812:	c6ffd06f          	j	1d480 <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x8c>
+15034-   1f816:	0308                	addi	a0,sp,384
+15035:   1f818:	34c0d0ef          	jal	2cb64 <y26::stage51::begin_q62_vector_rne(y26::stage51::VectorFixedPointState*)>
+15036-   1f81c:	c119                	beqz	a0,1f822 <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x242e>
+15037-   1f81e:	c63fd06f          	j	1d480 <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x8c>
+15038-   1f822:	ec4fe06f          	j	1dee6 <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0xaf2>
+15039-   1f826:	00081b63          	bnez	a6,1f83c <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x2448>
+15040-   1f82a:	000c0963          	beqz	s8,1f83c <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x2448>
+15041-   1f82e:	0fe00b93          	li	s7,254
+15042-   1f832:	018bf663          	bgeu	s7,s8,1f83e <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x244a>
+15043-   1f836:	0ff00c13          	li	s8,255
+15044-   1f83a:	b195                	j	1f49e <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x20aa>
+15045-   1f83c:	4c01                	li	s8,0
+15046-   1f83e:	018d87b3          	add	a5,s11,s8
+15047-   1f842:	00c78403          	lb	s0,12(a5)
+15048-   1f846:	4b85                	li	s7,1
+15049-   1f848:	0621                	addi	a2,a2,8
+15050-   1f84a:	fe860c23          	sb	s0,-8(a2)
+15051-   1f84e:	c77e92e3          	bne	t4,s7,1f4b2 <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x20be>
+15052-   1f852:	26013a03          	ld	s4,608(sp)
+15053-   1f856:	23013d03          	ld	s10,560(sp)
+15054-   1f85a:	a96fe06f          	j	1daf0 <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x6fc>
+15055-   1f85e:	af3f40ef          	jal	14350 <sched_getcpu@plt>
+15056-   1f862:	480d                	li	a6,3
+15057-   1f864:	00a85463          	bge	a6,a0,1f86c <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x2478>
+15058-   1f868:	e7cfe06f          	j	1dee4 <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0xaf0>
+15059-   1f86c:	00144393          	xori	t2,s0,1
+15060-   1f870:	0013949b          	slliw	s1,t2,0x1
+15061-   1f874:	e72fe06f          	j	1dee6 <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0xaf2>
+15062-   1f878:	00391993          	slli	s3,s2,0x3
+15063-   1f87c:	e4ce                	sd	s3,72(sp)
+15064-   1f87e:	e26fe06f          	j	1dea4 <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0xab0>
+15065-   1f882:	0308                	addi	a0,sp,384
+15066:   1f884:	31e0d0ef          	jal	2cba2 <y26::stage51::end_q62_vector_rne(y26::stage51::VectorFixedPointState*)>
+15067-   1f888:	89aa                	mv	s3,a0
+15068-   1f88a:	0089d493          	srli	s1,s3,0x8
+15069-   1f88e:	0ff4f413          	zext.b	s0,s1
+15070-   1f892:	e019                	bnez	s0,1f898 <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x24a4>
+15071-   1f894:	e44fe06f          	j	1ded8 <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0xae4>
+15072-   1f898:	0019c593          	xori	a1,s3,1
+15073-   1f89c:	0ff5f413          	zext.b	s0,a1
+15074-   1f8a0:	e38fe06f          	j	1ded8 <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0xae4>
+15075-   1f8a4:	012c0463          	beq	s8,s2,1f8ac <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x24b8>
+15076-   1f8a8:	bf3fe06f          	j	1e49a <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x10a6>
+15077-   1f8ac:	85d6                	mv	a1,s5
+15078-   1f8ae:	4a8130ef          	jal	32d56 <y26_stage48_load_vlseg2e64_4>
+15079-   1f8b2:	c4627057          	vsetivli	zero,4,e8,mf4,ta,mu
+15080-   1f8b6:	c13fe06f          	j	1e4c8 <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x10d4>
+15081-   1f8ba:	85d6                	mv	a1,s5
+15082-   1f8bc:	b27fd0ef          	jal	1d3e2 <y26_stage49_load_contiguous_c8x4>
+15083-   1f8c0:	c4627057          	vsetivli	zero,4,e8,mf4,ta,mu
+15084-   1f8c4:	c05fe06f          	j	1e4c8 <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x10d4>
+15085-   1f8c8:	6b42                	ld	s6,16(sp)
+15086-   1f8ca:	e066                	sd	s9,0(sp)
+--
+31271-   2cb22:	000ac603          	lbu	a2,0(s5)
+31272-   2cb26:	00c98023          	sb	a2,0(s3)
+31273-   2cb2a:	bd5d                	j	2c9e0 <std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_replace(unsigned long, unsigned long, char const*, unsigned long)+0x92>
+31274-   2cb2c:	000a4c83          	lbu	s9,0(s4)
+31275-   2cb30:	01958023          	sb	s9,0(a1)
+31276-   2cb34:	bf85                	j	2caa4 <std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_replace(unsigned long, unsigned long, char const*, unsigned long)+0x156>
+31277-   2cb36:	000ecf03          	lbu	t5,0(t4)
+31278-   2cb3a:	01e50023          	sb	t5,0(a0)
+31279-   2cb3e:	bf15                	j	2ca72 <std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_replace(unsigned long, unsigned long, char const*, unsigned long)+0x124>
+31280-   2cb40:	000ac383          	lbu	t2,0(s5)
+31281-   2cb44:	00730023          	sb	t2,0(t1)
+31282-   2cb48:	bf99                	j	2ca9e <std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_replace(unsigned long, unsigned long, char const*, unsigned long)+0x150>
+31283-   2cb4a:	0003bf37          	lui	t5,0x3b
+31284-   2cb4e:	288f0513          	addi	a0,t5,648 # 3b288 <_IO_stdin_used+0xb8>
+31285-   2cb52:	e466                	sd	s9,8(sp)
+31286-   2cb54:	ccce70ef          	jal	14020 <std::__throw_length_error(char const*)@plt>
+31287-   2cb58:	0003c437          	lui	s0,0x3c
+31288-   2cb5c:	e3840513          	addi	a0,s0,-456 # 3be38 <_IO_stdin_used+0xc68>
+31289-   2cb60:	cc0e70ef          	jal	14020 <std::__throw_length_error(char const*)@plt>
+31290-
+31291:000000000002cb64 <y26::stage51::begin_q62_vector_rne(y26::stage51::VectorFixedPointState*)>:
+31292-   2cb64:	87aa                	mv	a5,a0
+31293:   2cb66:	c10d                	beqz	a0,2cb88 <y26::stage51::begin_q62_vector_rne(y26::stage51::VectorFixedPointState*)+0x24>
+31294-   2cb68:	00454703          	lbu	a4,4(a0)
+31295-   2cb6c:	4501                	li	a0,0
+31296:   2cb6e:	ef11                	bnez	a4,2cb8a <y26::stage51::begin_q62_vector_rne(y26::stage51::VectorFixedPointState*)+0x26>
+31297-   2cb70:	00f022f3          	csrr	t0,vcsr
+31298-   2cb74:	00f15073          	csrwi	vcsr,2
+31299-   2cb78:	4505                	li	a0,1
+31300-   2cb7a:	0072f313          	andi	t1,t0,7
+31301-   2cb7e:	0067a023          	sw	t1,0(a5)
+31302-   2cb82:	00a78223          	sb	a0,4(a5)
+31303-   2cb86:	8082                	ret
+31304-   2cb88:	4501                	li	a0,0
+31305-   2cb8a:	8082                	ret
+31306-
+31307:000000000002cb8c <y26::stage51::q62_vsmul_m63_i64x4(long const*, long const*, long*)>:
+31308-   2cb8c:	cd827057          	vsetivli	zero,4,e64,m1,ta,ma
+31309-   2cb90:	02057007          	vle64.v	v0,(a0)
+31310-   2cb94:	0205f087          	vle64.v	v1,(a1)
+31311:   2cb98:	9e008157          	vsmul.vv	v2,v0,v1
+31312-   2cb9c:	02067127          	vse64.v	v2,(a2)
+31313-   2cba0:	8082                	ret
+31314-
+31315:000000000002cba2 <y26::stage51::end_q62_vector_rne(y26::stage51::VectorFixedPointState*)>:
+31316:   2cba2:	c501                	beqz	a0,2cbaa <y26::stage51::end_q62_vector_rne(y26::stage51::VectorFixedPointState*)+0x8>
+31317-   2cba4:	00454783          	lbu	a5,4(a0)
+31318:   2cba8:	eb91                	bnez	a5,2cbbc <y26::stage51::end_q62_vector_rne(y26::stage51::VectorFixedPointState*)+0x1a>
+31319-   2cbaa:	4601                	li	a2,0
+31320-   2cbac:	4581                	li	a1,0
+31321-   2cbae:	0085981b          	slliw	a6,a1,0x8
+31322-   2cbb2:	0ff67893          	zext.b	a7,a2
+31323-   2cbb6:	0108e533          	or	a0,a7,a6
+31324-   2cbba:	8082                	ret
+31325-   2cbbc:	00052283          	lw	t0,0(a0)
+31326-   2cbc0:	00902373          	csrr	t1,vxsat
+31327-   2cbc4:	00f29073          	csrw	vcsr,t0
+31328-   2cbc8:	00f026f3          	csrr	a3,vcsr
+31329-   2cbcc:	4118                	lw	a4,0(a0)
+31330-   2cbce:	0076f393          	andi	t2,a3,7
+31331-   2cbd2:	00050223          	sb	zero,4(a0)
+31332-   2cbd6:	40770533          	sub	a0,a4,t2
+31333-   2cbda:	00153593          	seqz	a1,a0
+31334-   2cbde:	00137613          	andi	a2,t1,1
+31335-   2cbe2:	0085981b          	slliw	a6,a1,0x8
+31336-   2cbe6:	0ff67893          	zext.b	a7,a2
+31337-   2cbea:	0108e533          	or	a0,a7,a6
+31338-   2cbee:	8082                	ret
+31339-
+31340:000000000002cbf0 <y26::stage51::q62_vsmul_m63_i64x4_guarded(long const*, long const*, long*, y26::stage51::VectorFixedPointResult*)>:
+31341:   2cbf0:	cd39                	beqz	a0,2cc4e <y26::stage51::q62_vsmul_m63_i64x4_guarded(long const*, long const*, long*, y26::stage51::VectorFixedPointResult*)+0x5e>
+31342:   2cbf2:	cdb1                	beqz	a1,2cc4e <y26::stage51::q62_vsmul_m63_i64x4_guarded(long const*, long const*, long*, y26::stage51::VectorFixedPointResult*)+0x5e>
+31343:   2cbf4:	ce29                	beqz	a2,2cc4e <y26::stage51::q62_vsmul_m63_i64x4_guarded(long const*, long const*, long*, y26::stage51::VectorFixedPointResult*)+0x5e>
+31344:   2cbf6:	cea1                	beqz	a3,2cc4e <y26::stage51::q62_vsmul_m63_i64x4_guarded(long const*, long const*, long*, y26::stage51::VectorFixedPointResult*)+0x5e>
+31345-   2cbf8:	00f02773          	csrr	a4,vcsr
+31346-   2cbfc:	00f15073          	csrwi	vcsr,2
+31347-   2cc00:	00777293          	andi	t0,a4,7
+31348-   2cc04:	cd827057          	vsetivli	zero,4,e64,m1,ta,ma
+31349-   2cc08:	02057007          	vle64.v	v0,(a0)
+31350-   2cc0c:	0205f087          	vle64.v	v1,(a1)
+31351:   2cc10:	9e008157          	vsmul.vv	v2,v0,v1
+31352-   2cc14:	02067127          	vse64.v	v2,(a2)
+31353-   2cc18:	00902673          	csrr	a2,vxsat
+31354-   2cc1c:	00f29073          	csrw	vcsr,t0
+31355-   2cc20:	00f027f3          	csrr	a5,vcsr
+31356-   2cc24:	0077f313          	andi	t1,a5,7
+31357-   2cc28:	405303b3          	sub	t2,t1,t0
+31358-   2cc2c:	0013b513          	seqz	a0,t2
+31359-   2cc30:	00167593          	andi	a1,a2,1
+31360-   2cc34:	00a680a3          	sb	a0,1(a3)
+31361-   2cc38:	00157813          	andi	a6,a0,1
+31362-   2cc3c:	00b68023          	sb	a1,0(a3)
+31363:   2cc40:	00080763          	beqz	a6,2cc4e <y26::stage51::q62_vsmul_m63_i64x4_guarded(long const*, long const*, long*, y26::stage51::VectorFixedPointResult*)+0x5e>
+31364-   2cc44:	0ff5f693          	zext.b	a3,a1
+31365-   2cc48:	0016c513          	xori	a0,a3,1
+31366-   2cc4c:	8082                	ret
+31367-   2cc4e:	4501                	li	a0,0
+31368-   2cc50:	8082                	ret
+31369-
+31370-000000000002cc52 <y26::int8_v1::valid_requant_asset(y26::int8_v1::RequantAsset const&)>:
+31371-   2cc52:	6118                	ld	a4,0(a0)
+31372-   2cc54:	87aa                	mv	a5,a0
+31373-   2cc56:	02074b63          	bltz	a4,2cc8c <y26::int8_v1::valid_requant_asset(y26::int8_v1::RequantAsset const&)+0x3a>
+31374-   2cc5a:	4514                	lw	a3,8(a0)
+31375-   2cc5c:	07e00293          	li	t0,126
+31376-   2cc60:	4501                	li	a0,0
+31377-   2cc62:	02d2e663          	bltu	t0,a3,2cc8e <y26::int8_v1::valid_requant_asset(y26::int8_v1::RequantAsset const&)+0x3c>
+31378-   2cc66:	00c7a303          	lw	t1,12(a5)
+31379-   2cc6a:	0ff00393          	li	t2,255
+31380-   2cc6e:	0263e063          	bltu	t2,t1,2cc8e <y26::int8_v1::valid_requant_asset(y26::int8_v1::RequantAsset const&)+0x3c>
+31381-   2cc72:	4b8c                	lw	a1,16(a5)
+31382-   2cc74:	0005cd63          	bltz	a1,2cc8e <y26::int8_v1::valid_requant_asset(y26::int8_v1::RequantAsset const&)+0x3c>
+31383-   2cc78:	4bc8                	lw	a0,20(a5)

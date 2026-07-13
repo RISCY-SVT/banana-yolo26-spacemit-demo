@@ -3,6 +3,7 @@
 #include "y26_k1x_conv_kernels.h"
 #include "y26_k1x_int8_v1.h"
 #include "y26_k1x_package.h"
+#include "y26_k1x_stage51_q62.h"
 
 #include <algorithm>
 #include <array>
@@ -23,11 +24,16 @@
 #include <utility>
 #include <vector>
 
+#if defined(__riscv_vector)
+#include <riscv_vector.h>
+#endif
+
 #if defined(__linux__)
 #include <linux/perf_event.h>
 #include <pthread.h>
 #include <sched.h>
 #include <sys/ioctl.h>
+#include <sys/mman.h>
 #include <sys/syscall.h>
 #include <unistd.h>
 #endif
@@ -126,6 +132,10 @@ int integer(const Row& row, const char* name) {
     return static_cast<int>(value);
 }
 
+int optional_integer(const Row& row, const char* name, int fallback) {
+    return row.contains(name) ? integer(row, name) : fallback;
+}
+
 std::size_t size_value(const Row& row, const char* name) {
     const auto value = parse_i64(field(row, name), name);
     if (value < 0 || static_cast<std::uint64_t>(value) > std::numeric_limits<std::size_t>::max()) {
@@ -192,22 +202,30 @@ struct ConvAsset {
     std::vector<std::int32_t> weight_sums;
     std::vector<std::int32_t> bias;
     std::vector<std::int64_t> multiplier;
+    std::vector<std::int64_t> multiplier_m63;
     std::vector<std::int32_t> shift;
     std::vector<std::int64_t> corrected_bias;
     std::array<Segment, 2> segments;
     int segment_count = 0;
+    bool vsmul_q62_compatible = false;
 };
 
 struct Operation {
     int index = -1;
     std::string kind;
     std::string name;
-    std::array<int, 3> inputs {-1, -1, -1};
+    std::array<int, 4> inputs {-1, -1, -1, -1};
     std::array<int, 2> outputs {-1, -1};
     ConvAsset conv;
+    int pool_kernel_h = 0;
+    int pool_kernel_w = 0;
+    int pool_stride_h = 0;
+    int pool_stride_w = 0;
+    int pool_pad_h = 0;
+    int pool_pad_w = 0;
     std::array<std::int8_t, 256> lut {};
     std::vector<std::int8_t> add_lut;
-    std::array<std::array<std::int8_t, 256>, 3> concat_lut {};
+    std::array<std::array<std::int8_t, 256>, 4> concat_lut {};
 };
 
 struct WorkerScratch {
@@ -280,8 +298,8 @@ class WorkerPool {
 public:
     using Job = void (*)(void*, int, WorkerScratch&);
 
-    WorkerPool(int requested, std::size_t panel_bytes)
-        : count_(std::clamp(requested, 1, kMaximumWorkers)) {
+    WorkerPool(int requested, std::size_t panel_bytes, int cpu_base)
+        : count_(std::clamp(requested, 1, kMaximumWorkers)), cpu_base_(cpu_base) {
         scratch_.resize(static_cast<std::size_t>(count_));
         for (WorkerScratch& scratch : scratch_) scratch.a_panel.resize(panel_bytes);
         threads_.reserve(static_cast<std::size_t>(count_));
@@ -314,7 +332,10 @@ public:
 
     bool affinity_ok() const noexcept {
         for (const WorkerScratch& scratch : scratch_) {
-            if (!scratch.affinity_set || scratch.observed_cpu < 0 || scratch.observed_cpu > 3) return false;
+            if (!scratch.affinity_set || scratch.observed_cpu < cpu_base_ ||
+                scratch.observed_cpu >= cpu_base_ + count_) {
+                return false;
+            }
         }
         return true;
     }
@@ -373,7 +394,7 @@ public:
 private:
     void worker_loop(int index) {
         WorkerScratch& scratch = scratch_[static_cast<std::size_t>(index)];
-        scratch.affinity_set = pin_current_thread(index);
+        scratch.affinity_set = pin_current_thread(cpu_base_ + index);
         scratch.observed_cpu = current_cpu();
         {
             std::lock_guard lock(mutex_);
@@ -450,6 +471,7 @@ private:
     }
 
     int count_ = 0;
+    int cpu_base_ = 0;
     std::vector<std::thread> threads_;
     std::vector<WorkerScratch> scratch_;
     std::mutex mutex_;
@@ -710,6 +732,43 @@ __attribute__((always_inline)) inline std::uint8_t requant_prevalidated(
     return static_cast<std::uint8_t>(shifted);
 }
 
+__attribute__((always_inline)) inline std::int64_t round_q62_prevalidated(
+    std::int64_t accumulator, std::int64_t multiplier, int right_shift) noexcept {
+    __extension__ using Signed128 = __int128;
+    __extension__ using Unsigned128 = unsigned __int128;
+    const Signed128 product = static_cast<Signed128>(accumulator) * static_cast<Signed128>(multiplier);
+    const bool negative = product < 0;
+    const Unsigned128 bits = static_cast<Unsigned128>(product);
+    const Unsigned128 absolute = negative ? (~bits) + 1U : bits;
+    Unsigned128 quotient = absolute;
+    if (right_shift != 0) {
+        quotient = absolute >> right_shift;
+        const Unsigned128 mask = (static_cast<Unsigned128>(1) << right_shift) - 1U;
+        const Unsigned128 remainder = absolute & mask;
+        const Unsigned128 half = static_cast<Unsigned128>(1) << (right_shift - 1);
+        if (remainder > half || (remainder == half && (quotient & 1U) != 0)) ++quotient;
+    }
+    const auto rounded = static_cast<std::int64_t>(quotient);
+    return negative ? -rounded : rounded;
+}
+
+__attribute__((always_inline)) inline std::uint8_t clamp_code(
+    std::int64_t rounded, int output_zero_point) noexcept {
+    const std::int64_t shifted = rounded + output_zero_point;
+    if (shifted <= 0) return 0;
+    if (shifted >= 255) return 255;
+    return static_cast<std::uint8_t>(shifted);
+}
+
+struct EpilogueProfile {
+    double extract_us = 0.0;
+    double bias_us = 0.0;
+    double multiply_rne_us = 0.0;
+    double clamp_us = 0.0;
+    double lut_us = 0.0;
+    double store_us = 0.0;
+};
+
 struct ConvRunContext {
     const ConvAsset* conv = nullptr;
     WorkerPool* pool = nullptr;
@@ -721,6 +780,7 @@ struct ConvRunContext {
     std::array<double, kMaximumWorkers> delivery_us {};
     std::array<double, kMaximumWorkers> kernel_us {};
     std::array<double, kMaximumWorkers> epilogue_us {};
+    std::array<EpilogueProfile, kMaximumWorkers> epilogue_profile {};
 };
 
 const Segment* find_segment(const ConvAsset& conv, int output_channel) noexcept {
@@ -734,7 +794,8 @@ const Segment* find_segment(const ConvAsset& conv, int output_channel) noexcept 
 
 void store_tile(const ConvAsset& conv, const std::array<std::int8_t*, 2>& outputs,
                 const std::int32_t* accumulators, int rows, int valid_rows,
-                int m_begin, int n_begin, EpilogueStrategy epilogue) {
+                int m_begin, int n_begin, EpilogueStrategy epilogue,
+                EpilogueProfile* profile) {
     const int row_groups = rows / 4;
     const std::int64_t correction = 128 - static_cast<std::int64_t>(conv.input_zero_point);
     if (epilogue == EpilogueStrategy::inline_scalar) {
@@ -755,15 +816,102 @@ void store_tile(const ConvAsset& conv, const std::array<std::int8_t*, 2>& output
             const int output_group = output_lane / 4;
             const int output_inner = output_lane % 4;
             for (int row = 0; row < valid_rows; ++row) {
+                if (profile == nullptr) {
+                    const int row_group = row / 4;
+                    const int row_inner = row % 4;
+                    const std::int32_t raw = accumulators[
+                        (output_group * row_groups + row_group) * 16 + row_inner * 4 + output_inner];
+                    const std::uint8_t conv_code = requant_prevalidated(
+                        static_cast<std::int64_t>(raw) + corrected_bias, multiplier, shift,
+                        conv.conv_output_zero_point);
+                    output[channel_base + static_cast<std::size_t>(m_begin + row) * 8U + channel_inner] =
+                        segment->lut[conv_code];
+                    continue;
+                }
+                auto begin = Clock::now();
                 const int row_group = row / 4;
                 const int row_inner = row % 4;
                 const std::int32_t raw = accumulators[
                     (output_group * row_groups + row_group) * 16 + row_inner * 4 + output_inner];
-                const std::uint8_t conv_code = requant_prevalidated(
-                    static_cast<std::int64_t>(raw) + corrected_bias, multiplier, shift,
-                    conv.conv_output_zero_point);
-                output[channel_base + static_cast<std::size_t>(m_begin + row) * 8U + channel_inner] =
-                    segment->lut[conv_code];
+                auto end = Clock::now();
+                profile->extract_us += elapsed_us(begin, end);
+                begin = end;
+                const std::int64_t corrected = static_cast<std::int64_t>(raw) + corrected_bias;
+                end = Clock::now();
+                profile->bias_us += elapsed_us(begin, end);
+                begin = end;
+                const std::int64_t rounded = round_q62_prevalidated(corrected, multiplier, shift);
+                end = Clock::now();
+                profile->multiply_rne_us += elapsed_us(begin, end);
+                begin = end;
+                const std::uint8_t conv_code = clamp_code(rounded, conv.conv_output_zero_point);
+                end = Clock::now();
+                profile->clamp_us += elapsed_us(begin, end);
+                begin = end;
+                const std::int8_t activated = segment->lut[conv_code];
+                end = Clock::now();
+                profile->lut_us += elapsed_us(begin, end);
+                begin = end;
+                output[channel_base + static_cast<std::size_t>(m_begin + row) * 8U + channel_inner] = activated;
+                profile->store_us += elapsed_us(begin, Clock::now());
+            }
+        }
+        return;
+    }
+    if (epilogue == EpilogueStrategy::rvv_q62) {
+        const int output_m = conv.output_h * conv.output_w;
+        for (int output_group = 0; output_group < 4; ++output_group) {
+            const int output_channel = n_begin + output_group * 4;
+            const Segment* segment = find_segment(conv, output_channel);
+            if (segment == nullptr) continue;
+            const int segment_channel = output_channel - segment->channel_begin;
+            const int segment_index = segment == &conv.segments[0] ? 0 : 1;
+            std::int8_t* output = outputs[static_cast<std::size_t>(segment_index)];
+            const std::size_t channel_base = static_cast<std::size_t>(segment_channel / 8) * output_m * 8U;
+            const std::size_t channel_inner = static_cast<std::size_t>(segment_channel % 8);
+            alignas(32) std::array<std::int64_t, 4> corrected {};
+            alignas(32) std::array<std::int64_t, 4> multiplier_m63 {};
+            alignas(32) std::array<std::int64_t, 4> rounded {};
+            for (int lane = 0; lane < 4; ++lane) {
+                multiplier_m63[static_cast<std::size_t>(lane)] =
+                    conv.multiplier_m63[static_cast<std::size_t>(output_channel + lane)];
+            }
+            for (int row = 0; row < valid_rows; ++row) {
+                const auto extract_begin = profile != nullptr ? Clock::now() : Clock::time_point {};
+                const int row_group = row / 4;
+                const int row_inner = row % 4;
+                const std::int32_t* raw = accumulators +
+                    (output_group * row_groups + row_group) * 16 + row_inner * 4;
+                const auto extract_end = profile != nullptr ? Clock::now() : Clock::time_point {};
+                for (int lane = 0; lane < 4; ++lane) {
+                    corrected[static_cast<std::size_t>(lane)] = static_cast<std::int64_t>(raw[lane]) +
+                        conv.corrected_bias[static_cast<std::size_t>(output_channel + lane)];
+                }
+                const auto bias_end = profile != nullptr ? Clock::now() : Clock::time_point {};
+                stage51::q62_vsmul_m63_i64x4(corrected.data(), multiplier_m63.data(), rounded.data());
+                const auto multiply_end = profile != nullptr ? Clock::now() : Clock::time_point {};
+                std::array<std::uint8_t, 4> codes {};
+                for (int lane = 0; lane < 4; ++lane) {
+                    codes[static_cast<std::size_t>(lane)] = clamp_code(
+                        rounded[static_cast<std::size_t>(lane)], conv.conv_output_zero_point);
+                }
+                const auto clamp_end = profile != nullptr ? Clock::now() : Clock::time_point {};
+                std::array<std::int8_t, 4> activated {};
+                for (int lane = 0; lane < 4; ++lane) {
+                    activated[static_cast<std::size_t>(lane)] = segment->lut[codes[static_cast<std::size_t>(lane)]];
+                }
+                const auto lut_end = profile != nullptr ? Clock::now() : Clock::time_point {};
+                std::memcpy(output + channel_base + static_cast<std::size_t>(m_begin + row) * 8U + channel_inner,
+                            activated.data(), activated.size());
+                if (profile != nullptr) {
+                    const auto store_end = Clock::now();
+                    profile->extract_us += elapsed_us(extract_begin, extract_end);
+                    profile->bias_us += elapsed_us(extract_end, bias_end);
+                    profile->multiply_rne_us += elapsed_us(bias_end, multiply_end);
+                    profile->clamp_us += elapsed_us(multiply_end, clamp_end);
+                    profile->lut_us += elapsed_us(clamp_end, lut_end);
+                    profile->store_us += elapsed_us(lut_end, store_end);
+                }
             }
         }
         return;
@@ -817,6 +965,12 @@ void run_conv_worker(void* opaque, int worker_index, WorkerScratch& scratch) {
         n_begin = conv.n_blocks * worker_index / context.options.workers;
         n_end = conv.n_blocks * (worker_index + 1) / context.options.workers;
     }
+    stage51::VectorFixedPointState vector_state;
+    if (context.options.epilogue == EpilogueStrategy::rvv_q62 &&
+        !stage51::begin_q62_vector_rne(&vector_state)) {
+        context.status[static_cast<std::size_t>(worker_index)] = Y26_CONV_STATUS_RUNTIME_SAFETY_FAILED;
+        return;
+    }
     const auto worker_begin = Clock::now();
     for (int tile = tile_begin; tile < tile_end; ++tile) {
         const int m_begin = tile * rows;
@@ -838,22 +992,31 @@ void run_conv_worker(void* opaque, int worker_index, WorkerScratch& scratch) {
             }
             const auto epilogue_begin = context.options.profile_phases ? Clock::now() : worker_begin;
             store_tile(conv, context.outputs, scratch.c_tile.data(), rows, valid_rows,
-                       m_begin, n_block * kNBlock, context.options.epilogue);
+                       m_begin, n_block * kNBlock, context.options.epilogue,
+                       context.options.profile_phases
+                           ? &context.epilogue_profile[static_cast<std::size_t>(worker_index)] : nullptr);
             if (context.options.profile_phases) {
                 context.epilogue_us[static_cast<std::size_t>(worker_index)] += elapsed_us(epilogue_begin, Clock::now());
             }
         }
     }
     context.total_us[static_cast<std::size_t>(worker_index)] = elapsed_us(worker_begin, Clock::now());
-    context.status[static_cast<std::size_t>(worker_index)] = current_cpu() >= 0 && current_cpu() <= 3
-        ? Y26_CONV_STATUS_SUCCESS : Y26_CONV_STATUS_RUNTIME_SAFETY_FAILED;
+    bool vector_ok = true;
+    if (context.options.epilogue == EpilogueStrategy::rvv_q62) {
+        const auto result = stage51::end_q62_vector_rne(&vector_state);
+        vector_ok = result.restored && !result.saturated;
+    }
+    context.status[static_cast<std::size_t>(worker_index)] =
+        current_cpu() >= 0 && current_cpu() <= 3 && vector_ok
+            ? Y26_CONV_STATUS_SUCCESS : Y26_CONV_STATUS_RUNTIME_SAFETY_FAILED;
 }
 
 int run_conv(WorkerPool& pool, const ConvAsset& conv, const std::int8_t* input,
              const std::array<std::int8_t*, 2>& outputs, const RunOptions& options,
              OperationTiming* timing, double* min_worker, double* max_worker) {
     if (input == nullptr || outputs[0] == nullptr || options.workers < 1 ||
-        options.workers > pool.capacity() || options.epilogue == EpilogueStrategy::rvv_q62) {
+        options.workers > pool.capacity() ||
+        (options.epilogue == EpilogueStrategy::rvv_q62 && !conv.vsmul_q62_compatible)) {
         return Y26_CONV_STATUS_INVALID_ARGUMENT;
     }
     for (int segment = 0; segment < conv.segment_count; ++segment) {
@@ -885,6 +1048,13 @@ int run_conv(WorkerPool& pool, const ConvAsset& conv, const std::int8_t* input,
             timing->delivery_worker_sum_us += context.delivery_us[static_cast<std::size_t>(worker)];
             timing->vmadot_worker_sum_us += context.kernel_us[static_cast<std::size_t>(worker)];
             timing->epilogue_worker_sum_us += context.epilogue_us[static_cast<std::size_t>(worker)];
+            const auto& phases = context.epilogue_profile[static_cast<std::size_t>(worker)];
+            timing->epilogue_extract_worker_sum_us += phases.extract_us;
+            timing->epilogue_bias_worker_sum_us += phases.bias_us;
+            timing->epilogue_multiply_rne_worker_sum_us += phases.multiply_rne_us;
+            timing->epilogue_clamp_worker_sum_us += phases.clamp_us;
+            timing->epilogue_lut_worker_sum_us += phases.lut_us;
+            timing->epilogue_store_worker_sum_us += phases.store_us;
         }
     }
     if (min_worker != nullptr && max_worker != nullptr) {
@@ -904,6 +1074,7 @@ struct PersistentSlice::Impl {
     std::vector<std::int8_t> arena;
     std::vector<std::vector<std::int8_t>> captured_tensors;
     std::unique_ptr<WorkerPool> pool;
+    std::unique_ptr<WorkerPool> cluster1_pool;
     std::size_t total_packed_weight_bytes = 0;
     int model4_preact_id = 0;
     int model4_postact_id = 1;
@@ -978,6 +1149,8 @@ void validate_conv(ConvAsset& conv) {
         throw std::runtime_error("recomputed accumulator bound mismatch or unsafe Conv");
     }
     conv.corrected_bias.resize(static_cast<std::size_t>(conv.output_c));
+    conv.multiplier_m63.resize(static_cast<std::size_t>(conv.output_c));
+    conv.vsmul_q62_compatible = true;
     const std::int64_t correction = 128 - static_cast<std::int64_t>(conv.input_zero_point);
     for (int channel = 0; channel < conv.output_c; ++channel) {
         if (conv.multiplier[static_cast<std::size_t>(channel)] < 0 ||
@@ -987,6 +1160,14 @@ void validate_conv(ConvAsset& conv) {
         }
         conv.corrected_bias[static_cast<std::size_t>(channel)] = conv.bias[static_cast<std::size_t>(channel)] +
             correction * conv.weight_sums[static_cast<std::size_t>(channel)];
+        const std::int64_t multiplier = conv.multiplier[static_cast<std::size_t>(channel)];
+        if (conv.shift[static_cast<std::size_t>(channel)] != 62 || multiplier <= 0 ||
+            multiplier > std::numeric_limits<std::int64_t>::max() / 2) {
+            conv.vsmul_q62_compatible = false;
+            conv.multiplier_m63[static_cast<std::size_t>(channel)] = 0;
+        } else {
+            conv.multiplier_m63[static_cast<std::size_t>(channel)] = multiplier * 2;
+        }
     }
 }
 
@@ -1033,6 +1214,23 @@ struct LutRunContext {
     NonConvStrategy strategy = NonConvStrategy::parallel_scalar;
 };
 
+WorkerPool& nonconv_pool(PersistentSlice::Impl& executor, const RunOptions& options) {
+    if (options.nonconv == NonConvStrategy::cluster1_explicit_rvv) {
+        if (!executor.cluster1_pool) throw std::runtime_error("cluster1 pool is unavailable");
+        return *executor.cluster1_pool;
+    }
+    return *executor.pool;
+}
+
+int nonconv_workers(const WorkerPool& pool, const RunOptions& options) noexcept {
+    return std::min(options.workers, pool.capacity());
+}
+
+NonConvStrategy local_nonconv_strategy(NonConvStrategy strategy) noexcept {
+    return strategy == NonConvStrategy::cluster1_explicit_rvv
+        ? NonConvStrategy::explicit_rvv_lut : strategy;
+}
+
 void run_lut_worker(void* opaque, int worker_index, WorkerScratch&) {
     auto& context = *static_cast<LutRunContext*>(opaque);
     const std::size_t begin = context.bytes * static_cast<std::size_t>(worker_index) /
@@ -1065,9 +1263,11 @@ void run_lut(PersistentSlice::Impl& executor, const Operation& operation,
         }
         return;
     }
+    WorkerPool& pool = nonconv_pool(executor, options);
+    const int workers = nonconv_workers(pool, options);
     LutRunContext context {source, destination, operation.lut.data(), output.bytes,
-                           options.workers, options.nonconv};
-    executor.pool->dispatch(options.workers, run_lut_worker, &context, options.scheduler);
+                           workers, local_nonconv_strategy(options.nonconv)};
+    pool.dispatch(workers, run_lut_worker, &context, options.scheduler);
 }
 
 struct AddRunContext {
@@ -1115,9 +1315,11 @@ void run_add(PersistentSlice::Impl& executor, const Operation& operation,
         }
         return;
     }
+    WorkerPool& pool = nonconv_pool(executor, options);
+    const int workers = nonconv_workers(pool, options);
     AddRunContext context {left, right, destination, operation.add_lut.data(), output.bytes,
-                           options.workers};
-    executor.pool->dispatch(options.workers, run_add_worker, &context, options.scheduler);
+                           workers};
+    pool.dispatch(workers, run_add_worker, &context, options.scheduler);
 }
 
 struct ConcatRunContext {
@@ -1176,14 +1378,119 @@ void run_concat(PersistentSlice::Impl& executor, const Operation& operation,
                     int8_v1::semantic_code(source[index])];
             }
         } else {
+            WorkerPool& pool = nonconv_pool(executor, options);
+            const int workers = nonconv_workers(pool, options);
             ConcatRunContext context {source, segment_destination,
-                operation.concat_lut[input_index].data(), input.bytes, options.workers,
-                options.nonconv};
-            executor.pool->dispatch(options.workers, run_concat_worker, &context, options.scheduler);
+                operation.concat_lut[input_index].data(), input.bytes, workers,
+                local_nonconv_strategy(options.nonconv)};
+            pool.dispatch(workers, run_concat_worker, &context, options.scheduler);
         }
         output_block += input.c / 8;
     }
     if (output_block != output.c / 8) throw std::runtime_error("Concat channel count mismatch");
+}
+
+struct MaxPoolRunContext {
+    const std::int8_t* source = nullptr;
+    std::int8_t* destination = nullptr;
+    int input_h = 0;
+    int input_w = 0;
+    int output_h = 0;
+    int output_w = 0;
+    int channel_blocks = 0;
+    int kernel_h = 0;
+    int kernel_w = 0;
+    int stride_h = 0;
+    int stride_w = 0;
+    int pad_h = 0;
+    int pad_w = 0;
+    int workers = 1;
+};
+
+void maxpool_c8(const MaxPoolRunContext& context, int channel_block,
+                int output_y, int output_x) noexcept {
+    const int input_y_origin = output_y * context.stride_h - context.pad_h;
+    const int input_x_origin = output_x * context.stride_w - context.pad_w;
+    const std::size_t destination_offset =
+        (((static_cast<std::size_t>(channel_block) * context.output_h + output_y) *
+          context.output_w + output_x) * 8U);
+#if defined(__riscv_vector)
+    constexpr std::size_t lanes = 8;
+    vuint8m1_t maximum = __riscv_vmv_v_x_u8m1(0, lanes);
+    for (int kernel_y = 0; kernel_y < context.kernel_h; ++kernel_y) {
+        const int input_y = input_y_origin + kernel_y;
+        if (input_y < 0 || input_y >= context.input_h) continue;
+        for (int kernel_x = 0; kernel_x < context.kernel_w; ++kernel_x) {
+            const int input_x = input_x_origin + kernel_x;
+            if (input_x < 0 || input_x >= context.input_w) continue;
+            const std::size_t source_offset =
+                (((static_cast<std::size_t>(channel_block) * context.input_h + input_y) *
+                  context.input_w + input_x) * 8U);
+            vuint8m1_t value = __riscv_vle8_v_u8m1(
+                reinterpret_cast<const std::uint8_t*>(context.source + source_offset), lanes);
+            value = __riscv_vxor_vx_u8m1(value, 0x80U, lanes);
+            maximum = __riscv_vmaxu_vv_u8m1(maximum, value, lanes);
+        }
+    }
+    maximum = __riscv_vxor_vx_u8m1(maximum, 0x80U, lanes);
+    __riscv_vse8_v_u8m1(
+        reinterpret_cast<std::uint8_t*>(context.destination + destination_offset), maximum, lanes);
+#else
+    std::array<std::uint8_t, 8> maximum {};
+    for (int kernel_y = 0; kernel_y < context.kernel_h; ++kernel_y) {
+        const int input_y = input_y_origin + kernel_y;
+        if (input_y < 0 || input_y >= context.input_h) continue;
+        for (int kernel_x = 0; kernel_x < context.kernel_w; ++kernel_x) {
+            const int input_x = input_x_origin + kernel_x;
+            if (input_x < 0 || input_x >= context.input_w) continue;
+            const std::size_t source_offset =
+                (((static_cast<std::size_t>(channel_block) * context.input_h + input_y) *
+                  context.input_w + input_x) * 8U);
+            for (int lane = 0; lane < 8; ++lane) {
+                maximum[static_cast<std::size_t>(lane)] = std::max(
+                    maximum[static_cast<std::size_t>(lane)],
+                    int8_v1::semantic_code(context.source[source_offset + static_cast<std::size_t>(lane)]));
+            }
+        }
+    }
+    for (int lane = 0; lane < 8; ++lane) {
+        context.destination[destination_offset + static_cast<std::size_t>(lane)] =
+            int8_v1::signed_storage(maximum[static_cast<std::size_t>(lane)]);
+    }
+#endif
+}
+
+void run_maxpool_worker(void* opaque, int worker_index, WorkerScratch&) {
+    const auto& context = *static_cast<MaxPoolRunContext*>(opaque);
+    const int begin = context.channel_blocks * worker_index / context.workers;
+    const int end = context.channel_blocks * (worker_index + 1) / context.workers;
+    for (int channel_block = begin; channel_block < end; ++channel_block) {
+        for (int output_y = 0; output_y < context.output_h; ++output_y) {
+            for (int output_x = 0; output_x < context.output_w; ++output_x) {
+                maxpool_c8(context, channel_block, output_y, output_x);
+            }
+        }
+    }
+}
+
+void run_maxpool(PersistentSlice::Impl& executor, const Operation& operation,
+                 const RunOptions& options) {
+    const Tensor& input = executor.tensor(operation.inputs[0]);
+    const Tensor& output = executor.tensor(operation.outputs[0]);
+    const std::int8_t* source = executor.data(operation.inputs[0]);
+    std::int8_t* destination = executor.data(operation.outputs[0]);
+    if (int8_v1::ranges_overlap(source, input.bytes, destination, output.bytes)) {
+        throw std::runtime_error("MaxPool input/output overlap");
+    }
+    WorkerPool& pool = nonconv_pool(executor, options);
+    const int workers = nonconv_workers(pool, options);
+    MaxPoolRunContext context {
+        source, destination, input.h, input.w, output.h, output.w, input.c / 8,
+        operation.pool_kernel_h, operation.pool_kernel_w,
+        operation.pool_stride_h, operation.pool_stride_w,
+        operation.pool_pad_h, operation.pool_pad_w, workers,
+    };
+    pool.dispatch(workers, run_maxpool_worker, &context, options.scheduler);
 }
 
 }  // namespace
@@ -1243,7 +1550,8 @@ int PersistentSlice::prepare_with_contract(const std::filesystem::path& package_
             operation.index = integer(row, "index");
             operation.kind = field(row, "kind");
             operation.name = field(row, "name");
-            operation.inputs = {integer(row, "input0"), integer(row, "input1"), integer(row, "input2")};
+            operation.inputs = {integer(row, "input0"), integer(row, "input1"), integer(row, "input2"),
+                                optional_integer(row, "input3", -1)};
             operation.outputs = {integer(row, "output0"), integer(row, "output1")};
             if (operation.index != static_cast<int>(prepared.operations.size())) {
                 throw std::runtime_error("operation index mismatch");
@@ -1296,8 +1604,29 @@ int PersistentSlice::prepare_with_contract(const std::filesystem::path& package_
                 std::copy(lut.begin(), lut.end(), operation.lut.begin());
             } else if (operation.kind == "add_silu") {
                 operation.add_lut = read_binary<std::int8_t>(prepared.package / field(row, "add_lut_file"), 256U * 256U);
+            } else if (operation.kind == "maxpool") {
+                operation.pool_kernel_h = integer(row, "kernel_h");
+                operation.pool_kernel_w = integer(row, "kernel_w");
+                operation.pool_stride_h = integer(row, "stride_h");
+                operation.pool_stride_w = integer(row, "stride_w");
+                operation.pool_pad_h = integer(row, "pad_h");
+                operation.pool_pad_w = integer(row, "pad_w");
+                const Tensor& input = prepared.tensor(operation.inputs[0]);
+                const Tensor& output = prepared.tensor(operation.outputs[0]);
+                if (operation.pool_kernel_h <= 0 || operation.pool_kernel_w <= 0 ||
+                    operation.pool_stride_h <= 0 || operation.pool_stride_w <= 0) {
+                    throw std::runtime_error("invalid MaxPool geometry");
+                }
+                const int expected_h = (input.h + 2 * operation.pool_pad_h - operation.pool_kernel_h) /
+                                           operation.pool_stride_h + 1;
+                const int expected_w = (input.w + 2 * operation.pool_pad_w - operation.pool_kernel_w) /
+                                           operation.pool_stride_w + 1;
+                if (input.c != output.c || output.h != expected_h || output.w != expected_w ||
+                    input.zero_point != output.zero_point) {
+                    throw std::runtime_error("invalid MaxPool package contract");
+                }
             } else if (operation.kind == "concat") {
-                for (int input_index = 0; input_index < 3; ++input_index) {
+                for (int input_index = 0; input_index < 4; ++input_index) {
                     if (operation.inputs[static_cast<std::size_t>(input_index)] < 0) continue;
                     const auto lut = read_binary<std::int8_t>(prepared.package /
                         field(row, ("concat" + std::to_string(input_index) + "_lut_file").c_str()), 256);
@@ -1318,7 +1647,8 @@ int PersistentSlice::prepare_with_contract(const std::filesystem::path& package_
             prepared.model5_output_id < 0 || prepared.slice_output_id < 0) {
             throw std::runtime_error("unexpected persistent integer-slice package surface");
         }
-        prepared.pool = std::make_unique<WorkerPool>(worker_capacity, maximum_panel);
+        prepared.pool = std::make_unique<WorkerPool>(worker_capacity, maximum_panel, 0);
+        prepared.cluster1_pool = std::make_unique<WorkerPool>(worker_capacity, 0, 4);
         prepared.ready = true;
         *impl_ = std::move(prepared);
         return Y26_CONV_STATUS_SUCCESS;
@@ -1375,6 +1705,8 @@ int execute_range(PersistentSlice::Impl& executor, int first_operation, int last
                 if (operation.kind == "lut") run_lut(executor, operation, options);
                 else if (operation.kind == "add_silu") run_add(executor, operation, options);
                 else if (operation.kind == "concat") run_concat(executor, operation, options);
+                else if (operation.kind == "maxpool") run_maxpool(executor, operation, options);
+                else status = Y26_CONV_STATUS_INVALID_ARGUMENT;
             } catch (const std::exception&) {
                 status = Y26_CONV_STATUS_INVALID_ARGUMENT;
             }
@@ -1394,12 +1726,14 @@ int execute_range(PersistentSlice::Impl& executor, int first_operation, int last
             else if (operation.kind == "lut") timing->lut_us += row.wall_us;
             else if (operation.kind == "add_silu") timing->add_us += row.wall_us;
             else if (operation.kind == "concat") timing->concat_us += row.wall_us;
+            else if (operation.kind == "maxpool") timing->maxpool_us += row.wall_us;
             timing->operations.push_back(std::move(row));
         }
     }
     if (timing != nullptr) {
         timing->total_us = elapsed_us(total_begin, Clock::now());
-        timing->affinity_ok = executor.pool->affinity_ok() ? 1 : 0;
+        timing->affinity_ok = executor.pool->affinity_ok() && executor.cluster1_pool &&
+                              executor.cluster1_pool->affinity_ok() ? 1 : 0;
         timing->worker_counters = executor.pool->worker_counters();
     }
     return Y26_CONV_STATUS_SUCCESS;
@@ -1463,6 +1797,12 @@ int PersistentSlice::run_operation_resident(int operation_index, const RunOption
     return execute_range(*impl_, operation_index, operation_index, options, timing);
 }
 
+int PersistentSlice::run_range_resident(int first_operation, int last_operation,
+                                        const RunOptions& options, SliceTiming* timing) {
+    if (!impl_ || !impl_->ready) return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    return execute_range(*impl_, first_operation, last_operation, options, timing);
+}
+
 int PersistentSlice::copy_tensor(int tensor_id, std::int8_t* destination, std::size_t bytes) const {
     if (!impl_ || !impl_->ready || destination == nullptr) return Y26_CONV_STATUS_INVALID_ARGUMENT;
     try {
@@ -1510,9 +1850,47 @@ int PersistentSlice::operation_output_tensor_id(int operation_index, int slot) c
     }
     return impl_->operations[static_cast<std::size_t>(operation_index)].outputs[static_cast<std::size_t>(slot)];
 }
+int PersistentSlice::tensor_id_for_key(const std::string& key) const noexcept {
+    return impl_ ? impl_->tensor_id_for_key(key) : -1;
+}
 std::size_t PersistentSlice::arena_bytes() const noexcept { return impl_ ? impl_->arena.size() : 0; }
 std::size_t PersistentSlice::packed_weight_bytes() const noexcept { return impl_ ? impl_->total_packed_weight_bytes : 0; }
-bool PersistentSlice::worker_affinity_ok() const noexcept { return impl_ && impl_->pool && impl_->pool->affinity_ok(); }
+int PersistentSlice::prefault_memory(bool advise_hugepage, std::uint64_t* touched_checksum) noexcept {
+    if (!impl_ || !impl_->ready) return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    std::uint64_t checksum = 0;
+    constexpr std::size_t page_bytes = 4096;
+    auto touch = [&](const auto& bytes) {
+        for (std::size_t offset = 0; offset < bytes.size(); offset += page_bytes) {
+            checksum += static_cast<std::uint8_t>(bytes[offset]);
+        }
+        if (!bytes.empty()) checksum += static_cast<std::uint8_t>(bytes.back());
+    };
+    touch(impl_->arena);
+    for (const auto& operation : impl_->operations) {
+        if (operation.kind == "conv") touch(operation.conv.packed_weights);
+    }
+#if defined(__linux__)
+    if (advise_hugepage && !impl_->arena.empty()) {
+        const long page_size = sysconf(_SC_PAGESIZE);
+        if (page_size <= 0) return Y26_CONV_STATUS_RUNTIME_SAFETY_FAILED;
+        const auto mask = static_cast<std::uintptr_t>(page_size - 1);
+        const auto begin = reinterpret_cast<std::uintptr_t>(impl_->arena.data()) & ~mask;
+        const auto end =
+            (reinterpret_cast<std::uintptr_t>(impl_->arena.data() + impl_->arena.size()) + mask) & ~mask;
+        if (madvise(reinterpret_cast<void*>(begin), end - begin, MADV_HUGEPAGE) != 0) {
+            return Y26_CONV_STATUS_RUNTIME_SAFETY_FAILED;
+        }
+    }
+#else
+    if (advise_hugepage) return Y26_CONV_STATUS_RUNTIME_SAFETY_FAILED;
+#endif
+    if (touched_checksum != nullptr) *touched_checksum = checksum;
+    return Y26_CONV_STATUS_SUCCESS;
+}
+bool PersistentSlice::worker_affinity_ok() const noexcept {
+    return impl_ && impl_->pool && impl_->cluster1_pool && impl_->pool->affinity_ok() &&
+           impl_->cluster1_pool->affinity_ok();
+}
 const std::string& PersistentSlice::manifest_sha256() const noexcept {
     static const std::string empty;
     return impl_ ? impl_->trusted_manifest : empty;
@@ -1548,6 +1926,7 @@ const char* partition_policy_name(PartitionPolicy value) noexcept {
 const char* nonconv_strategy_name(NonConvStrategy value) noexcept {
     if (value == NonConvStrategy::serial_scalar) return "serial_scalar";
     if (value == NonConvStrategy::parallel_scalar) return "parallel_scalar";
+    if (value == NonConvStrategy::cluster1_explicit_rvv) return "cluster1_explicit_rvv";
     return "explicit_rvv_lut";
 }
 const char* scheduler_strategy_name(SchedulerStrategy value) noexcept {

@@ -245,6 +245,7 @@ def derive_integer_assets(package: Path, builder: ScheduleBuilder) -> tuple[list
         "requant_multiplier_file", "requant_shift_file", "segment0_begin", "segment0_count",
         "segment0_lut_file", "segment1_begin", "segment1_count", "segment1_lut_file",
         "lut_file", "add_lut_file", "concat0_lut_file", "concat1_lut_file", "concat2_lut_file",
+        "concat3_lut_file",
     ]
     for source in operations:
         row = dict(source)
@@ -345,9 +346,18 @@ def derive_integer_assets(package: Path, builder: ScheduleBuilder) -> tuple[list
             path = operation_dir / "add_silu_lut_256x256_s8.bin"
             lut.tofile(path)
             row["add_lut_file"] = str(path.relative_to(package))
+        elif row["kind"] == "maxpool":
+            source = tensors[int(row["input0"])]
+            target = tensors[int(row["output0"])]
+            if (
+                int(source["c"]) != int(target["c"])
+                or f32_bits(np.float32(source["scale"])) != f32_bits(np.float32(target["scale"]))
+                or int(source["zero_point"]) != int(target["zero_point"])
+            ):
+                raise ValueError(f"MaxPool quantization domain mismatch: {row['name']}")
         elif row["kind"] == "concat":
             target = tensors[int(row["output0"])]
-            for input_index in range(3):
+            for input_index in range(4):
                 tensor_id = int(row[f"input{input_index}"])
                 if tensor_id < 0:
                     continue
@@ -406,9 +416,33 @@ def execute_integer_fixture(package: Path, tensors: list[dict[str, Any]], operat
             right = values[int(row["input1"])]
             lut = np.fromfile(package / str(row["add_lut_file"]), dtype=np.int8).reshape(256, 256).astype(np.int16) + 128
             values[int(row["output0"])] = np.ascontiguousarray(lut[left, right], dtype=np.uint8)
+        elif kind == "maxpool":
+            source = values[int(row["input0"])]
+            kernel_h = int(row["kernel_h"])
+            kernel_w = int(row["kernel_w"])
+            stride_h = int(row["stride_h"])
+            stride_w = int(row["stride_w"])
+            pad_h = int(row["pad_h"])
+            pad_w = int(row["pad_w"])
+            _, channels, input_h, input_w = source.shape
+            output_h = (input_h + 2 * pad_h - kernel_h) // stride_h + 1
+            output_w = (input_w + 2 * pad_w - kernel_w) // stride_w + 1
+            padded = np.pad(
+                source, ((0, 0), (0, 0), (pad_h, pad_h), (pad_w, pad_w)),
+                mode="constant", constant_values=0,
+            )
+            pooled = np.zeros((1, channels, output_h, output_w), dtype=np.uint8)
+            for kernel_y in range(kernel_h):
+                for kernel_x in range(kernel_w):
+                    pooled = np.maximum(
+                        pooled,
+                        padded[:, :, kernel_y : kernel_y + output_h * stride_h : stride_h,
+                               kernel_x : kernel_x + output_w * stride_w : stride_w],
+                    )
+            values[int(row["output0"])] = np.ascontiguousarray(pooled, dtype=np.uint8)
         elif kind == "concat":
             target_parts: list[np.ndarray] = []
-            for input_index in range(3):
+            for input_index in range(4):
                 tensor_id = int(row[f"input{input_index}"])
                 if tensor_id < 0:
                     continue

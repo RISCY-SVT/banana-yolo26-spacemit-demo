@@ -27,6 +27,7 @@ add_library(y26_k1x_custom_int8_engine
     kernels/stage47_integrated_conv.cpp
     kernels/stage48_nchwc8_model5.cpp
     kernels/stage49_persistent_slice.cpp
+    kernels/stage51_q62_epilogue.cpp
     kernels/vmadot_4x4x8_ime.cpp
     kernels/vmadot_4x4x8_scalar.cpp
     kernels/vmadot123_direct_conv.cpp
@@ -443,6 +444,12 @@ if(Y26_K1X_BUILD_TOOLS)
         tools/stage50_integer_vector_sidecar.cpp
     )
     target_compile_options(stage50_integer_vector_sidecar PRIVATE -Wall -Wextra -Wpedantic)
+
+    add_executable(stage51_q62_vsmul_probe
+        tools/stage51_q62_vsmul_probe.cpp
+    )
+    target_link_libraries(stage51_q62_vsmul_probe PRIVATE y26_k1x_custom_int8_engine)
+    target_compile_options(stage51_q62_vsmul_probe PRIVATE -Wall -Wextra -Wpedantic)
 
     add_executable(bench_stage43_model5_island
         tools/bench_stage43_model5_island.cpp

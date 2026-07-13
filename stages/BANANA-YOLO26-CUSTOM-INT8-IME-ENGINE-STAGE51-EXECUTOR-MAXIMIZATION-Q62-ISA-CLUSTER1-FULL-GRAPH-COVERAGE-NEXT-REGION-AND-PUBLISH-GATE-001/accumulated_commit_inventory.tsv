@@ -1,0 +1,31 @@
+commit	parents	date	subject
+6ea3f0737c2063de94a7b4beac976180c4375872	53ac15ad253ac70e594cc7e1ac6c117e92da85ca	2026-07-06T08:55:00+02:00	Repair model4 fullshape merge dataflow for YOLO26 custom INT8 engine
+d8025985bff6373aaf7082a47ad532a18bd64134	6ea3f0737c2063de94a7b4beac976180c4375872	2026-07-06T11:37:11+02:00	Integrate model4 C2f merge repair into YOLO26 custom INT8 runner
+8350c57bd015f044a51800dcd318cb43976e534a	d8025985bff6373aaf7082a47ad532a18bd64134	2026-07-06T14:01:47+02:00	Close model4 C2f ONNX cut oracle gate
+fce411e20eb649e7f7f0cfe65573848c0e8a1fd4	8350c57bd015f044a51800dcd318cb43976e534a	2026-07-06T16:06:37+02:00	Close model4 ONNX cut runner API and repair output quantization
+e3bbacba79f2c58b10057735c514a280577223c2	fce411e20eb649e7f7f0cfe65573848c0e8a1fd4	2026-07-06T19:57:55+02:00	Repair YOLO26 model4 merge dataflow after ONNX cut proof
+b382bd71c4091cc3476d59f77cb35c2a0d246513	e3bbacba79f2c58b10057735c514a280577223c2	2026-07-07T07:09:30+02:00	Select YOLO26 model4 Conv threading lane
+6a32c904cf711afab24e3efd9d2adaa9306c101f	b382bd71c4091cc3476d59f77cb35c2a0d246513	2026-07-07T10:57:46+02:00	Repair YOLO26 model4 activation requant after Conv threading
+502f7abe06aaba413310731971176ede603f527f	6a32c904cf711afab24e3efd9d2adaa9306c101f	2026-07-07T13:12:14+02:00	Select YOLO26 model4 Conv tile prepack lane
+b54c8767e691dc57cbd035a13d2d2d348d2f5366	502f7abe06aaba413310731971176ede603f527f	2026-07-07T15:54:37+02:00	Repair YOLO26 model4 Conv correction writeback
+8c3d64735c3460174e709c780b6a179724a807e8	b54c8767e691dc57cbd035a13d2d2d348d2f5366	2026-07-08T08:16:22+02:00	Add YOLO26 vendor ORT rt204 COCO baseline
+921c1d75ab5161bb9e3e732516047cfe058e3b16	8c3d64735c3460174e709c780b6a179724a807e8	2026-07-08T10:04:15+02:00	Prove vmadot123 semantics for YOLO26 direct Conv lane
+00aa667b8770cd9e6c7a5cdd24ac2714bb1d52a9	921c1d75ab5161bb9e3e732516047cfe058e3b16	2026-07-08T11:44:37+02:00	Gate YOLO26 vmadot123 direct Conv sidecar
+1304c765cbb97241a5ac5700bb91c0fce7d4c60b	00aa667b8770cd9e6c7a5cdd24ac2714bb1d52a9	2026-07-08T13:15:32+02:00	Decide YOLO26 MMT4D mainline after sliding layout proof
+6c64bdd1f9e00359c4c0a084926a75f338252a3d	1304c765cbb97241a5ac5700bb91c0fce7d4c60b	2026-07-08T15:02:33+02:00	Gate YOLO26 MMT4D mixed signedness correction
+71a89f40daf39e4a6675ef6dfc2c8485d2671fc7	6c64bdd1f9e00359c4c0a084926a75f338252a3d	2026-07-08T17:19:38+02:00	Probe YOLO26 cv2 software-pipelined vmadot microkernel
+a8b76072f19ff792bc5afc33ab93a022f2c26eb6	71a89f40daf39e4a6675ef6dfc2c8485d2671fc7	2026-07-08T19:48:19+02:00	Repair YOLO26 vmadot SIGILL diagnostic emission
+a945d60a5fedf3d5b74483a02e5b95214c5cd973	a8b76072f19ff792bc5afc33ab93a022f2c26eb6	2026-07-09T05:52:34+02:00	Select YOLO26 cv2 pipelined vmadot sidecar
+97d9e8ce52c584a5ecc3d3aa44dc6e18e4e9e8a8	a945d60a5fedf3d5b74483a02e5b95214c5cd973	2026-07-09T07:23:06+02:00	Gate YOLO26 model4 post-cv2 bottleneck after pipelined vmadot
+11675ccfbdf905bef92b5fd69f75d08a541a549c	97d9e8ce52c584a5ecc3d3aa44dc6e18e4e9e8a8	2026-07-09T09:17:20+02:00	Gate YOLO26 model4 post-3x3 bottleneck repair
+57ad1bf94d9322108fdca453e03a340e1ce0b1f2	11675ccfbdf905bef92b5fd69f75d08a541a549c	2026-07-09T10:49:03+02:00	Repair YOLO26 model4 branch3x3 im2col pack path
+6559e2a4a146e96df9db37bf748808896d08e147	57ad1bf94d9322108fdca453e03a340e1ce0b1f2	2026-07-09T14:15:18+02:00	Add YOLO26 full-model skeleton gate
+7a9b679f4b352c7894c9176539f1765d894daa73	6559e2a4a146e96df9db37bf748808896d08e147	2026-07-10T09:51:25+02:00	Repair YOLO26 in-process ORT contract and add model16 oracle
+f363c84ea39a8b6219ecec331b54e7deb892cf6a	7a9b679f4b352c7894c9176539f1765d894daa73	2026-07-11T11:26:14+02:00	Checkpoint exact YOLO26 Stage43 model5 evidence
+bdefd89cc4247cb9e0ddac6fd06b561b05d29c87	f363c84ea39a8b6219ecec331b54e7deb892cf6a	2026-07-11T12:59:08+02:00	Repair and evaluate YOLO26 model5 stride2 dataflow
+860ee58a55286f3e207d4b0eb7cec8a59a85bb9d	bdefd89cc4247cb9e0ddac6fd06b561b05d29c87	2026-07-11T17:37:52+02:00	Recalibrate YOLO26 K1X system strategy and model co-design path
+da213f6c11339187d2169e5a2516feef1b732dd9	860ee58a55286f3e207d4b0eb7cec8a59a85bb9d	2026-07-12T01:08:23+02:00	Revalidate YOLO26 INT8 with SpacemiT ORT 2.0.5
+3c1eabb5198316c26c9577c0018343568e84c993	da213f6c11339187d2169e5a2516feef1b732dd9	2026-07-12T13:14:12+02:00	Measure and gate the K1X resident INT8 AOT executor
+b163c83f7dc1677c8b31b9a2cc75e227d5992b0d	3c1eabb5198316c26c9577c0018343568e84c993	2026-07-12T17:34:05+02:00	Define K1X INT8 semantics and test direct NCHWc8 delivery
+eb8e28194853d8f70c8a8a8d008253396327aac1	b163c83f7dc1677c8b31b9a2cc75e227d5992b0d	2026-07-12T22:01:14+02:00	Prove the persistent NCHWc8 integer slice on K1X
+ea993fb4255f12592380b975bd3cc6dbc73bea57	eb8e28194853d8f70c8a8a8d008253396327aac1	2026-07-13T09:32:04+02:00	Close the persistent NCHWc8 model4-to-model8 slice on K1X

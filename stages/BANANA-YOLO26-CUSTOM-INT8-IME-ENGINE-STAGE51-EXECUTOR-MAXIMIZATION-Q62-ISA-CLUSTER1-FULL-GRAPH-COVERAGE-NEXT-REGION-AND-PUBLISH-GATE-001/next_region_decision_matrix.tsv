@@ -1,0 +1,5 @@
+candidate	coverage_gain	layout	contract	risk	decision
+P stem model0-3	high MAC	RGB entry contract needed	partly representable	high	not-selected
+F model8->model9	SPPF MaxPool + 2 Conv + Add	resident NCHWc8	K1X_INT8_V1 exact	bounded	selected
+F model10 attention	attention	mixed	MatMul/Softmax unresolved	high	not-selected
+neck/head	material	multiple branches	partial	high	deferred

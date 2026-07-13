@@ -24,6 +24,7 @@
 #if defined(__linux__)
 #include <pthread.h>
 #include <sched.h>
+#include <sys/mman.h>
 #endif
 
 namespace {
@@ -51,7 +52,12 @@ struct Options {
     int repeats = 5;
     int controller_cpu = -1;
     int operation_index = -1;
+    int first_operation = -1;
+    int last_operation = -1;
+    std::string range_input_key;
+    std::string range_output_key;
     std::string integer_contract = "v1";
+    std::string memory_policy = "current";
 };
 
 struct Statistics {
@@ -120,6 +126,7 @@ Options parse_options(int argc, char** argv) {
             if (value == "serial") options.run.nonconv = NonConvStrategy::serial_scalar;
             else if (value == "parallel") options.run.nonconv = NonConvStrategy::parallel_scalar;
             else if (value == "rvv_lut") options.run.nonconv = NonConvStrategy::explicit_rvv_lut;
+            else if (value == "cluster1_rvv") options.run.nonconv = NonConvStrategy::cluster1_explicit_rvv;
             else fail("invalid non-Conv strategy: " + value);
         } else if (key == "--scheduler") {
             if (value == "all") options.run.scheduler = SchedulerStrategy::all_workers_complete;
@@ -132,6 +139,16 @@ Options parse_options(int argc, char** argv) {
         else if (key == "--repeats") options.repeats = parse_int(value, "repeats");
         else if (key == "--controller-cpu") options.controller_cpu = parse_int(value, "controller-cpu");
         else if (key == "--operation-index") options.operation_index = parse_int(value, "operation-index");
+        else if (key == "--first-operation") options.first_operation = parse_int(value, "first-operation");
+        else if (key == "--last-operation") options.last_operation = parse_int(value, "last-operation");
+        else if (key == "--range-input-key") options.range_input_key = value;
+        else if (key == "--range-output-key") options.range_output_key = value;
+        else if (key == "--memory-policy") {
+            if (value != "current" && value != "mlock_prefault" && value != "hugepage") {
+                fail("invalid memory policy: " + value);
+            }
+            options.memory_policy = value;
+        }
         else fail("unknown option: " + key);
     }
     if (options.package.empty() || options.trusted_manifest.size() != 64) {
@@ -303,7 +320,7 @@ int benchmark(PersistentSlice& executor, const Options& options, bool slice) {
     std::vector<std::int8_t> output(expected.size());
     const auto execute_resident = [&]() -> int {
         if (executor.load_tensor(input_id, input.data(), input.size()) != Y26_CONV_STATUS_SUCCESS) {
-            return Y26_CONV_STATUS_INVALID_ARGUMENT;
+            return static_cast<int>(Y26_CONV_STATUS_INVALID_ARGUMENT);
         }
         return slice ? executor.run_slice_resident(options.run, nullptr)
                      : executor.run_model5_resident(options.run, nullptr);
@@ -354,6 +371,74 @@ int benchmark(PersistentSlice& executor, const Options& options, bool slice) {
               << "\nprocess_cpu_mean_us=" << cpu.mean << "\nrepeat_mean_cv_pct=" << repeats.cv_pct
               << "\nmismatches=" << mismatches << "\noutput_hash_fnv1a64=0x" << std::hex << fnv1a64(output) << std::dec
               << "\naffinity_ok=" << (executor.worker_affinity_ok() ? 1 : 0) << '\n';
+    return mismatches == 0 ? 0 : 3;
+}
+
+int benchmark_range(PersistentSlice& executor, const Options& options) {
+    if (options.first_operation < 0 || options.last_operation < options.first_operation ||
+        options.last_operation >= executor.operation_count() || options.range_input_key.empty() ||
+        options.range_output_key.empty()) {
+        fail("benchmark-range requires a valid operation range and tensor keys");
+    }
+    const int input_id = executor.tensor_id_for_key(options.range_input_key);
+    const int output_id = executor.tensor_id_for_key(options.range_output_key);
+    if (input_id < 0 || output_id < 0) fail("benchmark-range tensor key is absent");
+    const auto input = read_bytes(oracle_path(options, input_id), executor.tensor_bytes(input_id));
+    const auto expected = read_bytes(oracle_path(options, output_id), executor.tensor_bytes(output_id));
+    const auto execute = [&]() {
+        if (executor.load_tensor(input_id, input.data(), input.size()) != Y26_CONV_STATUS_SUCCESS) {
+            return static_cast<int>(Y26_CONV_STATUS_INVALID_ARGUMENT);
+        }
+        return executor.run_range_resident(
+            options.first_operation, options.last_operation, options.run, nullptr);
+    };
+    for (int iteration = 0; iteration < options.warmup; ++iteration) {
+        if (execute() != Y26_CONV_STATUS_SUCCESS) return 2;
+    }
+    std::vector<double> wall_samples;
+    std::vector<double> cpu_samples;
+    std::vector<double> repeat_means;
+    wall_samples.reserve(static_cast<std::size_t>(options.runs * options.repeats));
+    cpu_samples.reserve(wall_samples.capacity());
+    for (int repeat = 0; repeat < options.repeats; ++repeat) {
+        std::vector<double> current;
+        current.reserve(static_cast<std::size_t>(options.runs));
+        for (int run = 0; run < options.runs; ++run) {
+            const double cpu_begin = process_cpu_us();
+            const auto begin = Clock::now();
+            const int status = execute();
+            const auto end = Clock::now();
+            const double cpu_end = process_cpu_us();
+            if (status != Y26_CONV_STATUS_SUCCESS) return 2;
+            const double wall = elapsed_us(begin, end);
+            wall_samples.push_back(wall);
+            cpu_samples.push_back(cpu_end - cpu_begin);
+            current.push_back(wall);
+            std::cout << "raw\trepeat=" << repeat << "\trun=" << run << "\twall_us=" << wall
+                      << "\tprocess_cpu_us=" << (cpu_end - cpu_begin) << '\n';
+        }
+        const auto current_stats = statistics(current);
+        repeat_means.push_back(current_stats.mean);
+        std::cout << "repeat_summary\trepeat=" << repeat << "\tmean_us=" << current_stats.mean
+                  << "\tstddev_us=" << current_stats.stddev << "\tp95_us=" << current_stats.p95 << '\n';
+    }
+    std::vector<std::int8_t> output(expected.size());
+    if (executor.copy_tensor(output_id, output.data(), output.size()) != Y26_CONV_STATUS_SUCCESS) return 2;
+    const auto wall = statistics(wall_samples);
+    const auto cpu = statistics(cpu_samples);
+    const auto repeats = statistics(repeat_means);
+    const auto mismatches = mismatch_count(output, expected);
+    std::cout << std::fixed << std::setprecision(6)
+              << "first_operation=" << options.first_operation
+              << "\nlast_operation=" << options.last_operation
+              << "\nrange_input_key=" << options.range_input_key
+              << "\nrange_output_key=" << options.range_output_key
+              << "\nmean_us=" << wall.mean << "\nstddev_us=" << wall.stddev << "\ncv_pct=" << wall.cv_pct
+              << "\nmin_us=" << wall.minimum << "\nmax_us=" << wall.maximum << "\nmedian_us=" << wall.median
+              << "\np90_us=" << wall.p90 << "\np95_us=" << wall.p95
+              << "\nprocess_cpu_mean_us=" << cpu.mean << "\nrepeat_mean_cv_pct=" << repeats.cv_pct
+              << "\nmismatches=" << mismatches << "\noutput_hash_fnv1a64=0x" << std::hex << fnv1a64(output)
+              << std::dec << "\naffinity_ok=" << (executor.worker_affinity_ok() ? 1 : 0) << '\n';
     return mismatches == 0 ? 0 : 3;
 }
 
@@ -449,7 +534,13 @@ int profile(PersistentSlice& executor, const Options& options, bool slice) {
                   << "\tname=" << operation.name << "\twall_us=" << operation.wall_us
                   << "\tdelivery_worker_sum_us=" << operation.delivery_worker_sum_us
                   << "\tvmadot_worker_sum_us=" << operation.vmadot_worker_sum_us
-                  << "\tepilogue_worker_sum_us=" << operation.epilogue_worker_sum_us << '\n';
+                  << "\tepilogue_worker_sum_us=" << operation.epilogue_worker_sum_us
+                  << "\tq0_extract_worker_sum_us=" << operation.epilogue_extract_worker_sum_us
+                  << "\tq1_bias_worker_sum_us=" << operation.epilogue_bias_worker_sum_us
+                  << "\tq2_multiply_rne_worker_sum_us=" << operation.epilogue_multiply_rne_worker_sum_us
+                  << "\tq3_clamp_worker_sum_us=" << operation.epilogue_clamp_worker_sum_us
+                  << "\tq4_lut_worker_sum_us=" << operation.epilogue_lut_worker_sum_us
+                  << "\tq5_store_worker_sum_us=" << operation.epilogue_store_worker_sum_us << '\n';
     }
     for (const auto& counter : timing.worker_counters) {
         const double scale = counter.time_running == 0
@@ -463,9 +554,50 @@ int profile(PersistentSlice& executor, const Options& options, bool slice) {
     }
     std::cout << "total_us=" << timing.total_us << "\nconv_us=" << timing.conv_us << "\nlut_us=" << timing.lut_us
               << "\nadd_us=" << timing.add_us << "\nconcat_us=" << timing.concat_us
+              << "\nmaxpool_us=" << timing.maxpool_us
               << "\nmin_worker_us=" << timing.min_worker_us << "\nmax_worker_us=" << timing.max_worker_us
               << "\nmismatches=" << mismatch_count(output, expected) << "\naffinity_ok=" << timing.affinity_ok << '\n';
     return mismatch_count(output, expected) == 0 ? 0 : 3;
+}
+
+int profile_operation(PersistentSlice& executor, const Options& options) {
+    if (options.operation_index < 0 || options.operation_index >= executor.operation_count()) {
+        fail("--operation-index is required for profile-operation");
+    }
+    for (int slot = 0; slot < 3; ++slot) {
+        const int input_id = executor.operation_input_tensor_id(options.operation_index, slot);
+        if (input_id < 0) continue;
+        const auto input = read_bytes(oracle_path(options, input_id), executor.tensor_bytes(input_id));
+        if (executor.load_tensor(input_id, input.data(), input.size()) != Y26_CONV_STATUS_SUCCESS) return 2;
+    }
+    const int output_id = executor.operation_output_tensor_id(options.operation_index, 0);
+    if (output_id < 0) return 2;
+    const auto expected = read_bytes(oracle_path(options, output_id), executor.tensor_bytes(output_id));
+    RunOptions run = options.run;
+    run.profile_phases = true;
+    SliceTiming timing;
+    const int status = executor.run_operation_resident(options.operation_index, run, &timing);
+    if (status != Y26_CONV_STATUS_SUCCESS) return 2;
+    std::vector<std::int8_t> output(expected.size());
+    if (executor.copy_tensor(output_id, output.data(), output.size()) != Y26_CONV_STATUS_SUCCESS) return 2;
+    for (const auto& operation : timing.operations) {
+        std::cout << "operation=" << operation.operation_index << "\tkind=" << operation.kind
+                  << "\tname=" << operation.name << "\twall_us=" << operation.wall_us << '\n';
+    }
+    for (const auto& counter : timing.worker_counters) {
+        const double scale = counter.time_running == 0
+                                 ? 0.0
+                                 : static_cast<double>(counter.time_enabled) /
+                                       static_cast<double>(counter.time_running);
+        std::cout << "worker_counter=" << counter.worker << "\tevent=" << counter.event
+                  << "\tstatus=" << counter.status << "\terrno=" << counter.error_number
+                  << "\tcount=" << counter.count << "\ttime_enabled=" << counter.time_enabled
+                  << "\ttime_running=" << counter.time_running << "\tscale=" << scale << '\n';
+    }
+    const auto mismatches = mismatch_count(output, expected);
+    std::cout << "total_us=" << timing.total_us << "\nmismatches=" << mismatches
+              << "\naffinity_ok=" << timing.affinity_ok << '\n';
+    return mismatches == 0 ? 0 : 3;
 }
 
 int frm_sweep(PersistentSlice& executor, const Options& options) {
@@ -523,6 +655,25 @@ int main(int argc, char** argv) {
             std::cerr << "prepare_status=" << prepare_status << " error=" << executor.last_error() << '\n';
             return 2;
         }
+        std::uint64_t prefault_checksum = 0;
+        bool memory_policy_active = options.memory_policy == "current";
+        if (options.memory_policy == "mlock_prefault") {
+#if defined(__linux__)
+            if (mlockall(MCL_CURRENT | MCL_FUTURE) != 0) fail("mlockall failed");
+            memory_policy_active = true;
+#else
+            fail("mlock_prefault is unavailable on this platform");
+#endif
+        }
+        if (options.memory_policy != "current") {
+            const int memory_status =
+                executor.prefault_memory(options.memory_policy == "hugepage", &prefault_checksum);
+            if (memory_status != Y26_CONV_STATUS_SUCCESS) fail("memory prefault/advice failed");
+            memory_policy_active = true;
+        }
+        std::cout << "memory_policy=" << options.memory_policy
+                  << " memory_policy_active=" << (memory_policy_active ? 1 : 0)
+                  << " prefault_checksum=" << prefault_checksum << '\n';
         print_contract(options, executor);
         if (options.mode == "verify") return 0;
         if (options.mode == "validate-model5") return validate(executor, options, false, false);
@@ -531,8 +682,10 @@ int main(int argc, char** argv) {
         if (options.mode == "benchmark-model5") return benchmark(executor, options, false);
         if (options.mode == "benchmark-slice") return benchmark(executor, options, true);
         if (options.mode == "benchmark-operation") return benchmark_operation(executor, options);
+        if (options.mode == "benchmark-range") return benchmark_range(executor, options);
         if (options.mode == "profile-model5") return profile(executor, options, false);
         if (options.mode == "profile-slice") return profile(executor, options, true);
+        if (options.mode == "profile-operation") return profile_operation(executor, options);
         if (options.mode == "frm-sweep") return frm_sweep(executor, options);
         fail("invalid mode: " + options.mode);
     } catch (const std::exception& error) {

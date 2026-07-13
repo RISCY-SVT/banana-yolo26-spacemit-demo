@@ -1,0 +1,160 @@
+Linux bf3 6.6.63 #2.2.7.2 SMP PREEMPT Fri Aug 15 12:32:44 UTC 2025 riscv64 riscv64 riscv64 GNU/Linux
+2
+1
+           CPU0       CPU1       CPU2       CPU3       CPU4       CPU5       CPU6       CPU7
+ 11:   28752876   26277274   17753246  133556338   11702544    6712949   27868800   18052149  RISC-V INTC   5 Edge      riscv-timer
+ 12:          0          0          0          0          0          0          0          0  SiFive PLIC  60 Edge      pinctrl
+ 13:          0          0          0          0          0          0          0          0  SiFive PLIC  58 Edge      k1x-gpio
+ 14:          1          0          0          0          0          0          0          0  SiFive PLIC  72 Edge      pdma
+ 15:          0          0          0          0          0          0          0          0  SiFive PLIC  36 Edge      d4010800.i2c
+ 16:       1119          0          0          0          0          0          0          0  SiFive PLIC  38 Edge      d4012000.i2c
+ 17:     355334          0          0          0          0          0          0          0  SiFive PLIC  19 Edge      d401d800.i2c
+ 18:          0          0          0          0          0          0          0          0  SiFive PLIC  64 Edge      spm8821
+ 26:          0          0          0          0          0          0          0          0   spm8821   7 Edge      p1-adc
+ 29:          0          0          0          0          0          0          0          0   spm8821  10 Edge      rtc@pmic
+ 56:          0          0          0          0          0          0          0          0   spm8821  37 Edge      spacemit_pwrkey_rise
+ 57:          0          0          0          0          0          0          0          0   spm8821  38 Edge      spacemit_pwrkey_fall
+ 58:          0          0          0          0          0          0          0          0   spm8821  39 Edge      spacemit_pwrkey_skey
+ 59:          0          0          0          0          0          0          0          0   spm8821  40 Edge      spacemit_pwrkey_lkey
+ 62:          0          0          0          0          0          0          0          0  SiFive PLIC 146 Edge      k1x-pcie
+ 65:          0          0          0          0          0          0          0          0   PCI-MSI 134217728 Edge      PCIe PME, aerdrv
+ 66:          0          0          0          0          0          0          0          0  SiFive PLIC 147 Edge      k1x-pcie
+ 69:          0          0          0          0          0          0          0          0   PCI-MSI 268435456 Edge      PCIe PME, aerdrv
+ 70:          0          0          0          0          0          0          0          0  SiFive PLIC  87 Edge      JPU
+ 71:          0          0          0          0          0          0          0          0   pinctrl 268 Edge      rtw_wifi_gpio_wakeup
+ 72:          0          0          0          0          0          0          0          0  SiFive PLIC  86 Edge      v2d-irq
+ 73:          0          0          0          0          0          0          0          0  SiFive PLIC  42 Edge      UART1
+ 74:       2863          0          0          0          0          0          0          0  SiFive PLIC  44 Edge      UART3
+ 75:     151852          0          0          0          0          0          0          0  SiFive PLIC  75 Edge      pvrsrvkm
+ 76:       4304          0          0          0          0          0          0          0   PCI-MSI 134742016 Edge      nvme0q0
+ 77:       3985          0          0          0          0          0          0          0   PCI-MSI 134742017 Edge      nvme0q1
+ 78:       3001          0          0          0          0          0          0          0   PCI-MSI 134742018 Edge      nvme0q2
+ 79:        831          0          0          0          0          0          0          0   PCI-MSI 134742019 Edge      nvme0q3
+ 80:       3587          0          0          0          0          0          0          0   PCI-MSI 134742020 Edge      nvme0q4
+ 81:       3695          0          0          0          0          0          0          0   PCI-MSI 134742021 Edge      nvme0q5
+ 82:       6306          0          0          0          0          0          0          0   PCI-MSI 134742022 Edge      nvme0q6
+ 83:       2196          0          0          0          0          0          0          0   PCI-MSI 134742023 Edge      nvme0q7
+ 84:      11268          0          0          0          0          0          0          0   PCI-MSI 134742024 Edge      nvme0q8
+ 85:          2          0          0          0          0          0          0          0  SiFive PLIC 117 Edge      d420c000.spi
+ 86:    1941063          0          0          0          0          0          0          0  SiFive PLIC 131 Edge      end0
+ 87:          0          0          0          0          0          0          0          0  SiFive PLIC 133 Edge      end1
+ 88:          0          0          0          0          0          0          0          0  SiFive PLIC 149 Edge      dwc3-usb-wakeup
+ 89:      54520          0          0          0          0          0          0          0  SiFive PLIC 125 Edge      xhci-hcd:usb2
+ 90:          0          0          0          0          0          0          0          0  SiFive PLIC 118 Edge      ehci_hcd:usb1
+ 91:          0          0          0          0          0          0          0          0  SiFive PLIC 148 Edge      usb-wakeup
+ 92:          0          0          0          0          0          0          0          0  SiFive PLIC 105 Edge      mv_udc
+ 93:          0          0          0          0          0          0          0          0  SiFive PLIC  74 Edge      c0500000.linlon-v5
+ 94:          0          0          0          0          0          0          0          0  SiFive PLIC  81 Edge      k1xccic
+ 95:          0          0          0          0          0          0          0          0  SiFive PLIC  82 Edge      k1xccic
+ 96:          0          0          0          0          0          0          0          0  SiFive PLIC  83 Edge      k1xccic
+ 97:          6          0          0          0          0          0          0          0  SiFive PLIC  84 Edge      mars-cpp
+ 98:          0          0          0          0          0          0          0          0  SiFive PLIC  79 Edge      feisp
+ 99:      17564          0          0          0          0          0          0          0  SiFive PLIC  61 Edge      thermal_zone0, thermal_zone1, thermal_zone2, thermal_zone3
+100:          0          0          0          0          0          0          0          0  SiFive PLIC  99 Edge      mmc0
+101:          0          0          0          0          0          0          0          0  k1x-gpio-irqchip  80 Edge      d4280000.sdh cd
+102:  438793382          0          0          0          0          0          0          0  SiFive PLIC 100 Edge      mmc1
+103:    2106187          0          0          0          0          0          0          0  SiFive PLIC 101 Edge      mmc2
+104:          0          0          0          0          0          0          0          0  SiFive PLIC 113 Edge      spacemit-crypto-engine-0
+105:         14          0          0          0          0          0          0          0  SiFive PLIC  52 Edge      d4013400.mailbox
+106:          0          0          0          0          0          0          0          0  RISC-V INTC  13 Edge      riscv-pmu
+107:          0          0          0          0          0          0          0          0  k1x-gpio-irqchip 126 Edge      es8326
+108:   76900125          0          0          0          0          0          0          0  SiFive PLIC 139 Edge      DPU_ONLINE
+109:          0          0          0          0          0          0          0          0  SiFive PLIC 138 Edge      DPU_OFFLINE
+110:          3          0          0          0          0          0          0          0  SiFive PLIC 136 Edge      c0400500.hdmi
+IPI0:     25323      36029      36480      30162      29307      28914      26360      26736  Rescheduling interrupts
+IPI1:   4658901   81469870   54822742   80266042   55200032   19417232   59516489   69914789  Function call interrupts
+IPI2:         0          0          0          0          0          0          0          0  CPU stop interrupts
+IPI3:         0          0          0          0          0          0          0          0  CPU stop (for crash dump) interrupts
+IPI4:      3133       3090       1173       6140       1445       1013       2923       2701  IRQ work interrupts
+IPI5:         0          0          0          0          0          0          0          0  Timer broadcast interrupts
+/proc/irq/1/smp_affinity_list=0-7
+/proc/irq/10/smp_affinity_list=0-7
+/proc/irq/100/smp_affinity_list=0-7
+/proc/irq/101/smp_affinity_list=0-7
+/proc/irq/102/smp_affinity_list=0-7
+/proc/irq/103/smp_affinity_list=0-7
+/proc/irq/104/smp_affinity_list=0-7
+/proc/irq/105/smp_affinity_list=0-7
+/proc/irq/106/smp_affinity_list=0-7
+/proc/irq/107/smp_affinity_list=0-7
+/proc/irq/108/smp_affinity_list=0-7
+/proc/irq/109/smp_affinity_list=0-7
+/proc/irq/11/smp_affinity_list=0-7
+/proc/irq/110/smp_affinity_list=0-7
+/proc/irq/12/smp_affinity_list=0-7
+/proc/irq/13/smp_affinity_list=0-7
+/proc/irq/14/smp_affinity_list=0-7
+/proc/irq/15/smp_affinity_list=0-7
+/proc/irq/16/smp_affinity_list=0-7
+/proc/irq/17/smp_affinity_list=0-7
+/proc/irq/18/smp_affinity_list=0-7
+/proc/irq/2/smp_affinity_list=0-7
+/proc/irq/26/smp_affinity_list=0-7
+/proc/irq/29/smp_affinity_list=0-7
+/proc/irq/3/smp_affinity_list=0-7
+/proc/irq/4/smp_affinity_list=0-7
+/proc/irq/5/smp_affinity_list=0-7
+/proc/irq/56/smp_affinity_list=0-7
+/proc/irq/57/smp_affinity_list=0-7
+/proc/irq/58/smp_affinity_list=0-7
+/proc/irq/59/smp_affinity_list=0-7
+/proc/irq/6/smp_affinity_list=0-7
+/proc/irq/62/smp_affinity_list=0-7
+/proc/irq/65/smp_affinity_list=0-7
+/proc/irq/66/smp_affinity_list=0-7
+/proc/irq/69/smp_affinity_list=0-7
+/proc/irq/7/smp_affinity_list=0-7
+/proc/irq/70/smp_affinity_list=0
+/proc/irq/71/smp_affinity_list=0-7
+/proc/irq/72/smp_affinity_list=0-7
+/proc/irq/73/smp_affinity_list=0-7
+/proc/irq/74/smp_affinity_list=0-7
+/proc/irq/75/smp_affinity_list=0-7
+/proc/irq/76/smp_affinity_list=0-7
+/proc/irq/77/smp_affinity_list=0
+/proc/irq/78/smp_affinity_list=1
+/proc/irq/79/smp_affinity_list=2
+/proc/irq/8/smp_affinity_list=0-7
+/proc/irq/80/smp_affinity_list=3
+/proc/irq/81/smp_affinity_list=4
+/proc/irq/82/smp_affinity_list=5
+/proc/irq/83/smp_affinity_list=6
+/proc/irq/84/smp_affinity_list=7
+/proc/irq/85/smp_affinity_list=0-7
+/proc/irq/86/smp_affinity_list=0-7
+/proc/irq/87/smp_affinity_list=0-7
+/proc/irq/88/smp_affinity_list=0-7
+/proc/irq/89/smp_affinity_list=0-7
+/proc/irq/9/smp_affinity_list=0-7
+/proc/irq/90/smp_affinity_list=0-7
+/proc/irq/91/smp_affinity_list=0-7
+/proc/irq/92/smp_affinity_list=0-7
+/proc/irq/93/smp_affinity_list=0-7
+/proc/irq/94/smp_affinity_list=0-7
+/proc/irq/95/smp_affinity_list=0-7
+/proc/irq/96/smp_affinity_list=0-7
+/proc/irq/97/smp_affinity_list=0-7
+/proc/irq/98/smp_affinity_list=0-7
+/proc/irq/99/smp_affinity_list=0-7
+cgroup2 on /sys/fs/cgroup type cgroup2 (rw,nosuid,nodev,noexec,relatime,nsdelegate,memory_recursiveprot)
+/sys/fs/cgroup/cpuset.cpus.effective
+/sys/fs/cgroup/cpuset.cpus.effective=0-7
+2033272
+PageTables:        14452 kB
+SecPageTables:         0 kB
+AnonHugePages:         0 kB
+ShmemHugePages:        0 kB
+FileHugePages:         0 kB
+HugePages_Total:       0
+HugePages_Free:        0
+HugePages_Rsvd:        0
+HugePages_Surp:        0
+Hugepagesize:       2048 kB
+Hugetlb:               0 kB
+SCHED_OTHER min/max priority	: 0/0
+SCHED_FIFO min/max priority	: 1/99
+SCHED_RR min/max priority	: 1/99
+SCHED_BATCH min/max priority	: 0/0
+SCHED_IDLE min/max priority	: 0/0
+SCHED_DEADLINE min/max priority	: 0/0
+inactive

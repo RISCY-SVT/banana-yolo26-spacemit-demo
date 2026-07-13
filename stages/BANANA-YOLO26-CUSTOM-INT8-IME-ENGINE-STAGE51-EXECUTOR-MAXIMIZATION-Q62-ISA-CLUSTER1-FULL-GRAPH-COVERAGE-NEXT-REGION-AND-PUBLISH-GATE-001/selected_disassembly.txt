@@ -1,0 +1,964 @@
+14466-   1f060:	00063383          	ld	t2,0(a2)
+14467-   1f064:	0047ae03          	lw	t3,4(a5)
+14468-   1f068:	7f72                	ld	t5,312(sp)
+14469-   1f06a:	01b588b3          	add	a7,a1,s11
+14470-   1f06e:	007e0833          	add	a6,t3,t2
+14471-   1f072:	0504b423          	sd	a6,72(s1)
+14472-   1f076:	0008b403          	ld	s0,0(a7)
+14473-   1f07a:	01e58333          	add	t1,a1,t5
+14474-   1f07e:	478c                	lw	a1,8(a5)
+14475-   1f080:	00c7af83          	lw	t6,12(a5)
+14476-   1f084:	00858733          	add	a4,a1,s0
+14477-   1f088:	e8b8                	sd	a4,80(s1)
+14478-   1f08a:	00033783          	ld	a5,0(t1)
+14479-   1f08e:	00ff8eb3          	add	t4,t6,a5
+14480-   1f092:	05d4bc23          	sd	t4,88(s1)
+14481-   1f096:	a4af50ef          	jal	142e0 <std::chrono::_V2::steady_clock::now()@plt>
+14482-   1f09a:	75ca                	ld	a1,176(sp)
+14483-   1f09c:	842a                	mv	s0,a0
+14484-   1f09e:	752a                	ld	a0,168(sp)
+14485-   1f0a0:	8626                	mv	a2,s1
+14486:   1f0a2:	2eb0d0ef          	jal	2cb8c <y26::stage51::q62_vsmul_m63_i64x4(long const*, long const*, long*)>
+14487-   1f0a6:	a3af50ef          	jal	142e0 <std::chrono::_V2::steady_clock::now()@plt>
+14488-   1f0aa:	034ca283          	lw	t0,52(s9)
+14489-   1f0ae:	6094                	ld	a3,0(s1)
+14490-   1f0b0:	862a                	mv	a2,a0
+14491-   1f0b2:	4381                	li	t2,0
+14492-   1f0b4:	00d28533          	add	a0,t0,a3
+14493-   1f0b8:	00a05763          	blez	a0,1f0c6 <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x1cd2>
+14494-   1f0bc:	0ff00393          	li	t2,255
+14495-   1f0c0:	00ad4363          	blt	s10,a0,1f0c6 <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x1cd2>
+14496-   1f0c4:	83aa                	mv	t2,a0
+14497-   1f0c6:	0084be03          	ld	t3,8(s1)
+14498-   1f0ca:	4301                	li	t1,0
+14499-   1f0cc:	01c288b3          	add	a7,t0,t3
+14500-   1f0d0:	01105763          	blez	a7,1f0de <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x1cea>
+14501-   1f0d4:	0ff00313          	li	t1,255
+14502-   1f0d8:	011d4363          	blt	s10,a7,1f0de <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x1cea>
+14503-   1f0dc:	8346                	mv	t1,a7
+14504-   1f0de:	0104b803          	ld	a6,16(s1)
+14505-   1f0e2:	4f01                	li	t5,0
+14506-   1f0e4:	010285b3          	add	a1,t0,a6
+--
+14638-   1f290:	017808b3          	add	a7,a6,s7
+14639-   1f294:	00a70eb3          	add	t4,a4,a0
+14640-   1f298:	05d9b023          	sd	t4,64(s3)
+14641-   1f29c:	0008b283          	ld	t0,0(a7)
+14642-   1f2a0:	004fa603          	lw	a2,4(t6)
+14643-   1f2a4:	01b803b3          	add	t2,a6,s11
+14644-   1f2a8:	008fae03          	lw	t3,8(t6)
+14645-   1f2ac:	00560333          	add	t1,a2,t0
+14646-   1f2b0:	0469b423          	sd	t1,72(s3)
+14647-   1f2b4:	009806b3          	add	a3,a6,s1
+14648-   1f2b8:	0003b803          	ld	a6,0(t2)
+14649-   1f2bc:	00cfaf03          	lw	t5,12(t6)
+14650-   1f2c0:	752a                	ld	a0,168(sp)
+14651-   1f2c2:	010e05b3          	add	a1,t3,a6
+14652-   1f2c6:	04b9b823          	sd	a1,80(s3)
+14653-   1f2ca:	0006bf83          	ld	t6,0(a3)
+14654-   1f2ce:	75ca                	ld	a1,176(sp)
+14655-   1f2d0:	864e                	mv	a2,s3
+14656-   1f2d2:	01ff07b3          	add	a5,t5,t6
+14657-   1f2d6:	04f9bc23          	sd	a5,88(s3)
+14658:   1f2da:	0b30d0ef          	jal	2cb8c <y26::stage51::q62_vsmul_m63_i64x4(long const*, long const*, long*)>
+14659-   1f2de:	034ca283          	lw	t0,52(s9)
+14660-   1f2e2:	0009b503          	ld	a0,0(s3)
+14661-   1f2e6:	ff0108b7          	lui	a7,0xff010
+14662-   1f2ea:	fff88e93          	addi	t4,a7,-1 # ffffffffff00ffff <__global_pointer$+0xfffffffffefcb47f>
+14663-   1f2ee:	00a28633          	add	a2,t0,a0
+14664-   1f2f2:	7741                	lui	a4,0xffff0
+14665-   1f2f4:	0ff70393          	addi	t2,a4,255 # ffffffffffff00ff <__global_pointer$+0xfffffffffffab57f>
+14666-   1f2f8:	788e                	ld	a7,224(sp)
+14667-   1f2fa:	4801                	li	a6,0
+14668-   1f2fc:	00c05763          	blez	a2,1f30a <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x1f16>
+14669-   1f300:	0ff00813          	li	a6,255
+14670-   1f304:	00cd4363          	blt	s10,a2,1f30a <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x1f16>
+14671-   1f308:	8832                	mv	a6,a2
+14672-   1f30a:	0089b303          	ld	t1,8(s3)
+14673-   1f30e:	4681                	li	a3,0
+14674-   1f310:	00628e33          	add	t3,t0,t1
+14675-   1f314:	01c05763          	blez	t3,1f322 <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x1f2e>
+14676-   1f318:	0ff00693          	li	a3,255
+14677-   1f31c:	01cd4363          	blt	s10,t3,1f322 <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x1f2e>
+14678-   1f320:	86f2                	mv	a3,t3
+--
+15015-   1f7d8:	00de1eb3          	sll	t4,t3,a3
+15016-   1f7dc:	01585733          	srl	a4,a6,s5
+15017-   1f7e0:	00eee2b3          	or	t0,t4,a4
+15018-   1f7e4:	d22fe06f          	j	1dd06 <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x912>
+15019-   1f7e8:	68e6                	ld	a7,88(sp)
+15020-   1f7ea:	7722                	ld	a4,40(sp)
+15021-   1f7ec:	18012023          	sw	zero,384(sp)
+15022-   1f7f0:	03288e3b          	mulw	t3,a7,s2
+15023-   1f7f4:	18010223          	sb	zero,388(sp)
+15024-   1f7f8:	5b44                	lw	s1,52(a4)
+15025-   1f7fa:	4289                	li	t0,2
+15026-   1f7fc:	4b81                	li	s7,0
+15027-   1f7fe:	011e0ebb          	addw	t4,t3,a7
+15028-   1f802:	026e4f3b          	divw	t5,t3,t1
+15029-   1f806:	026ecfbb          	divw	t6,t4,t1
+15030-   1f80a:	e8fa                	sd	t5,80(sp)
+15031-   1f80c:	ecfe                	sd	t6,88(sp)
+15032-   1f80e:	00548463          	beq	s1,t0,1f816 <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x2422>
+15033-   1f812:	c6ffd06f          	j	1d480 <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x8c>
+15034-   1f816:	0308                	addi	a0,sp,384
+15035:   1f818:	34c0d0ef          	jal	2cb64 <y26::stage51::begin_q62_vector_rne(y26::stage51::VectorFixedPointState*)>
+15036-   1f81c:	c119                	beqz	a0,1f822 <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x242e>
+15037-   1f81e:	c63fd06f          	j	1d480 <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x8c>
+15038-   1f822:	ec4fe06f          	j	1dee6 <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0xaf2>
+15039-   1f826:	00081b63          	bnez	a6,1f83c <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x2448>
+15040-   1f82a:	000c0963          	beqz	s8,1f83c <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x2448>
+15041-   1f82e:	0fe00b93          	li	s7,254
+15042-   1f832:	018bf663          	bgeu	s7,s8,1f83e <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x244a>
+15043-   1f836:	0ff00c13          	li	s8,255
+15044-   1f83a:	b195                	j	1f49e <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x20aa>
+15045-   1f83c:	4c01                	li	s8,0
+15046-   1f83e:	018d87b3          	add	a5,s11,s8
+15047-   1f842:	00c78403          	lb	s0,12(a5)
+15048-   1f846:	4b85                	li	s7,1
+15049-   1f848:	0621                	addi	a2,a2,8
+15050-   1f84a:	fe860c23          	sb	s0,-8(a2)
+15051-   1f84e:	c77e92e3          	bne	t4,s7,1f4b2 <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x20be>
+15052-   1f852:	26013a03          	ld	s4,608(sp)
+15053-   1f856:	23013d03          	ld	s10,560(sp)
+15054-   1f85a:	a96fe06f          	j	1daf0 <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x6fc>
+15055-   1f85e:	af3f40ef          	jal	14350 <sched_getcpu@plt>
+15056-   1f862:	480d                	li	a6,3
+15057-   1f864:	00a85463          	bge	a6,a0,1f86c <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x2478>
+15058-   1f868:	e7cfe06f          	j	1dee4 <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0xaf0>
+15059-   1f86c:	00144393          	xori	t2,s0,1
+15060-   1f870:	0013949b          	slliw	s1,t2,0x1
+15061-   1f874:	e72fe06f          	j	1dee6 <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0xaf2>
+15062-   1f878:	00391993          	slli	s3,s2,0x3
+15063-   1f87c:	e4ce                	sd	s3,72(sp)
+15064-   1f87e:	e26fe06f          	j	1dea4 <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0xab0>
+15065-   1f882:	0308                	addi	a0,sp,384
+15066:   1f884:	31e0d0ef          	jal	2cba2 <y26::stage51::end_q62_vector_rne(y26::stage51::VectorFixedPointState*)>
+15067-   1f888:	89aa                	mv	s3,a0
+15068-   1f88a:	0089d493          	srli	s1,s3,0x8
+15069-   1f88e:	0ff4f413          	zext.b	s0,s1
+15070-   1f892:	e019                	bnez	s0,1f898 <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x24a4>
+15071-   1f894:	e44fe06f          	j	1ded8 <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0xae4>
+15072-   1f898:	0019c593          	xori	a1,s3,1
+15073-   1f89c:	0ff5f413          	zext.b	s0,a1
+15074-   1f8a0:	e38fe06f          	j	1ded8 <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0xae4>
+15075-   1f8a4:	012c0463          	beq	s8,s2,1f8ac <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x24b8>
+15076-   1f8a8:	bf3fe06f          	j	1e49a <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x10a6>
+15077-   1f8ac:	85d6                	mv	a1,s5
+15078-   1f8ae:	4a8130ef          	jal	32d56 <y26_stage48_load_vlseg2e64_4>
+15079-   1f8b2:	c4627057          	vsetivli	zero,4,e8,mf4,ta,mu
+15080-   1f8b6:	c13fe06f          	j	1e4c8 <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x10d4>
+15081-   1f8ba:	85d6                	mv	a1,s5
+15082-   1f8bc:	b27fd0ef          	jal	1d3e2 <y26_stage49_load_contiguous_c8x4>
+15083-   1f8c0:	c4627057          	vsetivli	zero,4,e8,mf4,ta,mu
+15084-   1f8c4:	c05fe06f          	j	1e4c8 <y26::stage49::(anonymous namespace)::run_conv_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x10d4>
+15085-   1f8c8:	6b42                	ld	s6,16(sp)
+15086-   1f8ca:	e066                	sd	s9,0(sp)
+--
+31271-   2cb22:	000ac603          	lbu	a2,0(s5)
+31272-   2cb26:	00c98023          	sb	a2,0(s3)
+31273-   2cb2a:	bd5d                	j	2c9e0 <std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_replace(unsigned long, unsigned long, char const*, unsigned long)+0x92>
+31274-   2cb2c:	000a4c83          	lbu	s9,0(s4)
+31275-   2cb30:	01958023          	sb	s9,0(a1)
+31276-   2cb34:	bf85                	j	2caa4 <std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_replace(unsigned long, unsigned long, char const*, unsigned long)+0x156>
+31277-   2cb36:	000ecf03          	lbu	t5,0(t4)
+31278-   2cb3a:	01e50023          	sb	t5,0(a0)
+31279-   2cb3e:	bf15                	j	2ca72 <std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_replace(unsigned long, unsigned long, char const*, unsigned long)+0x124>
+31280-   2cb40:	000ac383          	lbu	t2,0(s5)
+31281-   2cb44:	00730023          	sb	t2,0(t1)
+31282-   2cb48:	bf99                	j	2ca9e <std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_replace(unsigned long, unsigned long, char const*, unsigned long)+0x150>
+31283-   2cb4a:	0003bf37          	lui	t5,0x3b
+31284-   2cb4e:	288f0513          	addi	a0,t5,648 # 3b288 <_IO_stdin_used+0xb8>
+31285-   2cb52:	e466                	sd	s9,8(sp)
+31286-   2cb54:	ccce70ef          	jal	14020 <std::__throw_length_error(char const*)@plt>
+31287-   2cb58:	0003c437          	lui	s0,0x3c
+31288-   2cb5c:	e3840513          	addi	a0,s0,-456 # 3be38 <_IO_stdin_used+0xc68>
+31289-   2cb60:	cc0e70ef          	jal	14020 <std::__throw_length_error(char const*)@plt>
+31290-
+31291:000000000002cb64 <y26::stage51::begin_q62_vector_rne(y26::stage51::VectorFixedPointState*)>:
+31292-   2cb64:	87aa                	mv	a5,a0
+31293:   2cb66:	c10d                	beqz	a0,2cb88 <y26::stage51::begin_q62_vector_rne(y26::stage51::VectorFixedPointState*)+0x24>
+31294-   2cb68:	00454703          	lbu	a4,4(a0)
+31295-   2cb6c:	4501                	li	a0,0
+31296:   2cb6e:	ef11                	bnez	a4,2cb8a <y26::stage51::begin_q62_vector_rne(y26::stage51::VectorFixedPointState*)+0x26>
+31297-   2cb70:	00f022f3          	csrr	t0,vcsr
+31298-   2cb74:	00f15073          	csrwi	vcsr,2
+31299-   2cb78:	4505                	li	a0,1
+31300-   2cb7a:	0072f313          	andi	t1,t0,7
+31301-   2cb7e:	0067a023          	sw	t1,0(a5)
+31302-   2cb82:	00a78223          	sb	a0,4(a5)
+31303-   2cb86:	8082                	ret
+31304-   2cb88:	4501                	li	a0,0
+31305-   2cb8a:	8082                	ret
+31306-
+31307:000000000002cb8c <y26::stage51::q62_vsmul_m63_i64x4(long const*, long const*, long*)>:
+31308-   2cb8c:	cd827057          	vsetivli	zero,4,e64,m1,ta,ma
+31309-   2cb90:	02057007          	vle64.v	v0,(a0)
+31310-   2cb94:	0205f087          	vle64.v	v1,(a1)
+31311:   2cb98:	9e008157          	vsmul.vv	v2,v0,v1
+31312-   2cb9c:	02067127          	vse64.v	v2,(a2)
+31313-   2cba0:	8082                	ret
+31314-
+31315:000000000002cba2 <y26::stage51::end_q62_vector_rne(y26::stage51::VectorFixedPointState*)>:
+31316:   2cba2:	c501                	beqz	a0,2cbaa <y26::stage51::end_q62_vector_rne(y26::stage51::VectorFixedPointState*)+0x8>
+31317-   2cba4:	00454783          	lbu	a5,4(a0)
+31318:   2cba8:	eb91                	bnez	a5,2cbbc <y26::stage51::end_q62_vector_rne(y26::stage51::VectorFixedPointState*)+0x1a>
+31319-   2cbaa:	4601                	li	a2,0
+31320-   2cbac:	4581                	li	a1,0
+31321-   2cbae:	0085981b          	slliw	a6,a1,0x8
+31322-   2cbb2:	0ff67893          	zext.b	a7,a2
+31323-   2cbb6:	0108e533          	or	a0,a7,a6
+31324-   2cbba:	8082                	ret
+31325-   2cbbc:	00052283          	lw	t0,0(a0)
+31326-   2cbc0:	00902373          	csrr	t1,vxsat
+31327-   2cbc4:	00f29073          	csrw	vcsr,t0
+31328-   2cbc8:	00f026f3          	csrr	a3,vcsr
+31329-   2cbcc:	4118                	lw	a4,0(a0)
+31330-   2cbce:	0076f393          	andi	t2,a3,7
+31331-   2cbd2:	00050223          	sb	zero,4(a0)
+31332-   2cbd6:	40770533          	sub	a0,a4,t2
+31333-   2cbda:	00153593          	seqz	a1,a0
+31334-   2cbde:	00137613          	andi	a2,t1,1
+31335-   2cbe2:	0085981b          	slliw	a6,a1,0x8
+31336-   2cbe6:	0ff67893          	zext.b	a7,a2
+31337-   2cbea:	0108e533          	or	a0,a7,a6
+31338-   2cbee:	8082                	ret
+31339-
+31340:000000000002cbf0 <y26::stage51::q62_vsmul_m63_i64x4_guarded(long const*, long const*, long*, y26::stage51::VectorFixedPointResult*)>:
+31341:   2cbf0:	cd39                	beqz	a0,2cc4e <y26::stage51::q62_vsmul_m63_i64x4_guarded(long const*, long const*, long*, y26::stage51::VectorFixedPointResult*)+0x5e>
+31342:   2cbf2:	cdb1                	beqz	a1,2cc4e <y26::stage51::q62_vsmul_m63_i64x4_guarded(long const*, long const*, long*, y26::stage51::VectorFixedPointResult*)+0x5e>
+31343:   2cbf4:	ce29                	beqz	a2,2cc4e <y26::stage51::q62_vsmul_m63_i64x4_guarded(long const*, long const*, long*, y26::stage51::VectorFixedPointResult*)+0x5e>
+31344:   2cbf6:	cea1                	beqz	a3,2cc4e <y26::stage51::q62_vsmul_m63_i64x4_guarded(long const*, long const*, long*, y26::stage51::VectorFixedPointResult*)+0x5e>
+31345-   2cbf8:	00f02773          	csrr	a4,vcsr
+31346-   2cbfc:	00f15073          	csrwi	vcsr,2
+31347-   2cc00:	00777293          	andi	t0,a4,7
+31348-   2cc04:	cd827057          	vsetivli	zero,4,e64,m1,ta,ma
+31349-   2cc08:	02057007          	vle64.v	v0,(a0)
+31350-   2cc0c:	0205f087          	vle64.v	v1,(a1)
+31351:   2cc10:	9e008157          	vsmul.vv	v2,v0,v1
+31352-   2cc14:	02067127          	vse64.v	v2,(a2)
+31353-   2cc18:	00902673          	csrr	a2,vxsat
+31354-   2cc1c:	00f29073          	csrw	vcsr,t0
+31355-   2cc20:	00f027f3          	csrr	a5,vcsr
+31356-   2cc24:	0077f313          	andi	t1,a5,7
+31357-   2cc28:	405303b3          	sub	t2,t1,t0
+31358-   2cc2c:	0013b513          	seqz	a0,t2
+31359-   2cc30:	00167593          	andi	a1,a2,1
+31360-   2cc34:	00a680a3          	sb	a0,1(a3)
+31361-   2cc38:	00157813          	andi	a6,a0,1
+31362-   2cc3c:	00b68023          	sb	a1,0(a3)
+31363:   2cc40:	00080763          	beqz	a6,2cc4e <y26::stage51::q62_vsmul_m63_i64x4_guarded(long const*, long const*, long*, y26::stage51::VectorFixedPointResult*)+0x5e>
+31364-   2cc44:	0ff5f693          	zext.b	a3,a1
+31365-   2cc48:	0016c513          	xori	a0,a3,1
+31366-   2cc4c:	8082                	ret
+31367-   2cc4e:	4501                	li	a0,0
+31368-   2cc50:	8082                	ret
+31369-
+31370-000000000002cc52 <y26::int8_v1::valid_requant_asset(y26::int8_v1::RequantAsset const&)>:
+31371-   2cc52:	6118                	ld	a4,0(a0)
+31372-   2cc54:	87aa                	mv	a5,a0
+31373-   2cc56:	02074b63          	bltz	a4,2cc8c <y26::int8_v1::valid_requant_asset(y26::int8_v1::RequantAsset const&)+0x3a>
+31374-   2cc5a:	4514                	lw	a3,8(a0)
+31375-   2cc5c:	07e00293          	li	t0,126
+31376-   2cc60:	4501                	li	a0,0
+31377-   2cc62:	02d2e663          	bltu	t0,a3,2cc8e <y26::int8_v1::valid_requant_asset(y26::int8_v1::RequantAsset const&)+0x3c>
+31378-   2cc66:	00c7a303          	lw	t1,12(a5)
+31379-   2cc6a:	0ff00393          	li	t2,255
+31380-   2cc6e:	0263e063          	bltu	t2,t1,2cc8e <y26::int8_v1::valid_requant_asset(y26::int8_v1::RequantAsset const&)+0x3c>
+31381-   2cc72:	4b8c                	lw	a1,16(a5)
+31382-   2cc74:	0005cd63          	bltz	a1,2cc8e <y26::int8_v1::valid_requant_asset(y26::int8_v1::RequantAsset const&)+0x3c>
+31383-   2cc78:	4bc8                	lw	a0,20(a5)
+
+# Next-region MaxPool excerpt
+.deps/custom_int8_engine/build-riscv-stage51-u0/bench_stage50_slice:     file format elf64-littleriscv
+   152a8:	02028807          	vle8.v	v16,(t0)
+   152b2:	02078827          	vse8.v	v16,(a5)
+   159d0:	02038007          	vle8.v	v0,(t2)
+   159da:	02080027          	vse8.v	v0,(a6)
+   163c2:	02048c07          	vle8.v	v24,(s1)
+   163d2:	02038c27          	vse8.v	v24,(t2)
+   163f8:	02080407          	vle8.v	v8,(a6)
+   16408:	02088427          	vse8.v	v8,(a7)
+   16a46:	02098407          	vle8.v	v8,(s3)
+   16a50:	02040427          	vse8.v	v8,(s0)
+   177ac:	02090007          	vle8.v	v0,(s2)
+   177b6:	02030027          	vse8.v	v0,(t1)
+   17898:	02038007          	vle8.v	v0,(t2)
+   178a2:	02068027          	vse8.v	v0,(a3)
+   178c0:	02090807          	vle8.v	v16,(s2)
+   178c8:	02088827          	vse8.v	v16,(a7)
+   17934:	02090407          	vle8.v	v8,(s2)
+   1793c:	02070427          	vse8.v	v8,(a4)
+   17982:	02060c07          	vle8.v	v24,(a2)
+   1798c:	020e0c27          	vse8.v	v24,(t3)
+   179d0:	020a8807          	vle8.v	v16,(s5)
+   179da:	020f8827          	vse8.v	v16,(t6)
+   17a22:	02080407          	vle8.v	v8,(a6)
+   17a2c:	02088427          	vse8.v	v8,(a7)
+   17abc:	02030407          	vle8.v	v8,(t1)
+   17ac6:	02038427          	vse8.v	v8,(t2)
+   17b48:	02090c07          	vle8.v	v24,(s2)
+   17b52:	020f0c27          	vse8.v	v24,(t5)
+   17f84:	02080807          	vle8.v	v16,(a6)
+   17f8e:	02058827          	vse8.v	v16,(a1)
+   17fc4:	020c8407          	vle8.v	v8,(s9)
+   17fce:	02050427          	vse8.v	v8,(a0)
+   18014:	020d8c07          	vle8.v	v24,(s11)
+   1801e:	02050c27          	vse8.v	v24,(a0)
+   18040:	02088007          	vle8.v	v0,(a7)
+   1804a:	02050027          	vse8.v	v0,(a0)
+   1809e:	020c8807          	vle8.v	v16,(s9)
+   180a8:	02050827          	vse8.v	v16,(a0)
+   180e6:	02050c07          	vle8.v	v24,(a0)
+   180f0:	02070c27          	vse8.v	v24,(a4)
+   1813a:	02068407          	vle8.v	v8,(a3)
+   18144:	02050427          	vse8.v	v8,(a0)
+   181d4:	02030007          	vle8.v	v0,(t1)
+   181de:	02038027          	vse8.v	v0,(t2)
+   1885a:	020e8087          	vle8.v	v1,(t4)
+   1888e:	020700a7          	vse8.v	v1,(a4)
+   188f4:	02080027          	vse8.v	v0,(a6)
+   188fc:	02098027          	vse8.v	v0,(s3)
+   18910:	02060027          	vse8.v	v0,(a2)
+   18920:	020e0027          	vse8.v	v0,(t3)
+   18930:	020f0027          	vse8.v	v0,(t5)
+   18940:	02078027          	vse8.v	v0,(a5)
+   18950:	02050027          	vse8.v	v0,(a0)
+   18960:	02058027          	vse8.v	v0,(a1)
+   18970:	02088027          	vse8.v	v0,(a7)
+   18980:	020d8027          	vse8.v	v0,(s11)
+   18990:	020b8027          	vse8.v	v0,(s7)
+   189a0:	02030027          	vse8.v	v0,(t1)
+   189b0:	02038027          	vse8.v	v0,(t2)
+   189c0:	02070027          	vse8.v	v0,(a4)
+   189c8:	020c8027          	vse8.v	v0,(s9)
+   18a08:	02078807          	vle8.v	v16,(a5)
+   18a12:	020a8827          	vse8.v	v16,(s5)
+   1945a:	02058707          	vle8.v	v14,(a1)
+   19460:	02068787          	vle8.v	v15,(a3)
+   194dc:	020b8407          	vle8.v	v8,(s7)
+   194e6:	02050427          	vse8.v	v8,(a0)
+   19580:	02078287          	vle8.v	v5,(a5)
+   19588:	020a8307          	vle8.v	v6,(s5)
+   1984e:	020500a7          	vse8.v	v1,(a0)
+   19856:	020580a7          	vse8.v	v1,(a1)
+   1985e:	020680a7          	vse8.v	v1,(a3)
+   19866:	020700a7          	vse8.v	v1,(a4)
+   1986e:	020800a7          	vse8.v	v1,(a6)
+   19876:	020880a7          	vse8.v	v1,(a7)
+   1987e:	020a80a7          	vse8.v	v1,(s5)
+   19886:	020b00a7          	vse8.v	v1,(s6)
+   1988e:	020b80a7          	vse8.v	v1,(s7)
+   19896:	020c00a7          	vse8.v	v1,(s8)
+   1989e:	020c80a7          	vse8.v	v1,(s9)
+   198a4:	020e00a7          	vse8.v	v1,(t3)
+   198aa:	020f00a7          	vse8.v	v1,(t5)
+   198b2:	020f80a7          	vse8.v	v1,(t6)
+   198b6:	020480a7          	vse8.v	v1,(s1)
+   19d7a:	020f8387          	vle8.v	v7,(t6)
+   19d82:	020b0407          	vle8.v	v8,(s6)
+   19dc8:	02068007          	vle8.v	v0,(a3)
+   19dd0:	02088107          	vle8.v	v2,(a7)
+   1a756:	020e0807          	vle8.v	v16,(t3)
+   1a760:	020e8827          	vse8.v	v16,(t4)
+   1a77e:	020f0407          	vle8.v	v8,(t5)
+   1a788:	020f8427          	vse8.v	v8,(t6)
+   1aae6:	020e0007          	vle8.v	v0,(t3)
+   1aaf8:	020e8027          	vse8.v	v0,(t4)
+   1ab20:	020d8c07          	vle8.v	v24,(s11)
+   1ab32:	02078c27          	vse8.v	v24,(a5)
+   1adcc:	02060407          	vle8.v	v8,(a2)
+   1add6:	02068427          	vse8.v	v8,(a3)
+   1aeea:	02088127          	vse8.v	v2,(a7)
+   1b046:	020d8407          	vle8.v	v8,(s11)
+   1b050:	02050427          	vse8.v	v8,(a0)
+   1b08a:	020d8807          	vle8.v	v16,(s11)
+   1b094:	02050827          	vse8.v	v16,(a0)
+   1b234:	02030007          	vle8.v	v0,(t1)
+   1b23e:	020d8027          	vse8.v	v0,(s11)
+   1b492:	02070c07          	vle8.v	v24,(a4)
+   1b49c:	020d8c27          	vse8.v	v24,(s11)
+   1b4d6:	02070407          	vle8.v	v8,(a4)
+   1b4e0:	02050427          	vse8.v	v8,(a0)
+   1b4fc:	02078807          	vle8.v	v16,(a5)
+   1b506:	02060827          	vse8.v	v16,(a2)
+   1b54e:	020f8c07          	vle8.v	v24,(t6)
+   1b558:	02058c27          	vse8.v	v24,(a1)
+   1b78c:	02070007          	vle8.v	v0,(a4)
+   1b796:	020d8027          	vse8.v	v0,(s11)
+   1bef0:	02050407          	vle8.v	v8,(a0)
+   1befa:	02048427          	vse8.v	v8,(s1)
+   1bf80:	02030007          	vle8.v	v0,(t1)
+   1bf86:	02038027          	vse8.v	v0,(t2)
+   1bfd4:	02090407          	vle8.v	v8,(s2)
+   1bfde:	02050427          	vse8.v	v8,(a0)
+   1c034:	02080407          	vle8.v	v8,(a6)
+   1c03e:	02038427          	vse8.v	v8,(t2)
+   1c084:	02090407          	vle8.v	v8,(s2)
+   1c08e:	02078427          	vse8.v	v8,(a5)
+   1c514:	020e0407          	vle8.v	v8,(t3)
+   1c51e:	02060427          	vse8.v	v8,(a2)
+   1c64e:	020e0c07          	vle8.v	v24,(t3)
+   1c656:	02098c27          	vse8.v	v24,(s3)
+   1c6e8:	02090807          	vle8.v	v16,(s2)
+   1c6f2:	02080827          	vse8.v	v16,(a6)
+   1c748:	020e0407          	vle8.v	v8,(t3)
+   1c752:	02060427          	vse8.v	v8,(a2)
+   1c792:	02028007          	vle8.v	v0,(t0)
+   1c79c:	02078027          	vse8.v	v0,(a5)
+   1c890:	02068407          	vle8.v	v8,(a3)
+   1c898:	02080427          	vse8.v	v8,(a6)
+   1c904:	02058807          	vle8.v	v16,(a1)
+   1c90c:	02038827          	vse8.v	v16,(t2)
+   1c96e:	02088407          	vle8.v	v8,(a7)
+   1c978:	020e0427          	vse8.v	v8,(t3)
+   1c992:	02058007          	vle8.v	v0,(a1)
+   1c99c:	020a0027          	vse8.v	v0,(s4)
+   1d384:	02080007          	vle8.v	v0,(a6)
+   1d390:	020980a7          	vse8.v	v1,(s3)
+   1d6d4:	02080007          	vle8.v	v0,(a6)
+   1d6e0:	020980a7          	vse8.v	v1,(s3)
+000000000001d72a <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)>:
+   1d73e:	3e7f5463          	bge	t5,t2,1db26 <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x3fc>
+   1d754:	3c605463          	blez	t1,1db1c <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x3f2>
+   1d75e:	3ac05b63          	blez	a2,1db14 <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x3ea>
+   1d79c:	30605d63          	blez	t1,1dab6 <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x38c>
+   1d7a2:	a021                	j	1d7aa <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x80>
+   1d7a6:	30d30863          	beq	t1,a3,1dab6 <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x38c>
+   1d7ae:	fe04cbe3          	bltz	s1,1d7a4 <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x7a>
+   1d7b4:	fef4d8e3          	bge	s1,a5,1d7a4 <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x7a>
+   1d7ba:	feb055e3          	blez	a1,1d7a4 <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x7a>
+   1d7cc:	16080863          	beqz	a6,1d93c <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x212>
+   1d7d2:	12880c63          	beq	a6,s0,1d90a <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x1e0>
+   1d7d8:	10980263          	beq	a6,s1,1d8dc <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x1b2>
+   1d7de:	0c880863          	beq	a6,s0,1d8ae <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x184>
+   1d7e4:	08980e63          	beq	a6,s1,1d880 <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x156>
+   1d7ea:	06880463          	beq	a6,s0,1d852 <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x128>
+   1d7f0:	02980a63          	beq	a6,s1,1d824 <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0xfa>
+   1d7f8:	020e4463          	bltz	t3,1d820 <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0xf6>
+   1d7fe:	02f85163          	bge	a6,a5,1d820 <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0xf6>
+   1d814:	02040107          	vle8.v	v2,(s0)
+   1d81c:	1a1000d7          	vmaxu.vv	v1,v1,v0
+   1d828:	0204c463          	bltz	s1,1d850 <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x126>
+   1d830:	0304d063          	bge	s1,a6,1d850 <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x126>
+   1d844:	02040207          	vle8.v	v4,(s0)
+   1d84c:	1a1280d7          	vmaxu.vv	v1,v1,v5
+   1d856:	0204c463          	bltz	s1,1d87e <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x154>
+   1d85e:	0304d063          	bge	s1,a6,1d87e <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x154>
+   1d872:	02040307          	vle8.v	v6,(s0)
+   1d87a:	1a1380d7          	vmaxu.vv	v1,v1,v7
+   1d884:	0204c463          	bltz	s1,1d8ac <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x182>
+   1d88c:	0304d063          	bge	s1,a6,1d8ac <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x182>
+   1d8a0:	02040407          	vle8.v	v8,(s0)
+   1d8a8:	1a1480d7          	vmaxu.vv	v1,v1,v9
+   1d8b2:	0204c463          	bltz	s1,1d8da <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x1b0>
+   1d8ba:	0304d063          	bge	s1,a6,1d8da <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x1b0>
+   1d8ce:	02040507          	vle8.v	v10,(s0)
+   1d8d6:	1a1580d7          	vmaxu.vv	v1,v1,v11
+   1d8e0:	0204c463          	bltz	s1,1d908 <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x1de>
+   1d8e8:	0304d063          	bge	s1,a6,1d908 <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x1de>
+   1d8fc:	02040607          	vle8.v	v12,(s0)
+   1d904:	1a1680d7          	vmaxu.vv	v1,v1,v13
+   1d90e:	0204c463          	bltz	s1,1d936 <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x20c>
+   1d916:	0304d063          	bge	s1,a6,1d936 <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x20c>
+   1d92a:	02040707          	vle8.v	v14,(s0)
+   1d932:	1a1780d7          	vmaxu.vv	v1,v1,v15
+   1d938:	e6f586e3          	beq	a1,a5,1d7a4 <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x7a>
+   1d940:	0204c463          	bltz	s1,1d968 <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x23e>
+   1d948:	0304d063          	bge	s1,a6,1d968 <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x23e>
+   1d95c:	02040807          	vle8.v	v16,(s0)
+   1d964:	1a1880d7          	vmaxu.vv	v1,v1,v17
+   1d96e:	0204c463          	bltz	s1,1d996 <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x26c>
+   1d976:	0304d063          	bge	s1,a6,1d996 <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x26c>
+   1d98a:	02040907          	vle8.v	v18,(s0)
+   1d992:	1a1980d7          	vmaxu.vv	v1,v1,v19
+   1d99e:	02044363          	bltz	s0,1d9c4 <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x29a>
+   1d9a6:	01045f63          	bge	s0,a6,1d9c4 <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x29a>
+   1d9b8:	02040a07          	vle8.v	v20,(s0)
+   1d9c0:	1a1a80d7          	vmaxu.vv	v1,v1,v21
+   1d9cc:	02044363          	bltz	s0,1d9f2 <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x2c8>
+   1d9d4:	01045f63          	bge	s0,a6,1d9f2 <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x2c8>
+   1d9e6:	02040b07          	vle8.v	v22,(s0)
+   1d9ee:	1a1b80d7          	vmaxu.vv	v1,v1,v23
+   1d9fa:	02044363          	bltz	s0,1da20 <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x2f6>
+   1da02:	01045f63          	bge	s0,a6,1da20 <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x2f6>
+   1da14:	02040c07          	vle8.v	v24,(s0)
+   1da1c:	1a1c80d7          	vmaxu.vv	v1,v1,v25
+   1da28:	02044363          	bltz	s0,1da4e <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x324>
+   1da30:	01045f63          	bge	s0,a6,1da4e <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x324>
+   1da42:	02040d07          	vle8.v	v26,(s0)
+   1da4a:	1a1d80d7          	vmaxu.vv	v1,v1,v27
+   1da56:	02044363          	bltz	s0,1da7c <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x352>
+   1da5e:	01045f63          	bge	s0,a6,1da7c <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x352>
+   1da70:	02040e07          	vle8.v	v28,(s0)
+   1da78:	1a1e80d7          	vmaxu.vv	v1,v1,v29
+   1da84:	02044363          	bltz	s0,1daaa <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x380>
+   1da8c:	01045f63          	bge	s0,a6,1daaa <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x380>
+   1da9e:	02040f07          	vle8.v	v30,(s0)
+   1daa6:	1a1f80d7          	vmaxu.vv	v1,v1,v31
+   1daac:	e8f598e3          	bne	a1,a5,1d93c <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x212>
+   1dab2:	ced31ce3          	bne	t1,a3,1d7aa <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x80>
+   1dac6:	02088127          	vse8.v	v2,(a7)
+   1dad0:	c8c5cde3          	blt	a1,a2,1d76a <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x40>
+   1dad6:	006fd963          	bge	t6,t1,1dae8 <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x3be>
+   1dadc:	c8c046e3          	bgtz	a2,1d768 <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x3e>
+   1dae4:	0062df63          	bge	t0,t1,1db02 <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x3d8>
+   1daee:	00765f63          	bge	a2,t2,1db0c <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x3e2>
+   1daf2:	fe605be3          	blez	t1,1dae8 <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x3be>
+   1dafc:	c6c046e3          	bgtz	a2,1d768 <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x3e>
+   1db00:	b7c5                	j	1dae0 <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x3b6>
+   1db08:	fe7fc8e3          	blt	t6,t2,1daf8 <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x3ce>
+   1db18:	0065d863          	bge	a1,t1,1db28 <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x3fe>
+   1db22:	c278c9e3          	blt	a7,t2,1d754 <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x2a>
+   1db2e:	c27846e3          	blt	a6,t2,1d75a <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)+0x30>
+   1dba4:	020e0407          	vle8.v	v8,(t3)
+   1dbae:	02078427          	vse8.v	v8,(a5)
+   1dc78:	02090407          	vle8.v	v8,(s2)
+   1dc82:	02078427          	vse8.v	v8,(a5)
+   1dd54:	02098407          	vle8.v	v8,(s3)
+   1dd5e:	02040427          	vse8.v	v8,(s0)
+   1e162:	1a1181d7          	vmaxu.vv	v3,v1,v3
+   1e508:	02078407          	vle8.v	v8,(a5)
+   1e512:	02060427          	vse8.v	v8,(a2)
+   1e534:	02080807          	vle8.v	v16,(a6)
+   1e53e:	020e0827          	vse8.v	v16,(t3)
+   1eb5a:	02050007          	vle8.v	v0,(a0)
+   1eb5e:	02058027          	vse8.v	v0,(a1)
+   1ef50:	020e8387          	vle8.v	v7,(t4)
+   1ef58:	020a8487          	vle8.v	v9,(s5)
+   1ef60:	020a0407          	vle8.v	v8,(s4)
+   1ef70:	02098607          	vle8.v	v12,(s3)
+   1ef78:	02090587          	vle8.v	v11,(s2)
+   1ef94:	02048707          	vle8.v	v14,(s1)
+   1efa4:	02040787          	vle8.v	v15,(s0)
+   1efb4:	02038d07          	vle8.v	v26,(t2)
+   1fa04:	020d0ba7          	vse8.v	v23,(s10)
+   1fa0c:	02080ba7          	vse8.v	v23,(a6)
+   1fa3a:	02068ba7          	vse8.v	v23,(a3)
+   1fa90:	020f0b87          	vle8.v	v23,(t5)
+   20688:	02040127          	vse8.v	v2,(s0)
+   2068c:	020e0127          	vse8.v	v2,(t3)
+   20694:	02030127          	vse8.v	v2,(t1)
+   2069c:	02080127          	vse8.v	v2,(a6)
+   206a4:	020f0127          	vse8.v	v2,(t5)
+   206ac:	02060127          	vse8.v	v2,(a2)
+   206b4:	02038127          	vse8.v	v2,(t2)
+   206bc:	02058127          	vse8.v	v2,(a1)
+   206c4:	020b8127          	vse8.v	v2,(s7)
+   206cc:	02078127          	vse8.v	v2,(a5)
+   206d4:	02098127          	vse8.v	v2,(s3)
+   206dc:	02050127          	vse8.v	v2,(a0)
+   20812:	7fb0d0ef          	jal	2e80c <y26::stage51::q62_vsmul_m63_i64x4(long const*, long const*, long*)>
+   20a4a:	5c30d0ef          	jal	2e80c <y26::stage51::q62_vsmul_m63_i64x4(long const*, long const*, long*)>
+   20f88:	05d0d0ef          	jal	2e7e4 <y26::stage51::begin_q62_vector_rne(y26::stage51::VectorFixedPointState*)>
+   20ff4:	02f0d0ef          	jal	2e822 <y26::stage51::end_q62_vector_rne(y26::stage51::VectorFixedPointState*)>
+   21656:	02060407          	vle8.v	v8,(a2)
+   21660:	02088427          	vse8.v	v8,(a7)
+   21738:	02088407          	vle8.v	v8,(a7)
+   21742:	02060427          	vse8.v	v8,(a2)
+   2180a:	02038407          	vle8.v	v8,(t2)
+   21812:	02060427          	vse8.v	v8,(a2)
+   228f6:	020500a7          	vse8.v	v1,(a0)
+   228fe:	020700a7          	vse8.v	v1,(a4)
+   22906:	020780a7          	vse8.v	v1,(a5)
+   229ca:	020d0407          	vle8.v	v8,(s10)
+   229d4:	02050427          	vse8.v	v8,(a0)
+   22b30:	02028807          	vle8.v	v16,(t0)
+   22b38:	02050827          	vse8.v	v16,(a0)
+   22b74:	020d8c07          	vle8.v	v24,(s11)
+   22b7e:	020e8c27          	vse8.v	v24,(t4)
+   22b98:	02080007          	vle8.v	v0,(a6)
+   22ba0:	02088027          	vse8.v	v0,(a7)
+   22c3e:	02090407          	vle8.v	v8,(s2)
+   22c48:	02050427          	vse8.v	v8,(a0)
+   22d2c:	020b0c07          	vle8.v	v24,(s6)
+   22d36:	020e8c27          	vse8.v	v24,(t4)
+   22d84:	020a0807          	vle8.v	v16,(s4)
+   22d8e:	02090827          	vse8.v	v16,(s2)
+   22dcc:	02058407          	vle8.v	v8,(a1)
+   22dd6:	02060427          	vse8.v	v8,(a2)
+   22df4:	020a0007          	vle8.v	v0,(s4)
+   22dfe:	020e0027          	vse8.v	v0,(t3)
+   22ebc:	02060407          	vle8.v	v8,(a2)
+   22ec6:	02068427          	vse8.v	v8,(a3)
+   22f00:	02078007          	vle8.v	v0,(a5)
+   22f0a:	02030027          	vse8.v	v0,(t1)
+   22f22:	020b0807          	vle8.v	v16,(s6)
+   22f2c:	02058827          	vse8.v	v16,(a1)
+   2395c:	020c0027          	vse8.v	v0,(s8)
+   23964:	020f8027          	vse8.v	v0,(t6)
+   2396c:	02040027          	vse8.v	v0,(s0)
+   23a40:	020901a7          	vse8.v	v3,(s2)
+   23a44:	020d01a7          	vse8.v	v3,(s10)
+   23d40:	020d8407          	vle8.v	v8,(s11)
+   23d4a:	02050427          	vse8.v	v8,(a0)
+   23d9a:	02080807          	vle8.v	v16,(a6)
+   23da4:	02050827          	vse8.v	v16,(a0)
+   24302:	02048127          	vse8.v	v2,(s1)
+   2430a:	020e0127          	vse8.v	v2,(t3)
+   24a44:	02068407          	vle8.v	v8,(a3)
+   24a4e:	02050427          	vse8.v	v8,(a0)
+   24ede:	020e81a7          	vse8.v	v3,(t4)
+   25282:	020f8407          	vle8.v	v8,(t6)
+   2528c:	02060427          	vse8.v	v8,(a2)
+   257a0:	02088807          	vle8.v	v16,(a7)
+   257aa:	02068827          	vse8.v	v16,(a3)
+   25826:	020e8007          	vle8.v	v0,(t4)
+   25830:	020f0027          	vse8.v	v0,(t5)
+   2584e:	02030c07          	vle8.v	v24,(t1)
+   25858:	02078c27          	vse8.v	v24,(a5)
+   267a8:	02028407          	vle8.v	v8,(t0)
+   267b2:	02038427          	vse8.v	v8,(t2)
+   26826:	02060807          	vle8.v	v16,(a2)
+   2682e:	020b0827          	vse8.v	v16,(s6)
+   26870:	02088c07          	vle8.v	v24,(a7)
+   2687a:	02068c27          	vse8.v	v24,(a3)
+   271be:	020f8c07          	vle8.v	v24,(t6)
+   271c8:	02068c27          	vse8.v	v24,(a3)
+   27240:	020a8007          	vle8.v	v0,(s5)
+   2724a:	02068027          	vse8.v	v0,(a3)
+   272a2:	020e8407          	vle8.v	v8,(t4)
+   272ac:	020f8427          	vse8.v	v8,(t6)
+   27452:	02058807          	vle8.v	v16,(a1)
+   2745c:	02060827          	vse8.v	v16,(a2)
+   274b4:	02050c07          	vle8.v	v24,(a0)
+   274be:	02068c27          	vse8.v	v24,(a3)
+   274f4:	02058007          	vle8.v	v0,(a1)
+   274fe:	02060027          	vse8.v	v0,(a2)
+   27d7e:	020e0007          	vle8.v	v0,(t3)
+   27d88:	02060027          	vse8.v	v0,(a2)
+   27f96:	02050407          	vle8.v	v8,(a0)
+   27fa0:	02038427          	vse8.v	v8,(t2)
+   28028:	020e0807          	vle8.v	v16,(t3)
+   28032:	020e8827          	vse8.v	v16,(t4)
+   28628:	02058407          	vle8.v	v8,(a1)
+   28638:	020e0427          	vse8.v	v8,(t3)
+   29178:	020b8407          	vle8.v	v8,(s7)
+   29182:	020c8427          	vse8.v	v8,(s9)
+   29d18:	020d0c07          	vle8.v	v24,(s10)
+   29d22:	02078c27          	vse8.v	v24,(a5)
+   29fb8:	02080807          	vle8.v	v16,(a6)
+   29fc2:	02070827          	vse8.v	v16,(a4)
+   29fe0:	020e8c07          	vle8.v	v24,(t4)
+   29fea:	02078c27          	vse8.v	v24,(a5)
+   2a39c:	72a78613          	addi	a2,a5,1834 # 1d72a <y26::stage49::(anonymous namespace)::run_maxpool_worker(void*, int, y26::stage49::(anonymous namespace)::WorkerScratch&)>
+   2a45c:	02040407          	vle8.v	v8,(s0)
+   2a466:	02048427          	vse8.v	v8,(s1)
+   2a47e:	02088007          	vle8.v	v0,(a7)
+   2a488:	02080027          	vse8.v	v0,(a6)
+   2a548:	02030627          	vse8.v	v12,(t1)
+   2a54e:	02078627          	vse8.v	v12,(a5)
+   2a554:	02080627          	vse8.v	v12,(a6)
+   2a55c:	02070627          	vse8.v	v12,(a4)
+   2a562:	02060627          	vse8.v	v12,(a2)
+   2a56a:	02088627          	vse8.v	v12,(a7)
+   2a572:	02048627          	vse8.v	v12,(s1)
+   2a57a:	020b0627          	vse8.v	v12,(s6)
+   2a582:	020b8627          	vse8.v	v12,(s7)
+   2a58a:	020e8627          	vse8.v	v12,(t4)
+   2a592:	020f8627          	vse8.v	v12,(t6)
+   2a598:	02038627          	vse8.v	v12,(t2)
+   2a59e:	020e0627          	vse8.v	v12,(t3)
+   2a5a4:	02068627          	vse8.v	v12,(a3)
+   2a5ac:	02058627          	vse8.v	v12,(a1)
+   2a5b4:	020f0627          	vse8.v	v12,(t5)
+   2a5de:	02080687          	vle8.v	v13,(a6)
+   2a602:	020706a7          	vse8.v	v13,(a4)
+   2a72e:	02060007          	vle8.v	v0,(a2)
+   2a738:	020f8027          	vse8.v	v0,(t6)
+   2a750:	02050407          	vle8.v	v8,(a0)
+   2a75a:	02088427          	vse8.v	v8,(a7)
+   2b246:	02060807          	vle8.v	v16,(a2)
+   2b250:	02050827          	vse8.v	v16,(a0)
+   2b26c:	02068c07          	vle8.v	v24,(a3)
+   2b276:	02050c27          	vse8.v	v24,(a0)
+   2b694:	02058007          	vle8.v	v0,(a1)
+   2b69c:	02050027          	vse8.v	v0,(a0)
+   2b6b8:	020f8407          	vle8.v	v8,(t6)
+   2b6c2:	02078427          	vse8.v	v8,(a5)
+   2b98a:	02060807          	vle8.v	v16,(a2)
+   2b994:	02088827          	vse8.v	v16,(a7)
+   2c350:	02040407          	vle8.v	v8,(s0)
+   2c35a:	02068427          	vse8.v	v8,(a3)
+   2c3cc:	02038007          	vle8.v	v0,(t2)
+   2c3d6:	02048027          	vse8.v	v0,(s1)
+   2c550:	02040407          	vle8.v	v8,(s0)
+   2c55a:	02068427          	vse8.v	v8,(a3)
+   2c5fa:	02050007          	vle8.v	v0,(a0)
+   2c604:	02048027          	vse8.v	v0,(s1)
+   2ca6e:	02050407          	vle8.v	v8,(a0)
+   2ca78:	02058427          	vse8.v	v8,(a1)
+   2cbb0:	020680a7          	vse8.v	v1,(a3)
+   2cbb8:	020e00a7          	vse8.v	v1,(t3)
+   2cbc0:	020b80a7          	vse8.v	v1,(s7)
+   2cbc8:	020880a7          	vse8.v	v1,(a7)
+   2cbce:	020e80a7          	vse8.v	v1,(t4)
+   2cbd6:	020f80a7          	vse8.v	v1,(t6)
+   2cbdc:	020280a7          	vse8.v	v1,(t0)
+   2cbe4:	020780a7          	vse8.v	v1,(a5)
+   2cbea:	020300a7          	vse8.v	v1,(t1)
+   2cbf0:	020500a7          	vse8.v	v1,(a0)
+   2cbf8:	020f00a7          	vse8.v	v1,(t5)
+   2cbfe:	020580a7          	vse8.v	v1,(a1)
+   2cc04:	020600a7          	vse8.v	v1,(a2)
+   2cc0c:	020b80a7          	vse8.v	v1,(s7)
+   2e282:	02098407          	vle8.v	v8,(s3)
+   2e28c:	02078427          	vse8.v	v8,(a5)
+   2e342:	02070407          	vle8.v	v8,(a4)
+   2e34c:	020e0427          	vse8.v	v8,(t3)
+   2e36e:	02098007          	vle8.v	v0,(s3)
+   2e378:	02080027          	vse8.v	v0,(a6)
+   2e3cc:	02068807          	vle8.v	v16,(a3)
+   2e3d6:	02028827          	vse8.v	v16,(t0)
+   2e484:	020b8807          	vle8.v	v16,(s7)
+   2e48e:	02038827          	vse8.v	v16,(t2)
+   2e4f0:	02088407          	vle8.v	v8,(a7)
+   2e4fa:	02060427          	vse8.v	v8,(a2)
+   2e54c:	020f8007          	vle8.v	v0,(t6)
+   2e556:	02098027          	vse8.v	v0,(s3)
+   2e650:	020e8c07          	vle8.v	v24,(t4)
+   2e658:	02098c27          	vse8.v	v24,(s3)
+   2e6e0:	020e8407          	vle8.v	v8,(t4)
+   2e6ea:	02060427          	vse8.v	v8,(a2)
+   2e70a:	02078007          	vle8.v	v0,(a5)
+   2e714:	02030027          	vse8.v	v0,(t1)
+   2e754:	020a0807          	vle8.v	v16,(s4)
+   2e75e:	02058827          	vse8.v	v16,(a1)
+000000000002e7e4 <y26::stage51::begin_q62_vector_rne(y26::stage51::VectorFixedPointState*)>:
+   2e7e6:	c10d                	beqz	a0,2e808 <y26::stage51::begin_q62_vector_rne(y26::stage51::VectorFixedPointState*)+0x24>
+   2e7ee:	ef11                	bnez	a4,2e80a <y26::stage51::begin_q62_vector_rne(y26::stage51::VectorFixedPointState*)+0x26>
+000000000002e80c <y26::stage51::q62_vsmul_m63_i64x4(long const*, long const*, long*)>:
+000000000002e822 <y26::stage51::end_q62_vector_rne(y26::stage51::VectorFixedPointState*)>:
+   2e822:	c501                	beqz	a0,2e82a <y26::stage51::end_q62_vector_rne(y26::stage51::VectorFixedPointState*)+0x8>
+   2e828:	eb91                	bnez	a5,2e83c <y26::stage51::end_q62_vector_rne(y26::stage51::VectorFixedPointState*)+0x1a>
+000000000002e870 <y26::stage51::q62_vsmul_m63_i64x4_guarded(long const*, long const*, long*, y26::stage51::VectorFixedPointResult*)>:
+   2e870:	cd39                	beqz	a0,2e8ce <y26::stage51::q62_vsmul_m63_i64x4_guarded(long const*, long const*, long*, y26::stage51::VectorFixedPointResult*)+0x5e>
+   2e872:	cdb1                	beqz	a1,2e8ce <y26::stage51::q62_vsmul_m63_i64x4_guarded(long const*, long const*, long*, y26::stage51::VectorFixedPointResult*)+0x5e>
+   2e874:	ce29                	beqz	a2,2e8ce <y26::stage51::q62_vsmul_m63_i64x4_guarded(long const*, long const*, long*, y26::stage51::VectorFixedPointResult*)+0x5e>
+   2e876:	cea1                	beqz	a3,2e8ce <y26::stage51::q62_vsmul_m63_i64x4_guarded(long const*, long const*, long*, y26::stage51::VectorFixedPointResult*)+0x5e>
+   2e8c0:	00080763          	beqz	a6,2e8ce <y26::stage51::q62_vsmul_m63_i64x4_guarded(long const*, long const*, long*, y26::stage51::VectorFixedPointResult*)+0x5e>
+   2ed1a:	02078287          	vle8.v	v5,(a5)
+   2ed2a:	02028807          	vle8.v	v16,(t0)
+   2ed32:	02030787          	vle8.v	v15,(t1)
+   2ed4a:	02050507          	vle8.v	v10,(a0)
+   2ed92:	02040707          	vle8.v	v14,(s0)
+   2edae:	02060487          	vle8.v	v9,(a2)
+   2edc6:	02038607          	vle8.v	v12,(t2)
+   2edd6:	02048387          	vle8.v	v7,(s1)
+   2edda:	02070407          	vle8.v	v8,(a4)
+   2edea:	02088d07          	vle8.v	v26,(a7)
+   2ee0a:	02058687          	vle8.v	v13,(a1)
+   2ee1e:	02098c87          	vle8.v	v25,(s3)
+   2ee32:	02068587          	vle8.v	v11,(a3)
+   2ee46:	02080d87          	vle8.v	v27,(a6)
+   2ee4a:	020a0c07          	vle8.v	v24,(s4)
+   2ee5a:	020a8e87          	vle8.v	v29,(s5)
+   2f7aa:	020f8407          	vle8.v	v8,(t6)
+   2f7b4:	02070427          	vse8.v	v8,(a4)
+   2f8ee:	020f0007          	vle8.v	v0,(t5)
+   2f8f8:	020f8027          	vse8.v	v0,(t6)
+   2f926:	02060807          	vle8.v	v16,(a2)
+   2f930:	020d0827          	vse8.v	v16,(s10)
+   2f95c:	02078c07          	vle8.v	v24,(a5)
+   2f966:	02028c27          	vse8.v	v24,(t0)
+   2f992:	02038407          	vle8.v	v8,(t2)
+   2f99c:	02058427          	vse8.v	v8,(a1)
+   2fba8:	020a8407          	vle8.v	v8,(s5)
+   2fbb2:	02050427          	vse8.v	v8,(a0)
+   2fd84:	02060027          	vse8.v	v0,(a2)
+   2fd8c:	02080027          	vse8.v	v0,(a6)
+   2fd94:	02088027          	vse8.v	v0,(a7)
+   2fd9c:	02098027          	vse8.v	v0,(s3)
+   2fda2:	020a0027          	vse8.v	v0,(s4)
+   2fda8:	020d0027          	vse8.v	v0,(s10)
+   2fdae:	020d8027          	vse8.v	v0,(s11)
+   2fdb6:	020e0027          	vse8.v	v0,(t3)
+   2fdbc:	020e8027          	vse8.v	v0,(t4)
+   2fdc0:	020f0027          	vse8.v	v0,(t5)
+   2fe92:	02098227          	vse8.v	v4,(s3)
+   2fe9a:	02038227          	vse8.v	v4,(t2)
+   2fea2:	02058227          	vse8.v	v4,(a1)
+   2fea8:	02060227          	vse8.v	v4,(a2)
+   2feb0:	02080227          	vse8.v	v4,(a6)
+   2feb8:	02088227          	vse8.v	v4,(a7)
+   2fec0:	020a0227          	vse8.v	v4,(s4)
+   2ff7a:	02028527          	vse8.v	v10,(t0)
+   2ff7e:	02090527          	vse8.v	v10,(s2)
+   2ff9e:	02078527          	vse8.v	v10,(a5)
+   2ffa2:	02040527          	vse8.v	v10,(s0)
+   303e0:	020782a7          	vse8.v	v5,(a5)
+   303e6:	020f02a7          	vse8.v	v5,(t5)
+   303ec:	020b82a7          	vse8.v	v5,(s7)
+   303f4:	020c82a7          	vse8.v	v5,(s9)
+   3042a:	020783a7          	vse8.v	v7,(a5)
+   30442:	02078327          	vse8.v	v6,(a5)
+   30448:	02028327          	vse8.v	v6,(t0)
+   30464:	02098407          	vle8.v	v8,(s3)
+   3046c:	02050427          	vse8.v	v8,(a0)
+   30512:	02098007          	vle8.v	v0,(s3)
+   3051c:	02068027          	vse8.v	v0,(a3)
+   30598:	02080c07          	vle8.v	v24,(a6)
+   305a0:	02090c27          	vse8.v	v24,(s2)
+   30ab0:	02068407          	vle8.v	v8,(a3)
+   30aba:	02050427          	vse8.v	v8,(a0)
+   30e7a:	02060407          	vle8.v	v8,(a2)
+   30e84:	02058427          	vse8.v	v8,(a1)
+   316b4:	02090c07          	vle8.v	v24,(s2)
+   316be:	02050c27          	vse8.v	v24,(a0)
+   31a50:	020c8807          	vle8.v	v16,(s9)
+   31a5a:	02050827          	vse8.v	v16,(a0)
+   31a72:	02070c07          	vle8.v	v24,(a4)
+   31a7c:	02050c27          	vse8.v	v24,(a0)
+   31e7a:	020c0407          	vle8.v	v8,(s8)
+   31e84:	02050427          	vse8.v	v8,(a0)
+   32182:	020f8807          	vle8.v	v16,(t6)
+   3218c:	020f0827          	vse8.v	v16,(t5)
+   321ce:	02050407          	vle8.v	v8,(a0)
+   321d8:	02090427          	vse8.v	v8,(s2)
+   32252:	020c8007          	vle8.v	v0,(s9)
+   3225c:	02030027          	vse8.v	v0,(t1)
+   32822:	02040407          	vle8.v	v8,(s0)
+   3282c:	02050427          	vse8.v	v8,(a0)
+   32b40:	020a0007          	vle8.v	v0,(s4)
+   32b4a:	02038027          	vse8.v	v0,(t2)
+   32b84:	020f04a7          	vse8.v	v9,(t5)
+   32b88:	020504a7          	vse8.v	v9,(a0)
+   32b8e:	020f84a7          	vse8.v	v9,(t6)
+   32c3a:	02098c07          	vle8.v	v24,(s3)
+   32c44:	02050c27          	vse8.v	v24,(a0)
+   32f24:	02060007          	vle8.v	v0,(a2)
+   32f2e:	02068027          	vse8.v	v0,(a3)
+   32f6a:	02030807          	vle8.v	v16,(t1)
+   32f74:	020e8827          	vse8.v	v16,(t4)
+   33152:	020a8807          	vle8.v	v16,(s5)
+   3315c:	02050827          	vse8.v	v16,(a0)
+   33174:	02080407          	vle8.v	v8,(a6)
+   3317e:	02030427          	vse8.v	v8,(t1)
+   33230:	020b0c07          	vle8.v	v24,(s6)
+   3323a:	02050c27          	vse8.v	v24,(a0)
+   332b2:	02028627          	vse8.v	v12,(t0)
+   332f6:	020e0687          	vle8.v	v13,(t3)
+   332fe:	020906a7          	vse8.v	v13,(s2)
+   334e6:	02058407          	vle8.v	v8,(a1)
+   334ee:	02050427          	vse8.v	v8,(a0)
+   341ba:	02098407          	vle8.v	v8,(s3)
+   341c4:	02040427          	vse8.v	v8,(s0)
+   342ae:	02078807          	vle8.v	v16,(a5)
+   342b8:	02090827          	vse8.v	v16,(s2)
+   34316:	02050407          	vle8.v	v8,(a0)
+   34320:	02060427          	vse8.v	v8,(a2)
+   3433e:	020e0007          	vle8.v	v0,(t3)
+   34348:	020e8027          	vse8.v	v0,(t4)
+   34780:	020e0007          	vle8.v	v0,(t3)
+   34784:	020e8107          	vle8.v	v2,(t4)
+   3478c:	020f0187          	vle8.v	v3,(t5)
+   34794:	020f0207          	vle8.v	v4,(t5)
+   3479c:	020f0287          	vle8.v	v5,(t5)
+   34814:	020e0007          	vle8.v	v0,(t3)
+   3481c:	020f0087          	vle8.v	v1,(t5)
+   34820:	020e8107          	vle8.v	v2,(t4)
+   34828:	020f0187          	vle8.v	v3,(t5)
+   34830:	020f0207          	vle8.v	v4,(t5)
+   34838:	020f0287          	vle8.v	v5,(t5)
+   348f0:	020e0007          	vle8.v	v0,(t3)
+   348f8:	020f0087          	vle8.v	v1,(t5)
+   34900:	020f0107          	vle8.v	v2,(t5)
+   34904:	020e8207          	vle8.v	v4,(t4)
+   3490c:	020f0287          	vle8.v	v5,(t5)
+   34914:	020f0307          	vle8.v	v6,(t5)
+   3491c:	020f0387          	vle8.v	v7,(t5)
+   34cda:	02088027          	vse8.v	v0,(a7)
+   34ce8:	020b8127          	vse8.v	v2,(s7)
+   34d7c:	02068b87          	vle8.v	v23,(a3)
+   34d80:	02078c07          	vle8.v	v24,(a5)
+   34e60:	020f8487          	vle8.v	v9,(t6)
+   34e68:	020a8387          	vle8.v	v7,(s5)
+   34e70:	020a0407          	vle8.v	v8,(s4)
+   34e80:	02098687          	vle8.v	v13,(s3)
+   34e88:	02090507          	vle8.v	v10,(s2)
+   34ea4:	02048607          	vle8.v	v12,(s1)
+   34eb4:	02040987          	vle8.v	v19,(s0)
+   34ec4:	02038d07          	vle8.v	v26,(t2)
+   37252:	020500a7          	vse8.v	v1,(a0)
+   3725a:	020700a7          	vse8.v	v1,(a4)
+   37262:	020780a7          	vse8.v	v1,(a5)
+   37326:	020d0407          	vle8.v	v8,(s10)
+   37330:	02050427          	vse8.v	v8,(a0)
+   3748c:	02028807          	vle8.v	v16,(t0)
+   37494:	02050827          	vse8.v	v16,(a0)
+   374d0:	020d8c07          	vle8.v	v24,(s11)
+   374da:	020e8c27          	vse8.v	v24,(t4)
+   374f4:	02080007          	vle8.v	v0,(a6)
+   374fc:	02088027          	vse8.v	v0,(a7)
+   38436:	020f8007          	vle8.v	v0,(t6)
+   38440:	02050027          	vse8.v	v0,(a0)
+   38532:	020c8407          	vle8.v	v8,(s9)
+   3853c:	02050427          	vse8.v	v8,(a0)
+   38b52:	02068407          	vle8.v	v8,(a3)
+   38b5c:	02050427          	vse8.v	v8,(a0)
+   394a8:	02078c07          	vle8.v	v24,(a5)
+   394b2:	02030c27          	vse8.v	v24,(t1)
+   39a4e:	02028807          	vle8.v	v16,(t0)
+   39a58:	02078827          	vse8.v	v16,(a5)
+   39c54:	02090407          	vle8.v	v8,(s2)
+   39c5e:	02058427          	vse8.v	v8,(a1)
+   3a27a:	02030007          	vle8.v	v0,(t1)
+   3a288:	020a8027          	vse8.v	v0,(s5)
+   3a384:	020d8807          	vle8.v	v16,(s11)
+   3a38e:	02088827          	vse8.v	v16,(a7)
+   3a60a:	020e0c07          	vle8.v	v24,(t3)
+   3a616:	02050c27          	vse8.v	v24,(a0)
+   3a6e6:	020e0007          	vle8.v	v0,(t3)
+   3a6f6:	020e8027          	vse8.v	v0,(t4)
+   3a880:	020f0407          	vle8.v	v8,(t5)
+   3a88c:	02050427          	vse8.v	v8,(a0)
+   3aa88:	02030807          	vle8.v	v16,(t1)
+   3aa98:	02038827          	vse8.v	v16,(t2)
+   3ab28:	02030407          	vle8.v	v8,(t1)
+   3ab34:	02098427          	vse8.v	v8,(s3)
+   3b378:	02080407          	vle8.v	v8,(a6)
+   3b37c:	02058427          	vse8.v	v8,(a1)
+   3b3d4:	020e0407          	vle8.v	v8,(t3)
+   3b3de:	020a0427          	vse8.v	v8,(s4)
+   3b442:	02098007          	vle8.v	v0,(s3)
+   3b448:	02050027          	vse8.v	v0,(a0)
+   3b4d4:	020d8807          	vle8.v	v16,(s11)
+   3b4de:	02078827          	vse8.v	v16,(a5)
+   3b4f6:	020d8407          	vle8.v	v8,(s11)
+   3b500:	02078427          	vse8.v	v8,(a5)
+   3b51a:	02058c07          	vle8.v	v24,(a1)
+   3b524:	020e0c27          	vse8.v	v24,(t3)
+   3b53c:	020d0007          	vle8.v	v0,(s10)
+   3b546:	02038027          	vse8.v	v0,(t2)
+   3b55e:	020d8c07          	vle8.v	v24,(s11)
+   3b568:	02078c27          	vse8.v	v24,(a5)
+   3b580:	02088007          	vle8.v	v0,(a7)
+   3b58a:	02058027          	vse8.v	v0,(a1)
+   3c4e2:	020c0c07          	vle8.v	v24,(s8)
+   3c4ec:	02058c27          	vse8.v	v24,(a1)
+   3c4fe:	020c0807          	vle8.v	v16,(s8)
+   3c508:	02068827          	vse8.v	v16,(a3)
+   3c8e8:	02050007          	vle8.v	v0,(a0)
+   3c8ec:	02058087          	vle8.v	v1,(a1)
+   3c90a:	02050007          	vle8.v	v0,(a0)
+   3c90e:	02058087          	vle8.v	v1,(a1)
+   3c92e:	02050007          	vle8.v	v0,(a0)
+   3c932:	02058087          	vle8.v	v1,(a1)
+   3c950:	02050007          	vle8.v	v0,(a0)
+   3c954:	02058087          	vle8.v	v1,(a1)
+   3ca76:	020f80a7          	vse8.v	v1,(t6)
+   3ca7a:	020780a7          	vse8.v	v1,(a5)
+   3ca86:	020f00a7          	vse8.v	v1,(t5)
+   3ca8e:	020300a7          	vse8.v	v1,(t1)
+   3ca96:	020380a7          	vse8.v	v1,(t2)
+   3ca9e:	020480a7          	vse8.v	v1,(s1)
+   3caa6:	020600a7          	vse8.v	v1,(a2)
+   3caae:	020680a7          	vse8.v	v1,(a3)
+   3cab6:	020700a7          	vse8.v	v1,(a4)
+   3cabe:	020800a7          	vse8.v	v1,(a6)
+   3cac6:	020880a7          	vse8.v	v1,(a7)
+   3cace:	020e00a7          	vse8.v	v1,(t3)
+   3cad6:	020e80a7          	vse8.v	v1,(t4)
+   3cade:	020400a7          	vse8.v	v1,(s0)
+   3cae6:	020f80a7          	vse8.v	v1,(t6)
+   3caee:	020780a7          	vse8.v	v1,(a5)

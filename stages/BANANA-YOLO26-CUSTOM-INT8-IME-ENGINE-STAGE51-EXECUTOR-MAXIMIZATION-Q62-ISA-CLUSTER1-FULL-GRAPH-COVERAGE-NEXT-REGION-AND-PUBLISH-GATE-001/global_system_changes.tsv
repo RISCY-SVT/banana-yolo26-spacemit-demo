@@ -1,0 +1,4 @@
+surface	before	temporary	after	persistent	rollback
+kernel.perf_event_paranoid	2	-1	2	no	completed
+kernel.kptr_restrict	1	0	1	no	completed
+IRQ affinity 86/99/102/103	CPU0-7	CPU5-7	CPU0-7	no	completed

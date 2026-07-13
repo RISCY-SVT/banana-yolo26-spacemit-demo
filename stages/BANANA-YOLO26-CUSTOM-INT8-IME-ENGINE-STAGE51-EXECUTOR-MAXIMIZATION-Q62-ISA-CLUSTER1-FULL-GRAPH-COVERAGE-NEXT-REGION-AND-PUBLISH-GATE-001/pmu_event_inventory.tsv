@@ -1,0 +1,6 @@
+event	status	scope	interpretation
+cycles	available	per-worker after affinity	diagnostic
+instructions	available	per-worker after affinity	diagnostic
+cache-references	unmapped-or-unsupported	time_running=0	not zero activity
+cache-misses	unmapped-or-unsupported	time_running=0	not zero activity
+X60 named stall/L1/L2	unavailable-matching-source	not measured	no fabricated count

@@ -1,0 +1,68 @@
+[dev] glibc: ldd (Ubuntu GLIBC 2.39-0ubuntu8.7) 2.39
+[dev] node : /usr/bin/node  v24.15.0 | npm: 12.0.0
+[dev] codex: /home/svt/.npm-global/bin/codex
+[dev] claude: /home/svt/.npm-global/bin/claude
+[dev] riscv default: /opt/riscv -> /opt/SpacemiT
+[env] TOOLCHAIN_ROOT=/data/SpacemiT/spacemit-toolchain-linux-glibc-x86_64-v1.1.2
+[env] ARCH_FLAGS=-march=rv64gcv_zvfh -mabi=lp64d
+[env] OPENCV_SRC=/data/opencv
+[env] NCNN_SRC=/data/ncnn
+[env] K1_SYSROOT_OVERLAY=/data/sysroots/k1x-gtk3-overlay
+[env] BANANA_SSH_TARGET=svt@banana
+[env] K1_LOG_ROOT=/data/ncnn-logs/ai-team
+bf3
+Linux bf3 6.6.63 #2.2.7.2 SMP PREEMPT Fri Aug 15 12:32:44 UTC 2025 riscv64 riscv64 riscv64 GNU/Linux
+PRETTY_NAME="Bianbu 2.2.1"
+NAME="Bianbu"
+VERSION_ID="2.2.1"
+VERSION="2.2.1 (Noble Numbat)"
+VERSION_CODENAME=noble
+ID=bianbu
+ID_LIKE=debian
+HOME_URL="https://bianbu.spacemit.com"
+SUPPORT_URL="https://bianbu.spacemit.com"
+BUG_REPORT_URL="https://ticket.spacemit.com"
+PRIVACY_POLICY_URL="https://www.spacemit.com/privacy-policy"
+UBUNTU_CODENAME=noble
+LOGO=bianbu-logo
+TARGET SOURCE         FSTYPE OPTIONS
+/data  /dev/nvme0n1p1 ext4   rw,noatime
+Filesystem     Type  Size  Used Avail Use% Mounted on
+/dev/nvme0n1p1 ext4  469G  8.6G  436G   2% /data
+/dev/mmcblk2p6 ext4  115G   23G   86G  22% /
+NAME         TYPE FSTYPE   SIZE MOUNTPOINTS
+mmcblk2      disk        116.5G
+├─mmcblk2p1  part          256K
+├─mmcblk2p2  part           64K
+├─mmcblk2p3  part            1M
+├─mmcblk2p4  part            2M
+├─mmcblk2p5  part ext4     256M /boot
+└─mmcblk2p6  part ext4   116.2G /
+mmcblk2boot0 disk            4M
+mmcblk2boot1 disk            4M
+nvme0n1      disk        476.9G
+└─nvme0n1p1  part ext4   476.9G /data
+DATA_SOURCE=/dev/nvme0n1p1
+DATA_WRITABLE=1
+2
+1
+90be7592-f6d9-4d69-ae40-a6c9d25a51ab
+/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor=performance
+/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq=1600000
+/sys/devices/system/cpu/cpu4/cpufreq/scaling_cur_freq=1600000
+ 13:02:46 up 14 days, 18:54,  3 users,  load average: 2.01, 2.01, 2.00
+2.01 2.01 2.00 3/631 175786
+Architecture:        riscv64
+Byte Order:          Little Endian
+CPU(s):              8
+On-line CPU(s) list: 0-7
+Model name:          Spacemit(R) X60
+Thread(s) per core:  1
+Core(s) per socket:  8
+Socket(s):           1
+CPU(s) scaling MHz:  100%
+CPU max MHz:         1600.0000
+CPU min MHz:         614.4000
+L1d cache:           256 KiB (8 instances)
+L1i cache:           256 KiB (8 instances)
+L2 cache:            1 MiB (2 instances)

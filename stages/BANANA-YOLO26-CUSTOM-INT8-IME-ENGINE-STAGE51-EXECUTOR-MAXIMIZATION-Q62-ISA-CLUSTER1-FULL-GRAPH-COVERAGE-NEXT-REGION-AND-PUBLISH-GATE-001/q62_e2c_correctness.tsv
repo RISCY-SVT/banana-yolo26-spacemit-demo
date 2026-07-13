@@ -1,0 +1,4 @@
+surface	cases	result	state_restore	evidence
+standalone signed/tie probe	256	byte-exact	8/8 ambient vcsr	q62_e2c_probe.txt
+package F0-F7	8x32 boundaries	byte-exact	FRM/vxrm/vxsat pass	q62_e2c_package_correctness.txt
+M4/M8/M12 tails	all selected tails	byte-exact	pass	host and board tests

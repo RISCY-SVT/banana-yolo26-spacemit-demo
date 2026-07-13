@@ -1,0 +1,3 @@
+publication_phase	branch	head	status	authority
+prestage	yolo26-custom-int8-engine	ea993fb4255f12592380b975bd3cc6dbc73bea57	published-fast-forward	raw command 0014
+final	yolo26-custom-int8-engine	self-identity recorded outside tracked tree	post-commit parity required	result packet final-push evidence

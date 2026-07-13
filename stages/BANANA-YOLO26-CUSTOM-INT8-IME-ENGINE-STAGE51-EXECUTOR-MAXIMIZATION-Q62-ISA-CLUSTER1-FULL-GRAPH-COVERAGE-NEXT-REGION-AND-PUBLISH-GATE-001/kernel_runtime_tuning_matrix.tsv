@@ -1,0 +1,6 @@
+arm	mean_us	p95_us	selection
+current	21365.038442	21546.243400	not-selected
+mlock_prefault	21351.670888	21451.434350	not-selected
+hugepage	21357.938710	21510.444400	not-selected
+sched_rr20	20973.341840	21161.386150	selected
+irq_retarget	21237.374568	21378.434550	not-selected

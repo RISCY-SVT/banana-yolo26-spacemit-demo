@@ -1,0 +1,12 @@
+board=Banana-Pi BPI-F3 / SpacemiT K1X
+os=Bianbu 2.2.1
+kernel=6.6.63
+cpu_count=8
+ime_workers=CPU0-3
+controller=CPU4
+cluster1_non_ime=CPU4-7 diagnostic only, not selected
+governor=performance
+frequency_khz=1600000
+compiler=SpacemiT GCC 14.3.0 g56971dcbea2
+flags=-march=rv64gcv_zvfh -mabi=lp64d -mtune=spacemit-x60 -funroll-loops -O3 -DNDEBUG
+board_stage_root=/data/k1x-stage-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE51-EXECUTOR-MAXIMIZATION-Q62-ISA-CLUSTER1-FULL-GRAPH-COVERAGE-NEXT-REGION-AND-PUBLISH-GATE-001

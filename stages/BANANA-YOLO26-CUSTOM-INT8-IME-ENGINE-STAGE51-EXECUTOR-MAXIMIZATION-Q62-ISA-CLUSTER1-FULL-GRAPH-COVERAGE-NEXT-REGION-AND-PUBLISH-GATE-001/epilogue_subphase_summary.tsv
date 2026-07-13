@@ -1,0 +1,3 @@
+route	wall_us	delivery_worker_sum_us	vmadot_worker_sum_us	epilogue_worker_sum_us	q0_extract_worker_sum_us	q1_bias_worker_sum_us	q2_multiply_rne_worker_sum_us	q3_clamp_worker_sum_us	q4_lut_worker_sum_us	q5_store_worker_sum_us	dominant_subphase
+E1	398572.830000	18506.500000	15694.912000	1460928.600000	126563.340000	238033.880000	254113.740000	197065.570000	190210.690000	228546.680000	q2_multiply_rne_worker_sum_us
+E2c	87403.590000	17615.285000	15288.051000	295443.520000	30920.964000	35775.346000	35302.192000	36867.675000	35991.418000	34660.503000	q3_clamp_worker_sum_us

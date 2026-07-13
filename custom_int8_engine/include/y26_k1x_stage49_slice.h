@@ -20,7 +20,12 @@ enum class LoadStrategy {
 };
 enum class EpilogueStrategy { generic_scalar, inline_scalar, rvv_q62 };
 enum class PartitionPolicy { spatial, output_channel };
-enum class NonConvStrategy { serial_scalar, parallel_scalar, explicit_rvv_lut };
+enum class NonConvStrategy {
+    serial_scalar,
+    parallel_scalar,
+    explicit_rvv_lut,
+    cluster1_explicit_rvv,
+};
 enum class SchedulerStrategy { all_workers_complete, active_workers_complete };
 
 struct RunOptions {
@@ -55,6 +60,12 @@ struct OperationTiming {
     double delivery_worker_sum_us = 0.0;
     double vmadot_worker_sum_us = 0.0;
     double epilogue_worker_sum_us = 0.0;
+    double epilogue_extract_worker_sum_us = 0.0;
+    double epilogue_bias_worker_sum_us = 0.0;
+    double epilogue_multiply_rne_worker_sum_us = 0.0;
+    double epilogue_clamp_worker_sum_us = 0.0;
+    double epilogue_lut_worker_sum_us = 0.0;
+    double epilogue_store_worker_sum_us = 0.0;
 };
 
 struct SliceTiming {
@@ -63,6 +74,7 @@ struct SliceTiming {
     double lut_us = 0.0;
     double add_us = 0.0;
     double concat_us = 0.0;
+    double maxpool_us = 0.0;
     double min_worker_us = 0.0;
     double max_worker_us = 0.0;
     int affinity_ok = 0;
@@ -105,6 +117,8 @@ public:
     int run_slice_resident(const RunOptions& options, SliceTiming* timing);
     int run_operation_resident(int operation_index, const RunOptions& options,
                                SliceTiming* timing);
+    int run_range_resident(int first_operation, int last_operation,
+                           const RunOptions& options, SliceTiming* timing);
 
     int copy_tensor(int tensor_id, std::int8_t* destination, std::size_t bytes) const;
     int copy_captured_tensor(int tensor_id, std::int8_t* destination, std::size_t bytes) const;
@@ -117,8 +131,10 @@ public:
     int output_tensor_id() const noexcept;
     int operation_input_tensor_id(int operation_index, int slot) const noexcept;
     int operation_output_tensor_id(int operation_index, int slot) const noexcept;
+    int tensor_id_for_key(const std::string& key) const noexcept;
     std::size_t arena_bytes() const noexcept;
     std::size_t packed_weight_bytes() const noexcept;
+    int prefault_memory(bool advise_hugepage, std::uint64_t* touched_checksum) noexcept;
     bool worker_affinity_ok() const noexcept;
     const std::string& manifest_sha256() const noexcept;
     const std::string& last_error() const noexcept;

@@ -1,0 +1,4 @@
+envelope	compute_ms	nonmac_ms	total_ms	interpretation
+optimistic	143.973694	15.000000	158.973694	analytical, not physical bound
+central	169.380817	35.000000	204.380817	selected LUT plus conservative uncovered rows
+conservative	199.869364	70.000000	269.869364	cache/scheduler/head uncertainty

@@ -1,0 +1,10 @@
+candidate	mean_us	p95_us	exact	selected
+lut_c0_4	490.935575	524.319300	pass	no
+lut_c1_1	1150.010675	1194.800750	pass	no
+lut_c1_4	555.245000	769.356700	pass	no
+add_c0_4	204.794525	225.368900	pass	no
+add_c1_1	622.611950	639.300150	pass	no
+add_c1_4	206.820600	227.337700	pass	no
+concat_c0_4	5.343825	6.431600	pass	no
+concat_c1_1	5.508325	6.544050	pass	no
+concat_c1_4	8.773125	6.793150	pass	no
