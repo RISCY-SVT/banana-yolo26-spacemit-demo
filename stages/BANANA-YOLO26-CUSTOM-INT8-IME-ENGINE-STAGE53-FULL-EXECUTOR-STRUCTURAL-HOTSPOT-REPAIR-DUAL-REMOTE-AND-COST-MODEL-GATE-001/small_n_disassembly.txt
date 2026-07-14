@@ -1,0 +1,72 @@
+# Selected Stage53 M12xN4 and M12xN8 IME kernels
+# Binary SHA-256: db1eaae130aa70adf04211b8c61e751df4faa2906889aa0b76140bf4a89c8b79
+
+/data/ncnn-logs/ai-team/2026-07-14/2026-07-14_08-08-50__codex__BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE53-FULL-EXECUTOR-STRUCTURAL-HOTSPOT-REPAIR-DUAL-REMOTE-AND-COST-MODEL-GATE-001__stage53-structural-hotspot-repair/artifacts/release-build-stage53/install/lib/liby26_k1x_int8_executor.so:     file format elf64-littleriscv
+
+
+Disassembly of section .text:
+
+000000000002afb2 <y26_stage53_kernel_m12n4>:
+   2afb2:	011072d7          	vsetvli	t0,zero,e32,m2,tu,mu
+   2afb6:	2e840457          	vxor.vv	v8,v8,v8
+   2afba:	2ea50557          	vxor.vv	v10,v10,v10
+   2afbe:	2ec60657          	vxor.vv	v12,v12,v12
+   2afc2:	000072d7          	vsetvli	t0,zero,e8,m1,tu,mu
+   2afc6:	8332                	mv	t1,a2
+   2afc8:	8e2a                	mv	t3,a0
+   2afca:	8eae                	mv	t4,a1
+   2afcc:	020e0007          	vle8.v	v0,(t3)
+   2afd0:	020e0f13          	addi	t5,t3,32
+   2afd4:	020f0087          	vle8.v	v1,(t5)
+   2afd8:	040e0f13          	addi	t5,t3,64
+   2afdc:	020f0107          	vle8.v	v2,(t5)
+   2afe0:	020e8207          	vle8.v	v4,(t4)
+   2afe4:	e240342b          	smt.vmadot	v8,v0,v4
+   2afe8:	e240b52b          	smt.vmadot	v10,v1,v4
+   2afec:	e241362b          	smt.vmadot	v12,v2,v4
+   2aff0:	060e0e13          	addi	t3,t3,96
+   2aff4:	080e8e93          	addi	t4,t4,128
+   2aff8:	137d                	addi	t1,t1,-1
+   2affa:	fc0319e3          	bnez	t1,2afcc <y26_stage53_kernel_m12n4+0x1a>
+   2affe:	011072d7          	vsetvli	t0,zero,e32,m2,tu,mu
+   2b002:	83b6                	mv	t2,a3
+   2b004:	0203e427          	vse32.v	v8,(t2)
+   2b008:	04038393          	addi	t2,t2,64
+   2b00c:	0203e527          	vse32.v	v10,(t2)
+   2b010:	04038393          	addi	t2,t2,64
+   2b014:	0203e627          	vse32.v	v12,(t2)
+   2b018:	04038393          	addi	t2,t2,64
+   2b01c:	8082                	ret
+
+000000000002b01e <y26_stage53_kernel_m12n8>:
+   2b01e:	011072d7          	vsetvli	t0,zero,e32,m2,tu,mu
+   2b022:	2e840457          	vxor.vv	v8,v8,v8
+   2b026:	2ea50557          	vxor.vv	v10,v10,v10
+   2b02a:	2ec60657          	vxor.vv	v12,v12,v12
+   2b02e:	2ee70757          	vxor.vv	v14,v14,v14
+   2b032:	2f080857          	vxor.vv	v16,v16,v16
+   2b036:	2f290957          	vxor.vv	v18,v18,v18
+   2b03a:	000072d7          	vsetvli	t0,zero,e8,m1,tu,mu
+   2b03e:	8332                	mv	t1,a2
+   2b040:	8e2a                	mv	t3,a0
+   2b042:	8eae                	mv	t4,a1
+   2b044:	020e0007          	vle8.v	v0,(t3)
+   2b048:	020e0f13          	addi	t5,t3,32
+   2b04c:	020f0087          	vle8.v	v1,(t5)
+   2b050:	040e0f13          	addi	t5,t3,64
+   2b054:	020f0107          	vle8.v	v2,(t5)
+   2b058:	020e8207          	vle8.v	v4,(t4)
+   2b05c:	020e8f13          	addi	t5,t4,32
+   2b060:	020f0287          	vle8.v	v5,(t5)
+   2b064:	e240342b          	smt.vmadot	v8,v0,v4
+   2b068:	e240b52b          	smt.vmadot	v10,v1,v4
+   2b06c:	e241362b          	smt.vmadot	v12,v2,v4
+   2b070:	e250372b          	smt.vmadot	v14,v0,v5
+   2b074:	e250b82b          	smt.vmadot	v16,v1,v5
+   2b078:	e251392b          	smt.vmadot	v18,v2,v5
+   2b07c:	060e0e13          	addi	t3,t3,96
+   2b080:	080e8e93          	addi	t4,t4,128
+   2b084:	137d                	addi	t1,t1,-1
+   2b086:	fa031fe3          	bnez	t1,2b044 <y26_stage53_kernel_m12n8+0x26>
+   2b08a:	011072d7          	vsetvli	t0,zero,e32,m2,tu,mu
+   2b08e:	83b6                	mv	t2,a3

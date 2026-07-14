@@ -35,6 +35,7 @@ struct Options {
     bool benchmark = false;
     bool verify = false;
     bool version = false;
+    bool dump_live_boundary = false;
     std::string dump_boundary;
     y26_scheduler scheduler = Y26_SCHEDULER_SAFE;
 };
@@ -67,6 +68,9 @@ Options parse(int argc, char** argv) {
         else if (argument == "--version") options.version = true;
         else if (argument == "--dump-boundary") {
             options.dump_boundary = next();
+        } else if (argument == "--dump-boundary-live") {
+            options.dump_boundary = next();
+            options.dump_live_boundary = true;
         } else {
             throw std::runtime_error("unknown argument: " + argument);
         }
@@ -196,7 +200,7 @@ int main(int argc, char** argv) {
         executor_options.worker_cpu_begin = 0;
         executor_options.controller_cpu = 4;
         executor_options.scheduler = options.scheduler;
-        executor_options.flags = options.dump_boundary.empty()
+        executor_options.flags = options.dump_boundary.empty() || options.dump_live_boundary
             ? Y26_EXECUTOR_FLAG_NONE : Y26_EXECUTOR_FLAG_CAPTURE_BOUNDARIES;
         if (y26_executor_prepare(executor.get(), options.package.c_str(), manifest.c_str(),
                                  &executor_options) != Y26_STATUS_OK) {

@@ -1,0 +1,1122 @@
+# Selected Stage53 grouped/depthwise RVV excerpts
+# Binary SHA-256: db1eaae130aa70adf04211b8c61e751df4faa2906889aa0b76140bf4a89c8b79
+
+/data/ncnn-logs/ai-team/2026-07-14/2026-07-14_08-08-50__codex__BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE53-FULL-EXECUTOR-STRUCTURAL-HOTSPOT-REPAIR-DUAL-REMOTE-AND-COST-MODEL-GATE-001__stage53-structural-hotspot-repair/artifacts/release-build-stage53/install/lib/liby26_k1x_int8_executor.so:     file format elf64-littleriscv
+
+
+Disassembly of section .text:
+
+0000000000083b00 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x3fa>:
+   83b00:	2b013a03          	ld	s4,688(sp)
+   83b04:	2d813083          	ld	ra,728(sp)
+   83b08:	27813d83          	ld	s11,632(sp)
+   83b0c:	28013d03          	ld	s10,640(sp)
+   83b10:	28813c83          	ld	s9,648(sp)
+   83b14:	29013c03          	ld	s8,656(sp)
+   83b18:	29813b83          	ld	s7,664(sp)
+   83b1c:	2a013b03          	ld	s6,672(sp)
+   83b20:	2a813a83          	ld	s5,680(sp)
+   83b24:	2c013903          	ld	s2,704(sp)
+   83b28:	2e010113          	addi	sp,sp,736
+   83b2c:	8082                	ret
+   83b2e:	6809                	lui	a6,0x2
+   83b30:	7892                	ld	a7,288(sp)
+   83b32:	01088933          	add	s2,a7,a6
+   83b36:	f3b94a83          	lbu	s5,-197(s2)
+   83b3a:	000a8863          	beqz	s5,83b4a <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x444>
+   83b3e:	196a4b03          	lbu	s6,406(s4)
+   83b42:	000b0463          	beqz	s6,83b4a <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x444>
+   83b46:	0b30106f          	j	853f8 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1cf2>
+   83b4a:	194a4b83          	lbu	s7,404(s4)
+   83b4e:	f2de                	sd	s7,352(sp)
+   83b50:	440b9e63          	bnez	s7,83fac <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x8a6>
+   83b54:	004a2c03          	lw	s8,4(s4)
+   83b58:	4c89                	li	s9,2
+   83b5a:	c19c1de3          	bne	s8,s9,83774 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x6e>
+   83b5e:	050a2d83          	lw	s11,80(s4)
+   83b62:	04ca2e03          	lw	t3,76(s4)
+   83b66:	c1be17e3          	bne	t3,s11,83774 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x6e>
+   83b6a:	048a2e83          	lw	t4,72(s4)
+   83b6e:	c1ce93e3          	bne	t4,t3,83774 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x6e>
+   83b72:	7c92                	ld	s9,288(sp)
+   83b74:	8566                	mv	a0,s9
+   83b76:	a81ec0ef          	jal	705f6 <y26::stage52::FullExecutor::Impl::tensor(int) const>
+   83b7a:	028a2583          	lw	a1,40(s4)
+   83b7e:	892a                	mv	s2,a0
+   83b80:	8566                	mv	a0,s9
+   83b82:	a75ec0ef          	jal	705f6 <y26::stage52::FullExecutor::Impl::tensor(int) const>
+   83b86:	195a4a83          	lbu	s5,405(s4)
+   83b8a:	e82a                	sd	a0,16(sp)
+   83b8c:	000a9463          	bnez	s5,83b94 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x48e>
+   83b90:	7d70106f          	j	85b66 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x2460>
+   83b94:	048a2c03          	lw	s8,72(s4)
+   83b98:	03452e83          	lw	t4,52(a0)
+   83b9c:	7592                	ld	a1,288(sp)
+   83b9e:	41fc579b          	sraiw	a5,s8,0x1f
+   83ba2:	01d7d39b          	srliw	t2,a5,0x1d
+   83ba6:	0183883b          	addw	a6,t2,s8
+   83baa:	4038571b          	sraiw	a4,a6,0x3
+   83bae:	03d70fbb          	mulw	t6,a4,t4
+   83bb2:	5d00                	lw	s0,56(a0)
+   83bb4:	0a85bd83          	ld	s11,168(a1)
+   83bb8:	6930                	ld	a2,80(a0)
+   83bba:	05093683          	ld	a3,80(s2)
+   83bbe:	05c92e03          	lw	t3,92(s2)
+   83bc2:	03492c03          	lw	s8,52(s2)
+   83bc6:	03892c83          	lw	s9,56(s2)
+   83bca:	e422                	sd	s0,8(sp)
+   83bcc:	1a010623          	sb	zero,428(sp)
+   83bd0:	1320                	addi	s0,sp,424
+   83bd2:	03f484bb          	mulw	s1,s1,t6
+   83bd6:	08000313          	li	t1,128
+   83bda:	8522                	mv	a0,s0
+   83bdc:	e4ee                	sd	s11,72(sp)
+   83bde:	f876                	sd	t4,48(sp)
+   83be0:	e8b2                	sd	a2,80(sp)
+   83be2:	9db6                	add	s11,s11,a3
+   83be4:	1a012423          	sw	zero,424(sp)
+   83be8:	41c30b3b          	subw	s6,t1,t3
+   83bec:	009f88bb          	addw	a7,t6,s1
+   83bf0:	0334c2bb          	divw	t0,s1,s3
+   83bf4:	0338c9bb          	divw	s3,a7,s3
+   83bf8:	ec16                	sd	t0,24(sp)
+   83bfa:	e54e                	sd	s3,136(sp)
+   83bfc:	a258f0ef          	jal	13620 <y26::stage51::begin_q62_vector_rne(y26::stage51::VectorFixedPointState*)@plt>
+   83c00:	e119                	bnez	a0,83c06 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x500>
+   83c02:	3f40206f          	j	85ff6 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x28f0>
+   83c06:	cc747057          	vsetivli	zero,8,e8,mf2,ta,ma
+   83c0a:	040d0993          	addi	s3,s10,64
+   83c0e:	5e003057          	vmv.v.i	v0,0
+   83c12:	048d0b93          	addi	s7,s10,72
+   83c16:	008d0513          	addi	a0,s10,8
+   83c1a:	010d0913          	addi	s2,s10,16
+   83c1e:	020d0027          	vse8.v	v0,(s10)
+   83c22:	050d0a93          	addi	s5,s10,80
+   83c26:	02098027          	vse8.v	v0,(s3)
+   83c2a:	058d0e93          	addi	t4,s10,88
+   83c2e:	02050027          	vse8.v	v0,(a0)
+   83c32:	018d0f13          	addi	t5,s10,24
+   83c36:	020b8027          	vse8.v	v0,(s7)
+   83c3a:	65e2                	ld	a1,24(sp)
+   83c3c:	02090027          	vse8.v	v0,(s2)
+   83c40:	67aa                	ld	a5,136(sp)
+   83c42:	020a8027          	vse8.v	v0,(s5)
+   83c46:	e95e                	sd	s7,144(sp)
+   83c48:	020f0027          	vse8.v	v0,(t5)
+   83c4c:	f44a                	sd	s2,40(sp)
+   83c4e:	020e8027          	vse8.v	v0,(t4)
+   83c52:	f056                	sd	s5,32(sp)
+   83c54:	ed76                	sd	t4,152(sp)
+   83c56:	2ef5dc63          	bge	a1,a5,83f4e <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x848>
+   83c5a:	63a2                	ld	t2,8(sp)
+   83c5c:	2e705963          	blez	t2,83f4e <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x848>
+   83c60:	f922                	sd	s0,176(sp)
+   83c62:	6762                	ld	a4,24(sp)
+   83c64:	7fc2                	ld	t6,48(sp)
+   83c66:	128a3683          	ld	a3,296(s4)
+   83c6a:	140a3483          	ld	s1,320(s4)
+   83c6e:	03f7443b          	divw	s0,a4,t6
+   83c72:	098a3e03          	ld	t3,152(s4)
+   83c76:	064a2803          	lw	a6,100(s4)
+   83c7a:	03f76abb          	remw	s5,a4,t6
+   83c7e:	00341613          	slli	a2,s0,0x3
+   83c82:	008608b3          	add	a7,a2,s0
+   83c86:	00641513          	slli	a0,s0,0x6
+   83c8a:	6622                	ld	a2,8(sp)
+   83c8c:	02050e93          	addi	t4,a0,32
+   83c90:	00389b93          	slli	s7,a7,0x3
+   83c94:	01d687b3          	add	a5,a3,t4
+   83c98:	00a683b3          	add	t2,a3,a0
+   83c9c:	01748933          	add	s2,s1,s7
+   83ca0:	00541313          	slli	t1,s0,0x5
+   83ca4:	00430293          	addi	t0,t1,4
+   83ca8:	005e0f33          	add	t5,t3,t0
+   83cac:	62c6                	ld	t0,80(sp)
+   83cae:	41e985b3          	sub	a1,s3,t5
+   83cb2:	ecfa                	sd	t5,88(sp)
+   83cb4:	6f26                	ld	t5,72(sp)
+   83cb6:	f0ae                	sd	a1,96(sp)
+   83cb8:	006e04b3          	add	s1,t3,t1
+   83cbc:	f8be                	sd	a5,112(sp)
+   83cbe:	f49e                	sd	t2,104(sp)
+   83cc0:	028f8fb3          	mul	t6,t6,s0
+   83cc4:	410a883b          	subw	a6,s5,a6
+   83cc8:	001a871b          	addiw	a4,s5,1
+   83ccc:	f53a                	sd	a4,168(sp)
+   83cce:	00180e9b          	addiw	t4,a6,1 # 2001 <(anonymous namespace)::g_thread_cluster0_hotpath_allowed+0x1ff9>
+   83cd2:	00280e1b          	addiw	t3,a6,2
+   83cd6:	015f86b3          	add	a3,t6,s5
+   83cda:	028c0433          	mul	s0,s8,s0
+   83cde:	02c68bb3          	mul	s7,a3,a2
+   83ce2:	00880333          	add	t1,a6,s0
+   83ce6:	003b9893          	slli	a7,s7,0x3
+   83cea:	03930333          	mul	t1,t1,s9
+   83cee:	00588533          	add	a0,a7,t0
+   83cf2:	00af05b3          	add	a1,t5,a0
+   83cf6:	fc2e                	sd	a1,56(sp)
+   83cf8:	00085463          	bgez	a6,83d00 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x5fa>
+   83cfc:	25e0106f          	j	84f5a <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1854>
+   83d00:	8fa6                	mv	t6,s1
+   83d02:	85ca                	mv	a1,s2
+   83d04:	8f4e                	mv	t5,s3
+   83d06:	4681                	li	a3,0
+   83d08:	e0c2                	sd	a6,64(sp)
+   83d0a:	6386                	ld	t2,64(sp)
+   83d0c:	000fa783          	lw	a5,0(t6)
+   83d10:	8776                	mv	a4,t4
+   83d12:	6383cde3          	blt	t2,s8,84b4c <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1446>
+   83d16:	6d8744e3          	blt	a4,s8,84bde <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x14d8>
+   83d1a:	8772                	mv	a4,t3
+   83d1c:	0007881b          	sext.w	a6,a5
+   83d20:	778742e3          	blt	a4,s8,84c84 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x157e>
+   83d24:	010f2023          	sw	a6,0(t5)
+   83d28:	0685                	addi	a3,a3,1
+   83d2a:	47a1                	li	a5,8
+   83d2c:	0f91                	addi	t6,t6,4
+   83d2e:	0f11                	addi	t5,t5,4
+   83d30:	0585                	addi	a1,a1,1
+   83d32:	fcf69ce3          	bne	a3,a5,83d0a <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x604>
+   83d36:	6e4a                	ld	t3,144(sp)
+   83d38:	cd817057          	vsetivli	zero,2,e64,m1,ta,ma
+   83d3c:	0209e207          	vle32.v	v4,(s3)
+   83d40:	6342                	ld	t1,16(sp)
+   83d42:	7ea2                	ld	t4,40(sp)
+   83d44:	020e6287          	vle32.v	v5,(t3)
+   83d48:	76e2                	ld	a3,56(sp)
+   83d4a:	05c32603          	lw	a2,92(t1)
+   83d4e:	75a6                	ld	a1,104(sp)
+   83d50:	856a                	mv	a0,s10
+   83d52:	4a43a357          	vsext.vf2	v6,v4
+   83d56:	4a53a3d7          	vsext.vf2	v7,v5
+   83d5a:	020d7327          	vse64.v	v6,(s10)
+   83d5e:	020ef3a7          	vse64.v	v7,(t4)
+   83d62:	f5e8f0ef          	jal	134c0 <y26::stage51::q62_vsmul_m63_i64x4_to_s8(long const*, long const*, long, signed char*)@plt>
+   83d66:	7502                	ld	a0,32(sp)
+   83d68:	cd817057          	vsetivli	zero,2,e64,m1,ta,ma
+   83d6c:	62ea                	ld	t0,152(sp)
+   83d6e:	63c2                	ld	t2,16(sp)
+   83d70:	02056407          	vle32.v	v8,(a0)
+   83d74:	78a2                	ld	a7,40(sp)
+   83d76:	0202e487          	vle32.v	v9,(t0)
+   83d7a:	7762                	ld	a4,56(sp)
+   83d7c:	05c3a603          	lw	a2,92(t2)
+   83d80:	75c6                	ld	a1,112(sp)
+   83d82:	00470693          	addi	a3,a4,4
+   83d86:	856a                	mv	a0,s10
+   83d88:	4a83a557          	vsext.vf2	v10,v8
+   83d8c:	4a93a5d7          	vsext.vf2	v11,v9
+   83d90:	020d7527          	vse64.v	v10,(s10)
+   83d94:	0208f5a7          	vse64.v	v11,(a7)
+   83d98:	f288f0ef          	jal	134c0 <y26::stage51::q62_vsmul_m63_i64x4_to_s8(long const*, long const*, long, signed char*)@plt>
+   83d9c:	6622                	ld	a2,8(sp)
+   83d9e:	4805                	li	a6,1
+   83da0:	19060f63          	beq	a2,a6,83f3e <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x838>
+   83da4:	010a86b3          	add	a3,s5,a6
+   83da8:	fffa8f93          	addi	t6,s5,-1
+   83dac:	008f8f33          	add	t5,t6,s0
+   83db0:	00868333          	add	t1,a3,s0
+   83db4:	039f07b3          	mul	a5,t5,s9
+   83db8:	008a8e33          	add	t3,s5,s0
+   83dbc:	65c6                	ld	a1,80(sp)
+   83dbe:	63a6                	ld	t2,72(sp)
+   83dc0:	0b85                	addi	s7,s7,1
+   83dc2:	003b9e93          	slli	t4,s7,0x3
+   83dc6:	00be8533          	add	a0,t4,a1
+   83dca:	00a382b3          	add	t0,t2,a0
+   83dce:	738a                	ld	t2,160(sp)
+   83dd0:	fc96                	sd	t0,120(sp)
+   83dd2:	039308b3          	mul	a7,t1,s9
+   83dd6:	00178713          	addi	a4,a5,1
+   83dda:	00371613          	slli	a2,a4,0x3
+   83dde:	966e                	add	a2,a2,s11
+   83de0:	039e0833          	mul	a6,t3,s9
+   83de4:	00188f93          	addi	t6,a7,1
+   83de8:	003f9693          	slli	a3,t6,0x3
+   83dec:	01b68bb3          	add	s7,a3,s11
+   83df0:	00180f13          	addi	t5,a6,1
+   83df4:	003f1313          	slli	t1,t5,0x3
+   83df8:	01b306b3          	add	a3,t1,s11
+   83dfc:	8e1e                	mv	t3,t2
+   83dfe:	0013829b          	addiw	t0,t2,1
+   83e02:	01504463          	bgtz	s5,83e0a <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x704>
+   83e06:	27b0106f          	j	85880 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x217a>
+   83e0a:	77c2                	ld	a5,48(sp)
+   83e0c:	7eaa                	ld	t4,168(sp)
+   83e0e:	00fec463          	blt	t4,a5,83e16 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x710>
+   83e12:	26f0106f          	j	85880 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x217a>
+   83e16:	65a2                	ld	a1,8(sp)
+   83e18:	00b2c463          	blt	t0,a1,83e20 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x71a>
+   83e1c:	2650106f          	j	85880 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x217a>
+   83e20:	7542                	ld	a0,48(sp)
+   83e22:	01850463          	beq	a0,s8,83e2a <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x724>
+   83e26:	25b0106f          	j	85880 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x217a>
+   83e2a:	63a2                	ld	t2,8(sp)
+   83e2c:	01938463          	beq	t2,s9,83e34 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x72e>
+   83e30:	2510106f          	j	85880 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x217a>
+   83e34:	064a2883          	lw	a7,100(s4)
+   83e38:	4805                	li	a6,1
+   83e3a:	01089863          	bne	a7,a6,83e4a <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x744>
+   83e3e:	068a2703          	lw	a4,104(s4)
+   83e42:	01071463          	bne	a4,a6,83e4a <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x744>
+   83e46:	4720106f          	j	852b8 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1bb2>
+   83e4a:	411a833b          	subw	t1,s5,a7
+   83e4e:	00130f1b          	addiw	t5,t1,1
+   83e52:	00230e9b          	addiw	t4,t1,2
+   83e56:	00035463          	bgez	t1,83e5e <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x758>
+   83e5a:	1eb0106f          	j	85844 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x213e>
+   83e5e:	00830fb3          	add	t6,t1,s0
+   83e62:	039f8733          	mul	a4,t6,s9
+   83e66:	e0a6                	sd	s1,64(sp)
+   83e68:	854a                	mv	a0,s2
+   83e6a:	e14e                	sd	s3,128(sp)
+   83e6c:	4881                	li	a7,0
+   83e6e:	fd1a                	sd	t1,184(sp)
+   83e70:	fc3a                	sd	a4,56(sp)
+   83e72:	6306                	ld	t1,64(sp)
+   83e74:	73ea                	ld	t2,184(sp)
+   83e76:	85fa                	mv	a1,t5
+   83e78:	00032703          	lw	a4,0(t1)
+   83e7c:	7583c0e3          	blt	t2,s8,84dbc <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x16b6>
+   83e80:	6b85c4e3          	blt	a1,s8,84d28 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1622>
+   83e84:	85f6                	mv	a1,t4
+   83e86:	0007039b          	sext.w	t2,a4
+   83e8a:	0185d463          	bge	a1,s8,83e92 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x78c>
+   83e8e:	02a0106f          	j	84eb8 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x17b2>
+   83e92:	670a                	ld	a4,128(sp)
+   83e94:	6f86                	ld	t6,64(sp)
+   83e96:	0885                	addi	a7,a7,1
+   83e98:	00470593          	addi	a1,a4,4
+   83e9c:	004f8813          	addi	a6,t6,4
+   83ea0:	e12e                	sd	a1,128(sp)
+   83ea2:	00772023          	sw	t2,0(a4)
+   83ea6:	e0c2                	sd	a6,64(sp)
+   83ea8:	45a1                	li	a1,8
+   83eaa:	0505                	addi	a0,a0,1
+   83eac:	fcb893e3          	bne	a7,a1,83e72 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x76c>
+   83eb0:	00b60833          	add	a6,a2,a1
+   83eb4:	00b68f33          	add	t5,a3,a1
+   83eb8:	008b8793          	addi	a5,s7,8
+   83ebc:	e0fa                	sd	t5,64(sp)
+   83ebe:	cd817057          	vsetivli	zero,2,e64,m1,ta,ma
+   83ec2:	6f4a                	ld	t5,144(sp)
+   83ec4:	0209e887          	vle32.v	v17,(s3)
+   83ec8:	fd16                	sd	t0,184(sp)
+   83eca:	62c2                	ld	t0,16(sp)
+   83ecc:	020f6e87          	vle32.v	v29,(t5)
+   83ed0:	e142                	sd	a6,128(sp)
+   83ed2:	7822                	ld	a6,40(sp)
+   83ed4:	05c2a603          	lw	a2,92(t0)
+   83ed8:	4b13af57          	vsext.vf2	v30,v17
+   83edc:	7be6                	ld	s7,120(sp)
+   83ede:	75a6                	ld	a1,104(sp)
+   83ee0:	856a                	mv	a0,s10
+   83ee2:	4bd3afd7          	vsext.vf2	v31,v29
+   83ee6:	86de                	mv	a3,s7
+   83ee8:	020d7f27          	vse64.v	v30,(s10)
+   83eec:	fc3e                	sd	a5,56(sp)
+   83eee:	02087fa7          	vse64.v	v31,(a6)
+   83ef2:	dce8f0ef          	jal	134c0 <y26::stage51::q62_vsmul_m63_i64x4_to_s8(long const*, long const*, long, signed char*)@plt>
+   83ef6:	7582                	ld	a1,32(sp)
+   83ef8:	cd817057          	vsetivli	zero,2,e64,m1,ta,ma
+   83efc:	656a                	ld	a0,152(sp)
+   83efe:	6e42                	ld	t3,16(sp)
+   83f00:	0205e087          	vle32.v	v1,(a1)
+   83f04:	78a2                	ld	a7,40(sp)
+   83f06:	02056007          	vle32.v	v0,(a0)
+   83f0a:	75c6                	ld	a1,112(sp)
+   83f0c:	05ce2603          	lw	a2,92(t3)
+   83f10:	004b8693          	addi	a3,s7,4
+   83f14:	856a                	mv	a0,s10
+   83f16:	4a13a457          	vsext.vf2	v8,v1
+   83f1a:	4a03a2d7          	vsext.vf2	v5,v0
+   83f1e:	020d7427          	vse64.v	v8,(s10)
+   83f22:	0208f2a7          	vse64.v	v5,(a7)
+   83f26:	d9a8f0ef          	jal	134c0 <y26::stage51::q62_vsmul_m63_i64x4_to_s8(long const*, long const*, long, signed char*)@plt>
+   83f2a:	6ea2                	ld	t4,8(sp)
+   83f2c:	73ea                	ld	t2,184(sp)
+   83f2e:	008b8613          	addi	a2,s7,8
+   83f32:	fcb2                	sd	a2,120(sp)
+   83f34:	6686                	ld	a3,64(sp)
+   83f36:	660a                	ld	a2,128(sp)
+   83f38:	7be2                	ld	s7,56(sp)
+   83f3a:	ec7e91e3          	bne	t4,t2,83dfc <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x6f6>
+   83f3e:	6462                	ld	s0,24(sp)
+   83f40:	692a                	ld	s2,136(sp)
+   83f42:	0014049b          	addiw	s1,s0,1
+   83f46:	ec26                	sd	s1,24(sp)
+   83f48:	d0991de3          	bne	s2,s1,83c62 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x55c>
+   83f4c:	744a                	ld	s0,176(sp)
+   83f4e:	8522                	mv	a0,s0
+   83f50:	cc0900ef          	jal	14410 <y26::stage51::end_q62_vector_rne(y26::stage51::VectorFixedPointState*)@plt>
+   83f54:	89aa                	mv	s3,a0
+   83f56:	0089da13          	srli	s4,s3,0x8
+   83f5a:	0ffa7a93          	zext.b	s5,s4
+   83f5e:	000a8663          	beqz	s5,83f6a <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x864>
+   83f62:	0ff57b13          	zext.b	s6,a0
+   83f66:	b80b07e3          	beqz	s6,83af4 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x3ee>
+   83f6a:	4541                	li	a0,16
+   83f6c:	e348f0ef          	jal	135a0 <__cxa_allocate_exception@plt>
+   83f70:	0000a597          	auipc	a1,0xa
+   83f74:	5f858593          	addi	a1,a1,1528 # 8e568 <y26::stage52::FullExecutor::Impl::run_optimized_core(y26::stage49::SliceTiming*)+0x2f72>
+   83f78:	84aa                	mv	s1,a0
+   83f7a:	d868f0ef          	jal	13500 <std::runtime_error::runtime_error(char const*)@plt>
+   83f7e:	8526                	mv	a0,s1
+   83f80:	00033617          	auipc	a2,0x33
+   83f84:	f2863603          	ld	a2,-216(a2) # b6ea8 <std::runtime_error::~runtime_error()@GLIBCXX_3.4>
+   83f88:	00033597          	auipc	a1,0x33
+   83f8c:	0505b583          	ld	a1,80(a1) # b6fd8 <typeinfo for std::runtime_error@GLIBCXX_3.4>
+   83f90:	a10900ef          	jal	141a0 <__cxa_throw@plt>
+   83f94:	7282                	ld	t0,32(sp)
+   83f96:	001d0b1b          	addiw	s6,s10,1
+   83f9a:	88ce                	mv	a7,s3
+   83f9c:	89ae                	mv	s3,a1
+   83f9e:	Address 0x83f9e is out of bounds.
+
+
+/data/ncnn-logs/ai-team/2026-07-14/2026-07-14_08-08-50__codex__BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE53-FULL-EXECUTOR-STRUCTURAL-HOTSPOT-REPAIR-DUAL-REMOTE-AND-COST-MODEL-GATE-001__stage53-structural-hotspot-repair/artifacts/release-build-stage53/install/lib/liby26_k1x_int8_executor.so:     file format elf64-littleriscv
+
+
+Disassembly of section .text:
+
+0000000000084b00 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x13fa>:
+   84b00:	a038                	fsd	fa4,64(s0)
+   84b02:	8526                	mv	a0,s1
+   84b04:	00032617          	auipc	a2,0x32
+   84b08:	3a463603          	ld	a2,932(a2) # b6ea8 <std::runtime_error::~runtime_error()@GLIBCXX_3.4>
+   84b0c:	00032597          	auipc	a1,0x32
+   84b10:	4cc5b583          	ld	a1,1228(a1) # b6fd8 <typeinfo for std::runtime_error@GLIBCXX_3.4>
+   84b14:	e8c8f0ef          	jal	141a0 <__cxa_throw@plt>
+   84b18:	1308                	addi	a0,sp,416
+   84b1a:	b078e0ef          	jal	13620 <y26::stage51::begin_q62_vector_rne(y26::stage51::VectorFixedPointState*)@plt>
+   84b1e:	e119                	bnez	a0,84b24 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x141e>
+   84b20:	5040106f          	j	86024 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x291e>
+   84b24:	fb7950e3          	bge	s2,s7,84ac4 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x13be>
+   84b28:	038c2403          	lw	s0,56(s8)
+   84b2c:	d2cff06f          	j	84058 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x952>
+   84b30:	05c94503          	lbu	a0,92(s2)
+   84b34:	c119                	beqz	a0,84b3a <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1434>
+   84b36:	3f80106f          	j	85f2e <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x2828>
+   84b3a:	24ca2583          	lw	a1,588(s4)
+   84b3e:	0005c463          	bltz	a1,84b46 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1440>
+   84b42:	3e00106f          	j	85f22 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x281c>
+   84b46:	ed02                	sd	zero,152(sp)
+   84b48:	c8cff06f          	j	83fd4 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x8ce>
+   84b4c:	068a2703          	lw	a4,104(s4)
+   84b50:	32e04463          	bgtz	a4,84e78 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1772>
+   84b54:	4805                	li	a6,1
+   84b56:	40e808bb          	subw	a7,a6,a4
+   84b5a:	40e002bb          	negw	t0,a4
+   84b5e:	8646                	mv	a2,a7
+   84b60:	0392d363          	bge	t0,s9,84b86 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1480>
+   84b64:	00628533          	add	a0,t0,t1
+   84b68:	00351393          	slli	t2,a0,0x3
+   84b6c:	007d8833          	add	a6,s11,t2
+   84b70:	00d802b3          	add	t0,a6,a3
+   84b74:	00028503          	lb	a0,0(t0)
+   84b78:	00058383          	lb	t2,0(a1)
+   84b7c:	01650833          	add	a6,a0,s6
+   84b80:	027802b3          	mul	t0,a6,t2
+   84b84:	9796                	add	a5,a5,t0
+   84b86:	3398d563          	bge	a7,s9,84eb0 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x17aa>
+   84b8a:	00660533          	add	a0,a2,t1
+   84b8e:	00351393          	slli	t2,a0,0x3
+   84b92:	007d8833          	add	a6,s11,t2
+   84b96:	00d802b3          	add	t0,a6,a3
+   84b9a:	00028883          	lb	a7,0(t0)
+   84b9e:	00858503          	lb	a0,8(a1)
+   84ba2:	4609                	li	a2,2
+   84ba4:	016883b3          	add	t2,a7,s6
+   84ba8:	02a38833          	mul	a6,t2,a0
+   84bac:	40e6073b          	subw	a4,a2,a4
+   84bb0:	97c2                	add	a5,a5,a6
+   84bb2:	2f975163          	bge	a4,s9,84e94 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x178e>
+   84bb6:	006708b3          	add	a7,a4,t1
+   84bba:	00389513          	slli	a0,a7,0x3
+   84bbe:	00ad8633          	add	a2,s11,a0
+   84bc2:	00d60733          	add	a4,a2,a3
+   84bc6:	00070383          	lb	t2,0(a4)
+   84bca:	01058803          	lb	a6,16(a1)
+   84bce:	8776                	mv	a4,t4
+   84bd0:	016382b3          	add	t0,t2,s6
+   84bd4:	030288b3          	mul	a7,t0,a6
+   84bd8:	97c6                	add	a5,a5,a7
+   84bda:	95875063          	bge	a4,s8,83d1a <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x614>
+   84bde:	068a2603          	lw	a2,104(s4)
+   84be2:	40c003bb          	negw	t2,a2
+   84be6:	2ac04d63          	bgtz	a2,84ea0 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x179a>
+   84bea:	4505                	li	a0,1
+   84bec:	40c508bb          	subw	a7,a0,a2
+   84bf0:	82c6                	mv	t0,a7
+   84bf2:	0393d663          	bge	t2,s9,84c1e <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1518>
+   84bf6:	00870833          	add	a6,a4,s0
+   84bfa:	03980533          	mul	a0,a6,s9
+   84bfe:	01858803          	lb	a6,24(a1)
+   84c02:	93aa                	add	t2,t2,a0
+   84c04:	00339513          	slli	a0,t2,0x3
+   84c08:	00ad83b3          	add	t2,s11,a0
+   84c0c:	00d38533          	add	a0,t2,a3
+   84c10:	00050383          	lb	t2,0(a0)
+   84c14:	01638533          	add	a0,t2,s6
+   84c18:	03050833          	mul	a6,a0,a6
+   84c1c:	97c2                	add	a5,a5,a6
+   84c1e:	2598d963          	bge	a7,s9,84e70 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x176a>
+   84c22:	008703b3          	add	t2,a4,s0
+   84c26:	03938533          	mul	a0,t2,s9
+   84c2a:	4809                	li	a6,2
+   84c2c:	40c8063b          	subw	a2,a6,a2
+   84c30:	02058883          	lb	a7,32(a1)
+   84c34:	92aa                	add	t0,t0,a0
+   84c36:	00329393          	slli	t2,t0,0x3
+   84c3a:	007d8533          	add	a0,s11,t2
+   84c3e:	00d50833          	add	a6,a0,a3
+   84c42:	00080283          	lb	t0,0(a6)
+   84c46:	016283b3          	add	t2,t0,s6
+   84c4a:	031388b3          	mul	a7,t2,a7
+   84c4e:	97c6                	add	a5,a5,a7
+   84c50:	8d965563          	bge	a2,s9,83d1a <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x614>
+   84c54:	9722                	add	a4,a4,s0
+   84c56:	03970833          	mul	a6,a4,s9
+   84c5a:	02858283          	lb	t0,40(a1)
+   84c5e:	8772                	mv	a4,t3
+   84c60:	9642                	add	a2,a2,a6
+   84c62:	00361393          	slli	t2,a2,0x3
+   84c66:	007d88b3          	add	a7,s11,t2
+   84c6a:	00d88533          	add	a0,a7,a3
+   84c6e:	00050803          	lb	a6,0(a0)
+   84c72:	01680633          	add	a2,a6,s6
+   84c76:	025602b3          	mul	t0,a2,t0
+   84c7a:	9796                	add	a5,a5,t0
+   84c7c:	0007881b          	sext.w	a6,a5
+   84c80:	8b875263          	bge	a4,s8,83d24 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x61e>
+   84c84:	068a2883          	lw	a7,104(s4)
+   84c88:	4110053b          	negw	a0,a7
+   84c8c:	1d104463          	bgtz	a7,84e54 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x174e>
+   84c90:	4385                	li	t2,1
+   84c92:	411382bb          	subw	t0,t2,a7
+   84c96:	8396                	mv	t2,t0
+   84c98:	03955263          	bge	a0,s9,84cbc <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x15b6>
+   84c9c:	00870833          	add	a6,a4,s0
+   84ca0:	03980633          	mul	a2,a6,s9
+   84ca4:	03058803          	lb	a6,48(a1)
+   84ca8:	962a                	add	a2,a2,a0
+   84caa:	060e                	slli	a2,a2,0x3
+   84cac:	966e                	add	a2,a2,s11
+   84cae:	9636                	add	a2,a2,a3
+   84cb0:	00060603          	lb	a2,0(a2)
+   84cb4:	965a                	add	a2,a2,s6
+   84cb6:	03060833          	mul	a6,a2,a6
+   84cba:	97c2                	add	a5,a5,a6
+   84cbc:	1b92d663          	bge	t0,s9,84e68 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1762>
+   84cc0:	008708b3          	add	a7,a4,s0
+   84cc4:	03988633          	mul	a2,a7,s9
+   84cc8:	0025029b          	addiw	t0,a0,2
+   84ccc:	03858803          	lb	a6,56(a1)
+   84cd0:	00760533          	add	a0,a2,t2
+   84cd4:	00351393          	slli	t2,a0,0x3
+   84cd8:	007d88b3          	add	a7,s11,t2
+   84cdc:	00d88633          	add	a2,a7,a3
+   84ce0:	00060503          	lb	a0,0(a2)
+   84ce4:	016503b3          	add	t2,a0,s6
+   84ce8:	03038833          	mul	a6,t2,a6
+   84cec:	97c2                	add	a5,a5,a6
+   84cee:	0007881b          	sext.w	a6,a5
+   84cf2:	0192c463          	blt	t0,s9,84cfa <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x15f4>
+   84cf6:	82eff06f          	j	83d24 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x61e>
+   84cfa:	9722                	add	a4,a4,s0
+   84cfc:	03970633          	mul	a2,a4,s9
+   84d00:	04058883          	lb	a7,64(a1)
+   84d04:	00560533          	add	a0,a2,t0
+   84d08:	00351393          	slli	t2,a0,0x3
+   84d0c:	007d8833          	add	a6,s11,t2
+   84d10:	00d802b3          	add	t0,a6,a3
+   84d14:	00028703          	lb	a4,0(t0)
+   84d18:	01670633          	add	a2,a4,s6
+   84d1c:	031608b3          	mul	a7,a2,a7
+   84d20:	00f8883b          	addw	a6,a7,a5
+   84d24:	800ff06f          	j	83d24 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x61e>
+   84d28:	068a2f83          	lw	t6,104(s4)
+   84d2c:	41fe083b          	subw	a6,t3,t6
+   84d30:	6a084c63          	bltz	a6,853e8 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1ce2>
+   84d34:	0018039b          	addiw	t2,a6,1
+   84d38:	8f9e                	mv	t6,t2
+   84d3a:	03985263          	bge	a6,s9,84d5e <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1658>
+   84d3e:	00858333          	add	t1,a1,s0
+   84d42:	03930333          	mul	t1,t1,s9
+   84d46:	01850783          	lb	a5,24(a0)
+   84d4a:	9342                	add	t1,t1,a6
+   84d4c:	030e                	slli	t1,t1,0x3
+   84d4e:	936e                	add	t1,t1,s11
+   84d50:	9346                	add	t1,t1,a7
+   84d52:	00030303          	lb	t1,0(t1)
+   84d56:	935a                	add	t1,t1,s6
+   84d58:	02f307b3          	mul	a5,t1,a5
+   84d5c:	973e                	add	a4,a4,a5
+   84d5e:	6993d363          	bge	t2,s9,853e4 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1cde>
+   84d62:	008583b3          	add	t2,a1,s0
+   84d66:	03938333          	mul	t1,t2,s9
+   84d6a:	02050783          	lb	a5,32(a0)
+   84d6e:	2809                	addiw	a6,a6,2
+   84d70:	9f9a                	add	t6,t6,t1
+   84d72:	003f9393          	slli	t2,t6,0x3
+   84d76:	007d8333          	add	t1,s11,t2
+   84d7a:	01130fb3          	add	t6,t1,a7
+   84d7e:	000f8383          	lb	t2,0(t6)
+   84d82:	01638333          	add	t1,t2,s6
+   84d86:	02f307b3          	mul	a5,t1,a5
+   84d8a:	973e                	add	a4,a4,a5
+   84d8c:	8f985c63          	bge	a6,s9,83e84 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x77e>
+   84d90:	95a2                	add	a1,a1,s0
+   84d92:	039583b3          	mul	t2,a1,s9
+   84d96:	02850303          	lb	t1,40(a0)
+   84d9a:	85f6                	mv	a1,t4
+   84d9c:	981e                	add	a6,a6,t2
+   84d9e:	00381793          	slli	a5,a6,0x3
+   84da2:	00fd8fb3          	add	t6,s11,a5
+   84da6:	011f83b3          	add	t2,t6,a7
+   84daa:	00038803          	lb	a6,0(t2)
+   84dae:	016807b3          	add	a5,a6,s6
+   84db2:	02678333          	mul	t1,a5,t1
+   84db6:	971a                	add	a4,a4,t1
+   84db8:	8ceff06f          	j	83e86 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x780>
+   84dbc:	068a2803          	lw	a6,104(s4)
+   84dc0:	410e07bb          	subw	a5,t3,a6
+   84dc4:	4c07cc63          	bltz	a5,8529c <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1b96>
+   84dc8:	0017859b          	addiw	a1,a5,1
+   84dcc:	882e                	mv	a6,a1
+   84dce:	0397d463          	bge	a5,s9,84df6 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x16f0>
+   84dd2:	7fe2                	ld	t6,56(sp)
+   84dd4:	01f78333          	add	t1,a5,t6
+   84dd8:	00331393          	slli	t2,t1,0x3
+   84ddc:	007d8fb3          	add	t6,s11,t2
+   84de0:	011f8333          	add	t1,t6,a7
+   84de4:	00030f83          	lb	t6,0(t1)
+   84de8:	00050383          	lb	t2,0(a0)
+   84dec:	016f8333          	add	t1,t6,s6
+   84df0:	02730fb3          	mul	t6,t1,t2
+   84df4:	977e                	add	a4,a4,t6
+   84df6:	4995db63          	bge	a1,s9,8528c <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1b86>
+   84dfa:	75e2                	ld	a1,56(sp)
+   84dfc:	2789                	addiw	a5,a5,2
+   84dfe:	00b803b3          	add	t2,a6,a1
+   84e02:	00339313          	slli	t1,t2,0x3
+   84e06:	006d8fb3          	add	t6,s11,t1
+   84e0a:	011f8833          	add	a6,t6,a7
+   84e0e:	00080383          	lb	t2,0(a6)
+   84e12:	00850303          	lb	t1,8(a0)
+   84e16:	016385b3          	add	a1,t2,s6
+   84e1a:	02658fb3          	mul	t6,a1,t1
+   84e1e:	977e                	add	a4,a4,t6
+   84e20:	4797d863          	bge	a5,s9,85290 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1b8a>
+   84e24:	73e2                	ld	t2,56(sp)
+   84e26:	00778333          	add	t1,a5,t2
+   84e2a:	00331793          	slli	a5,t1,0x3
+   84e2e:	00fd85b3          	add	a1,s11,a5
+   84e32:	01158fb3          	add	t6,a1,a7
+   84e36:	000f8803          	lb	a6,0(t6)
+   84e3a:	01050383          	lb	t2,16(a0)
+   84e3e:	85fa                	mv	a1,t5
+   84e40:	01680333          	add	t1,a6,s6
+   84e44:	027307b3          	mul	a5,t1,t2
+   84e48:	973e                	add	a4,a4,a5
+   84e4a:	0185c463          	blt	a1,s8,84e52 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x174c>
+   84e4e:	836ff06f          	j	83e84 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x77e>
+   84e52:	bdd9                	j	84d28 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1622>
+   84e54:	4385                	li	t2,1
+   84e56:	42788263          	beq	a7,t2,8527a <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1b74>
+   84e5a:	4289                	li	t0,2
+   84e5c:	42588663          	beq	a7,t0,85288 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1b82>
+   84e60:	0007881b          	sext.w	a6,a5
+   84e64:	ec1fe06f          	j	83d24 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x61e>
+   84e68:	4509                	li	a0,2
+   84e6a:	411502bb          	subw	t0,a0,a7
+   84e6e:	b541                	j	84cee <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x15e8>
+   84e70:	4889                	li	a7,2
+   84e72:	40c8863b          	subw	a2,a7,a2
+   84e76:	bbe9                	j	84c50 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x154a>
+   84e78:	4885                	li	a7,1
+   84e7a:	33170763          	beq	a4,a7,851a8 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1aa2>
+   84e7e:	4289                	li	t0,2
+   84e80:	32570263          	beq	a4,t0,851a4 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1a9e>
+   84e84:	018ec463          	blt	t4,s8,84e8c <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1786>
+   84e88:	e93fe06f          	j	83d1a <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x614>
+   84e8c:	0007881b          	sext.w	a6,a5
+   84e90:	e95fe06f          	j	83d24 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x61e>
+   84e94:	8776                	mv	a4,t4
+   84e96:	01874463          	blt	a4,s8,84e9e <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1798>
+   84e9a:	e81fe06f          	j	83d1a <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x614>
+   84e9e:	b381                	j	84bde <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x14d8>
+   84ea0:	4285                	li	t0,1
+   84ea2:	4a560be3          	beq	a2,t0,85b58 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x2452>
+   84ea6:	4509                	li	a0,2
+   84ea8:	faa61ce3          	bne	a2,a0,84e60 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x175a>
+   84eac:	4601                	li	a2,0
+   84eae:	b34d                	j	84c50 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x154a>
+   84eb0:	4609                	li	a2,2
+   84eb2:	40e6073b          	subw	a4,a2,a4
+   84eb6:	b9f5                	j	84bb2 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x14ac>
+   84eb8:	068a2f83          	lw	t6,104(s4)
+   84ebc:	41fe083b          	subw	a6,t3,t6
+   84ec0:	0c084663          	bltz	a6,84f8c <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1886>
+   84ec4:	0018039b          	addiw	t2,a6,1
+   84ec8:	8f9e                	mv	t6,t2
+   84eca:	03985263          	bge	a6,s9,84eee <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x17e8>
+   84ece:	008587b3          	add	a5,a1,s0
+   84ed2:	03978333          	mul	t1,a5,s9
+   84ed6:	03050783          	lb	a5,48(a0)
+   84eda:	9342                	add	t1,t1,a6
+   84edc:	030e                	slli	t1,t1,0x3
+   84ede:	936e                	add	t1,t1,s11
+   84ee0:	9346                	add	t1,t1,a7
+   84ee2:	00030303          	lb	t1,0(t1)
+   84ee6:	935a                	add	t1,t1,s6
+   84ee8:	02f307b3          	mul	a5,t1,a5
+   84eec:	973e                	add	a4,a4,a5
+   84eee:	0193c463          	blt	t2,s9,84ef6 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x17f0>
+   84ef2:	0240106f          	j	85f16 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x2810>
+   84ef6:	008583b3          	add	t2,a1,s0
+   84efa:	03938333          	mul	t1,t2,s9
+   84efe:	03850783          	lb	a5,56(a0)
+   84f02:	2809                	addiw	a6,a6,2
+   84f04:	9f9a                	add	t6,t6,t1
+   84f06:	003f9393          	slli	t2,t6,0x3
+   84f0a:	007d8333          	add	t1,s11,t2
+   84f0e:	01130fb3          	add	t6,t1,a7
+   84f12:	000f8383          	lb	t2,0(t6)
+   84f16:	01638333          	add	t1,t2,s6
+   84f1a:	02f307b3          	mul	a5,t1,a5
+   84f1e:	973e                	add	a4,a4,a5
+   84f20:	0007039b          	sext.w	t2,a4
+   84f24:	01984463          	blt	a6,s9,84f2c <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1826>
+   84f28:	f6bfe06f          	j	83e92 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x78c>
+   84f2c:	95a2                	add	a1,a1,s0
+   84f2e:	039583b3          	mul	t2,a1,s9
+   84f32:	04050303          	lb	t1,64(a0)
+   84f36:	010387b3          	add	a5,t2,a6
+   84f3a:	00379f93          	slli	t6,a5,0x3
+   84f3e:	01fd8833          	add	a6,s11,t6
+   84f42:	011805b3          	add	a1,a6,a7
+   84f46:	00058383          	lb	t2,0(a1)
+   84f4a:	016387b3          	add	a5,t2,s6
+   84f4e:	02678333          	mul	t1,a5,t1
+   84f52:	00e303bb          	addw	t2,t1,a4
+   84f56:	f3dfe06f          	j	83e92 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x78c>
+   84f5a:	5e7d                	li	t3,-1
+   84f5c:	0dc80563          	beq	a6,t3,85026 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1920>
+   84f60:	5ef9                	li	t4,-2
+   84f62:	09d80563          	beq	a6,t4,84fec <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x18e6>
+   84f66:	7786                	ld	a5,96(sp)
+   84f68:	43a1                	li	t2,8
+   84f6a:	02f3fb63          	bgeu	t2,a5,84fa0 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x189a>
+   84f6e:	cd027057          	vsetivli	zero,4,e32,m1,ta,ma
+   84f72:	01048f93          	addi	t6,s1,16
+   84f76:	0204e107          	vle32.v	v2,(s1)
+   84f7a:	7802                	ld	a6,32(sp)
+   84f7c:	0209e127          	vse32.v	v2,(s3)
+   84f80:	020fe187          	vle32.v	v3,(t6)
+   84f84:	020861a7          	vse32.v	v3,(a6)
+   84f88:	daffe06f          	j	83d36 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x630>
+   84f8c:	5ffd                	li	t6,-1
+   84f8e:	05f80a63          	beq	a6,t6,84fe2 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x18dc>
+   84f92:	5ff9                	li	t6,-2
+   84f94:	05f80563          	beq	a6,t6,84fde <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x18d8>
+   84f98:	0007039b          	sext.w	t2,a4
+   84f9c:	ef7fe06f          	j	83e92 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x78c>
+   84fa0:	4098                	lw	a4,0(s1)
+   84fa2:	66e6                	ld	a3,88(sp)
+   84fa4:	04ed2023          	sw	a4,64(s10)
+   84fa8:	4290                	lw	a2,0(a3)
+   84faa:	04cd2223          	sw	a2,68(s10)
+   84fae:	0084a303          	lw	t1,8(s1)
+   84fb2:	046d2423          	sw	t1,72(s10)
+   84fb6:	00c4a883          	lw	a7,12(s1)
+   84fba:	051d2623          	sw	a7,76(s10)
+   84fbe:	0104a283          	lw	t0,16(s1)
+   84fc2:	045d2823          	sw	t0,80(s10)
+   84fc6:	48c8                	lw	a0,20(s1)
+   84fc8:	04ad2a23          	sw	a0,84(s10)
+   84fcc:	0184af03          	lw	t5,24(s1)
+   84fd0:	05ed2c23          	sw	t5,88(s10)
+   84fd4:	4ccc                	lw	a1,28(s1)
+   84fd6:	04bd2e23          	sw	a1,92(s10)
+   84fda:	d5dfe06f          	j	83d36 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x630>
+   84fde:	4801                	li	a6,0
+   84fe0:	b781                	j	84f20 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x181a>
+   84fe2:	4f81                	li	t6,0
+   84fe4:	f19049e3          	bgtz	s9,84ef6 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x17f0>
+   84fe8:	eabfe06f          	j	83e92 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x78c>
+   84fec:	039408b3          	mul	a7,s0,s9
+   84ff0:	03090593          	addi	a1,s2,48
+   84ff4:	884e                	mv	a6,s3
+   84ff6:	4681                	li	a3,0
+   84ff8:	4f05                	li	t5,1
+   84ffa:	4309                	li	t1,2
+   84ffc:	4f85                	li	t6,1
+   84ffe:	4389                	li	t2,2
+   85000:	42a1                	li	t0,8
+   85002:	00269e13          	slli	t3,a3,0x2
+   85006:	01c48eb3          	add	t4,s1,t3
+   8500a:	000ea703          	lw	a4,0(t4)
+   8500e:	8e3a                	mv	t3,a4
+   85010:	03804d63          	bgtz	s8,8504a <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1944>
+   85014:	01c82023          	sw	t3,0(a6)
+   85018:	0685                	addi	a3,a3,1
+   8501a:	0811                	addi	a6,a6,4
+   8501c:	0585                	addi	a1,a1,1
+   8501e:	fe5692e3          	bne	a3,t0,85002 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x18fc>
+   85022:	d15fe06f          	j	83d36 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x630>
+   85026:	4881                	li	a7,0
+   85028:	02000713          	li	a4,32
+   8502c:	0b804263          	bgtz	s8,850d0 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x19ca>
+   85030:	011482b3          	add	t0,s1,a7
+   85034:	0002a303          	lw	t1,0(t0)
+   85038:	011983b3          	add	t2,s3,a7
+   8503c:	0891                	addi	a7,a7,4
+   8503e:	0063a023          	sw	t1,0(t2)
+   85042:	fee897e3          	bne	a7,a4,85030 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x192a>
+   85046:	cf1fe06f          	j	83d36 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x630>
+   8504a:	068a2783          	lw	a5,104(s4)
+   8504e:	40f0053b          	negw	a0,a5
+   85052:	12f04963          	bgtz	a5,85184 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1a7e>
+   85056:	40ff0e3b          	subw	t3,t5,a5
+   8505a:	8672                	mv	a2,t3
+   8505c:	03955263          	bge	a0,s9,85080 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x197a>
+   85060:	01150eb3          	add	t4,a0,a7
+   85064:	003e9513          	slli	a0,t4,0x3
+   85068:	00ad8eb3          	add	t4,s11,a0
+   8506c:	00de8533          	add	a0,t4,a3
+   85070:	00050503          	lb	a0,0(a0)
+   85074:	00058e83          	lb	t4,0(a1)
+   85078:	955a                	add	a0,a0,s6
+   8507a:	03d50eb3          	mul	t4,a0,t4
+   8507e:	9776                	add	a4,a4,t4
+   85080:	119e5863          	bge	t3,s9,85190 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1a8a>
+   85084:	9646                	add	a2,a2,a7
+   85086:	00361513          	slli	a0,a2,0x3
+   8508a:	00ad8eb3          	add	t4,s11,a0
+   8508e:	00de8e33          	add	t3,t4,a3
+   85092:	000e0603          	lb	a2,0(t3)
+   85096:	00858503          	lb	a0,8(a1)
+   8509a:	40f307bb          	subw	a5,t1,a5
+   8509e:	01660eb3          	add	t4,a2,s6
+   850a2:	02ae8e33          	mul	t3,t4,a0
+   850a6:	9772                	add	a4,a4,t3
+   850a8:	0f97db63          	bge	a5,s9,8519e <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1a98>
+   850ac:	97c6                	add	a5,a5,a7
+   850ae:	00379613          	slli	a2,a5,0x3
+   850b2:	00cd8533          	add	a0,s11,a2
+   850b6:	00d50eb3          	add	t4,a0,a3
+   850ba:	000e8e03          	lb	t3,0(t4)
+   850be:	01058783          	lb	a5,16(a1)
+   850c2:	016e0633          	add	a2,t3,s6
+   850c6:	02f60533          	mul	a0,a2,a5
+   850ca:	00e50e3b          	addw	t3,a0,a4
+   850ce:	b799                	j	85014 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x190e>
+   850d0:	00140f93          	addi	t6,s0,1
+   850d4:	03940f33          	mul	t5,s0,s9
+   850d8:	4885                	li	a7,1
+   850da:	83c6                	mv	t2,a7
+   850dc:	01890513          	addi	a0,s2,24
+   850e0:	8ece                	mv	t4,s3
+   850e2:	4601                	li	a2,0
+   850e4:	4e09                	li	t3,2
+   850e6:	039f8833          	mul	a6,t6,s9
+   850ea:	00261793          	slli	a5,a2,0x2
+   850ee:	00f486b3          	add	a3,s1,a5
+   850f2:	429c                	lw	a5,0(a3)
+   850f4:	068a2703          	lw	a4,104(s4)
+   850f8:	85be                	mv	a1,a5
+   850fa:	40e006bb          	negw	a3,a4
+   850fe:	0ae04963          	bgtz	a4,851b0 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1aaa>
+   85102:	40e38fbb          	subw	t6,t2,a4
+   85106:	85fe                	mv	a1,t6
+   85108:	0396d263          	bge	a3,s9,8512c <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1a26>
+   8510c:	01e682b3          	add	t0,a3,t5
+   85110:	00329313          	slli	t1,t0,0x3
+   85114:	006d82b3          	add	t0,s11,t1
+   85118:	00c28333          	add	t1,t0,a2
+   8511c:	00030303          	lb	t1,0(t1)
+   85120:	00050283          	lb	t0,0(a0)
+   85124:	935a                	add	t1,t1,s6
+   85126:	025302b3          	mul	t0,t1,t0
+   8512a:	9796                	add	a5,a5,t0
+   8512c:	0b9fd163          	bge	t6,s9,851ce <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1ac8>
+   85130:	01e58fb3          	add	t6,a1,t5
+   85134:	003f9313          	slli	t1,t6,0x3
+   85138:	006d82b3          	add	t0,s11,t1
+   8513c:	00c285b3          	add	a1,t0,a2
+   85140:	00058303          	lb	t1,0(a1)
+   85144:	00850f83          	lb	t6,8(a0)
+   85148:	40ee02bb          	subw	t0,t3,a4
+   8514c:	016305b3          	add	a1,t1,s6
+   85150:	03f58333          	mul	t1,a1,t6
+   85154:	979a                	add	a5,a5,t1
+   85156:	0392d263          	bge	t0,s9,8517a <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1a74>
+   8515a:	92fa                	add	t0,t0,t5
+   8515c:	00329593          	slli	a1,t0,0x3
+   85160:	00bd8333          	add	t1,s11,a1
+   85164:	00c30fb3          	add	t6,t1,a2
+   85168:	000f8283          	lb	t0,0(t6)
+   8516c:	01050303          	lb	t1,16(a0)
+   85170:	016285b3          	add	a1,t0,s6
+   85174:	02658fb3          	mul	t6,a1,t1
+   85178:	97fe                	add	a5,a5,t6
+   8517a:	071c1363          	bne	s8,a7,851e0 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1ada>
+   8517e:	0007859b          	sext.w	a1,a5
+   85182:	a825                	j	851ba <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1ab4>
+   85184:	01f78963          	beq	a5,t6,85196 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1a90>
+   85188:	e87796e3          	bne	a5,t2,85014 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x190e>
+   8518c:	4781                	li	a5,0
+   8518e:	bf29                	j	850a8 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x19a2>
+   85190:	40f307bb          	subw	a5,t1,a5
+   85194:	bf11                	j	850a8 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x19a2>
+   85196:	e7905fe3          	blez	s9,85014 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x190e>
+   8519a:	4601                	li	a2,0
+   8519c:	b5e5                	j	85084 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x197e>
+   8519e:	00070e1b          	sext.w	t3,a4
+   851a2:	bd8d                	j	85014 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x190e>
+   851a4:	4701                	li	a4,0
+   851a6:	b431                	j	84bb2 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x14ac>
+   851a8:	cf9056e3          	blez	s9,84e94 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x178e>
+   851ac:	4601                	li	a2,0
+   851ae:	baf1                	j	84b8a <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1484>
+   851b0:	03170463          	beq	a4,a7,851d8 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1ad2>
+   851b4:	4f89                	li	t6,2
+   851b6:	01f70f63          	beq	a4,t6,851d4 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1ace>
+   851ba:	00bea023          	sw	a1,0(t4)
+   851be:	0605                	addi	a2,a2,1
+   851c0:	47a1                	li	a5,8
+   851c2:	0e91                	addi	t4,t4,4
+   851c4:	0505                	addi	a0,a0,1
+   851c6:	f2f612e3          	bne	a2,a5,850ea <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x19e4>
+   851ca:	b6dfe06f          	j	83d36 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x630>
+   851ce:	40ee02bb          	subw	t0,t3,a4
+   851d2:	b751                	j	85156 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1a50>
+   851d4:	4281                	li	t0,0
+   851d6:	b741                	j	85156 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1a50>
+   851d8:	fb9051e3          	blez	s9,8517a <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1a74>
+   851dc:	4581                	li	a1,0
+   851de:	bf89                	j	85130 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1a2a>
+   851e0:	08e04163          	bgtz	a4,85262 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1b5c>
+   851e4:	40e882bb          	subw	t0,a7,a4
+   851e8:	8596                	mv	a1,t0
+   851ea:	0396d263          	bge	a3,s9,8520e <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1b08>
+   851ee:	96c2                	add	a3,a3,a6
+   851f0:	00369313          	slli	t1,a3,0x3
+   851f4:	006d8fb3          	add	t6,s11,t1
+   851f8:	00cf86b3          	add	a3,t6,a2
+   851fc:	00068303          	lb	t1,0(a3)
+   85200:	01850f83          	lb	t6,24(a0)
+   85204:	016306b3          	add	a3,t1,s6
+   85208:	03f68333          	mul	t1,a3,t6
+   8520c:	979a                	add	a5,a5,t1
+   8520e:	0792d363          	bge	t0,s9,85274 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1b6e>
+   85212:	00b80fb3          	add	t6,a6,a1
+   85216:	003f9693          	slli	a3,t6,0x3
+   8521a:	00dd8333          	add	t1,s11,a3
+   8521e:	00c302b3          	add	t0,t1,a2
+   85222:	00028583          	lb	a1,0(t0)
+   85226:	02050f83          	lb	t6,32(a0)
+   8522a:	40ee02bb          	subw	t0,t3,a4
+   8522e:	01658733          	add	a4,a1,s6
+   85232:	03f706b3          	mul	a3,a4,t6
+   85236:	97b6                	add	a5,a5,a3
+   85238:	f592d3e3          	bge	t0,s9,8517e <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1a78>
+   8523c:	00580333          	add	t1,a6,t0
+   85240:	00331293          	slli	t0,t1,0x3
+   85244:	005d85b3          	add	a1,s11,t0
+   85248:	00c58fb3          	add	t6,a1,a2
+   8524c:	000f8683          	lb	a3,0(t6)
+   85250:	02850703          	lb	a4,40(a0)
+   85254:	01668333          	add	t1,a3,s6
+   85258:	02e302b3          	mul	t0,t1,a4
+   8525c:	00f285bb          	addw	a1,t0,a5
+   85260:	bfa9                	j	851ba <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1ab4>
+   85262:	4281                	li	t0,0
+   85264:	fd171ae3          	bne	a4,a7,85238 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1b32>
+   85268:	4581                	li	a1,0
+   8526a:	fb9044e3          	bgtz	s9,85212 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1b0c>
+   8526e:	0007859b          	sext.w	a1,a5
+   85272:	b7a1                	j	851ba <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1ab4>
+   85274:	40ee02bb          	subw	t0,t3,a4
+   85278:	b7c1                	j	85238 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1b32>
+   8527a:	01904463          	bgtz	s9,85282 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1b7c>
+   8527e:	aa7fe06f          	j	83d24 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x61e>
+   85282:	557d                	li	a0,-1
+   85284:	4381                	li	t2,0
+   85286:	bc2d                	j	84cc0 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x15ba>
+   85288:	4281                	li	t0,0
+   8528a:	b495                	j	84cee <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x15e8>
+   8528c:	2789                	addiw	a5,a5,2
+   8528e:	be49                	j	84e20 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x171a>
+   85290:	85fa                	mv	a1,t5
+   85292:	0185c463          	blt	a1,s8,8529a <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1b94>
+   85296:	beffe06f          	j	83e84 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x77e>
+   8529a:	b479                	j	84d28 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1622>
+   8529c:	587d                	li	a6,-1
+   8529e:	13078f63          	beq	a5,a6,853dc <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1cd6>
+   852a2:	5879                	li	a6,-2
+   852a4:	13078a63          	beq	a5,a6,853d8 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1cd2>
+   852a8:	018f4463          	blt	t5,s8,852b0 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1baa>
+   852ac:	bd9fe06f          	j	83e84 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x77e>
+   852b0:	0007039b          	sext.w	t2,a4
+   852b4:	bdffe06f          	j	83e92 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x78c>
+   852b8:	cd047057          	vsetivli	zero,8,e32,m1,ta,ma
+   852bc:	ff860e13          	addi	t3,a2,-8
+   852c0:	020e0787          	vle8.v	v15,(t3)
+   852c4:	00890513          	addi	a0,s2,8
+   852c8:	02090707          	vle8.v	v14,(s2)
+   852cc:	00860813          	addi	a6,a2,8
+   852d0:	02060807          	vle8.v	v16,(a2)
+   852d4:	01090613          	addi	a2,s2,16
+   852d8:	0204e887          	vle32.v	v17,(s1)
+   852dc:	ff868893          	addi	a7,a3,-8
+   852e0:	02050907          	vle8.v	v18,(a0)
+   852e4:	01890e93          	addi	t4,s2,24
+   852e8:	02080987          	vle8.v	v19,(a6)
+   852ec:	02090313          	addi	t1,s2,32
+   852f0:	4af2aad7          	vsext.vf4	v21,v15
+   852f4:	00868f13          	addi	t5,a3,8
+   852f8:	4ae2aa57          	vsext.vf4	v20,v14
+   852fc:	02890793          	addi	a5,s2,40
+   85300:	4b02ab57          	vsext.vf4	v22,v16
+   85304:	ff8b8393          	addi	t2,s7,-8
+   85308:	035b4c57          	vadd.vx	v24,v21,s6
+   8530c:	03090713          	addi	a4,s2,48
+   85310:	02060b87          	vle8.v	v23,(a2)
+   85314:	03890f93          	addi	t6,s2,56
+   85318:	02088c87          	vle8.v	v25,(a7)
+   8531c:	b74c28d7          	vmacc.vv	v17,v24,v20
+   85320:	036b4d57          	vadd.vx	v26,v22,s6
+   85324:	4b22add7          	vsext.vf4	v27,v18
+   85328:	4b32ae57          	vsext.vf4	v28,v19
+   8532c:	020e8e87          	vle8.v	v29,(t4)
+   85330:	b7bd28d7          	vmacc.vv	v17,v26,v27
+   85334:	02068f07          	vle8.v	v30,(a3)
+   85338:	03cb4fd7          	vadd.vx	v31,v28,s6
+   8533c:	4b72a0d7          	vsext.vf4	v1,v23
+   85340:	4b92a057          	vsext.vf4	v0,v25
+   85344:	02030407          	vle8.v	v8,(t1)
+   85348:	020f0287          	vle8.v	v5,(t5)
+   8534c:	b61fa8d7          	vmacc.vv	v17,v31,v1
+   85350:	020b41d7          	vadd.vx	v3,v0,s6
+   85354:	4bd2a257          	vsext.vf4	v4,v29
+   85358:	4be2a157          	vsext.vf4	v2,v30
+   8535c:	02078387          	vle8.v	v7,(a5)
+   85360:	008b8793          	addi	a5,s7,8
+   85364:	02038307          	vle8.v	v6,(t2)
+   85368:	b641a8d7          	vmacc.vv	v17,v3,v4
+   8536c:	022b44d7          	vadd.vx	v9,v2,s6
+   85370:	4a82a557          	vsext.vf4	v10,v8
+   85374:	4a52a5d7          	vsext.vf4	v11,v5
+   85378:	02070607          	vle8.v	v12,(a4)
+   8537c:	020b8687          	vle8.v	v13,(s7)
+   85380:	04090b93          	addi	s7,s2,64
+   85384:	b6a4a8d7          	vmacc.vv	v17,v9,v10
+   85388:	02bb4757          	vadd.vx	v14,v11,s6
+   8538c:	4a72a7d7          	vsext.vf4	v15,v7
+   85390:	4a62a857          	vsext.vf4	v16,v6
+   85394:	020f8907          	vle8.v	v18,(t6)
+   85398:	02078987          	vle8.v	v19,(a5)
+   8539c:	b6f728d7          	vmacc.vv	v17,v14,v15
+   853a0:	030b4a57          	vadd.vx	v20,v16,s6
+   853a4:	4ac2aad7          	vsext.vf4	v21,v12
+   853a8:	4ad2ab57          	vsext.vf4	v22,v13
+   853ac:	020b8b87          	vle8.v	v23,(s7)
+   853b0:	b75a28d7          	vmacc.vv	v17,v20,v21
+   853b4:	036b4c57          	vadd.vx	v24,v22,s6
+   853b8:	4b22acd7          	vsext.vf4	v25,v18
+   853bc:	4b32ad57          	vsext.vf4	v26,v19
+   853c0:	b79c28d7          	vmacc.vv	v17,v24,v25
+   853c4:	03ab4dd7          	vadd.vx	v27,v26,s6
+   853c8:	4b72ae57          	vsext.vf4	v28,v23
+   853cc:	b7cda8d7          	vmacc.vv	v17,v27,v28
+   853d0:	0209e8a7          	vse32.v	v17,(s3)
+   853d4:	ae9fe06f          	j	83ebc <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x7b6>
+   853d8:	4781                	li	a5,0
+   853da:	b499                	j	84e20 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x171a>
+   853dc:	eb905ae3          	blez	s9,85290 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1b8a>
+   853e0:	4801                	li	a6,0
+   853e2:	bc21                	j	84dfa <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x16f4>
+   853e4:	2809                	addiw	a6,a6,2
+   853e6:	b25d                	j	84d8c <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1686>
+   853e8:	5ffd                	li	t6,-1
+   853ea:	35f806e3          	beq	a6,t6,85f36 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x2830>
+   853ee:	5ff9                	li	t6,-2
+   853f0:	bbf814e3          	bne	a6,t6,84f98 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1892>
+   853f4:	4801                	li	a6,0
+   853f6:	ba59                	j	84d8c <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1686>
+   853f8:	8546                	mv	a0,a7
+   853fa:	8bc6                	mv	s7,a7
+   853fc:	9faeb0ef          	jal	705f6 <y26::stage52::FullExecutor::Impl::tensor(int) const>
+   85400:	028a2583          	lw	a1,40(s4)
+   85404:	842a                	mv	s0,a0
+   85406:	855e                	mv	a0,s7
+   85408:	9eeeb0ef          	jal	705f6 <y26::stage52::FullExecutor::Impl::tensor(int) const>
+   8540c:	03852f03          	lw	t5,56(a0)
+   85410:	594c                	lw	a1,52(a0)
+   85412:	892a                	mv	s2,a0
+   85414:	03442383          	lw	t2,52(s0)
+   85418:	03e58c3b          	mulw	s8,a1,t5
+   8541c:	05c44503          	lbu	a0,92(s0)
+   85420:	05093e03          	ld	t3,80(s2)
+   85424:	05043d83          	ld	s11,80(s0)
+   85428:	03842c83          	lw	s9,56(s0)
+   8542c:	0a8bba83          	ld	s5,168(s7)
+   85430:	ec7a                	sd	t5,24(sp)
+   85432:	e872                	sd	t3,16(sp)
+   85434:	f01e                	sd	t2,32(sp)
+   85436:	038484bb          	mulw	s1,s1,s8
+   8543a:	009c033b          	addw	t1,s8,s1
+   8543e:	0334c4bb          	divw	s1,s1,s3
+   85442:	033346bb          	divw	a3,t1,s3
+   85446:	e436                	sd	a3,8(sp)
+   85448:	f798e0ef          	jal	143c0 <y26::int8_v1::signed_storage(unsigned char)@plt>
+   8544c:	1a010623          	sb	zero,428(sp)
+   85450:	1a810993          	addi	s3,sp,424
+   85454:	842a                	mv	s0,a0
+   85456:	854e                	mv	a0,s3
+   85458:	1a012423          	sw	zero,424(sp)
+   8545c:	9c48e0ef          	jal	13620 <y26::stage51::begin_q62_vector_rne(y26::stage51::VectorFixedPointState*)@plt>
+   85460:	360504e3          	beqz	a0,85fc8 <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x28c2>
+   85464:	cc747057          	vsetivli	zero,8,e8,mf2,ta,ma
+   85468:	008d0813          	addi	a6,s10,8
+   8546c:	5e0039d7          	vmv.v.i	v19,0
+   85470:	010d0b13          	addi	s6,s10,16
+   85474:	018d0513          	addi	a0,s10,24
+   85478:	060d0293          	addi	t0,s10,96
+   8547c:	020d09a7          	vse8.v	v19,(s10)
+   85480:	040d0e93          	addi	t4,s10,64
+   85484:	020809a7          	vse8.v	v19,(a6)
+   85488:	020d0793          	addi	a5,s10,32
+   8548c:	020b09a7          	vse8.v	v19,(s6)
+   85490:	028d0713          	addi	a4,s10,40
+   85494:	020509a7          	vse8.v	v19,(a0)
+   85498:	068d0f93          	addi	t6,s10,104
+   8549c:	020789a7          	vse8.v	v19,(a5)
+   854a0:	048d0893          	addi	a7,s10,72
+   854a4:	020289a7          	vse8.v	v19,(t0)
+   854a8:	030d0b93          	addi	s7,s10,48
+   854ac:	020e89a7          	vse8.v	v19,(t4)
+   854b0:	070d0f13          	addi	t5,s10,112
+   854b4:	020709a7          	vse8.v	v19,(a4)
+   854b8:	050d0613          	addi	a2,s10,80
+   854bc:	020f89a7          	vse8.v	v19,(t6)
+   854c0:	038d0593          	addi	a1,s10,56
+   854c4:	020889a7          	vse8.v	v19,(a7)
+   854c8:	078d0e13          	addi	t3,s10,120
+   854cc:	020b89a7          	vse8.v	v19,(s7)
+   854d0:	058d0393          	addi	t2,s10,88
+   854d4:	020f09a7          	vse8.v	v19,(t5)
+   854d8:	66a2                	ld	a3,8(sp)
+   854da:	020609a7          	vse8.v	v19,(a2)
+   854de:	003c9313          	slli	t1,s9,0x3
+   854e2:	020589a7          	vse8.v	v19,(a1)
+   854e6:	e096                	sd	t0,64(sp)
+   854e8:	020e09a7          	vse8.v	v19,(t3)
+   854ec:	fc76                	sd	t4,56(sp)
+   854ee:	020389a7          	vse8.v	v19,(t2)
+   854f2:	f81a                	sd	t1,48(sp)
+   854f4:	0004859b          	sext.w	a1,s1
+   854f8:	20d4d263          	bge	s1,a3,856fc <y26::stage52::FullExecutor::Impl::conv_job(void*, int, int)+0x1ff6>
+   854fc:	e4ce                	sd	s3,72(sp)
+   854fe:	69e2                	ld	s3,24(sp)

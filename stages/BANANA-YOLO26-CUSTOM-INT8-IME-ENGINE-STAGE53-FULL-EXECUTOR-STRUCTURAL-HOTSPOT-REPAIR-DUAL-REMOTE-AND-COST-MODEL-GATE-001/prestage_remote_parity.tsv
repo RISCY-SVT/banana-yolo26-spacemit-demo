@@ -1,0 +1,3 @@
+remote	branch	remote_head	local_head	status
+github	yolo26-custom-int8-engine	c98212b6db56a7a27a0d26b645a7158dc36c5ff6	c98212b6db56a7a27a0d26b645a7158dc36c5ff6	parity
+gitlab-rd	yolo26-custom-int8-engine	c98212b6db56a7a27a0d26b645a7158dc36c5ff6	c98212b6db56a7a27a0d26b645a7158dc36c5ff6	parity

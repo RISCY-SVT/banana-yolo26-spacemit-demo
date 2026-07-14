@@ -25,6 +25,12 @@ load, worker affinity, controller CPU, scheduler mode, and package/binary
 hashes. Compare per-inference samples using the same statistical unit. Disable
 diagnostic boundary capture and operation profiling for headline timing.
 
+The condition-variable wake policy is used when `Y26_STAGE53_SPIN_POOL` is
+unset or has any value other than the literal `1`. The optimized-research
+epoch-spin policy requires `Y26_STAGE53_SPIN_POOL=1` before executor prepare.
+It intentionally consumes more process CPU; do not mistake that occupancy for
+a worker leak or enable it on a shared system without measuring the impact.
+
 ## Different Detections
 
 Verify padding 114, OpenCV linear resize, RGB order, normalization by 255,

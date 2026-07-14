@@ -299,7 +299,11 @@ public:
     using Job = void (*)(void*, int, WorkerScratch&);
 
     WorkerPool(int requested, std::size_t panel_bytes, int cpu_base)
-        : count_(std::clamp(requested, 1, kMaximumWorkers)), cpu_base_(cpu_base) {
+        : count_(std::clamp(requested, 1, kMaximumWorkers)), cpu_base_(cpu_base),
+          spin_mode_([]() {
+              const char* value = std::getenv("Y26_STAGE53_SPIN_POOL");
+              return value != nullptr && std::string_view(value) == "1";
+          }()) {
         scratch_.resize(static_cast<std::size_t>(count_));
         for (WorkerScratch& scratch : scratch_) scratch.a_panel.resize(panel_bytes);
         threads_.reserve(static_cast<std::size_t>(count_));
@@ -311,6 +315,17 @@ public:
     }
 
     ~WorkerPool() {
+        if (spin_mode_) {
+            spin_stopping_.store(true, std::memory_order_relaxed);
+            spin_generation_.fetch_add(1, std::memory_order_release);
+            for (std::thread& thread : threads_) if (thread.joinable()) thread.join();
+#if defined(__linux__)
+            for (WorkerScratch& scratch : scratch_) {
+                if (scratch.counter_fd >= 0) close(scratch.counter_fd);
+            }
+#endif
+            return;
+        }
         {
             std::lock_guard lock(mutex_);
             stopping_ = true;
@@ -376,6 +391,19 @@ public:
     }
 
     void dispatch(int active, Job job, void* context, SchedulerStrategy scheduler) {
+        if (spin_mode_) {
+            active_ = std::clamp(active, 1, count_);
+            active_workers_only_ = scheduler == SchedulerStrategy::active_workers_complete;
+            completion_target_ = active_workers_only_ ? active_ : count_;
+            job_ = job;
+            context_ = context;
+            spin_completed_.store(0, std::memory_order_relaxed);
+            spin_generation_.fetch_add(1, std::memory_order_release);
+            while (spin_completed_.load(std::memory_order_acquire) != completion_target_) {
+                asm volatile("" ::: "memory");
+            }
+            return;
+        }
         {
             std::lock_guard lock(mutex_);
             active_ = std::clamp(active, 1, count_);
@@ -408,7 +436,21 @@ private:
             int active = 0;
             bool active_workers_only = false;
             std::string counter_event;
-            {
+            if (spin_mode_) {
+                std::uint64_t generation = spin_generation_.load(std::memory_order_acquire);
+                while (generation == local_generation) {
+                    if (spin_stopping_.load(std::memory_order_relaxed)) return;
+                    asm volatile("" ::: "memory");
+                    generation = spin_generation_.load(std::memory_order_acquire);
+                }
+                local_generation = generation;
+                if (spin_stopping_.load(std::memory_order_relaxed)) return;
+                job = job_;
+                context = context_;
+                active = active_;
+                active_workers_only = active_workers_only_;
+                counter_event = counter_event_;
+            } else {
                 std::unique_lock lock(mutex_);
                 start_cv_.wait(lock, [&]() { return generation_ != local_generation; });
                 local_generation = generation_;
@@ -461,6 +503,10 @@ private:
 #endif
             }
             if (!active_workers_only || index < active) {
+                if (spin_mode_) {
+                    spin_completed_.fetch_add(1, std::memory_order_release);
+                    continue;
+                }
                 {
                     std::lock_guard lock(mutex_);
                     ++completed_;
@@ -487,6 +533,10 @@ private:
     void* context_ = nullptr;
     bool active_workers_only_ = false;
     bool stopping_ = false;
+    bool spin_mode_ = false;
+    std::atomic<std::uint64_t> spin_generation_ {0};
+    std::atomic<int> spin_completed_ {0};
+    std::atomic<bool> spin_stopping_ {false};
     std::string counter_event_;
 };
 
@@ -1072,6 +1122,9 @@ struct PersistentSlice::Impl {
     std::vector<Tensor> tensors;
     std::vector<Operation> operations;
     std::vector<std::int8_t> arena;
+    std::int8_t* external_arena = nullptr;
+    std::size_t external_arena_bytes = 0;
+    std::vector<std::int8_t*> external_tensors;
     std::vector<std::vector<std::int8_t>> captured_tensors;
     std::unique_ptr<WorkerPool> pool;
     std::unique_ptr<WorkerPool> cluster1_pool;
@@ -1091,8 +1144,22 @@ struct PersistentSlice::Impl {
         return tensors[static_cast<std::size_t>(id)];
     }
 
-    std::int8_t* data(int id) { return arena.data() + tensor(id).offset; }
-    const std::int8_t* data(int id) const { return arena.data() + tensor(id).offset; }
+    std::int8_t* data(int id) {
+        const Tensor& descriptor = tensor(id);
+        if (external_tensors[static_cast<std::size_t>(id)] != nullptr) {
+            return external_tensors[static_cast<std::size_t>(id)];
+        }
+        std::int8_t* base = external_arena != nullptr ? external_arena : arena.data();
+        return base + descriptor.offset;
+    }
+    const std::int8_t* data(int id) const {
+        const Tensor& descriptor = tensor(id);
+        if (external_tensors[static_cast<std::size_t>(id)] != nullptr) {
+            return external_tensors[static_cast<std::size_t>(id)];
+        }
+        const std::int8_t* base = external_arena != nullptr ? external_arena : arena.data();
+        return base + descriptor.offset;
+    }
 
     int tensor_id_for_key(std::string_view key) const noexcept {
         const auto found = std::find_if(tensors.begin(), tensors.end(), [&](const Tensor& tensor) {
@@ -1511,7 +1578,8 @@ int PersistentSlice::prepare_with_contract(const std::filesystem::path& package_
                                            const std::string& trusted_manifest_sha256,
                                            int worker_capacity,
                                            const std::string& expected_contract_id,
-                                           const std::string& expected_profile_id) {
+                                           const std::string& expected_profile_id,
+                                           bool enable_cluster1_pool) {
     if (worker_capacity < 1 || worker_capacity > kMaximumWorkers) return Y26_CONV_STATUS_INVALID_ARGUMENT;
     impl_->error.clear();
     try {
@@ -1544,6 +1612,7 @@ int PersistentSlice::prepare_with_contract(const std::filesystem::path& package_
             prepared.tensors.push_back(std::move(tensor));
         }
         prepared.arena.resize(required_arena);
+        prepared.external_tensors.resize(prepared.tensors.size(), nullptr);
         std::size_t maximum_panel = 0;
         for (const Row& row : read_tsv(prepared.package / "operations.tsv")) {
             Operation operation;
@@ -1648,7 +1717,9 @@ int PersistentSlice::prepare_with_contract(const std::filesystem::path& package_
             throw std::runtime_error("unexpected persistent integer-slice package surface");
         }
         prepared.pool = std::make_unique<WorkerPool>(worker_capacity, maximum_panel, 0);
-        prepared.cluster1_pool = std::make_unique<WorkerPool>(worker_capacity, 0, 4);
+        if (enable_cluster1_pool) {
+            prepared.cluster1_pool = std::make_unique<WorkerPool>(worker_capacity, 0, 4);
+        }
         prepared.ready = true;
         *impl_ = std::move(prepared);
         return Y26_CONV_STATUS_SUCCESS;
@@ -1732,8 +1803,8 @@ int execute_range(PersistentSlice::Impl& executor, int first_operation, int last
     }
     if (timing != nullptr) {
         timing->total_us = elapsed_us(total_begin, Clock::now());
-        timing->affinity_ok = executor.pool->affinity_ok() && executor.cluster1_pool &&
-                              executor.cluster1_pool->affinity_ok() ? 1 : 0;
+        timing->affinity_ok = executor.pool->affinity_ok() &&
+                              (!executor.cluster1_pool || executor.cluster1_pool->affinity_ok()) ? 1 : 0;
         timing->worker_counters = executor.pool->worker_counters();
     }
     return Y26_CONV_STATUS_SUCCESS;
@@ -1801,6 +1872,58 @@ int PersistentSlice::run_range_resident(int first_operation, int last_operation,
                                         const RunOptions& options, SliceTiming* timing) {
     if (!impl_ || !impl_->ready) return Y26_CONV_STATUS_INVALID_ARGUMENT;
     return execute_range(*impl_, first_operation, last_operation, options, timing);
+}
+
+int PersistentSlice::bind_external_arena(std::int8_t* arena, std::size_t bytes) {
+    if (!impl_ || !impl_->ready || arena == nullptr || bytes < impl_->arena.size()) {
+        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    }
+    impl_->external_arena = arena;
+    impl_->external_arena_bytes = bytes;
+    return Y26_CONV_STATUS_SUCCESS;
+}
+
+int PersistentSlice::bind_external_tensor(int tensor_id, std::int8_t* data,
+                                          std::size_t bytes) {
+    if (!impl_ || !impl_->ready || data == nullptr || tensor_id < 0 ||
+        static_cast<std::size_t>(tensor_id) >= impl_->external_tensors.size()) {
+        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    }
+    try {
+        if (impl_->tensor(tensor_id).bytes != bytes) return Y26_CONV_STATUS_INVALID_ARGUMENT;
+        impl_->external_tensors[static_cast<std::size_t>(tensor_id)] = data;
+        return Y26_CONV_STATUS_SUCCESS;
+    } catch (const std::exception&) {
+        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    }
+}
+
+void PersistentSlice::clear_external_tensor_bindings() noexcept {
+    if (!impl_) return;
+    std::fill(impl_->external_tensors.begin(), impl_->external_tensors.end(), nullptr);
+}
+
+int PersistentSlice::dispatch_external(int active_workers, ExternalJob job, void* context) {
+    if (!impl_ || !impl_->ready || !impl_->pool || job == nullptr || active_workers < 1 ||
+        active_workers > impl_->pool->capacity()) {
+        return Y26_CONV_STATUS_INVALID_ARGUMENT;
+    }
+    struct ExternalDispatchContext {
+        ExternalJob job = nullptr;
+        void* context = nullptr;
+        int workers = 0;
+    } dispatch {job, context, active_workers};
+    impl_->pool->dispatch(active_workers,
+        [](void* opaque, int worker, WorkerScratch&) {
+            auto& request = *static_cast<ExternalDispatchContext*>(opaque);
+            request.job(request.context, worker, request.workers);
+        },
+        &dispatch, SchedulerStrategy::active_workers_complete);
+    return Y26_CONV_STATUS_SUCCESS;
+}
+
+bool PersistentSlice::worker_affinity_ok() const noexcept {
+    return impl_ && impl_->pool && impl_->pool->affinity_ok();
 }
 
 int PersistentSlice::copy_tensor(int tensor_id, std::int8_t* destination, std::size_t bytes) const {
@@ -1886,10 +2009,6 @@ int PersistentSlice::prefault_memory(bool advise_hugepage, std::uint64_t* touche
 #endif
     if (touched_checksum != nullptr) *touched_checksum = checksum;
     return Y26_CONV_STATUS_SUCCESS;
-}
-bool PersistentSlice::worker_affinity_ok() const noexcept {
-    return impl_ && impl_->pool && impl_->cluster1_pool && impl_->pool->affinity_ok() &&
-           impl_->cluster1_pool->affinity_ok();
 }
 const std::string& PersistentSlice::manifest_sha256() const noexcept {
     static const std::string empty;

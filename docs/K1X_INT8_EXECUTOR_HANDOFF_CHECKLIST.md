@@ -10,9 +10,14 @@
 - [ ] C API smoke and error paths pass.
 - [ ] CPU0-3 worker affinity passes; CPU4-7 IME count is zero.
 - [ ] FRM and vector CSR restoration tests pass.
-- [ ] Full COCO result and prediction hash match the Stage52 report.
-- [ ] Safe full-model timing and 10,000-run soak match the reported surface.
+- [ ] Full COCO result and prediction hash match the Stage52 functional-reference
+      report and the byte-identical Stage53 optimized-research result.
+- [ ] The intended wake policy is explicit: condition-variable compatibility or
+      `Y26_STAGE53_SPIN_POOL=1` optimized research.
+- [ ] Full-model timing and the corresponding 10,000-run soak match the reported
+      statistical surface and wake policy.
 - [ ] Optional `rr20` is disabled unless a dedicated lab operator enables it.
 - [ ] No ORT, Python, per-run file I/O, or float Q/DQ exists in measured runtime.
-- [ ] Deployment is under `/data/k1x-yolo26-int8-executor`.
+- [ ] Deployment is under `/data/k1x-yolo26-int8-executor` or a versioned child
+      directory on the same NVMe filesystem.
 - [ ] Limitations and rollback/removal instructions were reviewed.

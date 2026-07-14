@@ -28,12 +28,20 @@
 #include <utility>
 #include <vector>
 
+#if defined(__riscv_vector)
+#include <riscv_vector.h>
+#endif
+
 #if defined(__linux__)
 #include <sys/resource.h>
 #endif
 
 #if defined(Y26_K1X_ENABLE_IME_ASM) && defined(__riscv)
 extern "C" void y26_stage48_kernel_m12n16(
+    const std::int8_t*, const std::int8_t*, int, std::int32_t*);
+extern "C" void y26_stage53_kernel_m12n4(
+    const std::int8_t*, const std::int8_t*, int, std::int32_t*);
+extern "C" void y26_stage53_kernel_m12n8(
     const std::int8_t*, const std::int8_t*, int, std::int32_t*);
 extern "C" void y26_stage48_load_vlse64_4(const std::int8_t*, std::int8_t*);
 extern "C" void y26_stage49_load_contiguous_c8x4(const std::int8_t*, std::int8_t*);
@@ -84,6 +92,22 @@ void run_m12n16(const std::int8_t* a, const std::int8_t* b,
 #if defined(Y26_K1X_ENABLE_IME_ASM) && defined(__riscv)
     y26_stage48_kernel_m12n16(a, b, k_tiles, c);
 #else
+    scalar_m12n16(a, b, k_tiles, c);
+#endif
+}
+
+void run_m12n_live(const std::int8_t* a, const std::int8_t* b,
+                   int k_tiles, int live_channels, std::int32_t* c) noexcept {
+#if defined(Y26_K1X_ENABLE_IME_ASM) && defined(__riscv)
+    if (live_channels <= 4) {
+        y26_stage53_kernel_m12n4(a, b, k_tiles, c);
+    } else if (live_channels <= 8) {
+        y26_stage53_kernel_m12n8(a, b, k_tiles, c);
+    } else {
+        y26_stage48_kernel_m12n16(a, b, k_tiles, c);
+    }
+#else
+    (void)live_channels;
     scalar_m12n16(a, b, k_tiles, c);
 #endif
 }
@@ -356,10 +380,15 @@ struct Conv {
     std::vector<std::int64_t> weight_sums;
     std::vector<std::int64_t> corrected_bias;
     std::vector<std::int64_t> multiplier_m63;
+    std::vector<std::int8_t> depthwise_weights_c8;
+    std::vector<std::int8_t> stem_weights_tap_major;
+    std::vector<std::int32_t> stem_corrected_bias_i32;
     int k_tiles = 0;
     int n_blocks = 0;
     int input_blocks = 0;
     bool dense_ime_eligible = false;
+    bool depthwise_rvv_eligible = false;
+    bool rgb_stem_rvv_eligible = false;
 };
 
 enum class BranchTransform { copy, split, reshape_split, resize, pool0, pool1, pool2, pool3 };
@@ -403,7 +432,38 @@ struct Operation {
     std::uint64_t softmax_reciprocal_q32 = 0;
     std::vector<std::uint64_t> exp_q48;
     bool matmul_ime_eligible = false;
+    int fused_lut_output = -1;
+    std::vector<std::int8_t> fused_lut;
+    bool skip_when_fused = false;
 };
+
+struct OperationProfileSample {
+    int full_operation_index = -1;
+    int resident_operation_index = -1;
+    std::string kind;
+    std::string source;
+    std::string name;
+    double wall_us = 0.0;
+};
+
+const char* operation_kind_name(OpKind kind) noexcept {
+    switch (kind) {
+        case OpKind::input_quant: return "input_quant";
+        case OpKind::conv_dense: return "conv_dense";
+        case OpKind::conv_grouped: return "conv_grouped";
+        case OpKind::lut1: return "lut1";
+        case OpKind::lut2: return "lut2";
+        case OpKind::split: return "split";
+        case OpKind::reshape: return "reshape";
+        case OpKind::transpose: return "transpose";
+        case OpKind::reshape_split_transpose: return "reshape_split_transpose";
+        case OpKind::concat: return "concat";
+        case OpKind::resize: return "resize";
+        case OpKind::matmul: return "matmul";
+        case OpKind::softmax_transpose: return "softmax_transpose";
+    }
+    return "unknown";
+}
 
 struct HeadScale {
     int resolution = 0;
@@ -523,13 +583,12 @@ struct FullExecutor::Impl {
     std::vector<OperationRunner> operation_runners;
     std::vector<std::int8_t> arena;
     std::vector<std::vector<std::int8_t>> captured;
-    std::vector<std::int8_t> optimized_core_input;
     struct CoreBridge {
         int full_tensor = -1;
         int core_tensor = -1;
-        std::vector<std::int8_t> snapshot;
+        std::vector<std::int8_t> diagnostic_snapshot;
     };
-    std::array<CoreBridge, 3> core_bridges;
+    std::array<CoreBridge, 6> core_bridges;
     std::array<HeadScale, 3> head;
     std::array<float, 300 * 6> last_output {};
     std::unique_ptr<WorkerPool> pool;
@@ -537,33 +596,76 @@ struct FullExecutor::Impl {
     std::vector<std::int8_t> matmul_packed_right;
     std::vector<std::int64_t> matmul_right_sums;
     std::unique_ptr<stage49::PersistentSlice> optimized_core;
+    std::vector<std::int8_t> core_input_diagnostic_snapshot;
     int core_start_operation = -1;
     int core_end_operation = -1;
     int core_input_tensor = -1;
     int core_output_tensor = -1;
     int optimized_core_last_operation = -1;
+    std::size_t core_scratch_offset = 0;
+    std::size_t core_scratch_bytes = 0;
     std::size_t total_weight_bytes = 0;
     std::string error;
     bool controller_affinity_ok = false;
     bool e2c2_enabled = true;
+    bool small_n_enabled = true;
+    bool rgb_stem_enabled = true;
+    bool fused_lut_enabled = false;
     bool ready = false;
+    std::uint64_t profile_run_sequence = 0;
 
-    void run_optimized_core() {
+    int full_operation_index(std::string_view name) const noexcept {
+        const auto found = std::find_if(operations.begin(), operations.end(),
+            [name](const Operation& operation) { return operation.name == name; });
+        return found == operations.end() ? -1 : found->index;
+    }
+
+    void dispatch_workers(int active, WorkerPool::Job job, void* context) {
+        if (optimized_core && config.scheduler == SchedulerMode::safe) {
+            if (optimized_core->dispatch_external(active, job, context) != 0) {
+                throw std::runtime_error("resident worker dispatch failed");
+            }
+            return;
+        }
+        if (!pool) throw std::runtime_error("full worker pool is unavailable");
+        pool->dispatch(active, job, context);
+    }
+
+    bool worker_affinity_ok() const noexcept {
+        if (optimized_core && config.scheduler == SchedulerMode::safe) {
+            return optimized_core->worker_affinity_ok();
+        }
+        return pool && pool->affinity_ok();
+    }
+
+    void run_optimized_core(stage49::SliceTiming* timing) {
         if (!optimized_core || core_input_tensor < 0 || core_output_tensor < 0) {
             throw std::runtime_error("optimized core is unavailable");
         }
         const Tensor& input = tensor(core_input_tensor);
-        const auto* input_data = arena.data() + input.offset;
+        auto* input_data = arena.data() + input.offset;
         const int core_input = optimized_core->input_tensor_id();
-        std::copy_n(input_data, input.storage_bytes, optimized_core_input.data());
-        if (optimized_core->tensor_bytes(core_input) != input.storage_bytes ||
-            optimized_core->load_tensor(core_input, input_data, input.storage_bytes) != 0) {
+        optimized_core->clear_external_tensor_bindings();
+        if (std::getenv("Y26_STAGE53_CAPTURE_RESIDENT") != nullptr) {
+            core_input_diagnostic_snapshot.assign(
+                input_data, input_data + input.storage_bytes);
+        }
+        if (optimized_core->bind_external_arena(
+                arena.data() + core_scratch_offset, core_scratch_bytes) != 0 ||
+            optimized_core->tensor_bytes(core_input) != input.storage_bytes ||
+            optimized_core->bind_external_tensor(
+                core_input, input_data, input.storage_bytes) != 0) {
             throw std::runtime_error("optimized core input contract mismatch");
         }
         for (const CoreBridge& bridge : core_bridges) {
             if (bridge.full_tensor < 0 || bridge.core_tensor < 0 ||
                 optimized_core->tensor_bytes(bridge.core_tensor) != tensor(bridge.full_tensor).storage_bytes) {
                 throw std::runtime_error("optimized core live-out contract mismatch");
+            }
+            const Tensor& full = tensor(bridge.full_tensor);
+            if (optimized_core->bind_external_tensor(
+                    bridge.core_tensor, arena.data() + full.offset, full.storage_bytes) != 0) {
+                throw std::runtime_error("optimized core live-out binding failed");
             }
         }
         stage49::RunOptions options;
@@ -575,16 +677,15 @@ struct FullExecutor::Impl {
         options.nonconv = stage49::NonConvStrategy::explicit_rvv_lut;
         options.scheduler = stage49::SchedulerStrategy::active_workers_complete;
         options.workers = config.workers;
-        if (optimized_core->run_range_resident(0, optimized_core_last_operation, options, nullptr) != 0) {
+        if (optimized_core->run_range_resident(0, optimized_core_last_operation, options, timing) != 0) {
             throw std::runtime_error("optimized core execution failed: " + optimized_core->last_error());
         }
-        for (CoreBridge& bridge : core_bridges) {
-            const Tensor& full = tensor(bridge.full_tensor);
-            auto* destination = arena.data() + full.offset;
-            if (optimized_core->copy_tensor(bridge.core_tensor, destination, full.storage_bytes) != 0) {
-                throw std::runtime_error("optimized core live-out copy failed");
+        if (std::getenv("Y26_STAGE53_CAPTURE_RESIDENT") != nullptr) {
+            for (CoreBridge& bridge : core_bridges) {
+                const Tensor& full = tensor(bridge.full_tensor);
+                bridge.diagnostic_snapshot.assign(
+                    arena.data() + full.offset, arena.data() + full.offset + full.storage_bytes);
             }
-            std::copy_n(destination, full.storage_bytes, bridge.snapshot.data());
         }
     }
 
@@ -664,6 +765,75 @@ struct FullExecutor::Impl {
         }
         if (!all_e2c) throw std::runtime_error("dense Conv is not fully E2c compatible");
         conv.dense_ime_eligible = true;
+        if (conv.input_c == 3 && conv.output_c == 16 && conv.kernel_h == 3 &&
+            conv.kernel_w == 3 && conv.stride_h == 2 && conv.stride_w == 2) {
+            conv.stem_weights_tap_major.resize(27U * 16U);
+            conv.stem_corrected_bias_i32.resize(16U);
+            for (int channel = 0; channel < 16; ++channel) {
+                const std::int64_t corrected = conv.corrected_bias[static_cast<std::size_t>(channel)];
+                if (corrected < std::numeric_limits<std::int32_t>::min() ||
+                    corrected > std::numeric_limits<std::int32_t>::max()) {
+                    throw std::runtime_error("RGB stem corrected bias exceeds int32");
+                }
+                conv.stem_corrected_bias_i32[static_cast<std::size_t>(channel)] =
+                    static_cast<std::int32_t>(corrected);
+                for (int kernel_y = 0; kernel_y < 3; ++kernel_y) {
+                    for (int kernel_x = 0; kernel_x < 3; ++kernel_x) {
+                        for (int input_channel = 0; input_channel < 3; ++input_channel) {
+                            const int tap = (kernel_y * 3 + kernel_x) * 3 + input_channel;
+                            const std::size_t source_index =
+                                (((static_cast<std::size_t>(channel) * 3U + input_channel) * 3U +
+                                  kernel_y) * 3U + kernel_x);
+                            conv.stem_weights_tap_major[
+                                static_cast<std::size_t>(tap) * 16U + channel] =
+                                conv.weights[source_index];
+                        }
+                    }
+                }
+            }
+            conv.rgb_stem_rvv_eligible = true;
+        }
+    }
+
+    void prepare_depthwise_conv(Operation& operation) {
+        Conv& conv = operation.conv;
+        const Tensor& input = tensor(operation.inputs[0]);
+        const Tensor& output = tensor(operation.output);
+        if (operation.kind != OpKind::conv_grouped || conv.group != conv.input_c ||
+            conv.group != conv.output_c || conv.input_c % 8 != 0 ||
+            conv.kernel_h != 3 || conv.kernel_w != 3 ||
+            conv.stride_h != 1 || conv.stride_w != 1 ||
+            input.rank != 4 || output.rank != 4 ||
+            input.layout != Layout::feature_nchwc8 ||
+            output.layout != Layout::feature_nchwc8) {
+            return;
+        }
+        if (conv.accumulator_bound > static_cast<std::uint64_t>(
+                std::numeric_limits<std::int32_t>::max())) {
+            throw std::runtime_error("depthwise accumulator exceeds int32");
+        }
+        conv.depthwise_weights_c8.resize(conv.weights.size());
+        const int channel_blocks = conv.output_c / 8;
+        for (int channel_block = 0; channel_block < channel_blocks; ++channel_block) {
+            for (int tap = 0; tap < 9; ++tap) {
+                for (int lane = 0; lane < 8; ++lane) {
+                    const int channel = channel_block * 8 + lane;
+                    conv.depthwise_weights_c8[
+                        (static_cast<std::size_t>(channel_block) * 9U + tap) * 8U + lane] =
+                        conv.weights[static_cast<std::size_t>(channel) * 9U + tap];
+                }
+            }
+        }
+        conv.multiplier_m63.resize(static_cast<std::size_t>(conv.output_c));
+        for (int channel = 0; channel < conv.output_c; ++channel) {
+            const std::int64_t multiplier = conv.multiplier[static_cast<std::size_t>(channel)];
+            if (conv.shift[static_cast<std::size_t>(channel)] != 62 || multiplier <= 0 ||
+                multiplier > std::numeric_limits<std::int64_t>::max() / 2) {
+                throw std::runtime_error("depthwise Conv is not Q62 vsmul-compatible");
+            }
+            conv.multiplier_m63[static_cast<std::size_t>(channel)] = multiplier * 2;
+        }
+        conv.depthwise_rvv_eligible = true;
     }
 
     void pack_dense_a(const Conv& conv, const Tensor& input, const std::int8_t* input_data,
@@ -773,7 +943,7 @@ struct FullExecutor::Impl {
     }
 
     void dispatch_range(RangeJob& job) {
-        pool->dispatch(config.workers, range_job, &job);
+        dispatch_workers(config.workers, range_job, &job);
         if (job.status.load(std::memory_order_relaxed) != 0) {
             throw std::runtime_error("parallel operator worker failed");
         }
@@ -784,7 +954,10 @@ struct FullExecutor::Impl {
         if (job.status.load(std::memory_order_relaxed) != 0) return;
         try {
             if (job.self->config.compute == ComputeMode::optimized &&
-                job.op->conv.dense_ime_eligible) {
+                job.self->rgb_stem_enabled && job.op->conv.rgb_stem_rvv_eligible) {
+                job.self->run_rgb_stem_chunk(*job.op, worker, workers);
+            } else if (job.self->config.compute == ComputeMode::optimized &&
+                       job.op->conv.dense_ime_eligible) {
                 job.self->run_dense_conv_chunk(*job.op, worker, workers);
             } else if (job.self->config.compute == ComputeMode::optimized &&
                        job.op->kind == OpKind::conv_grouped &&
@@ -799,12 +972,115 @@ struct FullExecutor::Impl {
         }
     }
 
-    void run_dense_conv_chunk(const Operation& operation, int worker, int workers) {
+    void run_rgb_stem_chunk(const Operation& operation, int worker, int workers) {
         const Conv& conv = operation.conv;
         const Tensor& input = tensor(operation.inputs[0]);
         const Tensor& output = tensor(operation.output);
         const auto* input_data = arena.data() + input.offset;
         auto* output_data = arena.data() + output.offset;
+        const int output_h = output.dims[2];
+        const int output_w = output.dims[3];
+        const int input_h = input.dims[2];
+        const int input_w = input.dims[3];
+        const int total = output_h * output_w;
+        const int begin = total * worker / workers;
+        const int end = total * (worker + 1) / workers;
+        const std::int8_t padding = int8_v1::signed_storage(
+            static_cast<std::uint8_t>(input.zero_point));
+        stage51::VectorFixedPointState vector_state;
+        if (!stage51::begin_q62_vector_rne(&vector_state)) {
+            throw std::runtime_error("cannot establish RGB stem Q62 vector state");
+        }
+        alignas(64) std::array<std::int32_t, 16> accumulator {};
+        alignas(32) std::array<std::int64_t, 4> corrected {};
+        alignas(32) std::array<std::int64_t, 4> multipliers {};
+        for (int spatial = begin; spatial < end; ++spatial) {
+            const int output_y = spatial / output_w;
+            const int output_x = spatial % output_w;
+#if defined(__riscv_vector)
+            constexpr std::size_t kChannels = 16;
+            vint32m2_t sum = __riscv_vle32_v_i32m2(
+                conv.stem_corrected_bias_i32.data(), kChannels);
+            for (int kernel_y = 0; kernel_y < 3; ++kernel_y) {
+                const int input_y = output_y * 2 - conv.pad_top + kernel_y;
+                for (int kernel_x = 0; kernel_x < 3; ++kernel_x) {
+                    const int input_x = output_x * 2 - conv.pad_left + kernel_x;
+                    for (int input_channel = 0; input_channel < 3; ++input_channel) {
+                        const std::int8_t input_value =
+                            input_y < 0 || input_y >= input_h ||
+                            input_x < 0 || input_x >= input_w
+                            ? padding
+                            : input_data[(static_cast<std::size_t>(input_y) * input_w + input_x) * 8U +
+                                         static_cast<std::size_t>(input_channel)];
+                        const int tap = (kernel_y * 3 + kernel_x) * 3 + input_channel;
+                        const vint8mf2_t weight_i8 = __riscv_vle8_v_i8mf2(
+                            conv.stem_weights_tap_major.data() + static_cast<std::size_t>(tap) * 16U,
+                            kChannels);
+                        const vint32m2_t weight_i32 =
+                            __riscv_vsext_vf4_i32m2(weight_i8, kChannels);
+                        sum = __riscv_vmacc_vx_i32m2(
+                            sum, static_cast<std::int32_t>(input_value), weight_i32, kChannels);
+                    }
+                }
+            }
+            __riscv_vse32_v_i32m2(accumulator.data(), sum, kChannels);
+#else
+            for (int output_channel = 0; output_channel < 16; ++output_channel) {
+                std::int64_t sum = conv.stem_corrected_bias_i32[
+                    static_cast<std::size_t>(output_channel)];
+                for (int kernel_y = 0; kernel_y < 3; ++kernel_y) {
+                    const int input_y = output_y * 2 - conv.pad_top + kernel_y;
+                    for (int kernel_x = 0; kernel_x < 3; ++kernel_x) {
+                        const int input_x = output_x * 2 - conv.pad_left + kernel_x;
+                        for (int input_channel = 0; input_channel < 3; ++input_channel) {
+                            const std::int8_t input_value =
+                                input_y < 0 || input_y >= input_h ||
+                                input_x < 0 || input_x >= input_w
+                                ? padding
+                                : input_data[(static_cast<std::size_t>(input_y) * input_w + input_x) * 8U +
+                                             static_cast<std::size_t>(input_channel)];
+                            const int tap = (kernel_y * 3 + kernel_x) * 3 + input_channel;
+                            sum += static_cast<std::int32_t>(input_value) *
+                                conv.stem_weights_tap_major[
+                                    static_cast<std::size_t>(tap) * 16U + output_channel];
+                        }
+                    }
+                }
+                accumulator[static_cast<std::size_t>(output_channel)] =
+                    static_cast<std::int32_t>(sum);
+            }
+#endif
+            for (int group = 0; group < 4; ++group) {
+                for (int lane = 0; lane < 4; ++lane) {
+                    const int channel = group * 4 + lane;
+                    corrected[static_cast<std::size_t>(lane)] =
+                        accumulator[static_cast<std::size_t>(channel)];
+                    multipliers[static_cast<std::size_t>(lane)] =
+                        conv.multiplier_m63[static_cast<std::size_t>(channel)];
+                }
+                const std::size_t destination =
+                    ((static_cast<std::size_t>((group * 4) / 8) * total + spatial) * 8U +
+                     static_cast<std::size_t>((group * 4) % 8));
+                stage51::q62_vsmul_m63_i64x4_to_s8(
+                    corrected.data(), multipliers.data(), output.zero_point,
+                    output_data + destination);
+            }
+        }
+        const auto result = stage51::end_q62_vector_rne(&vector_state);
+        if (!result.restored || result.saturated) {
+            throw std::runtime_error("RGB stem vector state restoration failed");
+        }
+    }
+
+    void run_dense_conv_chunk(const Operation& operation, int worker, int workers) {
+        const Conv& conv = operation.conv;
+        const Tensor& input = tensor(operation.inputs[0]);
+        const Tensor& output = tensor(operation.output);
+        const bool fuse_lut = fused_lut_enabled && !config.capture_boundaries &&
+            operation.fused_lut_output >= 0;
+        const Tensor& store_output = fuse_lut ? tensor(operation.fused_lut_output) : output;
+        const auto* input_data = arena.data() + input.offset;
+        auto* output_data = arena.data() + store_output.offset;
         DenseScratch& scratch = dense_scratch[static_cast<std::size_t>(worker)];
         const int output_m = output.dims[2] * output.dims[3];
         const int tiles = (output_m + kDenseM - 1) / kDenseM;
@@ -821,7 +1097,13 @@ struct FullExecutor::Impl {
             for (int n_block = 0; n_block < conv.n_blocks; ++n_block) {
                 const std::int8_t* packed = conv.packed_weights.data() +
                     static_cast<std::size_t>(n_block) * conv.k_tiles * kDenseN * 8U;
-                run_m12n16(scratch.a.data(), packed, conv.k_tiles, scratch.c.data());
+                const int live_channels = std::min(kDenseN, conv.output_c - n_block * kDenseN);
+                if (small_n_enabled) {
+                    run_m12n_live(
+                        scratch.a.data(), packed, conv.k_tiles, live_channels, scratch.c.data());
+                } else {
+                    run_m12n16(scratch.a.data(), packed, conv.k_tiles, scratch.c.data());
+                }
                 for (int output_group = 0; output_group < 4; ++output_group) {
                     const int channel_begin = n_block * kDenseN + output_group * 4;
                     if (channel_begin >= conv.output_c) continue;
@@ -847,9 +1129,21 @@ struct FullExecutor::Impl {
                                 const std::size_t destination =
                                     ((static_cast<std::size_t>(channel_begin / 8) * output_m + m_begin + row) * 8U +
                                      static_cast<std::size_t>(channel_begin % 8));
-                                stage51::q62_vsmul_m63_i64x4_to_s8(
-                                    corrected.data(), multipliers.data(), output.zero_point,
-                                    output_data + destination);
+                                if (fuse_lut) {
+                                    alignas(8) std::array<std::int8_t, 4> quantized_storage {};
+                                    stage51::q62_vsmul_m63_i64x4_to_s8(
+                                        corrected.data(), multipliers.data(), output.zero_point,
+                                        quantized_storage.data());
+                                    for (int lane = 0; lane < 4; ++lane) {
+                                        output_data[destination + static_cast<std::size_t>(lane)] =
+                                            operation.fused_lut[int8_v1::semantic_code(
+                                                quantized_storage[static_cast<std::size_t>(lane)])];
+                                    }
+                                } else {
+                                    stage51::q62_vsmul_m63_i64x4_to_s8(
+                                        corrected.data(), multipliers.data(), output.zero_point,
+                                        output_data + destination);
+                                }
                                 continue;
                             }
                             stage51::q62_vsmul_m63_i64x4(
@@ -874,7 +1168,9 @@ struct FullExecutor::Impl {
                             const std::size_t destination =
                                 ((static_cast<std::size_t>(channel / 8) * output_m + m_begin + row) * 8U +
                                  static_cast<std::size_t>(channel % 8));
-                            output_data[destination] = int8_v1::signed_storage(quantized);
+                            output_data[destination] = fuse_lut
+                                ? operation.fused_lut[quantized]
+                                : int8_v1::signed_storage(quantized);
                         }
                     }
                 }
@@ -943,60 +1239,111 @@ struct FullExecutor::Impl {
         const Conv& conv = operation.conv;
         const Tensor& input = tensor(operation.inputs[0]);
         const Tensor& output = tensor(operation.output);
-        if (input.layout != Layout::feature_nchwc8 || output.layout != Layout::feature_nchwc8 ||
-            input.rank != 4 || output.rank != 4 || conv.input_c % 8 != 0) {
+        if (!conv.depthwise_rvv_eligible) {
             run_conv_chunk(operation, worker, workers);
             return;
         }
         const int output_h = output.dims[2];
         const int output_w = output.dims[3];
-        const int spatial = output_h * output_w;
-        const int total = conv.output_c * spatial;
-        const int begin = total * worker / workers;
-        const int end = total * (worker + 1) / workers;
+        const int input_h = input.dims[2];
+        const int input_w = input.dims[3];
+        const int channel_blocks = conv.output_c / 8;
+        const int total_rows = channel_blocks * output_h;
+        const int begin = total_rows * worker / workers;
+        const int end = total_rows * (worker + 1) / workers;
         const auto* input_data = arena.data() + input.offset;
         auto* output_data = arena.data() + output.offset;
         const std::int64_t input_correction = 128 - input.zero_point;
-        for (int linear = begin; linear < end; ++linear) {
-            const int output_channel = linear / spatial;
-            const int output_position = linear % spatial;
-            const int output_y = output_position / output_w;
-            const int output_x = output_position % output_w;
-            std::int64_t accumulator = conv.bias[static_cast<std::size_t>(output_channel)];
-            for (int kernel_y = 0; kernel_y < conv.kernel_h; ++kernel_y) {
-                const int input_y = output_y * conv.stride_h - conv.pad_top + kernel_y;
-                if (input_y < 0 || input_y >= input.dims[2]) continue;
-                for (int kernel_x = 0; kernel_x < conv.kernel_w; ++kernel_x) {
-                    const int input_x = output_x * conv.stride_w - conv.pad_left + kernel_x;
-                    if (input_x < 0 || input_x >= input.dims[3]) continue;
-                    const std::size_t input_physical =
-                        ((static_cast<std::size_t>(output_channel / 8) * input.dims[2] + input_y) *
-                         input.dims[3] + input_x) * 8U + static_cast<std::size_t>(output_channel % 8);
-                    const std::size_t weight_index =
-                        (static_cast<std::size_t>(output_channel) * conv.kernel_h + kernel_y) *
-                        conv.kernel_w + kernel_x;
-                    accumulator += (static_cast<std::int64_t>(input_data[input_physical]) + input_correction) *
-                                   conv.weights[weight_index];
+        stage51::VectorFixedPointState vector_state;
+        if (!stage51::begin_q62_vector_rne(&vector_state)) {
+            throw std::runtime_error("cannot establish depthwise Q62 vector state");
+        }
+        alignas(32) std::array<std::int32_t, 8> accumulator {};
+        alignas(32) std::array<std::int64_t, 4> corrected {};
+        for (int row_task = begin; row_task < end; ++row_task) {
+            const int channel_block = row_task / output_h;
+            const int output_y = row_task % output_h;
+            const auto* packed_weights = conv.depthwise_weights_c8.data() +
+                static_cast<std::size_t>(channel_block) * 9U * 8U;
+            const auto* bias = conv.bias.data() + static_cast<std::size_t>(channel_block) * 8U;
+            const auto* multipliers = conv.multiplier_m63.data() +
+                static_cast<std::size_t>(channel_block) * 8U;
+            for (int output_x = 0; output_x < output_w; ++output_x) {
+                [[maybe_unused]] const bool interior =
+                    output_y > 0 && output_y + 1 < output_h &&
+                    output_x > 0 && output_x + 1 < output_w &&
+                    input_h == output_h && input_w == output_w &&
+                    conv.pad_top == 1 && conv.pad_left == 1;
+#if defined(__riscv_vector)
+                if (interior) {
+                    constexpr std::size_t kLanes = 8;
+                    vint32m1_t sum = __riscv_vle32_v_i32m1(bias, kLanes);
+                    for (int kernel_y = 0; kernel_y < 3; ++kernel_y) {
+                        for (int kernel_x = 0; kernel_x < 3; ++kernel_x) {
+                            const int tap = kernel_y * 3 + kernel_x;
+                            const std::size_t input_physical =
+                                ((static_cast<std::size_t>(channel_block) * input_h +
+                                  output_y + kernel_y - 1) * input_w +
+                                  output_x + kernel_x - 1) * 8U;
+                            const vint8mf4_t input_i8 =
+                                __riscv_vle8_v_i8mf4(input_data + input_physical, kLanes);
+                            const vint8mf4_t weight_i8 = __riscv_vle8_v_i8mf4(
+                                packed_weights + static_cast<std::size_t>(tap) * 8U, kLanes);
+                            vint32m1_t input_i32 = __riscv_vsext_vf4_i32m1(input_i8, kLanes);
+                            input_i32 = __riscv_vadd_vx_i32m1(
+                                input_i32, static_cast<std::int32_t>(input_correction), kLanes);
+                            const vint32m1_t weight_i32 =
+                                __riscv_vsext_vf4_i32m1(weight_i8, kLanes);
+                            sum = __riscv_vmacc_vv_i32m1(sum, input_i32, weight_i32, kLanes);
+                        }
+                    }
+                    __riscv_vse32_v_i32m1(accumulator.data(), sum, kLanes);
+                } else
+#endif
+                {
+                    for (int lane = 0; lane < 8; ++lane) {
+                        std::int64_t sum = bias[lane];
+                        for (int kernel_y = 0; kernel_y < 3; ++kernel_y) {
+                            const int input_y = output_y - conv.pad_top + kernel_y;
+                            if (input_y < 0 || input_y >= input_h) continue;
+                            for (int kernel_x = 0; kernel_x < 3; ++kernel_x) {
+                                const int input_x = output_x - conv.pad_left + kernel_x;
+                                if (input_x < 0 || input_x >= input_w) continue;
+                                const int tap = kernel_y * 3 + kernel_x;
+                                const std::size_t input_physical =
+                                    ((static_cast<std::size_t>(channel_block) * input_h + input_y) *
+                                     input_w + input_x) * 8U + static_cast<std::size_t>(lane);
+                                sum += (static_cast<std::int64_t>(input_data[input_physical]) +
+                                        input_correction) *
+                                       packed_weights[static_cast<std::size_t>(tap) * 8U + lane];
+                            }
+                        }
+                        accumulator[static_cast<std::size_t>(lane)] = static_cast<std::int32_t>(sum);
+                    }
+                }
+                const std::size_t output_physical =
+                    ((static_cast<std::size_t>(channel_block) * output_h + output_y) * output_w +
+                     output_x) * 8U;
+                for (int half = 0; half < 2; ++half) {
+                    for (int lane = 0; lane < 4; ++lane) {
+                        corrected[static_cast<std::size_t>(lane)] =
+                            accumulator[static_cast<std::size_t>(half * 4 + lane)];
+                    }
+                    stage51::q62_vsmul_m63_i64x4_to_s8(
+                        corrected.data(), multipliers + half * 4, output.zero_point,
+                        output_data + output_physical + static_cast<std::size_t>(half * 4));
                 }
             }
-            const int8_v1::RequantAsset asset {
-                conv.multiplier[static_cast<std::size_t>(output_channel)],
-                conv.shift[static_cast<std::size_t>(output_channel)], output.zero_point, 0, 255,
-            };
-            std::uint8_t quantized = 0;
-            if (!int8_v1::requantize_u8(accumulator, asset, &quantized)) {
-                throw std::runtime_error("depthwise Conv requantization failed");
-            }
-            const std::size_t output_physical =
-                ((static_cast<std::size_t>(output_channel / 8) * output_h + output_y) * output_w + output_x) *
-                8U + static_cast<std::size_t>(output_channel % 8);
-            output_data[output_physical] = int8_v1::signed_storage(quantized);
+        }
+        const auto result = stage51::end_q62_vector_rne(&vector_state);
+        if (!result.restored || result.saturated) {
+            throw std::runtime_error("depthwise Q62 vector state restoration failed");
         }
     }
 
     void run_conv(const Operation& operation) {
         ConvJob job {this, &operation};
-        pool->dispatch(config.workers, conv_job, &job);
+        dispatch_workers(config.workers, conv_job, &job);
         if (job.status.load(std::memory_order_relaxed) != 0) throw std::runtime_error("Conv worker failed");
     }
 
@@ -1009,6 +1356,41 @@ struct FullExecutor::Impl {
                               arena.data() + output.offset + begin,
                               operation.lut.data(), end - begin);
             return;
+        }
+        if (operation.kind == OpKind::lut2) {
+            const Tensor& right = tensor(operation.inputs[1]);
+            const bool direct = input.layout == Layout::feature_nchwc8 &&
+                right.layout == input.layout && output.layout == input.layout &&
+                input.rank == output.rank && right.rank == output.rank &&
+                input.dims == output.dims && right.dims == output.dims &&
+                input.storage_bytes == output.storage_bytes &&
+                right.storage_bytes == output.storage_bytes;
+            if (direct) {
+                const auto* left_data = arena.data() + input.offset;
+                const auto* right_data = arena.data() + right.offset;
+                auto* output_data = arena.data() + output.offset;
+                std::size_t index = begin;
+                for (; index + 4U <= end; index += 4U) {
+                    if (index + 64U < end) {
+                        __builtin_prefetch(left_data + index + 64U, 0, 1);
+                        __builtin_prefetch(right_data + index + 64U, 0, 1);
+                    }
+                    for (std::size_t lane = 0; lane < 4U; ++lane) {
+                        const std::size_t position = index + lane;
+                        const std::uint8_t left = int8_v1::semantic_code(left_data[position]);
+                        const std::uint8_t right_code = int8_v1::semantic_code(right_data[position]);
+                        output_data[position] = operation.lut[
+                            static_cast<std::size_t>(left) * 256U + right_code];
+                    }
+                }
+                for (; index < end; ++index) {
+                    const std::uint8_t left = int8_v1::semantic_code(left_data[index]);
+                    const std::uint8_t right_code = int8_v1::semantic_code(right_data[index]);
+                    output_data[index] = operation.lut[
+                        static_cast<std::size_t>(left) * 256U + right_code];
+                }
+                return;
+            }
         }
         for (std::size_t index = begin; index < end; ++index) {
             const std::uint8_t left = code(operation.inputs[0], index);
@@ -1023,8 +1405,16 @@ struct FullExecutor::Impl {
     void run_lut(const Operation& operation) {
         const Tensor& input = tensor(operation.inputs[0]);
         const Tensor& output = tensor(operation.output);
-        const bool raw = operation.kind == OpKind::lut1 && input.layout == output.layout &&
-                         input.storage_bytes == output.storage_bytes;
+        bool raw = operation.kind == OpKind::lut1 && input.layout == output.layout &&
+                   input.storage_bytes == output.storage_bytes;
+        if (operation.kind == OpKind::lut2) {
+            const Tensor& right = tensor(operation.inputs[1]);
+            raw = input.layout == Layout::feature_nchwc8 && right.layout == input.layout &&
+                output.layout == input.layout && input.rank == output.rank &&
+                right.rank == output.rank && input.dims == output.dims &&
+                right.dims == output.dims && input.storage_bytes == output.storage_bytes &&
+                right.storage_bytes == output.storage_bytes;
+        }
         RangeJob job {this, &operation, nullptr, nullptr, nullptr, 0,
                       raw ? output.storage_bytes : output.logical_elements, 0, RangeKind::lut};
         dispatch_range(job);
@@ -1067,6 +1457,54 @@ struct FullExecutor::Impl {
     void run_transform_chunk(const Operation& operation, std::size_t begin, std::size_t end) {
         const Tensor& source = tensor(operation.inputs[0]);
         const Tensor& output = tensor(operation.output);
+        const bool attention_split =
+            (operation.kind == OpKind::split ||
+             operation.kind == OpKind::reshape_split_transpose) &&
+            source.layout == Layout::feature_nchwc8 && output.layout == Layout::linear &&
+            source.rank == 4 && output.rank == 4 && operation.axis == 2 &&
+            operation.source_shape.size() == 4 && operation.source_shape[0] == 1 &&
+            source.dims[0] == 1 &&
+            operation.source_shape[1] * operation.source_shape[2] == source.dims[1] &&
+            operation.source_shape[3] == source.dims[2] * source.dims[3] &&
+            output.dims[0] == 1 && output.dims[1] == operation.source_shape[1];
+        if (attention_split) {
+            const int channels_per_head = operation.source_shape[2];
+            const int spatial_count = operation.source_shape[3];
+            const auto* source_data = arena.data() + source.offset;
+            auto* output_data = arena.data() + output.offset;
+            for (std::size_t index = begin; index < end; ++index) {
+                std::size_t temporary = index;
+                int local_channel = 0;
+                int spatial = 0;
+                int head = 0;
+                if (operation.kind == OpKind::reshape_split_transpose) {
+                    local_channel = static_cast<int>(temporary %
+                        static_cast<std::size_t>(output.dims[3]));
+                    temporary /= static_cast<std::size_t>(output.dims[3]);
+                    spatial = static_cast<int>(temporary %
+                        static_cast<std::size_t>(output.dims[2]));
+                    head = static_cast<int>(temporary /
+                        static_cast<std::size_t>(output.dims[2]));
+                } else {
+                    spatial = static_cast<int>(temporary %
+                        static_cast<std::size_t>(output.dims[3]));
+                    temporary /= static_cast<std::size_t>(output.dims[3]);
+                    local_channel = static_cast<int>(temporary %
+                        static_cast<std::size_t>(output.dims[2]));
+                    head = static_cast<int>(temporary /
+                        static_cast<std::size_t>(output.dims[2]));
+                }
+                const int source_channel =
+                    head * channels_per_head + operation.split_offset + local_channel;
+                const std::size_t source_physical =
+                    (static_cast<std::size_t>(source_channel / 8) * spatial_count + spatial) * 8U +
+                    static_cast<std::size_t>(source_channel % 8);
+                const std::uint8_t source_code =
+                    int8_v1::semantic_code(source_data[source_physical]);
+                output_data[index] = operation.lut[source_code];
+            }
+            return;
+        }
         if (operation.kind == OpKind::split && operation.axis == 1 &&
             source.layout == Layout::feature_nchwc8 && output.layout == Layout::feature_nchwc8 &&
             source.rank == 4 && output.rank == 4 && operation.split_offset % 8 == 0 &&
@@ -1154,6 +1592,22 @@ struct FullExecutor::Impl {
         return dimensions;
     }
 
+    bool concat_resize_c8_eligible(const Operation& operation, const Branch& branch,
+                                   int axis_offset) const {
+        if (branch.transform != BranchTransform::resize) return false;
+        const Tensor& output = tensor(operation.output);
+        const Tensor& source = tensor(operation.inputs[static_cast<std::size_t>(branch.input_slot)]);
+        const std::array<int, 4> branch_dims = concat_branch_dims(operation, branch);
+        const int axis = operation.axis < 0 ? output.rank + operation.axis : operation.axis;
+        return axis == 1 && output.rank == 4 && source.rank == 4 &&
+            output.layout == Layout::feature_nchwc8 && source.layout == Layout::feature_nchwc8 &&
+            output.dims[0] == 1 && source.dims[0] == 1 && branch_dims[1] == source.dims[1] &&
+            branch_dims[1] % 8 == 0 && axis_offset % 8 == 0 &&
+            source.dims[2] > 0 && source.dims[3] > 0 &&
+            output.dims[2] % source.dims[2] == 0 &&
+            output.dims[3] % source.dims[3] == 0;
+    }
+
     void run_concat_branch_chunk(const Operation& operation, const Branch& branch, int axis_offset,
                                  std::size_t begin, std::size_t end) {
         const Tensor& output = tensor(operation.output);
@@ -1161,6 +1615,50 @@ struct FullExecutor::Impl {
         const Tensor& source = tensor(input_id);
         const std::array<int, 4> branch_dims = concat_branch_dims(operation, branch);
         const int axis = operation.axis < 0 ? output.rank + operation.axis : operation.axis;
+        if (concat_resize_c8_eligible(operation, branch, axis_offset)) {
+            const int scale_y = output.dims[2] / source.dims[2];
+            const int scale_x = output.dims[3] / source.dims[3];
+            const std::size_t output_spatial_bytes =
+                static_cast<std::size_t>(output.dims[2]) * output.dims[3] * 8U;
+            const std::size_t destination_base = output.offset +
+                static_cast<std::size_t>(axis_offset / 8) * output_spatial_bytes;
+            const auto* source_data = arena.data() + source.offset;
+            auto* destination_data = arena.data() + destination_base;
+            alignas(32) std::array<std::int8_t, 32> mapped {};
+            for (std::size_t group = begin; group < end;) {
+                const std::size_t batch = std::min<std::size_t>(4, end - group);
+                if (branch.lut.empty()) {
+                    std::memcpy(mapped.data(), source_data + group * 8U, batch * 8U);
+                } else {
+                    transform_lut_rvv(source_data + group * 8U, mapped.data(),
+                                      branch.lut.data(), batch * 8U);
+                }
+                for (std::size_t item = 0; item < batch; ++item) {
+                    const std::size_t source_group = group + item;
+                    std::size_t temporary = source_group;
+                    const int source_x = static_cast<int>(temporary %
+                        static_cast<std::size_t>(source.dims[3]));
+                    temporary /= static_cast<std::size_t>(source.dims[3]);
+                    const int source_y = static_cast<int>(temporary %
+                        static_cast<std::size_t>(source.dims[2]));
+                    const int channel_block = static_cast<int>(temporary /
+                        static_cast<std::size_t>(source.dims[2]));
+                    const auto* value = mapped.data() + item * 8U;
+                    for (int repeat_y = 0; repeat_y < scale_y; ++repeat_y) {
+                        const int output_y = source_y * scale_y + repeat_y;
+                        for (int repeat_x = 0; repeat_x < scale_x; ++repeat_x) {
+                            const int output_x = source_x * scale_x + repeat_x;
+                            const std::size_t destination_group =
+                                ((static_cast<std::size_t>(channel_block) * output.dims[2] + output_y) *
+                                 output.dims[3] + output_x) * 8U;
+                            std::memcpy(destination_data + destination_group, value, 8U);
+                        }
+                    }
+                }
+                group += batch;
+            }
+            return;
+        }
         const bool blocked_fast_path = axis == 1 && output.rank == 4 && source.rank == 4 &&
             output.layout == Layout::feature_nchwc8 && source.layout == Layout::feature_nchwc8 &&
             output.dims[0] == 1 && source.dims[0] == 1 && branch_dims[1] % 8 == 0 &&
@@ -1321,6 +1819,12 @@ struct FullExecutor::Impl {
             std::size_t elements = 1;
             for (int dim = 0; dim < output.rank; ++dim) {
                 elements *= static_cast<std::size_t>(branch_dims[static_cast<std::size_t>(dim)]);
+            }
+            if (concat_resize_c8_eligible(operation, branch, axis_offset)) {
+                const Tensor& source = tensor(
+                    operation.inputs[static_cast<std::size_t>(branch.input_slot)]);
+                elements = static_cast<std::size_t>(source.dims[1] / 8) *
+                    source.dims[2] * source.dims[3];
             }
             RangeJob job {this, &operation, &branch, nullptr, nullptr, 0, elements, axis_offset,
                           RangeKind::concat_branch};
@@ -1522,7 +2026,7 @@ struct FullExecutor::Impl {
     void run_matmul_ime(const Operation& operation) {
         pack_matmul_right(operation);
         MatmulImeJob job {this, &operation};
-        pool->dispatch(config.workers, matmul_ime_job, &job);
+        dispatch_workers(config.workers, matmul_ime_job, &job);
         if (job.status.load(std::memory_order_relaxed) != 0) {
             throw std::runtime_error("MatMul IME worker failed");
         }
@@ -1543,6 +2047,57 @@ struct FullExecutor::Impl {
         const Tensor& input = tensor(operation.inputs[0]);
         const Tensor& output = tensor(operation.output);
         const int width = input.dims[static_cast<std::size_t>(input.rank - 1)];
+        const bool direct_transpose = input.layout == Layout::linear &&
+            output.layout == Layout::linear && input.rank == 4 && output.rank == 4 &&
+            operation.perm.size() == 4 && operation.perm[0] == 0 &&
+            operation.perm[1] == 1 && operation.perm[2] == 3 && operation.perm[3] == 2 &&
+            output.dims[0] == input.dims[0] && output.dims[1] == input.dims[1] &&
+            output.dims[2] == input.dims[3] && output.dims[3] == input.dims[2];
+        if (direct_transpose) {
+            const int rows_per_matrix = input.dims[2];
+            const auto* source = arena.data() + input.offset;
+            auto* destination = arena.data() + output.offset;
+            for (std::size_t row = begin; row < end; ++row) {
+                const auto* source_row = source + row * static_cast<std::size_t>(width);
+                std::uint8_t maximum = 0;
+                for (int column = 0; column < width; ++column) {
+                    maximum = std::max(maximum, int8_v1::semantic_code(source_row[column]));
+                }
+                std::uint64_t sum = 0;
+                for (int column = 0; column < width; ++column) {
+                    const std::uint8_t difference = static_cast<std::uint8_t>(
+                        maximum - int8_v1::semantic_code(source_row[column]));
+                    sum += operation.exp_q48[difference];
+                }
+
+                // Exact quotient work is shared by every equal score in a row.
+                std::array<std::uint8_t, 256> quantized_by_difference {};
+                std::array<std::uint8_t, 256> valid {};
+                const std::size_t matrix = row / static_cast<std::size_t>(rows_per_matrix);
+                const std::size_t row_in_matrix = row % static_cast<std::size_t>(rows_per_matrix);
+                for (int column = 0; column < width; ++column) {
+                    const std::uint8_t difference = static_cast<std::uint8_t>(
+                        maximum - int8_v1::semantic_code(source_row[column]));
+                    if (valid[difference] == 0) {
+                        const UnsignedInt128 numerator =
+                            static_cast<UnsignedInt128>(operation.exp_q48[difference]) *
+                            operation.softmax_reciprocal_q32;
+                        const UnsignedInt128 denominator = static_cast<UnsignedInt128>(sum) << 32U;
+                        const std::int64_t quantized =
+                            round_divide_even(numerator, denominator) + operation.output_zero_point;
+                        quantized_by_difference[difference] = static_cast<std::uint8_t>(
+                            std::clamp<std::int64_t>(quantized, 0, 255));
+                        valid[difference] = 1;
+                    }
+                    const std::size_t destination_flat =
+                        (matrix * static_cast<std::size_t>(width) + static_cast<std::size_t>(column)) *
+                        static_cast<std::size_t>(rows_per_matrix) + row_in_matrix;
+                    destination[destination_flat] =
+                        int8_v1::signed_storage(quantized_by_difference[difference]);
+                }
+            }
+            return;
+        }
         std::array<int, 4> source_index {};
         for (std::size_t row = begin; row < end; ++row) {
             std::uint8_t maximum = 0;
@@ -1584,6 +2139,59 @@ struct FullExecutor::Impl {
 
     void run_input_chunk(const Operation& operation, const float* input,
                          std::size_t begin, std::size_t end) {
+        const Tensor& output = tensor(operation.output);
+        if (output.layout == Layout::feature_nchwc8 && output.rank == 4 &&
+            output.dims[0] == 1 && output.dims[1] > 0 && output.dims[1] <= 8) {
+            const std::size_t plane = static_cast<std::size_t>(output.dims[2]) * output.dims[3];
+            auto* destination = arena.data() + output.offset;
+#if defined(__riscv_vector)
+            alignas(32) std::array<std::int32_t, 8> converted {};
+            std::size_t spatial = begin;
+            while (spatial < end) {
+                const std::size_t vl = __riscv_vsetvl_e32m1(
+                    std::min<std::size_t>(8, end - spatial));
+                for (int channel = 0; channel < output.dims[1]; ++channel) {
+                    vfloat32m1_t value = __riscv_vle32_v_f32m1(
+                        input + static_cast<std::size_t>(channel) * plane + spatial, vl);
+                    value = __riscv_vfmul_vf_f32m1(value, 255.0F, vl);
+                    vint32m1_t code = __riscv_vfcvt_x_f_v_i32m1_rm(
+                        value, __RISCV_FRM_RNE, vl);
+                    code = __riscv_vmax_vx_i32m1(code, 0, vl);
+                    code = __riscv_vmin_vx_i32m1(code, 255, vl);
+                    __riscv_vse32_v_i32m1(converted.data(), code, vl);
+                    for (std::size_t lane = 0; lane < vl; ++lane) {
+                        destination[(spatial + lane) * 8U + static_cast<std::size_t>(channel)] =
+                            int8_v1::signed_storage(
+                                static_cast<std::uint8_t>(converted[lane]));
+                    }
+                }
+                for (std::size_t lane = 0; lane < vl; ++lane) {
+                    std::fill(destination + (spatial + lane) * 8U + output.dims[1],
+                              destination + (spatial + lane + 1U) * 8U,
+                              int8_v1::signed_storage(0));
+                }
+                spatial += vl;
+            }
+#else
+            for (std::size_t spatial = begin; spatial < end; ++spatial) {
+                for (int channel = 0; channel < output.dims[1]; ++channel) {
+                    const double scaled = static_cast<double>(
+                        input[static_cast<std::size_t>(channel) * plane + spatial]) * 255.0;
+                    const double floor_value = std::floor(scaled);
+                    const double fraction = scaled - floor_value;
+                    std::int64_t rounded = static_cast<std::int64_t>(floor_value);
+                    if (fraction > 0.5 || (fraction == 0.5 && (rounded & 1))) ++rounded;
+                    destination[spatial * 8U + static_cast<std::size_t>(channel)] =
+                        int8_v1::signed_storage(static_cast<std::uint8_t>(
+                            std::clamp<std::int64_t>(rounded, 0, 255)));
+                }
+                std::fill(destination + spatial * 8U + output.dims[1],
+                          destination + (spatial + 1U) * 8U,
+                          int8_v1::signed_storage(0));
+            }
+#endif
+            return;
+        }
         for (std::size_t flat = begin; flat < end; ++flat) {
             const double scaled = static_cast<double>(input[flat]) * 255.0;
             const double floor_value = std::floor(scaled);
@@ -1597,6 +2205,23 @@ struct FullExecutor::Impl {
 
     void run_input_rgb_chunk(const Operation& operation, const std::uint8_t* rgb,
                              int stride, std::size_t begin, std::size_t end) {
+        const Tensor& output = tensor(operation.output);
+        if (output.layout == Layout::feature_nchwc8 && output.rank == 4 &&
+            output.dims[0] == 1 && output.dims[1] == 3) {
+            auto* destination = arena.data() + output.offset;
+            const std::size_t width = static_cast<std::size_t>(output.dims[3]);
+            for (std::size_t spatial = begin; spatial < end; ++spatial) {
+                const std::size_t y = spatial / width;
+                const std::size_t x = spatial % width;
+                const auto* source = rgb + y * static_cast<std::size_t>(stride) + x * 3U;
+                auto* output_pixel = destination + spatial * 8U;
+                output_pixel[0] = int8_v1::signed_storage(source[0]);
+                output_pixel[1] = int8_v1::signed_storage(source[1]);
+                output_pixel[2] = int8_v1::signed_storage(source[2]);
+                std::fill(output_pixel + 3, output_pixel + 8, int8_v1::signed_storage(0));
+            }
+            return;
+        }
         constexpr std::size_t kPlane = 640U * 640U;
         for (std::size_t flat = begin; flat < end; ++flat) {
             const std::size_t channel = flat / kPlane;
@@ -1617,7 +2242,10 @@ struct FullExecutor::Impl {
         job.input = input;
         job.rgb = rgb;
         job.rgb_stride = rgb_stride;
-        job.total = output.logical_elements;
+        job.total = output.layout == Layout::feature_nchwc8 && output.rank == 4 &&
+                    output.dims[0] == 1 && output.dims[1] <= 8
+            ? static_cast<std::size_t>(output.dims[2]) * output.dims[3]
+            : output.logical_elements;
         job.kind = rgb == nullptr ? RangeKind::input_quant : RangeKind::input_rgb;
         self->dispatch_range(job);
     }
@@ -1696,7 +2324,23 @@ struct FullExecutor::Impl {
         int global = 0;
         for (int scale_index = 0; scale_index < 3; ++scale_index) {
             const HeadScale& scale = head[static_cast<std::size_t>(scale_index)];
+            const Tensor& reg_tensor = tensor(scale.reg_tensor);
+            const Tensor& cls_tensor = tensor(scale.cls_tensor);
+            if (reg_tensor.layout != Layout::feature_nchwc8 ||
+                cls_tensor.layout != Layout::feature_nchwc8 ||
+                reg_tensor.rank != 4 || cls_tensor.rank != 4) {
+                throw std::runtime_error("head tensors require NCHWc8 physical layout");
+            }
+            const auto* reg_data = arena.data() + reg_tensor.offset;
+            const auto* cls_data = arena.data() + cls_tensor.offset;
             const int pixels = scale.resolution * scale.resolution;
+            const auto direct_code = [pixels](const std::int8_t* data, int channel, int spatial) {
+                const std::size_t offset =
+                    (static_cast<std::size_t>(channel / 8) * pixels + spatial) * 8U +
+                    static_cast<std::size_t>(channel % 8);
+                return int8_v1::semantic_code(data[offset]);
+            };
+            const int global_begin = global;
             for (int local = 0; local < pixels; ++local, ++global) {
                 const int y = local / scale.resolution;
                 const int x = local % scale.resolution;
@@ -1707,8 +2351,8 @@ struct FullExecutor::Impl {
                 const std::int32_t anchor_x = (2 * x + 1) << 15;
                 const std::int32_t anchor_y = (2 * y + 1) << 15;
                 const auto reg = [&](int channel) {
-                    const std::size_t flat = static_cast<std::size_t>(channel) * pixels + local;
-                    return scale.reg_q16[static_cast<std::size_t>(channel) * 256U + code(scale.reg_tensor, flat)];
+                    return scale.reg_q16[static_cast<std::size_t>(channel) * 256U +
+                        direct_code(reg_data, channel, local)];
                 };
                 point.box_q16 = {
                     (anchor_x - reg(0)) * scale.stride,
@@ -1716,12 +2360,21 @@ struct FullExecutor::Impl {
                     (anchor_x + reg(2)) * scale.stride,
                     (anchor_y + reg(3)) * scale.stride,
                 };
-                for (int class_index = 0; class_index < 80; ++class_index) {
-                    const std::size_t flat = static_cast<std::size_t>(class_index) * pixels + local;
-                    const std::uint32_t score = scale.cls_q24[code(scale.cls_tensor, flat)];
-                    if (score > point.best_score_q24) {
-                        point.best_score_q24 = score;
-                        point.best_class = class_index;
+            }
+            for (int class_block = 0; class_block < 10; ++class_block) {
+                const auto* class_block_data = cls_data +
+                    static_cast<std::size_t>(class_block) * pixels * 8U;
+                for (int local = 0; local < pixels; ++local) {
+                    Point& point = points[static_cast<std::size_t>(global_begin + local)];
+                    const auto* codes = class_block_data + static_cast<std::size_t>(local) * 8U;
+                    for (int lane = 0; lane < 8; ++lane) {
+                        const int class_index = class_block * 8 + lane;
+                        const std::uint32_t score = scale.cls_q24[
+                            int8_v1::semantic_code(codes[lane])];
+                        if (score > point.best_score_q24) {
+                            point.best_score_q24 = score;
+                            point.best_class = class_index;
+                        }
                     }
                 }
             }
@@ -1738,9 +2391,14 @@ struct FullExecutor::Impl {
             const Point& point = points[static_cast<std::size_t>(slot)];
             const HeadScale& scale = head[static_cast<std::size_t>(point.scale_index)];
             const int pixels = scale.resolution * scale.resolution;
+            const Tensor& cls_tensor = tensor(scale.cls_tensor);
+            const auto* cls_data = arena.data() + cls_tensor.offset;
             for (int class_index = 0; class_index < 80; ++class_index) {
-                const std::size_t flat = static_cast<std::size_t>(class_index) * pixels + point.local_index;
-                candidates[candidate_count++] = {scale.cls_q24[code(scale.cls_tensor, flat)], slot, class_index};
+                const std::size_t physical =
+                    (static_cast<std::size_t>(class_index / 8) * pixels + point.local_index) * 8U +
+                    static_cast<std::size_t>(class_index % 8);
+                candidates[candidate_count++] = {
+                    scale.cls_q24[int8_v1::semantic_code(cls_data[physical])], slot, class_index};
             }
         }
         auto candidate_compare = [](const Candidate& left, const Candidate& right) {
@@ -1787,6 +2445,15 @@ int FullExecutor::prepare(const std::filesystem::path& package_dir,
         const char* e2c2_environment = std::getenv("Y26_STAGE52_E2C2");
         prepared.e2c2_enabled = e2c2_environment == nullptr ||
             std::string_view(e2c2_environment) != "0";
+        const char* small_n_environment = std::getenv("Y26_STAGE53_SMALL_N");
+        prepared.small_n_enabled = small_n_environment == nullptr ||
+            std::string_view(small_n_environment) != "0";
+        const char* rgb_stem_environment = std::getenv("Y26_STAGE53_RGB_STEM");
+        prepared.rgb_stem_enabled = rgb_stem_environment == nullptr ||
+            std::string_view(rgb_stem_environment) != "0";
+        const char* fused_lut_environment = std::getenv("Y26_STAGE53_FUSED_LUT");
+        prepared.fused_lut_enabled = fused_lut_environment != nullptr &&
+            std::string_view(fused_lut_environment) == "1";
         std::size_t arena_bytes = 0;
         for (const Row& row : read_tsv(prepared.package / "tensors.tsv")) {
             Tensor tensor;
@@ -1917,9 +2584,50 @@ int FullExecutor::prepare(const std::filesystem::path& package_dir,
             if (operation.kind == OpKind::conv_dense) {
                 prepared.prepare_dense_conv(operation);
                 prepared.total_weight_bytes += operation.conv.packed_weights.size();
+            } else if (operation.kind == OpKind::conv_grouped) {
+                prepared.prepare_depthwise_conv(operation);
+                prepared.total_weight_bytes += operation.conv.depthwise_weights_c8.size();
             }
             prepared.operation_runners.push_back(Impl::runner_for(operation.kind));
             prepared.operations.push_back(std::move(operation));
+        }
+        std::vector<int> tensor_input_uses(prepared.tensors.size(), 0);
+        for (const Operation& operation : prepared.operations) {
+            for (int input_id : operation.inputs) {
+                if (input_id >= 0 && input_id < static_cast<int>(tensor_input_uses.size())) {
+                    ++tensor_input_uses[static_cast<std::size_t>(input_id)];
+                }
+            }
+        }
+        for (std::size_t index = 0; index + 1 < prepared.operations.size(); ++index) {
+            Operation& conv_operation = prepared.operations[index];
+            Operation& lut_operation = prepared.operations[index + 1];
+            if (conv_operation.kind != OpKind::conv_dense || lut_operation.kind != OpKind::lut1 ||
+                lut_operation.inputs.size() != 1 || lut_operation.inputs[0] != conv_operation.output ||
+                tensor_input_uses[static_cast<std::size_t>(conv_operation.output)] != 1 ||
+                lut_operation.lut.size() != 256) {
+                continue;
+            }
+            const Tensor& preactivation = prepared.tensor(conv_operation.output);
+            const Tensor& activation = prepared.tensor(lut_operation.output);
+            if (preactivation.layout != activation.layout ||
+                preactivation.dims != activation.dims ||
+                preactivation.storage_bytes != activation.storage_bytes) {
+                continue;
+            }
+            const auto overlaps_activation = [&](const Tensor& candidate) {
+                return activation.offset < candidate.offset + candidate.storage_bytes &&
+                    candidate.offset < activation.offset + activation.storage_bytes;
+            };
+            if (std::any_of(conv_operation.inputs.begin(), conv_operation.inputs.end(),
+                    [&](int input_id) {
+                        return overlaps_activation(prepared.tensor(input_id));
+                    })) {
+                continue;
+            }
+            conv_operation.fused_lut_output = lut_operation.output;
+            conv_operation.fused_lut = lut_operation.lut;
+            lut_operation.skip_when_fused = true;
         }
         std::size_t maximum_panel_bytes = 0;
         std::size_t maximum_matmul_right_bytes = 0;
@@ -1969,12 +2677,24 @@ int FullExecutor::prepare(const std::filesystem::path& package_dir,
         prepared.core_input_tensor = find_tensor(
             "/model.4/cv2/conv/Conv_output_0_QuantizeLinear_Output");
         prepared.core_output_tensor = find_tensor(
-            "/model.8/cv2/act/Mul_output_0_QuantizeLinear_Output");
+            "/model.9/Add_output_0_QuantizeLinear_Output");
         const int core_first_output = find_tensor(
             "/model.4/cv2/act/Mul_output_0_QuantizeLinear_Output");
         for (const Operation& operation : prepared.operations) {
             if (operation.output == core_first_output) prepared.core_start_operation = operation.index;
             if (operation.output == prepared.core_output_tensor) prepared.core_end_operation = operation.index;
+        }
+        if (prepared.core_start_operation > 0) {
+            Operation& core_entry = prepared.operations[
+                static_cast<std::size_t>(prepared.core_start_operation)];
+            Operation& producer = prepared.operations[
+                static_cast<std::size_t>(prepared.core_start_operation - 1)];
+            if (core_entry.skip_when_fused &&
+                producer.fused_lut_output == core_entry.output) {
+                producer.fused_lut_output = -1;
+                producer.fused_lut.clear();
+                core_entry.skip_when_fused = false;
+            }
         }
         const std::filesystem::path core_package = prepared.package / "optimized_core";
         if (config.compute == ComputeMode::optimized && std::filesystem::exists(core_package / "package.json")) {
@@ -1982,18 +2702,22 @@ int FullExecutor::prepare(const std::filesystem::path& package_dir,
             const std::string core_manifest = int8_v1::sha256_file(core_package / "asset_hashes.tsv");
             if (prepared.optimized_core->prepare_with_contract(
                     core_package, core_manifest, config.workers,
-                    int8_v1::kContractId, int8_v1::kGeneralProfile) != 0 ||
+                    int8_v1::kContractId, int8_v1::kGeneralProfile, false) != 0 ||
                 prepared.core_start_operation < 0 || prepared.core_end_operation < prepared.core_start_operation) {
                 throw std::runtime_error("cannot prepare optimized resident core");
             }
-            prepared.optimized_core_last_operation = 28;
-            const std::array<std::string_view, 3> full_names {
+            prepared.optimized_core_last_operation = 35;
+            const std::array<std::string_view, 6> full_names {
                 "/model.4/cv2/act/Mul_output_0_QuantizeLinear_Output",
                 "/model.6/cv2/act/Mul_output_0_QuantizeLinear_Output",
                 "/model.8/cv2/act/Mul_output_0_QuantizeLinear_Output",
+                "/model.9/Concat_output_0_QuantizeLinear_Output",
+                "/model.9/cv2/conv/Conv_output_0_QuantizeLinear_Output",
+                "/model.9/Add_output_0_QuantizeLinear_Output",
             };
-            const std::array<std::string_view, 3> core_keys {
-                "model4.postact", "model.6.output", "model.8.output",
+            const std::array<std::string_view, 6> core_keys {
+                "model4.postact", "model.6.output", "model.8.output", "model.9.concat",
+                "model.9.cv2_preact", "model.9.output",
             };
             for (std::size_t index = 0; index < prepared.core_bridges.size(); ++index) {
                 prepared.core_bridges[index].full_tensor = find_tensor(full_names[index]);
@@ -2005,16 +2729,17 @@ int FullExecutor::prepare(const std::filesystem::path& package_dir,
                     [](const Impl::CoreBridge& bridge) {
                         return bridge.full_tensor < 0 || bridge.core_tensor < 0;
                     })) {
-                throw std::runtime_error("optimized model4-to-model8 boundary is absent");
+                throw std::runtime_error("optimized model4-to-model9 boundary is absent");
             }
-            prepared.optimized_core_input.resize(
-                prepared.tensor(prepared.core_input_tensor).storage_bytes);
-            for (Impl::CoreBridge& bridge : prepared.core_bridges) {
-                bridge.snapshot.resize(prepared.tensor(bridge.full_tensor).storage_bytes);
-            }
+            prepared.core_scratch_offset = (prepared.arena.size() + 63U) & ~std::size_t {63U};
+            prepared.core_scratch_bytes = prepared.optimized_core->arena_bytes();
+            prepared.arena.resize(prepared.core_scratch_offset + prepared.core_scratch_bytes);
         }
-        prepared.pool = std::make_unique<WorkerPool>(config.workers, config.worker_cpu_begin, config.scheduler);
-        if (!prepared.controller_affinity_ok || !prepared.pool->affinity_ok()) {
+        if (!prepared.optimized_core || config.scheduler != SchedulerMode::safe) {
+            prepared.pool = std::make_unique<WorkerPool>(
+                config.workers, config.worker_cpu_begin, config.scheduler);
+        }
+        if (!prepared.controller_affinity_ok || !prepared.worker_affinity_ok()) {
             throw std::runtime_error("executor CPU affinity or scheduler policy could not be established");
         }
         prepared.ready = true;
@@ -2040,7 +2765,10 @@ int FullExecutor::run_input_surface(const float* input, const std::uint8_t* rgb,
         ((input == nullptr) == (rgb == nullptr))) return 1;
     try {
         RunTiming local;
-        const bool profile_operations = std::getenv("Y26_STAGE52_PROFILE_OPS") != nullptr;
+        const bool profile_operations = std::getenv("Y26_STAGE52_PROFILE_OPS") != nullptr ||
+                                        std::getenv("Y26_STAGE53_PROFILE_OPS") != nullptr;
+        std::vector<OperationProfileSample> profile_samples;
+        if (profile_operations) profile_samples.reserve(impl_->operations.size() + 8U);
         const std::clock_t process_cpu_begin = std::clock();
 #if defined(__linux__)
         rusage usage_begin {};
@@ -2050,20 +2778,44 @@ int FullExecutor::run_input_surface(const float* input, const std::uint8_t* rgb,
         const auto total_begin = Clock::now();
         for (std::size_t operation_index = 0; operation_index < impl_->operations.size(); ++operation_index) {
             const Operation& operation = impl_->operations[operation_index];
+            if (operation.skip_when_fused && impl_->fused_lut_enabled &&
+                !impl_->config.capture_boundaries) {
+                if (profile_operations) {
+                    profile_samples.push_back(OperationProfileSample {
+                        operation.index, -1, "lut1", "fused_into_dense_conv",
+                        operation.name, 0.0});
+                }
+                continue;
+            }
             const auto begin = Clock::now();
             if (impl_->optimized_core && !impl_->config.capture_boundaries &&
                 operation.index == impl_->core_start_operation) {
-                impl_->run_optimized_core();
+                stage49::SliceTiming resident_timing;
+                impl_->run_optimized_core(profile_operations ? &resident_timing : nullptr);
                 operation_index = static_cast<std::size_t>(impl_->core_end_operation);
-                local.resident_core_us += elapsed_us(begin, Clock::now());
+                const double duration = elapsed_us(begin, Clock::now());
+                local.resident_core_us += duration;
+                if (profile_operations) {
+                    double resident_operation_sum_us = 0.0;
+                    for (const stage49::OperationTiming& row : resident_timing.operations) {
+                        profile_samples.push_back(OperationProfileSample {
+                            impl_->full_operation_index(row.name), row.operation_index,
+                            row.kind, "resident_core", row.name, row.wall_us});
+                        resident_operation_sum_us += row.wall_us;
+                    }
+                    profile_samples.push_back(OperationProfileSample {
+                        -1, -1, "bridge", "resident_bridge", "resident_core_bridge_overhead",
+                        std::max(0.0, duration - resident_operation_sum_us)});
+                }
                 continue;
             }
             impl_->operation_runners[operation_index](
                 impl_.get(), operation, input, rgb, rgb_stride);
             const double duration = elapsed_us(begin, Clock::now());
             if (profile_operations) {
-                std::fprintf(stderr, "stage52_op\t%d\t%s\t%.3f\n",
-                             operation.index, operation.name.c_str(), duration);
+                profile_samples.push_back(OperationProfileSample {
+                    operation.index, -1, operation_kind_name(operation.kind),
+                    "full_executor", operation.name, duration});
             }
             if (operation.kind == OpKind::input_quant) local.input_quantize_us += duration;
             if (operation.kind == OpKind::conv_dense) local.dense_conv_us += duration;
@@ -2092,6 +2844,10 @@ int FullExecutor::run_input_surface(const float* input, const std::uint8_t* rgb,
         const auto head_begin = Clock::now();
         impl_->decode_head(output);
         local.head_us = elapsed_us(head_begin, Clock::now());
+        if (profile_operations) {
+            profile_samples.push_back(OperationProfileSample {
+                -1, -1, "head_decode", "full_executor", "final_head_decode", local.head_us});
+        }
         local.total_us = elapsed_us(total_begin, Clock::now());
         const std::clock_t process_cpu_end = std::clock();
         if (process_cpu_begin != static_cast<std::clock_t>(-1) &&
@@ -2108,8 +2864,23 @@ int FullExecutor::run_input_surface(const float* input, const std::uint8_t* rgb,
         }
 #endif
         local.output_hash = fnv1a64(output, output_count);
-        local.affinity_ok = impl_->controller_affinity_ok && impl_->pool->affinity_ok() ? 1 : 0;
+        local.affinity_ok = impl_->controller_affinity_ok && impl_->worker_affinity_ok() ? 1 : 0;
         std::copy(output, output + output_count, impl_->last_output.begin());
+        if (profile_operations) {
+            const std::uint64_t run_id = impl_->profile_run_sequence++;
+            double operation_sum_us = 0.0;
+            for (const OperationProfileSample& sample : profile_samples) {
+                operation_sum_us += sample.wall_us;
+                std::fprintf(stderr,
+                    "stage53_op\t%llu\t%d\t%d\t%s\t%s\t%.3f\t%s\n",
+                    static_cast<unsigned long long>(run_id), sample.full_operation_index,
+                    sample.resident_operation_index, sample.kind.c_str(), sample.source.c_str(),
+                    sample.wall_us, sample.name.c_str());
+            }
+            std::fprintf(stderr, "stage53_profile_run\t%llu\t%.3f\t%.3f\t%zu\n",
+                static_cast<unsigned long long>(run_id), local.total_us, operation_sum_us,
+                profile_samples.size());
+        }
         if (timing != nullptr) *timing = local;
         return 0;
     } catch (const std::exception& error) {
@@ -2143,16 +2914,20 @@ int FullExecutor::copy_boundary(int tensor_id, std::uint8_t* output, std::size_t
         }
         return 0;
     }
-    if (tensor_id == impl_->core_input_tensor && impl_->optimized_core_input.size() == bytes) {
+    if (tensor_id == impl_->core_input_tensor &&
+        impl_->core_input_diagnostic_snapshot.size() == bytes) {
         for (std::size_t index = 0; index < bytes; ++index) {
-            output[index] = int8_v1::semantic_code(impl_->optimized_core_input[index]);
+            const std::size_t offset = physical_offset(tensor, index) - tensor.offset;
+            output[index] = int8_v1::semantic_code(
+                impl_->core_input_diagnostic_snapshot[offset]);
         }
         return 0;
     }
     for (const Impl::CoreBridge& bridge : impl_->core_bridges) {
-        if (tensor_id == bridge.full_tensor && bridge.snapshot.size() == bytes) {
+        if (tensor_id == bridge.full_tensor && bridge.diagnostic_snapshot.size() == bytes) {
             for (std::size_t index = 0; index < bytes; ++index) {
-                output[index] = int8_v1::semantic_code(bridge.snapshot[index]);
+                const std::size_t offset = physical_offset(tensor, index) - tensor.offset;
+                output[index] = int8_v1::semantic_code(bridge.diagnostic_snapshot[offset]);
             }
             return 0;
         }

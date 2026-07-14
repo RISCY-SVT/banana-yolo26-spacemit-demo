@@ -85,6 +85,7 @@ struct SliceTiming {
 class PersistentSlice {
 public:
     struct Impl;
+    using ExternalJob = void (*)(void*, int, int);
 
     PersistentSlice();
     ~PersistentSlice();
@@ -100,7 +101,14 @@ public:
                               const std::string& trusted_manifest_sha256,
                               int worker_capacity,
                               const std::string& expected_contract_id,
-                              const std::string& expected_profile_id);
+                              const std::string& expected_profile_id,
+                              bool enable_cluster1_pool = true);
+
+    int bind_external_arena(std::int8_t* arena, std::size_t bytes);
+    int bind_external_tensor(int tensor_id, std::int8_t* data, std::size_t bytes);
+    void clear_external_tensor_bindings() noexcept;
+    int dispatch_external(int active_workers, ExternalJob job, void* context);
+    bool worker_affinity_ok() const noexcept;
 
     int run_model5(const std::int8_t* model4_postactivation_nchwc8_s8,
                    std::int8_t* model5_output_nchwc8_s8,
@@ -135,7 +143,6 @@ public:
     std::size_t arena_bytes() const noexcept;
     std::size_t packed_weight_bytes() const noexcept;
     int prefault_memory(bool advise_hugepage, std::uint64_t* touched_checksum) noexcept;
-    bool worker_affinity_ok() const noexcept;
     const std::string& manifest_sha256() const noexcept;
     const std::string& last_error() const noexcept;
 

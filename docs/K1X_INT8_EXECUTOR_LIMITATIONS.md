@@ -12,15 +12,16 @@
 - Package hashes detect accidental corruption and stale artifacts. They do not
   claim cryptographic authenticity.
 - `SCHED_RR` requires privileges and careful lab operation. `SCHED_OTHER` is
-  the supported handoff default.
+  the supported policy. The opt-in Stage53 epoch-spin wake mode consumes more
+  process CPU than the condition-variable compatibility mode and is therefore
+  labeled optimized research rather than a general-purpose default.
 - Legacy float-QDQ output is not the exact arithmetic authority.
-- The RGB stem currently uses the exact generic C3-through-K8 dense route.
-  Dedicated RGB/RGBX stem kernels remain performance work.
-- N4/N8 head convolutions use the exact masked-N16 IME route; they do not yet
-  avoid every unused output lane. Grouped/depthwise Conv uses an exact
-  four-worker direct scalar arithmetic path rather than a selected RVV kernel.
-- The static attention path is complete and exact, but remains a measured
-  optimization target together with the stem, small-N head, and grouped Conv.
+- The dedicated RGB stem, N4/N8 kernels, RVV depthwise path, and direct
+  attention transforms are specific to the frozen shapes. They are not generic
+  operator implementations for arbitrary models.
+- Some low-impact Split/Reshape/LUT/Concat surfaces retain measured direct or
+  reference implementations. Conv-to-LUT1 fusion was exact but rejected after
+  a complete-model timing regression.
 - This release does not include a camera service, default demo-backend change,
   model training, QAT, a student model, or Q31 promotion.
 - Production readiness and 20 FPS are not claimed.

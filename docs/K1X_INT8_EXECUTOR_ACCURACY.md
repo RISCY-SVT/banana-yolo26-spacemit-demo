@@ -25,9 +25,10 @@ IoU-averaged F1 proxy. It is not represented as a bootstrap confidence interval
 for COCO mAP. Complete metrics and per-class AP are in the Stage52
 `full_coco_report.md`.
 
-The 5,000-image run used exact E2c Q62. The release-default E2c2 route is
-byte-exact to E2c under the same `K1X_INT8_V1` contract across package-channel,
-adversarial, F0-F7, and real-image boundary gates; it changes timing, not this
-accuracy surface.
+Stage53 ran the selected E2c2 structural route over all 5,000 images. It
+produced 721,755 predictions and the same byte-for-byte prediction JSON SHA-256
+shown above. Therefore its COCO metrics are exactly the accepted Stage52
+values; this conclusion is based on the complete prediction surface rather
+than intermediate equality alone.
 
 Intermediate exactness does not substitute for this task-level evaluation.

@@ -51,6 +51,11 @@ profile and trusted `asset_hashes.tsv` SHA-256 must match the prepared
 `K1X_INT8_V1_YOLO26N_640_FULL_GRAPH_001` package; arbitrary profiles are
 rejected.
 
+The ABI does not change for Stage53. Setting `Y26_STAGE53_SPIN_POOL=1` before
+`y26_executor_prepare()` selects the measured epoch-spin research wake policy;
+leaving it unset retains condition-variable wakeup. The setting is captured
+when the handle prepares and must not be changed while that handle is active.
+
 The ABI returns `Y26_STATUS_INVALID_ARGUMENT`, `Y26_STATUS_PACKAGE_ERROR`,
 `Y26_STATUS_RUNTIME_ERROR`, or `Y26_STATUS_UNSUPPORTED` without throwing C++
 exceptions across the boundary. The string returned by `last_error` remains

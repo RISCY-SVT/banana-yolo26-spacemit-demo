@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Create the deterministic Stage 52 handoff manifest and checksum inventory."""
+"""Create a deterministic executor handoff manifest and checksum inventory."""
 
 from __future__ import annotations
 
@@ -22,6 +22,10 @@ def main() -> int:
     parser.add_argument("--root", type=Path, required=True)
     parser.add_argument("--source-commit", required=True)
     parser.add_argument("--package-manifest-sha256", required=True)
+    parser.add_argument(
+        "--release-id",
+        default="banana-yolo26-k1x-int8-executor-stage52",
+    )
     args = parser.parse_args()
 
     root = args.root.resolve()
@@ -42,7 +46,7 @@ def main() -> int:
         "sha256": sha256(path),
     } for path in files]
     manifest = {
-        "release_id": "banana-yolo26-k1x-int8-executor-stage52",
+        "release_id": args.release_id,
         "integer_contract_id": "K1X_INT8_V1",
         "profile_id": "K1X_INT8_V1_YOLO26N_640_FULL_GRAPH_001",
         "model_sha256": "30a94e4738606673b5e0a73499cbc977167f046f8fa8637d6040ce744f429c0c",

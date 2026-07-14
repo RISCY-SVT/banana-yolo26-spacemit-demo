@@ -54,7 +54,9 @@ def build_schedule(index: GraphIndex, package: Path) -> ScheduleBuilder:
         "model.9.cv1_act", concat_spec, cv1_channels,
         "/model.9/cv1/act@model9_concat_scale",
     )
-    builder.add_conv(cv1_node.name, model8_id, cv1_id, "silu")
+    # The accepted ONNX graph feeds model9 cv1 directly into SPPF MaxPool.
+    # Unlike the preceding Conv blocks, this cv1 has no SiLU node.
+    builder.add_conv(cv1_node.name, model8_id, cv1_id, "none")
 
     pool0_id = builder.tensor(
         "model.9.pool0", concat_spec, cv1_channels,

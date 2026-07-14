@@ -42,5 +42,6 @@ chmod 0755 "$output/bin/yolo26_k1x_int8" "$output/scripts/"*.sh
 python3 "$repo/custom_int8_engine/tools/stage52_release_bundle.py" \
   --root "$output" \
   --source-commit "$source_commit" \
-  --package-manifest-sha256 "$package_manifest_sha256"
+  --package-manifest-sha256 "$package_manifest_sha256" \
+  --release-id "${Y26_RELEASE_ID:-banana-yolo26-k1x-int8-executor-stage52}"
 (cd "$output" && sha256sum -c release_sha256.txt)

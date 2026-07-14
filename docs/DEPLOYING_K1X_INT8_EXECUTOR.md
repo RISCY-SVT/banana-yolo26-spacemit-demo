@@ -9,6 +9,10 @@ The release bundle deploys to:
 /data/k1x-yolo26-int8-executor/
 ```
 
+A versioned optimized-research bundle may use a child such as
+`/data/k1x-yolo26-int8-executor/stage53-optimized-research`; this keeps both
+handoffs on NVMe without replacing the Stage52 functional reference.
+
 `config/k1x-int8-executor-safe.conf` records the supported package root,
 worker/controller assignment, scheduler, input surface, and detector output
 schema. It is a reviewable handoff reference; the CLI still requires explicit
@@ -34,6 +38,21 @@ The default worker policy is CPU0-3 plus a CPU4 controller. The runtime must
 not execute IME instructions on CPU4-7. Use `--scheduler rr20` only on a
 dedicated lab board with sufficient privileges, a watchdog, and a cleanup
 path. It is not the default.
+
+The Stage53 epoch-spin wake policy is also opt-in and remains SCHED_OTHER:
+
+```bash
+Y26_STAGE53_SPIN_POOL=1 \
+  /data/k1x-yolo26-int8-executor/stage53-optimized-research/bin/yolo26_k1x_int8 \
+  --package /data/k1x-yolo26-int8-executor/stage53-optimized-research/package \
+  --image /data/example/bus.jpg --input-mode image \
+  --output-json /data/example/bus-stage53.json \
+  --threads 4 --pin 0-3 --scheduler safe --verify
+```
+
+It keeps worker CPUs active between prepared schedule epochs and therefore
+uses more process CPU than the condition-variable compatibility mode. Enable
+it only on a dedicated measured workload.
 
 `smoke-test.sh` validates package identity, loader resolution, CLI execution,
 and deterministic output before handoff. `uninstall.sh` removes only the

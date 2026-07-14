@@ -83,6 +83,7 @@ struct Options {
     int ort_memory_pattern = 0;
     int ort_cpu_arena = 0;
     int ort_thread_spinning = 0;
+    int ort_raw_per_run = 0;
     int thread_branch0 = 4;
     int thread_branch1 = 4;
     int thread_model4_cv2 = 4;
@@ -274,6 +275,8 @@ Options parse_options(int argc, char** argv) {
             options.ort_cpu_arena = std::stoi(require_value(i, argc, argv, "--ort-cpu-arena"));
         } else if (arg == "--ort-thread-spinning") {
             options.ort_thread_spinning = std::stoi(require_value(i, argc, argv, "--ort-thread-spinning"));
+        } else if (arg == "--ort-raw-per-run") {
+            options.ort_raw_per_run = std::stoi(require_value(i, argc, argv, "--ort-raw-per-run"));
         } else if (arg == "--warmup") {
             options.warmup = std::max(0, std::stoi(require_value(i, argc, argv, "--warmup")));
         } else if (arg == "--runs") {
@@ -305,7 +308,8 @@ Options parse_options(int argc, char** argv) {
     (void)y26_stage42::parse_ort_optimization_level(options.ort_opt_level);
     (void)y26_stage42::parse_ort_execution_mode(options.ort_execution_mode);
     for (const auto value : {options.ort_enable_profiling, options.ort_memory_pattern,
-                             options.ort_cpu_arena, options.ort_thread_spinning}) {
+                             options.ort_cpu_arena, options.ort_thread_spinning,
+                             options.ort_raw_per_run}) {
         if (value != 0 && value != 1) {
             throw std::runtime_error("ORT boolean options must be 0 or 1");
         }
@@ -1529,12 +1533,42 @@ int main(int argc, char** argv) {
             std::vector<double> input_wrap_repeat_us;
             std::vector<double> ort_run_repeat_us;
             std::vector<double> output_copy_repeat_us;
+            struct RawOrtSample {
+                int repeat = 0;
+                int run = 0;
+                double wall_us = 0.0;
+                double process_cpu_us = 0.0;
+                OrtOneOutputTiming components {};
+            };
+            std::vector<RawOrtSample> raw_samples;
+            if (options.ort_raw_per_run != 0) {
+                raw_samples.reserve(static_cast<std::size_t>(options.runs) *
+                                    static_cast<std::size_t>(options.repeats));
+            }
             for (int repeat = 0; repeat < options.repeats; ++repeat) {
                 OrtOneOutputTiming components {};
                 const auto begin = Clock::now();
                 const double process_cpu_begin_us = process_cpu_us();
                 for (int run = 0; run < options.runs; ++run) {
-                    output = run_once(&components);
+                    if (options.ort_raw_per_run == 0) {
+                        output = run_once(&components);
+                        continue;
+                    }
+                    RawOrtSample sample;
+                    sample.repeat = repeat;
+                    sample.run = run;
+                    const auto sample_begin = Clock::now();
+                    const double sample_process_begin_us = process_cpu_us();
+                    output = run_once(&sample.components);
+                    const double sample_process_end_us = process_cpu_us();
+                    const auto sample_end = Clock::now();
+                    sample.wall_us =
+                        std::chrono::duration<double, std::micro>(sample_end - sample_begin).count();
+                    sample.process_cpu_us = sample_process_end_us - sample_process_begin_us;
+                    components.input_wrap_us += sample.components.input_wrap_us;
+                    components.ort_run_us += sample.components.ort_run_us;
+                    components.output_copy_us += sample.components.output_copy_us;
+                    raw_samples.push_back(sample);
                 }
                 const double process_cpu_end_us = process_cpu_us();
                 const auto end = Clock::now();
@@ -1555,6 +1589,20 @@ int main(int argc, char** argv) {
                           << " ort_run_us=" << ort_run_repeat_us.back()
                           << " output_copy_us=" << output_copy_repeat_us.back()
                           << "\n";
+            }
+            if (options.ort_raw_per_run != 0) {
+                for (const RawOrtSample& sample : raw_samples) {
+                    std::cout << std::fixed << std::setprecision(6)
+                              << "stage42_ort_only_sample"
+                              << " repeat=" << sample.repeat
+                              << " run=" << sample.run
+                              << " wall_us=" << sample.wall_us
+                              << " process_cpu_us=" << sample.process_cpu_us
+                              << " input_wrap_us=" << sample.components.input_wrap_us
+                              << " ort_run_us=" << sample.components.ort_run_us
+                              << " output_copy_us=" << sample.components.output_copy_us
+                              << "\n";
+                }
             }
             const MetricStats ort_timing = stats_from_values(repeat_us);
             const MetricStats process_cpu_timing = stats_from_values(process_cpu_repeat_us);
