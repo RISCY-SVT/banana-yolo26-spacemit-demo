@@ -1,0 +1,9 @@
+index	name	input_c	output_c	group	kernel	stride	true_depthwise	selected_route
+77	/model.10/m/m.0/attn/pe/conv/Conv	128	128	128	3x3	1x1	1	explicit_rvv_c8_interior_border
+128	/model.23/one2one_cv3.0/one2one_cv3.0.0/one2one_cv3.0.0.0/conv/Conv	64	64	64	3x3	1x1	1	explicit_rvv_c8_interior_border
+139	/model.23/one2one_cv3.0/one2one_cv3.0.1/one2one_cv3.0.1.0/conv/Conv	80	80	80	3x3	1x1	1	explicit_rvv_c8_interior_border
+162	/model.23/one2one_cv3.1/one2one_cv3.1.0/one2one_cv3.1.0.0/conv/Conv	128	128	128	3x3	1x1	1	explicit_rvv_c8_interior_border
+173	/model.23/one2one_cv3.1/one2one_cv3.1.1/one2one_cv3.1.1.0/conv/Conv	80	80	80	3x3	1x1	1	explicit_rvv_c8_interior_border
+188	/model.22/m.0/m.0.1/attn/pe/conv/Conv	128	128	128	3x3	1x1	1	explicit_rvv_c8_interior_border
+202	/model.23/one2one_cv3.2/one2one_cv3.2.0/one2one_cv3.2.0.0/conv/Conv	256	256	256	3x3	1x1	1	explicit_rvv_c8_interior_border
+210	/model.23/one2one_cv3.2/one2one_cv3.2.1/one2one_cv3.2.1.0/conv/Conv	80	80	80	3x3	1x1	1	explicit_rvv_c8_interior_border

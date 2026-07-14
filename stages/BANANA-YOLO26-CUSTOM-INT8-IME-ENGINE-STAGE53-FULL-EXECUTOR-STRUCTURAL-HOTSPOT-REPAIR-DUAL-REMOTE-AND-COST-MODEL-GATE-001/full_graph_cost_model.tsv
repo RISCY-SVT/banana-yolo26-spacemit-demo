@@ -1,0 +1,14 @@
+component	predicted_us	source
+dense_conv_outside_resident_region	136175.994	selected Stage53 calibrated operation profile
+grouped_depthwise	19725.30666	selected Stage53 calibrated operation profile
+resident_model4_final_to_model9	19458.50532	selected Stage53 calibrated operation profile
+attention_matmul	13403.11138	selected Stage53 calibrated operation profile
+input_quantization_layout	12504.352820000002	selected Stage53 calibrated operation profile
+lut2_add	9521.9573	selected Stage53 calibrated operation profile
+attention_softmax_transpose	8718.13516	selected Stage53 calibrated operation profile
+head_decode_selection	7994.50762	selected Stage53 calibrated operation profile
+lut1	4830.2925000000005	selected Stage53 calibrated operation profile
+concat_resize	3888.8935400000005	selected Stage53 calibrated operation profile
+split_reshape_transpose	3429.37556	selected Stage53 calibrated operation profile
+resident_bridge	120.92984	selected Stage53 calibrated operation profile
+schedule_and_unaccounted	515.8052200000093	profile outer wall minus operation timer sum

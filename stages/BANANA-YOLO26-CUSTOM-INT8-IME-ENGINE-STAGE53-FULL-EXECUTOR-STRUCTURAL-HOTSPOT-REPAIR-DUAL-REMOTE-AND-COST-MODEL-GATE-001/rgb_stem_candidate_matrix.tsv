@@ -1,0 +1,5 @@
+route	exact	status	full_model_scout_mean_us
+R0_generic_C3_through_K8	1	control	not-applicable
+R1_explicit_RVV_C3_tap_major_M2N16	1	selected	255383.0
+R2_fused_input_and_stem	not-implemented	bounded-out-after_R1_gain	not-applicable
+R3_RGBX_C4_or_C8	not-selected	no-evidence-of-win	not-applicable

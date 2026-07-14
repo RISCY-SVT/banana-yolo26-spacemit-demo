@@ -1,0 +1,3 @@
+class	selected	count	runtime_copy
+resident_split_concat	producer/direct resident placement	5	none where quant domains match
+remaining_full_graph_split	direct physical subrange or copy	graph-derived	retained where alias lifetime is unsafe

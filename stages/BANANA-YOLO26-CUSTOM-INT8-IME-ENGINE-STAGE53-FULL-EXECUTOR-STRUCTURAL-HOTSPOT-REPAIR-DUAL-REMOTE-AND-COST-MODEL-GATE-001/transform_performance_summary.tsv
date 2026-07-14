@@ -1,0 +1,5 @@
+candidate	exact	selected	reason
+direct_LUT2_NCHWc8	1	1	not-applicable
+attention_direct_split_transpose	1	1	not-applicable
+C8_resize_concat	1	1	not-applicable
+Conv_LUT1_fusion	1	0	full-model no-win

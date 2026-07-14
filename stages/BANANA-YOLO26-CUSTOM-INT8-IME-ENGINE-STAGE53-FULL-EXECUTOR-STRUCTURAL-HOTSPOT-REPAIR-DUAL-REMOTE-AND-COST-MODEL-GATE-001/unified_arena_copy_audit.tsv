@@ -1,0 +1,5 @@
+copy_class	stage52_bytes	stage53_headline_bytes	disposition
+resident_core_input	819200	0	external tensor binding
+six_resident_liveouts	1536000	0	global arena bindings
+input_and_liveout_snapshots	2355200	0	capture mode only
+total_region_bridge	4710400	0	eliminated

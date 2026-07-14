@@ -1,0 +1,3 @@
+scope	unravel_calls_in_element_loop	ravel_calls_in_element_loop	physical_offset_calls_in_element_loop	status	reason
+selected_high_impact_paths	0	0	0	removed	not-applicable
+reference_debug_capture_fallback	not-applicable	not-applicable	not-applicable	retained	portable correctness authority and diagnostics

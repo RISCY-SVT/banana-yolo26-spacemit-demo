@@ -1,0 +1,4 @@
+kernel	implementation	exact	status
+M12xN4	named_smt_vmadot	1	selected
+M12xN8	named_smt_vmadot	1	selected
+M12xN16	existing_exact_tail	1	selected_for_N16

@@ -1,0 +1,3 @@
+route	full_model_mean_us	note
+masked_N16_control	290925.0	not-applicable
+true_N4_N8	289400.0	adjacent-source scout; final gain remains included in selected route

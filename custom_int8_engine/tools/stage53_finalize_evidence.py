@@ -9,7 +9,6 @@ import hashlib
 import json
 import math
 import re
-import shutil
 import statistics
 from collections import defaultdict
 from pathlib import Path
@@ -63,7 +62,13 @@ def write_tsv(path: Path, rows: list[dict[str, object]]) -> None:
                 fields.append(field)
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", newline="", encoding="utf-8") as stream:
-        writer = csv.DictWriter(stream, fieldnames=fields, delimiter="\t", lineterminator="\n")
+        writer = csv.DictWriter(
+            stream,
+            fieldnames=fields,
+            delimiter="\t",
+            lineterminator="\n",
+            restval="not-applicable",
+        )
         writer.writeheader()
         writer.writerows(rows)
 
@@ -72,6 +77,14 @@ def write_md(path: Path, title: str, paragraphs: Iterable[str]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(
         f"# {title}\n\n" + "\n\n".join(paragraphs) + "\n", encoding="utf-8"
+    )
+
+
+def copy_text_normalized(source: Path, destination: Path) -> None:
+    lines = source.read_text(encoding="utf-8").splitlines()
+    destination.write_text(
+        "\n".join(line.rstrip(" \t") for line in lines) + "\n",
+        encoding="utf-8",
     )
 
 
@@ -617,7 +630,7 @@ def main() -> int:
         ("per_class.tsv", "final_coco_per_class.tsv"),
         ("bootstrap.tsv", "final_coco_bootstrap.tsv"),
     ):
-        shutil.copyfile(args.coco_eval_dir / source, stage / destination)
+        copy_text_normalized(args.coco_eval_dir / source, stage / destination)
     write_md(stage / "final_coco_report.md", "Final COCO val2017 accuracy", [
         "The selected Stage53 E2c2 structural route completed all 5,000 COCO val2017 images "
         f"and emitted {prediction_count} predictions.",

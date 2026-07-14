@@ -1,0 +1,28 @@
+2026-07-14T12:38:27Z
+TARGET SOURCE         FSTYPE OPTIONS
+/data  /dev/nvme0n1p1 ext4   rw,noatime
+Filesystem     Type  Size  Used Avail Use% Mounted on
+/dev/nvme0n1p1 ext4  469G   12G  433G   3% /data
+/dev/mmcblk2p6 ext4  115G   23G   86G  22% /
+NAME         TYPE FSTYPE   SIZE MOUNTPOINTS
+mmcblk2      disk        116.5G
+├─mmcblk2p1  part          256K
+├─mmcblk2p2  part           64K
+├─mmcblk2p3  part            1M
+├─mmcblk2p4  part            2M
+├─mmcblk2p5  part ext4     256M /boot
+└─mmcblk2p6  part ext4   116.2G /
+mmcblk2boot0 disk            4M
+mmcblk2boot1 disk            4M
+nvme0n1      disk        476.9G
+└─nvme0n1p1  part ext4   476.9G /data
+data_source=/dev/nvme0n1p1
+stage_root=/data/k1x-stage-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE53-FULL-EXECUTOR-STRUCTURAL-HOTSPOT-REPAIR-DUAL-REMOTE-AND-COST-MODEL-GATE-001
+stage_root_files=12346
+stage_root_bytes=1945072600
+stage_root_symlinks=0
+release_root=/data/k1x-yolo26-int8-executor/stage53-optimized-research
+release_root_files=1205
+release_root_bytes=30121528
+TMPDIR=/data/k1x-stage-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE53-FULL-EXECUTOR-STRUCTURAL-HOTSPOT-REPAIR-DUAL-REMOTE-AND-COST-MODEL-GATE-001/tmp
+XDG_CACHE_HOME=/data/k1x-stage-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE53-FULL-EXECUTOR-STRUCTURAL-HOTSPOT-REPAIR-DUAL-REMOTE-AND-COST-MODEL-GATE-001/cache

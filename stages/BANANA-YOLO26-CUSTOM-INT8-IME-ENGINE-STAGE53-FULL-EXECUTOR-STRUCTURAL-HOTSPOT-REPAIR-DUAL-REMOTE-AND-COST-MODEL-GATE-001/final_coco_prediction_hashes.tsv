@@ -1,0 +1,2 @@
+surface	prediction_json	sha256	prediction_count	stage52_sha256	byte_identical
+stage53_selected_k1x_int8_v1	/data/ncnn-logs/ai-team/2026-07-14/2026-07-14_08-08-50__codex__BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE53-FULL-EXECUTOR-STRUCTURAL-HOTSPOT-REPAIR-DUAL-REMOTE-AND-COST-MODEL-GATE-001__stage53-structural-hotspot-repair/artifacts/coco/final_source/stage53_final_source5000.json	cda5c8c7a46d61d9c90f6292001eea190cb8f6617efe647a33dc6134dd57ccda	721755	cda5c8c7a46d61d9c90f6292001eea190cb8f6617efe647a33dc6134dd57ccda	1

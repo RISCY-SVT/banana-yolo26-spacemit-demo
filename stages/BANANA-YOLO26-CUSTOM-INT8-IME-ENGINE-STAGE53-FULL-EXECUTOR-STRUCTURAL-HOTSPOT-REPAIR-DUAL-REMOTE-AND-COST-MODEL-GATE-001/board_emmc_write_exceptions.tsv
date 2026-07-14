@@ -1,0 +1,2 @@
+path	bytes	reason	disposition
+none	0	All Stage53 board artifacts, temporary files, caches, packages, profiles, predictions, and release files remained under NVMe-backed /data.	no-exception

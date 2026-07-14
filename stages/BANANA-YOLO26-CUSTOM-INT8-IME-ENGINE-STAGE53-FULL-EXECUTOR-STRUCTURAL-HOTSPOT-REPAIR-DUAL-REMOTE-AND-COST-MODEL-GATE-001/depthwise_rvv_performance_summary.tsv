@@ -1,0 +1,3 @@
+route	family_mean_us	full_model_mean_us	status	full_model_p95_us
+Stage52_exact_scalar	102989.0	503636.514	reference	not-applicable
+Stage53_explicit_rvv_c8	19725.30666	420980.0	selected	423200.0

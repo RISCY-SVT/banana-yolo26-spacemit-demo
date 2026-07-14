@@ -1,0 +1,47 @@
+2026-07-14T12:37:37Z
+bf3
+Linux bf3 6.6.63 #2.2.7.2 SMP PREEMPT Fri Aug 15 12:32:44 UTC 2025 riscv64 riscv64 riscv64 GNU/Linux
+PRETTY_NAME="Bianbu 2.2.1"
+NAME="Bianbu"
+VERSION_ID="2.2.1"
+VERSION="2.2.1 (Noble Numbat)"
+VERSION_CODENAME=noble
+ID=bianbu
+ID_LIKE=debian
+HOME_URL="https://bianbu.spacemit.com"
+SUPPORT_URL="https://bianbu.spacemit.com"
+BUG_REPORT_URL="https://ticket.spacemit.com"
+PRIVACY_POLICY_URL="https://www.spacemit.com/privacy-policy"
+UBUNTU_CODENAME=noble
+LOGO=bianbu-logo
+online_cpus=0-7
+Architecture:        riscv64
+Byte Order:          Little Endian
+CPU(s):              8
+On-line CPU(s) list: 0-7
+Model name:          Spacemit(R) X60
+Thread(s) per core:  1
+Core(s) per socket:  8
+Socket(s):           1
+CPU(s) scaling MHz:  100%
+CPU max MHz:         1600.0000
+CPU min MHz:         614.4000
+L1d cache:           256 KiB (8 instances)
+L1i cache:           256 KiB (8 instances)
+L2 cache:            1 MiB (2 instances)
+governor=performance
+current_frequency_khz=1600000
+maximum_frequency_khz=1600000
+2.47 4.24 5.55 1/636 286974
+/sys/class/thermal/thermal_zone0/temp=50000
+/sys/class/thermal/thermal_zone1/temp=50000
+/sys/class/thermal/thermal_zone2/temp=52000
+/sys/class/thermal/thermal_zone3/temp=52000
+9f4dab757fa2affe6204e7ccfbad96055300fac1eff3450c4187bf2caf201cd2  /data/k1x-stage-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE53-FULL-EXECUTOR-STRUCTURAL-HOTSPOT-REPAIR-DUAL-REMOTE-AND-COST-MODEL-GATE-001/bin/yolo26_k1x_int8_final_source
+729fa9ed7728fed32d9a60e0e07f5a098fc849946c270f133a6713a9052fe021  /data/k1x-stage-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE53-FULL-EXECUTOR-STRUCTURAL-HOTSPOT-REPAIR-DUAL-REMOTE-AND-COST-MODEL-GATE-001/bin/yolo26_k1x_int8_release_static
+729fa9ed7728fed32d9a60e0e07f5a098fc849946c270f133a6713a9052fe021  /data/k1x-yolo26-int8-executor/stage53-optimized-research/bin/yolo26_k1x_int8
+d6b6a8faaf1e97fcd0b4eddd64fe442763bc5f82942f2fc3f4e18c8dc228680a  /data/k1x-yolo26-int8-executor/stage53-optimized-research/lib/liby26_k1x_int8_executor.a
+0ee6caf7bbd67c5be145a800a7add53f1bd6b8ec6e6e159024642ed3b25db87f  /data/k1x-yolo26-int8-executor/stage53-optimized-research/lib/liby26_k1x_int8_executor.so
+fab4a72cf524ce0a205ceca0384144f2eee7bc79dff3f4db8b7208614e8407be  /data/k1x-stage-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE53-FULL-EXECUTOR-STRUCTURAL-HOTSPOT-REPAIR-DUAL-REMOTE-AND-COST-MODEL-GATE-001/packages/stage53-deterministic/asset_hashes.tsv
+b394f4b13fb0775c46e30e96fa550687961ff20ade4ac9c9275d2f49992b4991  /data/k1x-yolo26-int8-executor/stage53-optimized-research/release_manifest.json
+ddafb7c2be2d746686f4061e851efcc20ccc36c6a9bef4e5838eddac2faa2f08  /data/k1x-yolo26-int8-executor/stage53-optimized-research/release_sha256.txt

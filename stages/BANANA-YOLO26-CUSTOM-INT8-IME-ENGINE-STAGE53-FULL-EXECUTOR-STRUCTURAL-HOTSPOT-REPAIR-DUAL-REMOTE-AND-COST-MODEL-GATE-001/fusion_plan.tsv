@@ -1,0 +1,5 @@
+candidate	exact	selected	reason
+Conv_to_LUT1	1	0	alias-safe candidate regressed complete full-model wall
+model9_four_way_concat	1	1	accepted resident producer-direct route
+attention_split_transpose	1	1	direct physical formulas remove generic index transforms
+resize_concat_C8	1	1	C8 source groups transformed once then replicated

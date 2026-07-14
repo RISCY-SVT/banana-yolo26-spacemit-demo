@@ -1,0 +1,2 @@
+surface	before_bytes	after_bytes	reduction_bytes	reduction_pct
+logical_tensor_plus_region_copy_bytes	43734400	39024000	4710400	10.770469012950903
