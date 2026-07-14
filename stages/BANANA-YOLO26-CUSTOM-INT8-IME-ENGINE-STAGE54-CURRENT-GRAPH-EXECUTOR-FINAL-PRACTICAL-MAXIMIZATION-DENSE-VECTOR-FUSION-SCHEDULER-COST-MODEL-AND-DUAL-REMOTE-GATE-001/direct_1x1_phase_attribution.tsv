@@ -1,0 +1,4 @@
+phase	diagnosis	selected_change
+A_delivery	material for high-M low-K shapes	direct-strided no-full-panel 1x1
+weight_traffic	shape-dependent	retain A-stationary except selected P3 stride2
+epilogue_LUT_store	dominant shared hot surface	E2c3 C8

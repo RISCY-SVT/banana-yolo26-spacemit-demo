@@ -1,0 +1,5 @@
+# Board benchmark environment
+
+Banana-Pi BPI-F3 / SpacemiT K1X; CPU0-3 IME workers; CPU4 controller; SCHED_OTHER; performance governor; recorded 1.6 GHz; warmup 10, runs 100, repeats 5.
+
+Compiler: SpacemiT GCC 14.3.0 g56971dcbea2. Flags: `-march=rv64gcv_zvfh -mabi=lp64d -mtune=spacemit-x60 -funroll-loops -O3 -DNDEBUG`.

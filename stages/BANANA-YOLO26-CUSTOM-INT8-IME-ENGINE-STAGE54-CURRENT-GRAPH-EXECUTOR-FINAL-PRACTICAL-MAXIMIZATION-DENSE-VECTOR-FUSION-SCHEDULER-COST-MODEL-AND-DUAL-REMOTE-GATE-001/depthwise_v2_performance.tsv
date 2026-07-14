@@ -1,0 +1,6 @@
+route	family_mean_us	status	full_model_mean_us	p95_us	exact
+DW1_stage53	19725.0	control	not-applicable	not-applicable	not-applicable
+DW2a_corrected_bias_C8	not-applicable	selected	186802.0	not-applicable	not-applicable
+DW2b_adjacent_x2	not-applicable	selected	184852.0	186968.0	not-applicable
+DW2c_vector_border	not-applicable	selected_family	183221.0	184990.0	not-applicable
+DW2d_C8_E2c3	not-applicable	selected	not-applicable	not-applicable	1

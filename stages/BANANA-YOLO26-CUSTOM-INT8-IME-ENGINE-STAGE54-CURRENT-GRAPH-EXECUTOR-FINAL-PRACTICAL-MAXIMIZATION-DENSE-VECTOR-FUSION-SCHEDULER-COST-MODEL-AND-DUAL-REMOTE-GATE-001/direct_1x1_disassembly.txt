@@ -1,0 +1,81 @@
+
+.deps/custom_int8_engine/build-riscv-stage52/yolo26_k1x_int8:     file format elf64-littleriscv
+
+
+Disassembly of section .plt:
+
+Disassembly of section .text:
+
+000000000003f4aa <y26_stage54_kernel_direct_1x1_m12n16>:
+   3f4aa:	011072d7          	vsetvli	t0,zero,e32,m2,tu,mu
+   3f4ae:	2e840457          	vxor.vv	v8,v8,v8
+   3f4b2:	2ea50557          	vxor.vv	v10,v10,v10
+   3f4b6:	2ec60657          	vxor.vv	v12,v12,v12
+   3f4ba:	2ee70757          	vxor.vv	v14,v14,v14
+   3f4be:	2f080857          	vxor.vv	v16,v16,v16
+   3f4c2:	2f290957          	vxor.vv	v18,v18,v18
+   3f4c6:	2f4a0a57          	vxor.vv	v20,v20,v20
+   3f4ca:	2f6b0b57          	vxor.vv	v22,v22,v22
+   3f4ce:	2f8c0c57          	vxor.vv	v24,v24,v24
+   3f4d2:	2fad0d57          	vxor.vv	v26,v26,v26
+   3f4d6:	2fce0e57          	vxor.vv	v28,v28,v28
+   3f4da:	2fef0f57          	vxor.vv	v30,v30,v30
+   3f4de:	000072d7          	vsetvli	t0,zero,e8,m1,tu,mu
+   3f4e2:	8336                	mv	t1,a3
+   3f4e4:	8e2a                	mv	t3,a0
+   3f4e6:	8eb2                	mv	t4,a2
+   3f4e8:	020e0007          	vle8.v	v0,(t3)
+   3f4ec:	020e0f13          	addi	t5,t3,32
+   3f4f0:	020f0087          	vle8.v	v1,(t5)
+   3f4f4:	040e0f13          	addi	t5,t3,64
+   3f4f8:	020f0107          	vle8.v	v2,(t5)
+   3f4fc:	020e8207          	vle8.v	v4,(t4)
+   3f500:	020e8f13          	addi	t5,t4,32
+   3f504:	020f0287          	vle8.v	v5,(t5)
+   3f508:	040e8f13          	addi	t5,t4,64
+   3f50c:	020f0307          	vle8.v	v6,(t5)
+   3f510:	060e8f13          	addi	t5,t4,96
+   3f514:	020f0387          	vle8.v	v7,(t5)
+   3f518:	e240342b          	smt.vmadot	v8,v0,v4
+   3f51c:	e240b52b          	smt.vmadot	v10,v1,v4
+   3f520:	e241362b          	smt.vmadot	v12,v2,v4
+   3f524:	e250372b          	smt.vmadot	v14,v0,v5
+   3f528:	e250b82b          	smt.vmadot	v16,v1,v5
+   3f52c:	e251392b          	smt.vmadot	v18,v2,v5
+   3f530:	e2603a2b          	smt.vmadot	v20,v0,v6
+   3f534:	e260bb2b          	smt.vmadot	v22,v1,v6
+   3f538:	e2613c2b          	smt.vmadot	v24,v2,v6
+   3f53c:	e2703d2b          	smt.vmadot	v26,v0,v7
+   3f540:	e270be2b          	smt.vmadot	v28,v1,v7
+   3f544:	e2713f2b          	smt.vmadot	v30,v2,v7
+   3f548:	9e2e                	add	t3,t3,a1
+   3f54a:	080e8e93          	addi	t4,t4,128
+   3f54e:	137d                	addi	t1,t1,-1
+   3f550:	f8031ce3          	bnez	t1,3f4e8 <y26_stage54_kernel_direct_1x1_m12n16+0x3e>
+   3f554:	011072d7          	vsetvli	t0,zero,e32,m2,tu,mu
+   3f558:	83ba                	mv	t2,a4
+   3f55a:	0203e427          	vse32.v	v8,(t2)
+   3f55e:	04038393          	addi	t2,t2,64
+   3f562:	0203e527          	vse32.v	v10,(t2)
+   3f566:	04038393          	addi	t2,t2,64
+   3f56a:	0203e627          	vse32.v	v12,(t2)
+   3f56e:	04038393          	addi	t2,t2,64
+   3f572:	0203e727          	vse32.v	v14,(t2)
+   3f576:	04038393          	addi	t2,t2,64
+   3f57a:	0203e827          	vse32.v	v16,(t2)
+   3f57e:	04038393          	addi	t2,t2,64
+   3f582:	0203e927          	vse32.v	v18,(t2)
+   3f586:	04038393          	addi	t2,t2,64
+   3f58a:	0203ea27          	vse32.v	v20,(t2)
+   3f58e:	04038393          	addi	t2,t2,64
+   3f592:	0203eb27          	vse32.v	v22,(t2)
+   3f596:	04038393          	addi	t2,t2,64
+   3f59a:	0203ec27          	vse32.v	v24,(t2)
+   3f59e:	04038393          	addi	t2,t2,64
+   3f5a2:	0203ed27          	vse32.v	v26,(t2)
+   3f5a6:	04038393          	addi	t2,t2,64
+   3f5aa:	0203ee27          	vse32.v	v28,(t2)
+   3f5ae:	04038393          	addi	t2,t2,64
+   3f5b2:	0203ef27          	vse32.v	v30,(t2)
+   3f5b6:	04038393          	addi	t2,t2,64
+   3f5ba:	8082                	ret

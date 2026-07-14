@@ -1,0 +1,4 @@
+arm	flags	exact	board	status	binary_identity	parser
+C0	explicit baseline	1	pass	selected	not-applicable	not-applicable
+C1	baseline plus -mcpu=spacemit-x60	1	not-applicable	no material gain	byte-identical-to-C0	not-applicable
+C2	baseline plus LTO	not-applicable	SIGILL_exit_132	rejected	not-applicable	pass

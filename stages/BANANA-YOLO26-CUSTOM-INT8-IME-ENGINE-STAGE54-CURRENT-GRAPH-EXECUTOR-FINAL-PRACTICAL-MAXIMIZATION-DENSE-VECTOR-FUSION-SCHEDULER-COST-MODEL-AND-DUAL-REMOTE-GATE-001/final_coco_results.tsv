@@ -1,0 +1,4 @@
+surface	map50_95	map50	ap_small	ap_medium	ap_large	delta_vs_stage53	classification
+FP32_reference	0.401438855549	not-applicable	not-applicable	not-applicable	not-applicable	not-applicable	not-applicable
+legacy_semantic_INT8	0.372453424641694	not-applicable	not-applicable	not-applicable	not-applicable	not-applicable	not-applicable
+Stage54_K1X_INT8_V1	0.3707408944391919	0.5258465300872381	0.18397294626227842	0.4142627352606523	0.5440433811804918	0.0	preferred

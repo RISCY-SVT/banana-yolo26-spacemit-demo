@@ -1,0 +1,889 @@
+
+.deps/custom_int8_engine/build-riscv-stage52/yolo26_k1x_int8:     file format elf64-littleriscv
+
+
+Disassembly of section .text:
+
+0000000000021382 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)>:
+   21382:	799c                	ld	a5,48(a1)
+   21384:	7169                	addi	sp,sp,-304
+   21386:	e9ea                	sd	s10,208(sp)
+   21388:	8d2e                	mv	s10,a1
+   2138a:	438c                	lw	a1,0(a5)
+   2138c:	e5ee                	sd	s11,200(sp)
+   2138e:	ede6                	sd	s9,216(sp)
+   21390:	f1e2                	sd	s8,224(sp)
+   21392:	e252                	sd	s4,256(sp)
+   21394:	e64e                	sd	s3,264(sp)
+   21396:	ea4a                	sd	s2,272(sp)
+   21398:	f222                	sd	s0,288(sp)
+   2139a:	f606                	sd	ra,296(sp)
+   2139c:	842a                	mv	s0,a0
+   2139e:	89b2                	mv	s3,a2
+   213a0:	8a36                	mv	s4,a3
+   213a2:	fdd6                	sd	s5,248(sp)
+   213a4:	ee26                	sd	s1,280(sp)
+   213a6:	f82a                	sd	a0,48(sp)
+   213a8:	c35fe0ef          	jal	1ffdc <y26::stage52::FullExecutor::Impl::tensor(int) const>
+   213ac:	028d2583          	lw	a1,40(s10)
+   213b0:	8caa                	mv	s9,a0
+   213b2:	8522                	mv	a0,s0
+   213b4:	c29fe0ef          	jal	1ffdc <y26::stage52::FullExecutor::Impl::tensor(int) const>
+   213b8:	6289                	lui	t0,0x2
+   213ba:	00540333          	add	t1,s0,t0
+   213be:	f4434903          	lbu	s2,-188(t1)
+   213c2:	048d0d93          	addi	s11,s10,72
+   213c6:	8c2a                	mv	s8,a0
+   213c8:	00090d63          	beqz	s2,213e2 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x60>
+   213cc:	05c44383          	lbu	t2,92(s0)
+   213d0:	64039963          	bnez	t2,21a22 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x6a0>
+   213d4:	264d2583          	lw	a1,612(s10)
+   213d8:	6405c563          	bltz	a1,21a22 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x6a0>
+   213dc:	8522                	mv	a0,s0
+   213de:	bfffe0ef          	jal	1ffdc <y26::stage52::FullExecutor::Impl::tensor(int) const>
+   213e2:	6489                	lui	s1,0x2
+   213e4:	76c2                	ld	a3,48(sp)
+   213e6:	692c                	ld	a1,80(a0)
+   213e8:	00399a93          	slli	s5,s3,0x3
+   213ec:	0a86b803          	ld	a6,168(a3)
+   213f0:	00968633          	add	a2,a3,s1
+   213f4:	e8063503          	ld	a0,-384(a2)
+   213f8:	050cbe03          	ld	t3,80(s9)
+   213fc:	034c2e83          	lw	t4,52(s8)
+   21400:	038c2f83          	lw	t6,56(s8)
+   21404:	f4764883          	lbu	a7,-185(a2)
+   21408:	00b802b3          	add	t0,a6,a1
+   2140c:	413a8f33          	sub	t5,s5,s3
+   21410:	007f1793          	slli	a5,t5,0x7
+   21414:	f416                	sd	t0,40(sp)
+   21416:	03df82bb          	mulw	t0,t6,t4
+   2141a:	00f50433          	add	s0,a0,a5
+   2141e:	9872                	add	a6,a6,t3
+   21420:	4ab1                	li	s5,12
+   21422:	00088963          	beqz	a7,21434 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0xb2>
+   21426:	048d2303          	lw	t1,72(s10)
+   2142a:	4aa1                	li	s5,8
+   2142c:	00f37713          	andi	a4,t1,15
+   21430:	5e071b63          	bnez	a4,21a26 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x6a4>
+   21434:	005a83bb          	addw	t2,s5,t0
+   21438:	fff3849b          	addiw	s1,t2,-1
+   2143c:	0354ce3b          	divw	t3,s1,s5
+   21440:	6609                	lui	a2,0x2
+   21442:	76c2                	ld	a3,48(sp)
+   21444:	4e85                	li	t4,1
+   21446:	1a4d2483          	lw	s1,420(s10)
+   2144a:	00c685b3          	add	a1,a3,a2
+   2144e:	f4c5a503          	lw	a0,-180(a1)
+   21452:	03c988bb          	mulw	a7,s3,t3
+   21456:	01c88f3b          	addw	t5,a7,t3
+   2145a:	0348c8bb          	divw	a7,a7,s4
+   2145e:	034f4f3b          	divw	t5,t5,s4
+   21462:	67d50f63          	beq	a0,t4,21ae0 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x75e>
+   21466:	4f89                	li	t6,2
+   21468:	e882                	sd	zero,80(sp)
+   2146a:	5df50063          	beq	a0,t6,21a2a <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x6a8>
+   2146e:	078d4683          	lbu	a3,120(s10)
+   21472:	dd02                	sw	zero,184(sp)
+   21474:	0a010e23          	sb	zero,188(sp)
+   21478:	62069163          	bnez	a3,21a9a <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x718>
+   2147c:	6e89                	lui	t4,0x2
+   2147e:	7542                	ld	a0,48(sp)
+   21480:	01d507b3          	add	a5,a0,t4
+   21484:	f457cf83          	lbu	t6,-187(a5)
+   21488:	000f8663          	beqz	t6,21494 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x112>
+   2148c:	4e31                	li	t3,12
+   2148e:	4f81                	li	t6,0
+   21490:	6dca8063          	beq	s5,t3,21b50 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x7ce>
+   21494:	11e8df63          	bge	a7,t5,215b2 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x230>
+   21498:	f9da                	sd	s6,240(sp)
+   2149a:	f5de                	sd	s7,232(sp)
+   2149c:	6b89                	lui	s7,0x2
+   2149e:	75c2                	ld	a1,48(sp)
+   214a0:	003a9e93          	slli	t4,s5,0x3
+   214a4:	02040513          	addi	a0,s0,32
+   214a8:	017586b3          	add	a3,a1,s7
+   214ac:	f4b6                	sd	a3,104(sp)
+   214ae:	fcf6                	sd	t4,120(sp)
+   214b0:	d356                	sw	s5,164(sp)
+   214b2:	fc2a                	sd	a0,56(sp)
+   214b4:	e942                	sd	a6,144(sp)
+   214b6:	ed7e                	sd	t6,152(sp)
+   214b8:	e17a                	sd	t5,128(sp)
+   214ba:	f0c6                	sd	a7,96(sp)
+   214bc:	8bea                	mv	s7,s10
+   214be:	03588b3b          	mulw	s6,a7,s5
+   214c2:	003b1a13          	slli	s4,s6,0x3
+   214c6:	416282bb          	subw	t0,t0,s6
+   214ca:	01480333          	add	t1,a6,s4
+   214ce:	e096                	sd	t0,64(sp)
+   214d0:	ec9a                	sd	t1,88(sp)
+   214d2:	e4da                	sd	s6,72(sp)
+   214d4:	6d06                	ld	s10,64(sp)
+   214d6:	6a26                	ld	s4,72(sp)
+   214d8:	886a                	mv	a6,s10
+   214da:	01aad363          	bge	s5,s10,214e0 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x15e>
+   214de:	581a                	lw	a6,164(sp)
+   214e0:	6f6a                	ld	t5,152(sp)
+   214e2:	0008099b          	sext.w	s3,a6
+   214e6:	000f0b63          	beqz	t5,214fc <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x17a>
+   214ea:	6b66                	ld	s6,88(sp)
+   214ec:	8d56                	mv	s10,s5
+   214ee:	8aa6                	mv	s5,s1
+   214f0:	44b1                	li	s1,12
+   214f2:	0e998163          	beq	s3,s1,215d4 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x252>
+   214f6:	84d6                	mv	s1,s5
+   214f8:	ecda                	sd	s6,88(sp)
+   214fa:	8aea                	mv	s5,s10
+   214fc:	78a6                	ld	a7,104(sp)
+   214fe:	00043383          	ld	t2,0(s0)
+   21502:	038c2703          	lw	a4,56(s8)
+   21506:	f598c503          	lbu	a0,-167(a7)
+   2150a:	66ca                	ld	a3,144(sp)
+   2150c:	87d2                	mv	a5,s4
+   2150e:	e01e                	sd	t2,0(sp)
+   21510:	88d6                	mv	a7,s5
+   21512:	884e                	mv	a6,s3
+   21514:	8666                	mv	a2,s9
+   21516:	85ee                	mv	a1,s11
+   21518:	95dff0ef          	jal	20e74 <y26::stage52::FullExecutor::Impl::pack_dense_a_p3(y26::stage52::(anonymous namespace)::Conv const&, y26::stage52::(anonymous namespace)::Tensor const&, signed char const*, int, int, int, int, signed char*) const [clone .isra.0]>
+   2151c:	67c6                	ld	a5,80(sp)
+   2151e:	0697d363          	bge	a5,s1,21584 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x202>
+   21522:	4721                	li	a4,8
+   21524:	3cea8563          	beq	s5,a4,218ee <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x56c>
+   21528:	1a0ba603          	lw	a2,416(s7) # 21a0 <(anonymous namespace)::g_thread_cluster0_hotpath_allowed+0x21a0>
+   2152c:	72a6                	ld	t0,104(sp)
+   2152e:	fff7cf13          	not	t5,a5
+   21532:	02f60833          	mul	a6,a2,a5
+   21536:	0e0bbe03          	ld	t3,224(s7)
+   2153a:	009f06bb          	addw	a3,t5,s1
+   2153e:	f422c303          	lbu	t1,-190(t0) # 1f42 <(anonymous namespace)::g_thread_cluster0_hotpath_allowed+0x1f42>
+   21542:	0016f893          	andi	a7,a3,1
+   21546:	f8ba                	sd	a4,112(sp)
+   21548:	e546                	sd	a7,136(sp)
+   2154a:	6008                	ld	a0,0(s0)
+   2154c:	00078b1b          	sext.w	s6,a5
+   21550:	00781d13          	slli	s10,a6,0x7
+   21554:	01ae05b3          	add	a1,t3,s10
+   21558:	20030f63          	beqz	t1,21776 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x3f4>
+   2155c:	67c6                	ld	a5,80(sp)
+   2155e:	048ba383          	lw	t2,72(s7)
+   21562:	4e91                	li	t4,4
+   21564:	0047971b          	slliw	a4,a5,0x4
+   21568:	40e38fbb          	subw	t6,t2,a4
+   2156c:	5dfede63          	bge	t4,t6,21b48 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x7c6>
+   21570:	7e46                	ld	t3,112(sp)
+   21572:	76e2                	ld	a3,56(sp)
+   21574:	4bfe4463          	blt	t3,t6,21a1c <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x69a>
+   21578:	0b01e0ef          	jal	3f628 <y26_stage53_kernel_m12n8>
+   2157c:	a401                	j	2177c <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x3fa>
+   2157e:	84d6                	mv	s1,s5
+   21580:	7caa                	ld	s9,168(sp)
+   21582:	6aaa                	ld	s5,136(sp)
+   21584:	7606                	ld	a2,96(sp)
+   21586:	6b06                	ld	s6,64(sp)
+   21588:	6a26                	ld	s4,72(sp)
+   2158a:	6f66                	ld	t5,88(sp)
+   2158c:	78e6                	ld	a7,120(sp)
+   2158e:	670a                	ld	a4,128(sp)
+   21590:	0016051b          	addiw	a0,a2,1 # 2001 <(anonymous namespace)::g_thread_cluster0_hotpath_allowed+0x2001>
+   21594:	415b0d3b          	subw	s10,s6,s5
+   21598:	014a85bb          	addw	a1,s5,s4
+   2159c:	011f03b3          	add	t2,t5,a7
+   215a0:	f0aa                	sd	a0,96(sp)
+   215a2:	e0ea                	sd	s10,64(sp)
+   215a4:	e4ae                	sd	a1,72(sp)
+   215a6:	ec9e                	sd	t2,88(sp)
+   215a8:	f2a716e3          	bne	a4,a0,214d4 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x152>
+   215ac:	8d5e                	mv	s10,s7
+   215ae:	7b4e                	ld	s6,240(sp)
+   215b0:	7bae                	ld	s7,232(sp)
+   215b2:	078d4c83          	lbu	s9,120(s10)
+   215b6:	560c9163          	bnez	s9,21b18 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x796>
+   215ba:	7412                	ld	s0,288(sp)
+   215bc:	70b2                	ld	ra,296(sp)
+   215be:	6dae                	ld	s11,200(sp)
+   215c0:	6d4e                	ld	s10,208(sp)
+   215c2:	6cee                	ld	s9,216(sp)
+   215c4:	7c0e                	ld	s8,224(sp)
+   215c6:	7aee                	ld	s5,248(sp)
+   215c8:	6a12                	ld	s4,256(sp)
+   215ca:	69b2                	ld	s3,264(sp)
+   215cc:	6952                	ld	s2,272(sp)
+   215ce:	64f2                	ld	s1,280(sp)
+   215d0:	6155                	addi	sp,sp,304
+   215d2:	8082                	ret
+   215d4:	6fc6                	ld	t6,80(sp)
+   215d6:	5f5fd363          	bge	t6,s5,21bbc <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x83a>
+   215da:	1a0ba683          	lw	a3,416(s7)
+   215de:	034ca583          	lw	a1,52(s9)
+   215e2:	038caf03          	lw	t5,56(s9)
+   215e6:	ffffc993          	not	s3,t6
+   215ea:	03f688b3          	mul	a7,a3,t6
+   215ee:	015984bb          	addw	s1,s3,s5
+   215f2:	0014f393          	andi	t2,s1,1
+   215f6:	89fe                	mv	s3,t6
+   215f8:	000f849b          	sext.w	s1,t6
+   215fc:	0e0bb603          	ld	a2,224(s7)
+   21600:	7762                	ld	a4,56(sp)
+   21602:	855a                	mv	a0,s6
+   21604:	ec9e                	sd	t2,88(sp)
+   21606:	03e58fb3          	mul	t6,a1,t5
+   2160a:	00789793          	slli	a5,a7,0x7
+   2160e:	963e                	add	a2,a2,a5
+   21610:	003f9593          	slli	a1,t6,0x3
+   21614:	6971d0ef          	jal	3f4aa <y26_stage54_kernel_direct_1x1_m12n16>
+   21618:	4531                	li	a0,12
+   2161a:	e02a                	sd	a0,0(sp)
+   2161c:	7722                	ld	a4,40(sp)
+   2161e:	7542                	ld	a0,48(sp)
+   21620:	88d2                	mv	a7,s4
+   21622:	e84a                	sd	s2,16(sp)
+   21624:	e426                	sd	s1,8(sp)
+   21626:	886a                	mv	a6,s10
+   21628:	87a2                	mv	a5,s0
+   2162a:	86e2                	mv	a3,s8
+   2162c:	866e                	mv	a2,s11
+   2162e:	85de                	mv	a1,s7
+   21630:	a77fe0ef          	jal	200a6 <y26::stage52::FullExecutor::Impl::store_dense_block(y26::stage52::(anonymous namespace)::Operation const&, y26::stage52::(anonymous namespace)::Conv const&, y26::stage52::(anonymous namespace)::Tensor const&, signed char*, y26::stage52::FullExecutor::Impl::DenseScratch&, int, int, int, int, bool)>
+   21634:	00198893          	addi	a7,s3,1
+   21638:	0008899b          	sext.w	s3,a7
+   2163c:	1159d563          	bge	s3,s5,21746 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x3c4>
+   21640:	6766                	ld	a4,88(sp)
+   21642:	cf21                	beqz	a4,2169a <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x318>
+   21644:	1a0ba683          	lw	a3,416(s7)
+   21648:	034cae83          	lw	t4,52(s9)
+   2164c:	038cae03          	lw	t3,56(s9)
+   21650:	031682b3          	mul	t0,a3,a7
+   21654:	0e0bb303          	ld	t1,224(s7)
+   21658:	7762                	ld	a4,56(sp)
+   2165a:	855a                	mv	a0,s6
+   2165c:	03ce8833          	mul	a6,t4,t3
+   21660:	00729593          	slli	a1,t0,0x7
+   21664:	00b30633          	add	a2,t1,a1
+   21668:	00381593          	slli	a1,a6,0x3
+   2166c:	63f1d0ef          	jal	3f4aa <y26_stage54_kernel_direct_1x1_m12n16>
+   21670:	7722                	ld	a4,40(sp)
+   21672:	7542                	ld	a0,48(sp)
+   21674:	46b1                	li	a3,12
+   21676:	e44e                	sd	s3,8(sp)
+   21678:	e036                	sd	a3,0(sp)
+   2167a:	88d2                	mv	a7,s4
+   2167c:	e84a                	sd	s2,16(sp)
+   2167e:	886a                	mv	a6,s10
+   21680:	87a2                	mv	a5,s0
+   21682:	86e2                	mv	a3,s8
+   21684:	866e                	mv	a2,s11
+   21686:	85de                	mv	a1,s7
+   21688:	a1ffe0ef          	jal	200a6 <y26::stage52::FullExecutor::Impl::store_dense_block(y26::stage52::(anonymous namespace)::Operation const&, y26::stage52::(anonymous namespace)::Conv const&, y26::stage52::(anonymous namespace)::Tensor const&, signed char*, y26::stage52::FullExecutor::Impl::DenseScratch&, int, int, int, int, bool)>
+   2168c:	6f46                	ld	t5,80(sp)
+   2168e:	002f0893          	addi	a7,t5,2
+   21692:	0008899b          	sext.w	s3,a7
+   21696:	0b59d863          	bge	s3,s5,21746 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x3c4>
+   2169a:	864e                	mv	a2,s3
+   2169c:	84e6                	mv	s1,s9
+   2169e:	89c6                	mv	s3,a7
+   216a0:	8cd6                	mv	s9,s5
+   216a2:	8ab2                	mv	s5,a2
+   216a4:	1a0ba683          	lw	a3,416(s7)
+   216a8:	0384af83          	lw	t6,56(s1) # 2038 <(anonymous namespace)::g_thread_cluster0_hotpath_allowed+0x2038>
+   216ac:	0344a383          	lw	t2,52(s1)
+   216b0:	033687b3          	mul	a5,a3,s3
+   216b4:	0e0bbe83          	ld	t4,224(s7)
+   216b8:	7762                	ld	a4,56(sp)
+   216ba:	855a                	mv	a0,s6
+   216bc:	03f38e33          	mul	t3,t2,t6
+   216c0:	00779293          	slli	t0,a5,0x7
+   216c4:	005e8633          	add	a2,t4,t0
+   216c8:	003e1593          	slli	a1,t3,0x3
+   216cc:	5df1d0ef          	jal	3f4aa <y26_stage54_kernel_direct_1x1_m12n16>
+   216d0:	7722                	ld	a4,40(sp)
+   216d2:	7542                	ld	a0,48(sp)
+   216d4:	e456                	sd	s5,8(sp)
+   216d6:	4ab1                	li	s5,12
+   216d8:	87a2                	mv	a5,s0
+   216da:	e056                	sd	s5,0(sp)
+   216dc:	88d2                	mv	a7,s4
+   216de:	886a                	mv	a6,s10
+   216e0:	86e2                	mv	a3,s8
+   216e2:	866e                	mv	a2,s11
+   216e4:	85de                	mv	a1,s7
+   216e6:	e84a                	sd	s2,16(sp)
+   216e8:	9bffe0ef          	jal	200a6 <y26::stage52::FullExecutor::Impl::store_dense_block(y26::stage52::(anonymous namespace)::Operation const&, y26::stage52::(anonymous namespace)::Conv const&, y26::stage52::(anonymous namespace)::Tensor const&, signed char*, y26::stage52::FullExecutor::Impl::DenseScratch&, int, int, int, int, bool)>
+   216ec:	1a0ba683          	lw	a3,416(s7)
+   216f0:	0344a303          	lw	t1,52(s1)
+   216f4:	5c8c                	lw	a1,56(s1)
+   216f6:	00198f13          	addi	t5,s3,1
+   216fa:	03e68833          	mul	a6,a3,t5
+   216fe:	0e0bb883          	ld	a7,224(s7)
+   21702:	7762                	ld	a4,56(sp)
+   21704:	855a                	mv	a0,s6
+   21706:	000f0a9b          	sext.w	s5,t5
+   2170a:	0989                	addi	s3,s3,2
+   2170c:	02b303b3          	mul	t2,t1,a1
+   21710:	00781613          	slli	a2,a6,0x7
+   21714:	9646                	add	a2,a2,a7
+   21716:	00339593          	slli	a1,t2,0x3
+   2171a:	5911d0ef          	jal	3f4aa <y26_stage54_kernel_direct_1x1_m12n16>
+   2171e:	4531                	li	a0,12
+   21720:	e02a                	sd	a0,0(sp)
+   21722:	7722                	ld	a4,40(sp)
+   21724:	7542                	ld	a0,48(sp)
+   21726:	e456                	sd	s5,8(sp)
+   21728:	e84a                	sd	s2,16(sp)
+   2172a:	88d2                	mv	a7,s4
+   2172c:	886a                	mv	a6,s10
+   2172e:	87a2                	mv	a5,s0
+   21730:	86e2                	mv	a3,s8
+   21732:	866e                	mv	a2,s11
+   21734:	85de                	mv	a1,s7
+   21736:	00098a9b          	sext.w	s5,s3
+   2173a:	96dfe0ef          	jal	200a6 <y26::stage52::FullExecutor::Impl::store_dense_block(y26::stage52::(anonymous namespace)::Operation const&, y26::stage52::(anonymous namespace)::Conv const&, y26::stage52::(anonymous namespace)::Tensor const&, signed char*, y26::stage52::FullExecutor::Impl::DenseScratch&, int, int, int, int, bool)>
+   2173e:	f79ac3e3          	blt	s5,s9,216a4 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x322>
+   21742:	8ae6                	mv	s5,s9
+   21744:	8ca6                	mv	s9,s1
+   21746:	7a06                	ld	s4,96(sp)
+   21748:	6686                	ld	a3,64(sp)
+   2174a:	6fa6                	ld	t6,72(sp)
+   2174c:	77e6                	ld	a5,120(sp)
+   2174e:	6e8a                	ld	t4,128(sp)
+   21750:	001a071b          	addiw	a4,s4,1
+   21754:	41a684bb          	subw	s1,a3,s10
+   21758:	01fd0a3b          	addw	s4,s10,t6
+   2175c:	f0ba                	sd	a4,96(sp)
+   2175e:	e0a6                	sd	s1,64(sp)
+   21760:	e4d2                	sd	s4,72(sp)
+   21762:	9b3e                	add	s6,s6,a5
+   21764:	e4ee84e3          	beq	t4,a4,215ac <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x22a>
+   21768:	8e26                	mv	t3,s1
+   2176a:	009d5363          	bge	s10,s1,21770 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x3ee>
+   2176e:	5e1a                	lw	t3,164(sp)
+   21770:	000e099b          	sext.w	s3,t3
+   21774:	bbb5                	j	214f0 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x16e>
+   21776:	76e2                	ld	a3,56(sp)
+   21778:	41f1d0ef          	jal	3f396 <y26_stage48_kernel_m12n16>
+   2177c:	7722                	ld	a4,40(sp)
+   2177e:	7542                	ld	a0,48(sp)
+   21780:	e45a                	sd	s6,8(sp)
+   21782:	866e                	mv	a2,s11
+   21784:	e84a                	sd	s2,16(sp)
+   21786:	e04e                	sd	s3,0(sp)
+   21788:	88d2                	mv	a7,s4
+   2178a:	4831                	li	a6,12
+   2178c:	87a2                	mv	a5,s0
+   2178e:	86e2                	mv	a3,s8
+   21790:	85de                	mv	a1,s7
+   21792:	915fe0ef          	jal	200a6 <y26::stage52::FullExecutor::Impl::store_dense_block(y26::stage52::(anonymous namespace)::Operation const&, y26::stage52::(anonymous namespace)::Conv const&, y26::stage52::(anonymous namespace)::Tensor const&, signed char*, y26::stage52::FullExecutor::Impl::DenseScratch&, int, int, int, int, bool)>
+   21796:	6646                	ld	a2,80(sp)
+   21798:	00160b13          	addi	s6,a2,1
+   2179c:	000b0d1b          	sext.w	s10,s6
+   217a0:	de9d52e3          	bge	s10,s1,21584 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x202>
+   217a4:	65aa                	ld	a1,136(sp)
+   217a6:	c5b1                	beqz	a1,217f2 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x470>
+   217a8:	1a0ba603          	lw	a2,416(s7)
+   217ac:	7526                	ld	a0,104(sp)
+   217ae:	0e0bb283          	ld	t0,224(s7)
+   217b2:	03660833          	mul	a6,a2,s6
+   217b6:	f4254303          	lbu	t1,-190(a0)
+   217ba:	6008                	ld	a0,0(s0)
+   217bc:	00781f13          	slli	t5,a6,0x7
+   217c0:	01e285b3          	add	a1,t0,t5
+   217c4:	32031a63          	bnez	t1,21af8 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x776>
+   217c8:	76e2                	ld	a3,56(sp)
+   217ca:	3cd1d0ef          	jal	3f396 <y26_stage48_kernel_m12n16>
+   217ce:	7722                	ld	a4,40(sp)
+   217d0:	7542                	ld	a0,48(sp)
+   217d2:	0b05                	addi	s6,s6,1
+   217d4:	e46a                	sd	s10,8(sp)
+   217d6:	e84a                	sd	s2,16(sp)
+   217d8:	e04e                	sd	s3,0(sp)
+   217da:	88d2                	mv	a7,s4
+   217dc:	4831                	li	a6,12
+   217de:	87a2                	mv	a5,s0
+   217e0:	86e2                	mv	a3,s8
+   217e2:	866e                	mv	a2,s11
+   217e4:	85de                	mv	a1,s7
+   217e6:	000b0d1b          	sext.w	s10,s6
+   217ea:	8bdfe0ef          	jal	200a6 <y26::stage52::FullExecutor::Impl::store_dense_block(y26::stage52::(anonymous namespace)::Operation const&, y26::stage52::(anonymous namespace)::Conv const&, y26::stage52::(anonymous namespace)::Tensor const&, signed char*, y26::stage52::FullExecutor::Impl::DenseScratch&, int, int, int, int, bool)>
+   217ee:	d89d5be3          	bge	s10,s1,21584 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x202>
+   217f2:	8fea                	mv	t6,s10
+   217f4:	e556                	sd	s5,136(sp)
+   217f6:	f566                	sd	s9,168(sp)
+   217f8:	8aa6                	mv	s5,s1
+   217fa:	8cda                	mv	s9,s6
+   217fc:	8d52                	mv	s10,s4
+   217fe:	74a6                	ld	s1,104(sp)
+   21800:	8a4e                	mv	s4,s3
+   21802:	7b42                	ld	s6,48(sp)
+   21804:	89fe                	mv	s3,t6
+   21806:	a879                	j	218a4 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x522>
+   21808:	048ba303          	lw	t1,72(s7)
+   2180c:	004c981b          	slliw	a6,s9,0x4
+   21810:	4891                	li	a7,4
+   21812:	41030f3b          	subw	t5,t1,a6
+   21816:	0de8d463          	bge	a7,t5,218de <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x55c>
+   2181a:	73c6                	ld	t2,112(sp)
+   2181c:	76e2                	ld	a3,56(sp)
+   2181e:	0be3ca63          	blt	t2,t5,218d2 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x550>
+   21822:	6071d0ef          	jal	3f628 <y26_stage53_kernel_m12n8>
+   21826:	7722                	ld	a4,40(sp)
+   21828:	e44e                	sd	s3,8(sp)
+   2182a:	87a2                	mv	a5,s0
+   2182c:	86e2                	mv	a3,s8
+   2182e:	866e                	mv	a2,s11
+   21830:	85de                	mv	a1,s7
+   21832:	855a                	mv	a0,s6
+   21834:	e84a                	sd	s2,16(sp)
+   21836:	e052                	sd	s4,0(sp)
+   21838:	88ea                	mv	a7,s10
+   2183a:	4831                	li	a6,12
+   2183c:	86bfe0ef          	jal	200a6 <y26::stage52::FullExecutor::Impl::store_dense_block(y26::stage52::(anonymous namespace)::Operation const&, y26::stage52::(anonymous namespace)::Conv const&, y26::stage52::(anonymous namespace)::Tensor const&, signed char*, y26::stage52::FullExecutor::Impl::DenseScratch&, int, int, int, int, bool)>
+   21840:	1a0ba603          	lw	a2,416(s7)
+   21844:	0c85                	addi	s9,s9,1
+   21846:	0e0bb703          	ld	a4,224(s7)
+   2184a:	039607b3          	mul	a5,a2,s9
+   2184e:	f424c683          	lbu	a3,-190(s1)
+   21852:	6008                	ld	a0,0(s0)
+   21854:	000c899b          	sext.w	s3,s9
+   21858:	00779f93          	slli	t6,a5,0x7
+   2185c:	01f705b3          	add	a1,a4,t6
+   21860:	c6ad                	beqz	a3,218ca <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x548>
+   21862:	048bae83          	lw	t4,72(s7)
+   21866:	004c9e1b          	slliw	t3,s9,0x4
+   2186a:	4311                	li	t1,4
+   2186c:	41ce82bb          	subw	t0,t4,t3
+   21870:	06535b63          	bge	t1,t0,218e6 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x564>
+   21874:	7846                	ld	a6,112(sp)
+   21876:	76e2                	ld	a3,56(sp)
+   21878:	06585063          	bge	a6,t0,218d8 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x556>
+   2187c:	31b1d0ef          	jal	3f396 <y26_stage48_kernel_m12n16>
+   21880:	7722                	ld	a4,40(sp)
+   21882:	0c85                	addi	s9,s9,1
+   21884:	e44e                	sd	s3,8(sp)
+   21886:	e84a                	sd	s2,16(sp)
+   21888:	e052                	sd	s4,0(sp)
+   2188a:	88ea                	mv	a7,s10
+   2188c:	4831                	li	a6,12
+   2188e:	87a2                	mv	a5,s0
+   21890:	86e2                	mv	a3,s8
+   21892:	866e                	mv	a2,s11
+   21894:	85de                	mv	a1,s7
+   21896:	855a                	mv	a0,s6
+   21898:	000c899b          	sext.w	s3,s9
+   2189c:	80bfe0ef          	jal	200a6 <y26::stage52::FullExecutor::Impl::store_dense_block(y26::stage52::(anonymous namespace)::Operation const&, y26::stage52::(anonymous namespace)::Conv const&, y26::stage52::(anonymous namespace)::Tensor const&, signed char*, y26::stage52::FullExecutor::Impl::DenseScratch&, int, int, int, int, bool)>
+   218a0:	cd59dfe3          	bge	s3,s5,2157e <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x1fc>
+   218a4:	1a0ba603          	lw	a2,416(s7)
+   218a8:	0e0bbe83          	ld	t4,224(s7)
+   218ac:	f424ce03          	lbu	t3,-190(s1)
+   218b0:	039605b3          	mul	a1,a2,s9
+   218b4:	6008                	ld	a0,0(s0)
+   218b6:	00759293          	slli	t0,a1,0x7
+   218ba:	005e85b3          	add	a1,t4,t0
+   218be:	f40e15e3          	bnez	t3,21808 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x486>
+   218c2:	76e2                	ld	a3,56(sp)
+   218c4:	2d31d0ef          	jal	3f396 <y26_stage48_kernel_m12n16>
+   218c8:	bfb9                	j	21826 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x4a4>
+   218ca:	76e2                	ld	a3,56(sp)
+   218cc:	2cb1d0ef          	jal	3f396 <y26_stage48_kernel_m12n16>
+   218d0:	bf45                	j	21880 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x4fe>
+   218d2:	2c51d0ef          	jal	3f396 <y26_stage48_kernel_m12n16>
+   218d6:	bf81                	j	21826 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x4a4>
+   218d8:	5511d0ef          	jal	3f628 <y26_stage53_kernel_m12n8>
+   218dc:	b755                	j	21880 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x4fe>
+   218de:	76e2                	ld	a3,56(sp)
+   218e0:	4dd1d0ef          	jal	3f5bc <y26_stage53_kernel_m12n4>
+   218e4:	b789                	j	21826 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x4a4>
+   218e6:	76e2                	ld	a3,56(sp)
+   218e8:	4d51d0ef          	jal	3f5bc <y26_stage53_kernel_m12n4>
+   218ec:	bf51                	j	21880 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x4fe>
+   218ee:	1a0ba603          	lw	a2,416(s7)
+   218f2:	0e0bbf83          	ld	t6,224(s7)
+   218f6:	fff7cb13          	not	s6,a5
+   218fa:	02f605b3          	mul	a1,a2,a5
+   218fe:	6008                	ld	a0,0(s0)
+   21900:	76e2                	ld	a3,56(sp)
+   21902:	009b0ebb          	addw	t4,s6,s1
+   21906:	001efe13          	andi	t3,t4,1
+   2190a:	8d3e                	mv	s10,a5
+   2190c:	00078b1b          	sext.w	s6,a5
+   21910:	f8f2                	sd	t3,112(sp)
+   21912:	00759293          	slli	t0,a1,0x7
+   21916:	005f85b3          	add	a1,t6,t0
+   2191a:	1b11d0ef          	jal	3f2ca <y26_stage48_kernel_m8n16>
+   2191e:	7722                	ld	a4,40(sp)
+   21920:	7542                	ld	a0,48(sp)
+   21922:	88d2                	mv	a7,s4
+   21924:	e84a                	sd	s2,16(sp)
+   21926:	e45a                	sd	s6,8(sp)
+   21928:	e04e                	sd	s3,0(sp)
+   2192a:	8856                	mv	a6,s5
+   2192c:	87a2                	mv	a5,s0
+   2192e:	86e2                	mv	a3,s8
+   21930:	866e                	mv	a2,s11
+   21932:	85de                	mv	a1,s7
+   21934:	f72fe0ef          	jal	200a6 <y26::stage52::FullExecutor::Impl::store_dense_block(y26::stage52::(anonymous namespace)::Operation const&, y26::stage52::(anonymous namespace)::Conv const&, y26::stage52::(anonymous namespace)::Tensor const&, signed char*, y26::stage52::FullExecutor::Impl::DenseScratch&, int, int, int, int, bool)>
+   21938:	001d0893          	addi	a7,s10,1
+   2193c:	00088d1b          	sext.w	s10,a7
+   21940:	c49d52e3          	bge	s10,s1,21584 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x202>
+   21944:	7646                	ld	a2,112(sp)
+   21946:	ea41                	bnez	a2,219d6 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x654>
+   21948:	f8d6                	sd	s5,112(sp)
+   2194a:	7b42                	ld	s6,48(sp)
+   2194c:	8aea                	mv	s5,s10
+   2194e:	7d62                	ld	s10,56(sp)
+   21950:	e566                	sd	s9,136(sp)
+   21952:	8cc6                	mv	s9,a7
+   21954:	1a0ba603          	lw	a2,416(s7)
+   21958:	0e0bb383          	ld	t2,224(s7)
+   2195c:	6008                	ld	a0,0(s0)
+   2195e:	039607b3          	mul	a5,a2,s9
+   21962:	86ea                	mv	a3,s10
+   21964:	00779713          	slli	a4,a5,0x7
+   21968:	00e385b3          	add	a1,t2,a4
+   2196c:	15f1d0ef          	jal	3f2ca <y26_stage48_kernel_m8n16>
+   21970:	7722                	ld	a4,40(sp)
+   21972:	88d2                	mv	a7,s4
+   21974:	87a2                	mv	a5,s0
+   21976:	4821                	li	a6,8
+   21978:	e456                	sd	s5,8(sp)
+   2197a:	86e2                	mv	a3,s8
+   2197c:	866e                	mv	a2,s11
+   2197e:	85de                	mv	a1,s7
+   21980:	855a                	mv	a0,s6
+   21982:	e84a                	sd	s2,16(sp)
+   21984:	e04e                	sd	s3,0(sp)
+   21986:	f20fe0ef          	jal	200a6 <y26::stage52::FullExecutor::Impl::store_dense_block(y26::stage52::(anonymous namespace)::Operation const&, y26::stage52::(anonymous namespace)::Conv const&, y26::stage52::(anonymous namespace)::Tensor const&, signed char*, y26::stage52::FullExecutor::Impl::DenseScratch&, int, int, int, int, bool)>
+   2198a:	1a0ba603          	lw	a2,416(s7)
+   2198e:	001c8a93          	addi	s5,s9,1
+   21992:	0e0bbf83          	ld	t6,224(s7)
+   21996:	035605b3          	mul	a1,a2,s5
+   2199a:	6008                	ld	a0,0(s0)
+   2199c:	86ea                	mv	a3,s10
+   2199e:	2a81                	sext.w	s5,s5
+   219a0:	0c89                	addi	s9,s9,2
+   219a2:	00759e93          	slli	t4,a1,0x7
+   219a6:	01df85b3          	add	a1,t6,t4
+   219aa:	1211d0ef          	jal	3f2ca <y26_stage48_kernel_m8n16>
+   219ae:	7722                	ld	a4,40(sp)
+   219b0:	e456                	sd	s5,8(sp)
+   219b2:	e84a                	sd	s2,16(sp)
+   219b4:	e04e                	sd	s3,0(sp)
+   219b6:	88d2                	mv	a7,s4
+   219b8:	87a2                	mv	a5,s0
+   219ba:	86e2                	mv	a3,s8
+   219bc:	866e                	mv	a2,s11
+   219be:	85de                	mv	a1,s7
+   219c0:	855a                	mv	a0,s6
+   219c2:	4821                	li	a6,8
+   219c4:	000c8a9b          	sext.w	s5,s9
+   219c8:	edefe0ef          	jal	200a6 <y26::stage52::FullExecutor::Impl::store_dense_block(y26::stage52::(anonymous namespace)::Operation const&, y26::stage52::(anonymous namespace)::Conv const&, y26::stage52::(anonymous namespace)::Tensor const&, signed char*, y26::stage52::FullExecutor::Impl::DenseScratch&, int, int, int, int, bool)>
+   219cc:	f89ac4e3          	blt	s5,s1,21954 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x5d2>
+   219d0:	7ac6                	ld	s5,112(sp)
+   219d2:	6caa                	ld	s9,136(sp)
+   219d4:	be45                	j	21584 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x202>
+   219d6:	1a0ba603          	lw	a2,416(s7)
+   219da:	0e0bb303          	ld	t1,224(s7)
+   219de:	6008                	ld	a0,0(s0)
+   219e0:	03160833          	mul	a6,a2,a7
+   219e4:	76e2                	ld	a3,56(sp)
+   219e6:	00781f13          	slli	t5,a6,0x7
+   219ea:	01e305b3          	add	a1,t1,t5
+   219ee:	0dd1d0ef          	jal	3f2ca <y26_stage48_kernel_m8n16>
+   219f2:	7722                	ld	a4,40(sp)
+   219f4:	7542                	ld	a0,48(sp)
+   219f6:	e46a                	sd	s10,8(sp)
+   219f8:	88d2                	mv	a7,s4
+   219fa:	86e2                	mv	a3,s8
+   219fc:	e84a                	sd	s2,16(sp)
+   219fe:	e04e                	sd	s3,0(sp)
+   21a00:	8856                	mv	a6,s5
+   21a02:	87a2                	mv	a5,s0
+   21a04:	866e                	mv	a2,s11
+   21a06:	85de                	mv	a1,s7
+   21a08:	e9efe0ef          	jal	200a6 <y26::stage52::FullExecutor::Impl::store_dense_block(y26::stage52::(anonymous namespace)::Operation const&, y26::stage52::(anonymous namespace)::Conv const&, y26::stage52::(anonymous namespace)::Tensor const&, signed char*, y26::stage52::FullExecutor::Impl::DenseScratch&, int, int, int, int, bool)>
+   21a0c:	66c6                	ld	a3,80(sp)
+   21a0e:	00268893          	addi	a7,a3,2
+   21a12:	00088d1b          	sext.w	s10,a7
+   21a16:	f29d49e3          	blt	s10,s1,21948 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x5c6>
+   21a1a:	b6ad                	j	21584 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x202>
+   21a1c:	17b1d0ef          	jal	3f396 <y26_stage48_kernel_m12n16>
+   21a20:	bbb1                	j	2177c <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x3fa>
+   21a22:	4901                	li	s2,0
+   21a24:	ba7d                	j	213e2 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x60>
+   21a26:	4ab1                	li	s5,12
+   21a28:	b431                	j	21434 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0xb2>
+   21a2a:	478d                	li	a5,3
+   21a2c:	a547d1e3          	bge	a5,s4,2146e <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0xec>
+   21a30:	41f9da1b          	sraiw	s4,s3,0x1f
+   21a34:	4149833b          	subw	t1,s3,s4
+   21a38:	00137393          	andi	t2,t1,1
+   21a3c:	01f9d71b          	srliw	a4,s3,0x1f
+   21a40:	0143863b          	addw	a2,t2,s4
+   21a44:	013709bb          	addw	s3,a4,s3
+   21a48:	029606bb          	mulw	a3,a2,s1
+   21a4c:	4019d59b          	sraiw	a1,s3,0x1
+   21a50:	dd02                	sw	zero,184(sp)
+   21a52:	0a010e23          	sb	zero,188(sp)
+   21a56:	03c58ebb          	mulw	t4,a1,t3
+   21a5a:	01f6d89b          	srliw	a7,a3,0x1f
+   21a5e:	9cb5                	addw	s1,s1,a3
+   21a60:	00d88fbb          	addw	t6,a7,a3
+   21a64:	078d4683          	lbu	a3,120(s10)
+   21a68:	01f4d51b          	srliw	a0,s1,0x1f
+   21a6c:	401fd79b          	sraiw	a5,t6,0x1
+   21a70:	00950f3b          	addw	t5,a0,s1
+   21a74:	e8be                	sd	a5,80(sp)
+   21a76:	401f549b          	sraiw	s1,t5,0x1
+   21a7a:	01ce8e3b          	addw	t3,t4,t3
+   21a7e:	01fe5a1b          	srliw	s4,t3,0x1f
+   21a82:	01fed31b          	srliw	t1,t4,0x1f
+   21a86:	01ca073b          	addw	a4,s4,t3
+   21a8a:	01d303bb          	addw	t2,t1,t4
+   21a8e:	40175f1b          	sraiw	t5,a4,0x1
+   21a92:	4013d89b          	sraiw	a7,t2,0x1
+   21a96:	9e0683e3          	beqz	a3,2147c <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0xfa>
+   21a9a:	1928                	addi	a0,sp,184
+   21a9c:	ec96                	sd	t0,88(sp)
+   21a9e:	e4c6                	sd	a7,72(sp)
+   21aa0:	e0fa                	sd	t5,64(sp)
+   21aa2:	fc42                	sd	a6,56(sp)
+   21aa4:	7fd380ef          	jal	5aaa0 <y26::stage51::begin_q62_vector_rne(y26::stage51::VectorFixedPointState*)>
+   21aa8:	7862                	ld	a6,56(sp)
+   21aaa:	6f06                	ld	t5,64(sp)
+   21aac:	68a6                	ld	a7,72(sp)
+   21aae:	62e6                	ld	t0,88(sp)
+   21ab0:	9c0516e3          	bnez	a0,2147c <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0xfa>
+   21ab4:	4541                	li	a0,16
+   21ab6:	81af30ef          	jal	14ad0 <__cxa_allocate_exception@plt>
+   21aba:	0005cc37          	lui	s8,0x5c
+   21abe:	2f0c0593          	addi	a1,s8,752 # 5c2f0 <_IO_stdin_used+0xd10>
+   21ac2:	842a                	mv	s0,a0
+   21ac4:	fcdf20ef          	jal	14a90 <std::runtime_error::runtime_error(char const*)@plt>
+   21ac8:	f5de                	sd	s7,232(sp)
+   21aca:	000694b7          	lui	s1,0x69
+   21ace:	d0048593          	addi	a1,s1,-768 # 68d00 <typeinfo for std::runtime_error@GLIBCXX_3.4>
+   21ad2:	6bd5                	lui	s7,0x15
+   21ad4:	ce0b8613          	addi	a2,s7,-800 # 14ce0 <std::runtime_error::~runtime_error()@plt>
+   21ad8:	8522                	mv	a0,s0
+   21ada:	f9da                	sd	s6,240(sp)
+   21adc:	d84f30ef          	jal	15060 <__cxa_throw@plt>
+   21ae0:	029989bb          	mulw	s3,s3,s1
+   21ae4:	8f72                	mv	t5,t3
+   21ae6:	4881                	li	a7,0
+   21ae8:	0349c5bb          	divw	a1,s3,s4
+   21aec:	0099863b          	addw	a2,s3,s1
+   21af0:	034644bb          	divw	s1,a2,s4
+   21af4:	e8ae                	sd	a1,80(sp)
+   21af6:	baa5                	j	2146e <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0xec>
+   21af8:	048ba883          	lw	a7,72(s7)
+   21afc:	004b169b          	slliw	a3,s6,0x4
+   21b00:	4791                	li	a5,4
+   21b02:	40d883bb          	subw	t2,a7,a3
+   21b06:	0e77d363          	bge	a5,t2,21bec <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x86a>
+   21b0a:	7746                	ld	a4,112(sp)
+   21b0c:	76e2                	ld	a3,56(sp)
+   21b0e:	0a774463          	blt	a4,t2,21bb6 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x834>
+   21b12:	3171d0ef          	jal	3f628 <y26_stage53_kernel_m12n8>
+   21b16:	b965                	j	217ce <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x44c>
+   21b18:	1928                	addi	a0,sp,184
+   21b1a:	092390ef          	jal	5abac <y26::stage51::end_q62_vector_rne(y26::stage51::VectorFixedPointState*)>
+   21b1e:	00855d13          	srli	s10,a0,0x8
+   21b22:	0ffd7d93          	zext.b	s11,s10
+   21b26:	000d8663          	beqz	s11,21b32 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x7b0>
+   21b2a:	0ff57413          	zext.b	s0,a0
+   21b2e:	a80406e3          	beqz	s0,215ba <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x238>
+   21b32:	4541                	li	a0,16
+   21b34:	f9df20ef          	jal	14ad0 <__cxa_allocate_exception@plt>
+   21b38:	0005cab7          	lui	s5,0x5c
+   21b3c:	318a8593          	addi	a1,s5,792 # 5c318 <_IO_stdin_used+0xd38>
+   21b40:	842a                	mv	s0,a0
+   21b42:	f4ff20ef          	jal	14a90 <std::runtime_error::runtime_error(char const*)@plt>
+   21b46:	b749                	j	21ac8 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x746>
+   21b48:	76e2                	ld	a3,56(sp)
+   21b4a:	2731d0ef          	jal	3f5bc <y26_stage53_kernel_m12n4>
+   21b4e:	b13d                	j	2177c <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x3fa>
+   21b50:	054d2a03          	lw	s4,84(s10)
+   21b54:	4305                	li	t1,1
+   21b56:	926a1fe3          	bne	s4,t1,21494 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x112>
+   21b5a:	058d3383          	ld	t2,88(s10)
+   21b5e:	02031993          	slli	s3,t1,0x20
+   21b62:	00698633          	add	a2,s3,t1
+   21b66:	92c397e3          	bne	t2,a2,21494 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x112>
+   21b6a:	060d3583          	ld	a1,96(s10)
+   21b6e:	934593e3          	bne	a1,s4,21494 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x112>
+   21b72:	068d2683          	lw	a3,104(s10)
+   21b76:	90069fe3          	bnez	a3,21494 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x112>
+   21b7a:	048d3503          	ld	a0,72(s10)
+   21b7e:	4e9d                	li	t4,7
+   21b80:	020e9e13          	slli	t3,t4,0x20
+   21b84:	00fe0a13          	addi	s4,t3,15
+   21b88:	01457333          	and	t1,a0,s4
+   21b8c:	900314e3          	bnez	t1,21494 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x112>
+   21b90:	034ca383          	lw	t2,52(s9)
+   21b94:	034c2703          	lw	a4,52(s8)
+   21b98:	8ee39ee3          	bne	t2,a4,21494 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x112>
+   21b9c:	f487cf83          	lbu	t6,-184(a5)
+   21ba0:	038c2983          	lw	s3,56(s8)
+   21ba4:	038ca783          	lw	a5,56(s9)
+   21ba8:	040f9663          	bnez	t6,21bf4 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x872>
+   21bac:	41378633          	sub	a2,a5,s3
+   21bb0:	00163f93          	seqz	t6,a2
+   21bb4:	b0c5                	j	21494 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x112>
+   21bb6:	7e01d0ef          	jal	3f396 <y26_stage48_kernel_m12n16>
+   21bba:	b911                	j	217ce <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x44c>
+   21bbc:	7786                	ld	a5,96(sp)
+   21bbe:	6686                	ld	a3,64(sp)
+   21bc0:	62a6                	ld	t0,72(sp)
+   21bc2:	7366                	ld	t1,120(sp)
+   21bc4:	680a                	ld	a6,128(sp)
+   21bc6:	00178e9b          	addiw	t4,a5,1
+   21bca:	41a68e3b          	subw	t3,a3,s10
+   21bce:	005d0a3b          	addw	s4,s10,t0
+   21bd2:	f0f6                	sd	t4,96(sp)
+   21bd4:	e0f2                	sd	t3,64(sp)
+   21bd6:	e4d2                	sd	s4,72(sp)
+   21bd8:	9b1a                	add	s6,s6,t1
+   21bda:	9dd809e3          	beq	a6,t4,215ac <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x22a>
+   21bde:	000e099b          	sext.w	s3,t3
+   21be2:	91cd57e3          	bge	s10,t3,214f0 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x16e>
+   21be6:	000d099b          	sext.w	s3,s10
+   21bea:	b219                	j	214f0 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x16e>
+   21bec:	76e2                	ld	a3,56(sp)
+   21bee:	1cf1d0ef          	jal	3f5bc <y26_stage53_kernel_m12n4>
+   21bf2:	bef1                	j	217ce <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x44c>
+   21bf4:	f9da                	sd	s6,240(sp)
+   21bf6:	f5de                	sd	s7,232(sp)
+   21bf8:	17379263          	bne	a5,s3,21d5c <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x9da>
+   21bfc:	6346                	ld	t1,80(sp)
+   21bfe:	0e935663          	bge	t1,s1,21cea <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x968>
+   21c02:	0fe8d463          	bge	a7,t5,21cea <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x968>
+   21c06:	411f0bbb          	subw	s7,t5,a7
+   21c0a:	020b9593          	slli	a1,s7,0x20
+   21c0e:	0205df13          	srli	t5,a1,0x20
+   21c12:	0028939b          	slliw	t2,a7,0x2
+   21c16:	4078863b          	subw	a2,a7,t2
+   21c1a:	98fa                	add	a7,a7,t5
+   21c1c:	00261f9b          	slliw	t6,a2,0x2
+   21c20:	00189513          	slli	a0,a7,0x1
+   21c24:	01150ab3          	add	s5,a0,a7
+   21c28:	7bc2                	ld	s7,48(sp)
+   21c2a:	41f0073b          	negw	a4,t6
+   21c2e:	005a9693          	slli	a3,s5,0x5
+   21c32:	00371a13          	slli	s4,a4,0x3
+   21c36:	6b09                	lui	s6,0x2
+   21c38:	00d807b3          	add	a5,a6,a3
+   21c3c:	01480eb3          	add	t4,a6,s4
+   21c40:	01f28e3b          	addw	t3,t0,t6
+   21c44:	0003099b          	sext.w	s3,t1
+   21c48:	02040593          	addi	a1,s0,32
+   21c4c:	016b8ab3          	add	s5,s7,s6
+   21c50:	e4ca                	sd	s2,72(sp)
+   21c52:	e0be                	sd	a5,64(sp)
+   21c54:	f8f6                	sd	t4,112(sp)
+   21c56:	fcf2                	sd	t3,120(sp)
+   21c58:	ecae                	sd	a1,88(sp)
+   21c5a:	f0c2                	sd	a6,96(sp)
+   21c5c:	e126                	sd	s1,128(sp)
+   21c5e:	fc6e                	sd	s11,56(sp)
+   21c60:	891a                	mv	s2,t1
+   21c62:	e896                	sd	t0,80(sp)
+   21c64:	8b4e                	mv	s6,s3
+   21c66:	72e6                	ld	t0,120(sp)
+   21c68:	79c6                	ld	s3,112(sp)
+   21c6a:	00491d9b          	slliw	s11,s2,0x4
+   21c6e:	f4ee                	sd	s11,104(sp)
+   21c70:	4bad                	li	s7,11
+   21c72:	8dda                	mv	s11,s6
+   21c74:	8b16                	mv	s6,t0
+   21c76:	6846                	ld	a6,80(sp)
+   21c78:	4331                	li	t1,12
+   21c7a:	000b049b          	sext.w	s1,s6
+   21c7e:	41680a3b          	subw	s4,a6,s6
+   21c82:	01635363          	bge	t1,s6,21c88 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x906>
+   21c86:	44b1                	li	s1,12
+   21c88:	076bd463          	bge	s7,s6,21cf0 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x96e>
+   21c8c:	1a0d2683          	lw	a3,416(s10)
+   21c90:	034caf03          	lw	t5,52(s9)
+   21c94:	038ca383          	lw	t2,56(s9)
+   21c98:	032688b3          	mul	a7,a3,s2
+   21c9c:	0e0d3603          	ld	a2,224(s10)
+   21ca0:	6766                	ld	a4,88(sp)
+   21ca2:	027f0fb3          	mul	t6,t5,t2
+   21ca6:	00789513          	slli	a0,a7,0x7
+   21caa:	962a                	add	a2,a2,a0
+   21cac:	854e                	mv	a0,s3
+   21cae:	003f9593          	slli	a1,t6,0x3
+   21cb2:	7f81d0ef          	jal	3f4aa <y26_stage54_kernel_direct_1x1_m12n16>
+   21cb6:	65a6                	ld	a1,72(sp)
+   21cb8:	7722                	ld	a4,40(sp)
+   21cba:	7662                	ld	a2,56(sp)
+   21cbc:	7542                	ld	a0,48(sp)
+   21cbe:	e82e                	sd	a1,16(sp)
+   21cc0:	88d2                	mv	a7,s4
+   21cc2:	e46e                	sd	s11,8(sp)
+   21cc4:	e026                	sd	s1,0(sp)
+   21cc6:	4831                	li	a6,12
+   21cc8:	87a2                	mv	a5,s0
+   21cca:	86e2                	mv	a3,s8
+   21ccc:	85ea                	mv	a1,s10
+   21cce:	bd8fe0ef          	jal	200a6 <y26::stage52::FullExecutor::Impl::store_dense_block(y26::stage52::(anonymous namespace)::Operation const&, y26::stage52::(anonymous namespace)::Conv const&, y26::stage52::(anonymous namespace)::Tensor const&, signed char*, y26::stage52::FullExecutor::Impl::DenseScratch&, int, int, int, int, bool)>
+   21cd2:	6a06                	ld	s4,64(sp)
+   21cd4:	06098993          	addi	s3,s3,96
+   21cd8:	3b51                	addiw	s6,s6,-12 # 1ff4 <(anonymous namespace)::g_thread_cluster0_hotpath_allowed+0x1ff4>
+   21cda:	f93a1ee3          	bne	s4,s3,21c76 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x8f4>
+   21cde:	698a                	ld	s3,128(sp)
+   21ce0:	0905                	addi	s2,s2,1
+   21ce2:	00090b1b          	sext.w	s6,s2
+   21ce6:	f93b40e3          	blt	s6,s3,21c66 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x8e4>
+   21cea:	7b4e                	ld	s6,240(sp)
+   21cec:	7bae                	ld	s7,232(sp)
+   21cee:	b0d1                	j	215b2 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x230>
+   21cf0:	6014                	ld	a3,0(s0)
+   21cf2:	038c2703          	lw	a4,56(s8)
+   21cf6:	f59ac503          	lbu	a0,-167(s5)
+   21cfa:	75e2                	ld	a1,56(sp)
+   21cfc:	e036                	sd	a3,0(sp)
+   21cfe:	7686                	ld	a3,96(sp)
+   21d00:	87d2                	mv	a5,s4
+   21d02:	8666                	mv	a2,s9
+   21d04:	48b1                	li	a7,12
+   21d06:	8826                	mv	a6,s1
+   21d08:	96cff0ef          	jal	20e74 <y26::stage52::FullExecutor::Impl::pack_dense_a_p3(y26::stage52::(anonymous namespace)::Conv const&, y26::stage52::(anonymous namespace)::Tensor const&, signed char const*, int, int, int, int, signed char*) const [clone .isra.0]>
+   21d0c:	1a0d2603          	lw	a2,416(s10)
+   21d10:	0e0d3e83          	ld	t4,224(s10)
+   21d14:	f42ac703          	lbu	a4,-190(s5)
+   21d18:	032607b3          	mul	a5,a2,s2
+   21d1c:	6008                	ld	a0,0(s0)
+   21d1e:	00779e13          	slli	t3,a5,0x7
+   21d22:	01ce85b3          	add	a1,t4,t3
+   21d26:	c305                	beqz	a4,21d46 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x9c4>
+   21d28:	048d2283          	lw	t0,72(s10)
+   21d2c:	7826                	ld	a6,104(sp)
+   21d2e:	4f11                	li	t5,4
+   21d30:	4102833b          	subw	t1,t0,a6
+   21d34:	026f5063          	bge	t5,t1,21d54 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x9d2>
+   21d38:	43a1                	li	t2,8
+   21d3a:	66e6                	ld	a3,88(sp)
+   21d3c:	0063c963          	blt	t2,t1,21d4e <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x9cc>
+   21d40:	0e91d0ef          	jal	3f628 <y26_stage53_kernel_m12n8>
+   21d44:	bf8d                	j	21cb6 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x934>
+   21d46:	66e6                	ld	a3,88(sp)
+   21d48:	64e1d0ef          	jal	3f396 <y26_stage48_kernel_m12n16>
+   21d4c:	b7ad                	j	21cb6 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x934>
+   21d4e:	6481d0ef          	jal	3f396 <y26_stage48_kernel_m12n16>
+   21d52:	b795                	j	21cb6 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x934>
+   21d54:	66e6                	ld	a3,88(sp)
+   21d56:	0671d0ef          	jal	3f5bc <y26_stage53_kernel_m12n4>
+   21d5a:	bfb1                	j	21cb6 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x934>
+   21d5c:	4f81                	li	t6,0
+   21d5e:	7b4e                	ld	s6,240(sp)
+   21d60:	7bae                	ld	s7,232(sp)
+   21d62:	f32ff06f          	j	21494 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x112>
+   21d66:	88aa                	mv	a7,a0
+   21d68:	8522                	mv	a0,s0
+   21d6a:	8a46                	mv	s4,a7
+   21d6c:	f9da                	sd	s6,240(sp)
+   21d6e:	f5de                	sd	s7,232(sp)
+   21d70:	e51f20ef          	jal	14bc0 <__cxa_free_exception@plt>
+   21d74:	8552                	mv	a0,s4
+   21d76:	b4af30ef          	jal	150c0 <_Unwind_Resume@plt>
+   21d7a:	b7f5                	j	21d66 <y26::stage52::FullExecutor::Impl::run_dense_conv_chunk(y26::stage52::(anonymous namespace)::Operation const&, int, int)+0x9e4>

@@ -1,0 +1,6 @@
+sequence	commit	publication_scope	github_status	gitlab_status
+0	9e9e32de006200f0224e58b059abf4583fdea213	accepted Stage53 baseline	prestage-parity	prestage-parity
+1	e6949efd8c3ba13b9d509e1154753005719ee2a3	Stage54 hot-path specialization	pending-final-fast-forward	pending-final-fast-forward
+2	e7f44c62cc5aaa20d26247e8c55b2327e8ccdd2c	Stage54 optimized handoff	pending-final-fast-forward	pending-final-fast-forward
+3	233bd46fecbb6b4396e4d869253ddca9ba5dfc6f	Stage54 dual-soak validation	pending-final-fast-forward	pending-final-fast-forward
+4	containing-commit	Stage54 final evidence and publication records	verified in post-push command ledger	verified in post-push command ledger

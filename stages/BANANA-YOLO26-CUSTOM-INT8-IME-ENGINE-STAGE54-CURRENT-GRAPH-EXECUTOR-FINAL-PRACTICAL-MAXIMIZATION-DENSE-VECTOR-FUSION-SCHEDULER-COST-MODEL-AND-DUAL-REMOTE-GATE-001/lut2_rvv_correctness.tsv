@@ -1,0 +1,3 @@
+route	status	parser	objdump	board
+scalar_direct_physical	exact	not-applicable	not-applicable	not-applicable
+explicit_RVV_vluxei16	rejected	pass	pass	SIGILL_exit_132

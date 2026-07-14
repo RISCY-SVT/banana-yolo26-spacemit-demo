@@ -1,0 +1,5 @@
+route	full_model_mean_us	status	full_model_p95_us
+E2c2_C4	239884.016	control	not-applicable
+E2c3_C8_vector_LUT_store	187040.0	selected	189738.0
+E2c3_direct1x1	184739.0	selected	187132.0
+E2c3_direct1x1_lifetime_safe_LUT	183774.0	selected	186048.0

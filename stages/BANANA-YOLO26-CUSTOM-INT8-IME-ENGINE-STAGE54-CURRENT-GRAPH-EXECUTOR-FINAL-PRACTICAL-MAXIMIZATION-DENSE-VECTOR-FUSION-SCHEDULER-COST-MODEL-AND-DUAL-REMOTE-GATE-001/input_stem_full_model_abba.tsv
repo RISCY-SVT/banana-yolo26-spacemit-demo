@@ -1,0 +1,6 @@
+route	full_model_mean_us	status	p95_us
+IS0_stage53	183192.0	control	not-applicable
+IS0_explicit_RVV_input	173381.0	selected	174219.0
+IS1_compact_C3	172095.0	selected	174083.0
+IS2_fused_float_input_stem	220489.0	rejected_no_win	224364.0
+IS3_RGB_byte_sidecar	not-applicable	not_selected	not-applicable

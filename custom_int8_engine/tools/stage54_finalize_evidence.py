@@ -34,6 +34,10 @@ PROFILE_ID = "K1X_INT8_V1_YOLO26N_640_FULL_GRAPH_001"
 MODEL_SHA256 = "30a94e4738606673b5e0a73499cbc977167f046f8fa8637d6040ce744f429c0c"
 PACKAGE_SHA256 = "fab4a72cf524ce0a205ceca0384144f2eee7bc79dff3f4db8b7208614e8407be"
 PREDICTION_SHA256 = "cda5c8c7a46d61d9c90f6292001eea190cb8f6617efe647a33dc6134dd57ccda"
+RELEASE_MANIFEST_SHA256 = "e636c56fe4c65a2336928cea57c62c5b48930509fd73b61f229097b3a67e8749"
+RELEASE_SHA256_FILE_SHA256 = "fc069c7ae3032ea104e9cae9b6c0cd74a4583cce741266c204eb9f0450bea1bb"
+RELEASE_BINARY_SHA256 = "873074863c1d051bbdd9695e15575db49a0aa930a2b4c2d7c51f55a2dbb11523"
+RELEASE_SOURCE_COMMIT = "233bd46fecbb6b4396e4d869253ddca9ba5dfc6f"
 STAGE53_MEAN_US = 239884.016
 STAGE53_CV_MEAN_US = 253069.478
 STAGE53_CORPUS_MEAN_US = 229292.05
@@ -433,6 +437,20 @@ def main() -> int:
 
     if sha256(args.coco_json) != PREDICTION_SHA256:
         raise ValueError("final COCO prediction JSON is not byte-identical to Stage53")
+    release_manifest_path = args.release_root / "release_manifest.json"
+    release_checksums_path = args.release_root / "release_sha256.txt"
+    release_binary_path = args.release_root / "bin/yolo26_k1x_int8"
+    if sha256(release_manifest_path) != RELEASE_MANIFEST_SHA256:
+        raise ValueError("unexpected release tree-manifest hash")
+    if sha256(release_checksums_path) != RELEASE_SHA256_FILE_SHA256:
+        raise ValueError("unexpected release checksum-file hash")
+    if sha256(release_binary_path) != RELEASE_BINARY_SHA256:
+        raise ValueError("unexpected packaged executor binary hash")
+    release_manifest = json.loads(release_manifest_path.read_text(encoding="utf-8"))
+    if release_manifest["source_commit"] != RELEASE_SOURCE_COMMIT:
+        raise ValueError("unexpected release source commit")
+    if release_manifest["package_manifest_sha256"] != PACKAGE_SHA256:
+        raise ValueError("unexpected packaged model manifest hash")
     for name, rows, result, expected_samples in (
         ("stage53 condition-variable", stage53_cv_raw, stage53_cv, 500),
         ("stage53 epoch-spin", stage53_spin_raw, stage53_spin, 500),
@@ -663,6 +681,11 @@ def main() -> int:
         f"The Stage53 optimized-research bundle is preserved. Stage54 qualifies for an updated "
         f"bundle at `{args.release_root}` because mean improved {speedup_stage53:.6f}%, exactness "
         "and COCO identity pass, the 10000-run soak passes, and API/CLI compatibility is retained.",
+        f"Release tree-manifest SHA-256: `{RELEASE_MANIFEST_SHA256}`. Checksum-file SHA-256: "
+        f"`{RELEASE_SHA256_FILE_SHA256}`. Packaged CLI SHA-256: `{RELEASE_BINARY_SHA256}`. "
+        f"Source commit: `{RELEASE_SOURCE_COMMIT}`. Package manifest: `{PACKAGE_SHA256}`.",
+        "On-board checksum verification, loader resolution, C API smoke, CLI smoke, and bundled "
+        "compatibility/low-latency benchmarks passed from the deployed NVMe release root.",
         "The bundle distinguishes condition-variable compatibility from dedicated-board epoch-spin "
         "low latency. It is an optimized research handoff, not production-ready.",
     ])
@@ -699,6 +722,8 @@ def main() -> int:
         f"mAP50-95 remains {K1X_MAP:.16f}.",
         f"Cost-model decomposition error {decomposition:+.6f}%, candidate error "
         f"{candidate_error:+.6f}%, held-out median MAPE {heldout:.6f}%.",
+        f"Release tree-manifest SHA-256 `{RELEASE_MANIFEST_SHA256}`; checksum-file SHA-256 "
+        f"`{RELEASE_SHA256_FILE_SHA256}`; handoff smoke passed.",
         "No 20 FPS, production-readiness, training, student-selection, Q31, RT205, or co-design "
         "execution claim is made.",
     ])

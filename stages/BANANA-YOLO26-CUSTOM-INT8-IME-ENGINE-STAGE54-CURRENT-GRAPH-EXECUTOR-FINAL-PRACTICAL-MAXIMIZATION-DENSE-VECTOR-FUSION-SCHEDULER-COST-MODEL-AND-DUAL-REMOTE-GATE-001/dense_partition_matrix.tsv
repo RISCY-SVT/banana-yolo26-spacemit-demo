@@ -1,0 +1,7 @@
+route	mean_us	p95_us	status	control_mean_us	candidate_mean_us
+M12_N16_A_stationary_spatial	186392.0	187826.0	selected	not-applicable	not-applicable
+M8_N16	195111.0	195271.0	rejected	not-applicable	not-applicable
+M12_N16_weight_stationary	188138.5	not-applicable	rejected	not-applicable	not-applicable
+output_channel_partition	273765.0	277759.0	rejected	not-applicable	not-applicable
+2d_partition	218974.0	229174.0	rejected	not-applicable	not-applicable
+P3_stride2_segmented_delivery	not-applicable	not-applicable	selected	173291.5	171302.0

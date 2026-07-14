@@ -1,0 +1,2 @@
+surface	predicted_mean_us	measured_mean_us	error_pct	gate_pct	status
+candidate_pre_measurement_composition	168074.0	167411.836	0.395529979134802	15.0	pass

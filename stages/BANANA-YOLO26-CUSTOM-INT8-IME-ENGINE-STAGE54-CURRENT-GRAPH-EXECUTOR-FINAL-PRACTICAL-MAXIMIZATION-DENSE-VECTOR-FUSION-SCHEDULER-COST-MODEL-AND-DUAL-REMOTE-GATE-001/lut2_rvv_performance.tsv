@@ -1,0 +1,3 @@
+route	full_model_mean_us	status	board_exit
+scalar_direct_physical	182409.0	selected	not-applicable
+explicit_RVV_vluxei16	not-applicable	rejected_SIGILL	132

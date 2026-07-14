@@ -1,0 +1,5 @@
+symbol	isa	cpu_set	sigill
+y26_stage54_kernel_direct_1x1_m12n16	explicit_smt.vmadot	CPU0-3	0
+stage51_q62_e2c3_x8_lut	explicit_standard_RVV_vsmul_vluxei8	CPU0-3	0
+depthwise_v2_C8	explicit_standard_RVV	CPU0-3	0
+input_quantize_rvv_v2	explicit_standard_RVV	CPU0-3	0

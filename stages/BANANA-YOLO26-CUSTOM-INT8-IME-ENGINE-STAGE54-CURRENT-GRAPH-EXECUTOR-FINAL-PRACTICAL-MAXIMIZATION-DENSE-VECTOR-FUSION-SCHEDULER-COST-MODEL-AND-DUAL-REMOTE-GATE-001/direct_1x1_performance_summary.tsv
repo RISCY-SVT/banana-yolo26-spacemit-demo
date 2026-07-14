@@ -1,0 +1,6 @@
+route	full_model_mean_us	exact	status	full_model_p95_us
+P0_materialized_M12	239884.016	1	control	not-applicable
+P1_direct_strided_M12N16	236691.0	1	selected_by_shape	239119.0
+P2_pointer_offset_table	not-applicable	1	represented_by_direct_pointer_setup	not-applicable
+P3_paired_M_tiles	not-applicable	1	bounded_no_additional_win	not-applicable
+P4_producer_consumer	not-applicable	1	lifetime-limited	not-applicable

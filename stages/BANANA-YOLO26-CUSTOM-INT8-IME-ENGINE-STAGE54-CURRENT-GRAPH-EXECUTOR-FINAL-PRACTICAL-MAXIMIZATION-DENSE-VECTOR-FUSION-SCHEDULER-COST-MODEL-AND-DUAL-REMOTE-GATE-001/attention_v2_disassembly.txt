@@ -1,0 +1,569 @@
+
+.deps/custom_int8_engine/build-riscv-stage52/yolo26_k1x_int8:     file format elf64-littleriscv
+
+
+Disassembly of section .text:
+
+00000000000280d4 <y26::stage52::FullExecutor::Impl::execute_matmul(y26::stage52::FullExecutor::Impl*, y26::stage52::(anonymous namespace)::Operation const&, float const*, unsigned char const*, int)>:
+   280d4:	4d38                	lw	a4,88(a0)
+   280d6:	710d                	addi	sp,sp,-352
+   280d8:	fe4e                	sd	s3,312(sp)
+   280da:	eaa2                	sd	s0,336(sp)
+   280dc:	ee86                	sd	ra,344(sp)
+   280de:	4785                	li	a5,1
+   280e0:	842a                	mv	s0,a0
+   280e2:	89ae                	mv	s3,a1
+   280e4:	00f71663          	bne	a4,a5,280f0 <y26::stage52::FullExecutor::Impl::execute_matmul(y26::stage52::FullExecutor::Impl*, y26::stage52::(anonymous namespace)::Operation const&, float const*, unsigned char const*, int)+0x1c>
+   280e8:	2605c283          	lbu	t0,608(a1)
+   280ec:	0a029b63          	bnez	t0,281a2 <y26::stage52::FullExecutor::Impl::execute_matmul(y26::stage52::FullExecutor::Impl*, y26::stage52::(anonymous namespace)::Operation const&, float const*, unsigned char const*, int)+0xce>
+   280f0:	cc747057          	vsetivli	zero,8,e8,mf2,ta,ma
+   280f4:	0e010313          	addi	t1,sp,224
+   280f8:	5e0030d7          	vmv.v.i	v1,0
+   280fc:	0b810393          	addi	t2,sp,184
+   28100:	0188                	addi	a0,sp,192
+   28102:	01ac                	addi	a1,sp,200
+   28104:	020300a7          	vse8.v	v1,(t1)
+   28108:	0990                	addi	a2,sp,208
+   2810a:	020380a7          	vse8.v	v1,(t2)
+   2810e:	0d810813          	addi	a6,sp,216
+   28112:	020500a7          	vse8.v	v1,(a0)
+   28116:	0e810e13          	addi	t3,sp,232
+   2811a:	020580a7          	vse8.v	v1,(a1)
+   2811e:	0289a683          	lw	a3,40(s3)
+   28122:	020600a7          	vse8.v	v1,(a2)
+   28126:	4899                	li	a7,6
+   28128:	020800a7          	vse8.v	v1,(a6)
+   2812c:	020e00a7          	vse8.v	v1,(t3)
+   28130:	f522                	sd	s0,168(sp)
+   28132:	f94e                	sd	s3,176(sp)
+   28134:	d3c6                	sw	a7,228(sp)
+   28136:	3806c963          	bltz	a3,284c8 <y26::stage52::FullExecutor::Impl::execute_matmul(y26::stage52::FullExecutor::Impl*, y26::stage52::(anonymous namespace)::Operation const&, float const*, unsigned char const*, int)+0x3f4>
+   2813a:	06043983          	ld	s3,96(s0)
+   2813e:	06843e83          	ld	t4,104(s0)
+   28142:	aaaabf37          	lui	t5,0xaaaab
+   28146:	aabf0f93          	addi	t6,t5,-1365 # ffffffffaaaaaaab <__global_pointer$+0xffffffffaaa40e4b>
+   2814a:	020f9713          	slli	a4,t6,0x20
+   2814e:	413e87b3          	sub	a5,t4,s3
+   28152:	01f702b3          	add	t0,a4,t6
+   28156:	4057d313          	srai	t1,a5,0x5
+   2815a:	025303b3          	mul	t2,t1,t0
+   2815e:	3676f563          	bgeu	a3,t2,284c8 <y26::stage52::FullExecutor::Impl::execute_matmul(y26::stage52::FullExecutor::Impl*, y26::stage52::(anonymous namespace)::Operation const&, float const*, unsigned char const*, int)+0x3f4>
+   28162:	00169513          	slli	a0,a3,0x1
+   28166:	96aa                	add	a3,a3,a0
+   28168:	00569593          	slli	a1,a3,0x5
+   2816c:	00b98633          	add	a2,s3,a1
+   28170:	04063803          	ld	a6,64(a2)
+   28174:	442c                	lw	a1,72(s0)
+   28176:	d582                	sw	zero,232(sp)
+   28178:	1134                	addi	a3,sp,168
+   2817a:	0003d8b7          	lui	a7,0x3d
+   2817e:	2d688613          	addi	a2,a7,726 # 3d2d6 <y26::stage52::FullExecutor::Impl::range_job(void*, int, int)>
+   28182:	8522                	mv	a0,s0
+   28184:	edc2                	sd	a6,216(sp)
+   28186:	11a0                	addi	s0,sp,232
+   28188:	1ae140ef          	jal	3c336 <y26::stage52::FullExecutor::Impl::dispatch_workers(int, void (*)(void*, int, int), void*)>
+   2818c:	00042e03          	lw	t3,0(s0)
+   28190:	000e099b          	sext.w	s3,t3
+   28194:	30099763          	bnez	s3,284a2 <y26::stage52::FullExecutor::Impl::execute_matmul(y26::stage52::FullExecutor::Impl*, y26::stage52::(anonymous namespace)::Operation const&, float const*, unsigned char const*, int)+0x3ce>
+   28198:	6456                	ld	s0,336(sp)
+   2819a:	60f6                	ld	ra,344(sp)
+   2819c:	79f2                	ld	s3,312(sp)
+   2819e:	6135                	addi	sp,sp,352
+   281a0:	8082                	ret
+   281a2:	e6a6                	sd	s1,328(sp)
+   281a4:	7984                	ld	s1,48(a1)
+   281a6:	e2ca                	sd	s2,320(sp)
+   281a8:	fa52                	sd	s4,304(sp)
+   281aa:	40cc                	lw	a1,4(s1)
+   281ac:	f656                	sd	s5,296(sp)
+   281ae:	f25a                	sd	s6,288(sp)
+   281b0:	ee5e                	sd	s7,280(sp)
+   281b2:	e666                	sd	s9,264(sp)
+   281b4:	e29f70ef          	jal	1ffdc <y26::stage52::FullExecutor::Impl::tensor(int) const>
+   281b8:	02852903          	lw	s2,40(a0)
+   281bc:	6b89                	lui	s7,0x2
+   281be:	01740fb3          	add	t6,s0,s7
+   281c2:	00291a93          	slli	s5,s2,0x2
+   281c6:	01550cb3          	add	s9,a0,s5
+   281ca:	028ca903          	lw	s2,40(s9)
+   281ce:	024caa83          	lw	s5,36(s9)
+   281d2:	04053b03          	ld	s6,64(a0)
+   281d6:	00391493          	slli	s1,s2,0x3
+   281da:	032a8bb3          	mul	s7,s5,s2
+   281de:	05053a03          	ld	s4,80(a0)
+   281e2:	0a843c83          	ld	s9,168(s0)
+   281e6:	eb0fb503          	ld	a0,-336(t6)
+   281ea:	037b5733          	divu	a4,s6,s7
+   281ee:	00070b1b          	sext.w	s6,a4
+   281f2:	029b0633          	mul	a2,s6,s1
+   281f6:	c601                	beqz	a2,281fe <y26::stage52::FullExecutor::Impl::execute_matmul(y26::stage52::FullExecutor::Impl*, y26::stage52::(anonymous namespace)::Operation const&, float const*, unsigned char const*, int)+0x12a>
+   281f8:	4581                	li	a1,0
+   281fa:	c87ec0ef          	jal	14e80 <memset@plt>
+   281fe:	23605d63          	blez	s6,28438 <y26::stage52::FullExecutor::Impl::execute_matmul(y26::stage52::FullExecutor::Impl*, y26::stage52::(anonymous namespace)::Operation const&, float const*, unsigned char const*, int)+0x364>
+   28202:	47bd                	li	a5,15
+   28204:	2327da63          	bge	a5,s2,28438 <y26::stage52::FullExecutor::Impl::execute_matmul(y26::stage52::FullExecutor::Impl*, y26::stage52::(anonymous namespace)::Operation const&, float const*, unsigned char const*, int)+0x364>
+   28208:	429d                	li	t0,7
+   2820a:	2352d763          	bge	t0,s5,28438 <y26::stage52::FullExecutor::Impl::execute_matmul(y26::stage52::FullExecutor::Impl*, y26::stage52::(anonymous namespace)::Operation const&, float const*, unsigned char const*, int)+0x364>
+   2820e:	ea62                	sd	s8,272(sp)
+   28210:	e26a                	sd	s10,256(sp)
+   28212:	41fadc1b          	sraiw	s8,s5,0x1f
+   28216:	41f95d1b          	sraiw	s10,s2,0x1f
+   2821a:	01cd531b          	srliw	t1,s10,0x1c
+   2821e:	fdee                	sd	s11,248(sp)
+   28220:	01dc5d9b          	srliw	s11,s8,0x1d
+   28224:	015d83bb          	addw	t2,s11,s5
+   28228:	0123053b          	addw	a0,t1,s2
+   2822c:	4033d59b          	sraiw	a1,t2,0x3
+   28230:	40455c1b          	sraiw	s8,a0,0x4
+   28234:	02bc0eb3          	mul	t4,s8,a1
+   28238:	4685                	li	a3,1
+   2823a:	40b68633          	sub	a2,a3,a1
+   2823e:	6809                	lui	a6,0x2
+   28240:	00761d13          	slli	s10,a2,0x7
+   28244:	01040ab3          	add	s5,s0,a6
+   28248:	00191513          	slli	a0,s2,0x1
+   2824c:	4801                	li	a6,0
+   2824e:	4e01                	li	t3,0
+   28250:	4601                	li	a2,0
+   28252:	82da                	mv	t0,s6
+   28254:	004e9893          	slli	a7,t4,0x4
+   28258:	41190f33          	sub	t5,s2,a7
+   2825c:	003f1793          	slli	a5,t5,0x3
+   28260:	014503b3          	add	t2,a0,s4
+   28264:	00750db3          	add	s11,a0,t2
+   28268:	01b50fb3          	add	t6,a0,s11
+   2826c:	f45e                	sd	s7,40(sp)
+   2826e:	f07e                	sd	t6,32(sp)
+   28270:	8b66                	mv	s6,s9
+   28272:	86c2                	mv	a3,a6
+   28274:	4881                	li	a7,0
+   28276:	f816                	sd	t0,48(sp)
+   28278:	fc66                	sd	s9,56(sp)
+   2827a:	e0b2                	sd	a2,64(sp)
+   2827c:	e4aa                	sd	a0,72(sp)
+   2827e:	e8c2                	sd	a6,80(sp)
+   28280:	ecbe                	sd	a5,88(sp)
+   28282:	f0f6                	sd	t4,96(sp)
+   28284:	f4f2                	sd	t3,104(sp)
+   28286:	8bf2                	mv	s7,t3
+   28288:	7f82                	ld	t6,32(sp)
+   2828a:	00168e13          	addi	t3,a3,1
+   2828e:	ed6a                	sd	s10,152(sp)
+   28290:	0e1e                	slli	t3,t3,0x7
+   28292:	8d36                	mv	s10,a3
+   28294:	8f6e                	mv	t5,s11
+   28296:	8e9e                	mv	t4,t2
+   28298:	82de                	mv	t0,s7
+   2829a:	8352                	mv	t1,s4
+   2829c:	4601                	li	a2,0
+   2829e:	f8c6                	sd	a7,112(sp)
+   282a0:	ec5a                	sd	s6,24(sp)
+   282a2:	fcd2                	sd	s4,120(sp)
+   282a4:	e15e                	sd	s7,128(sp)
+   282a6:	e56e                	sd	s11,136(sp)
+   282a8:	e91e                	sd	t2,144(sp)
+   282aa:	8ca2                	mv	s9,s0
+   282ac:	86ce                	mv	a3,s3
+   282ae:	67e2                	ld	a5,24(sp)
+   282b0:	00690a33          	add	s4,s2,t1
+   282b4:	01d909b3          	add	s3,s2,t4
+   282b8:	01e90433          	add	s0,s2,t5
+   282bc:	01f903b3          	add	t2,s2,t6
+   282c0:	006788b3          	add	a7,a5,t1
+   282c4:	f80e0513          	addi	a0,t3,-128
+   282c8:	e44a                	sd	s2,8(sp)
+   282ca:	e832                	sd	a2,16(sp)
+   282cc:	e98ab903          	ld	s2,-360(s5)
+   282d0:	00088d83          	lb	s11,0(a7)
+   282d4:	00a28633          	add	a2,t0,a0
+   282d8:	00a907b3          	add	a5,s2,a0
+   282dc:	01b78023          	sb	s11,0(a5)
+   282e0:	eb0ab803          	ld	a6,-336(s5)
+   282e4:	40688733          	sub	a4,a7,t1
+   282e8:	01470bb3          	add	s7,a4,s4
+   282ec:	00c80b33          	add	s6,a6,a2
+   282f0:	000b3903          	ld	s2,0(s6)
+   282f4:	0521                	addi	a0,a0,8
+   282f6:	0885                	addi	a7,a7,1
+   282f8:	9dca                	add	s11,s11,s2
+   282fa:	01bb3023          	sd	s11,0(s6)
+   282fe:	000b8b83          	lb	s7,0(s7) # 2000 <(anonymous namespace)::g_thread_cluster0_hotpath_allowed+0x2000>
+   28302:	01d70db3          	add	s11,a4,t4
+   28306:	01370b33          	add	s6,a4,s3
+   2830a:	017780a3          	sb	s7,1(a5)
+   2830e:	eb0ab803          	ld	a6,-336(s5)
+   28312:	9832                	add	a6,a6,a2
+   28314:	00083903          	ld	s2,0(a6) # 2000 <(anonymous namespace)::g_thread_cluster0_hotpath_allowed+0x2000>
+   28318:	9bca                	add	s7,s7,s2
+   2831a:	01783023          	sd	s7,0(a6)
+   2831e:	000d8d83          	lb	s11,0(s11)
+   28322:	01e70bb3          	add	s7,a4,t5
+   28326:	01b78123          	sb	s11,2(a5)
+   2832a:	eb0ab803          	ld	a6,-336(s5)
+   2832e:	9832                	add	a6,a6,a2
+   28330:	00083903          	ld	s2,0(a6)
+   28334:	9dca                	add	s11,s11,s2
+   28336:	01b83023          	sd	s11,0(a6)
+   2833a:	000b0d83          	lb	s11,0(s6)
+   2833e:	00870b33          	add	s6,a4,s0
+   28342:	01b781a3          	sb	s11,3(a5)
+   28346:	eb0ab803          	ld	a6,-336(s5)
+   2834a:	9832                	add	a6,a6,a2
+   2834c:	00083903          	ld	s2,0(a6)
+   28350:	9dca                	add	s11,s11,s2
+   28352:	01b83023          	sd	s11,0(a6)
+   28356:	000b8903          	lb	s2,0(s7)
+   2835a:	01f70bb3          	add	s7,a4,t6
+   2835e:	971e                	add	a4,a4,t2
+   28360:	01278223          	sb	s2,4(a5)
+   28364:	eb0ab803          	ld	a6,-336(s5)
+   28368:	9832                	add	a6,a6,a2
+   2836a:	00083d83          	ld	s11,0(a6)
+   2836e:	996e                	add	s2,s2,s11
+   28370:	01283023          	sd	s2,0(a6)
+   28374:	000b0b03          	lb	s6,0(s6)
+   28378:	016782a3          	sb	s6,5(a5)
+   2837c:	eb0ab803          	ld	a6,-336(s5)
+   28380:	00c80db3          	add	s11,a6,a2
+   28384:	000db903          	ld	s2,0(s11)
+   28388:	9b4a                	add	s6,s6,s2
+   2838a:	016db023          	sd	s6,0(s11)
+   2838e:	000b8b83          	lb	s7,0(s7)
+   28392:	01778323          	sb	s7,6(a5)
+   28396:	eb0ab803          	ld	a6,-336(s5)
+   2839a:	00c80db3          	add	s11,a6,a2
+   2839e:	000db903          	ld	s2,0(s11)
+   283a2:	01790b33          	add	s6,s2,s7
+   283a6:	016db023          	sd	s6,0(s11)
+   283aa:	00070703          	lb	a4,0(a4)
+   283ae:	00e783a3          	sb	a4,7(a5)
+   283b2:	eb0ab783          	ld	a5,-336(s5)
+   283b6:	00c78bb3          	add	s7,a5,a2
+   283ba:	000bb603          	ld	a2,0(s7)
+   283be:	00e60833          	add	a6,a2,a4
+   283c2:	010bb023          	sd	a6,0(s7)
+   283c6:	f0ae13e3          	bne	t3,a0,282cc <y26::stage52::FullExecutor::Impl::execute_matmul(y26::stage52::FullExecutor::Impl*, y26::stage52::(anonymous namespace)::Operation const&, float const*, unsigned char const*, int)+0x1f8>
+   283ca:	6a42                	ld	s4,16(sp)
+   283cc:	6922                	ld	s2,8(sp)
+   283ce:	9326                	add	t1,t1,s1
+   283d0:	001a061b          	addiw	a2,s4,1
+   283d4:	f8028293          	addi	t0,t0,-128
+   283d8:	9ea6                	add	t4,t4,s1
+   283da:	9f26                	add	t5,t5,s1
+   283dc:	9fa6                	add	t6,t6,s1
+   283de:	080e0e13          	addi	t3,t3,128
+   283e2:	ecb646e3          	blt	a2,a1,282ae <y26::stage52::FullExecutor::Impl::execute_matmul(y26::stage52::FullExecutor::Impl*, y26::stage52::(anonymous namespace)::Operation const&, float const*, unsigned char const*, int)+0x1da>
+   283e6:	7e46                	ld	t3,112(sp)
+   283e8:	8eea                	mv	t4,s10
+   283ea:	6fe2                	ld	t6,24(sp)
+   283ec:	6f0a                	ld	t5,128(sp)
+   283ee:	6d6a                	ld	s10,152(sp)
+   283f0:	001e089b          	addiw	a7,t3,1
+   283f4:	89b6                	mv	s3,a3
+   283f6:	7a66                	ld	s4,120(sp)
+   283f8:	6daa                	ld	s11,136(sp)
+   283fa:	63ca                	ld	t2,144(sp)
+   283fc:	8466                	mv	s0,s9
+   283fe:	01af0bb3          	add	s7,t5,s10
+   28402:	00be86b3          	add	a3,t4,a1
+   28406:	010f8b13          	addi	s6,t6,16
+   2840a:	e788cfe3          	blt	a7,s8,28288 <y26::stage52::FullExecutor::Impl::execute_matmul(y26::stage52::FullExecutor::Impl*, y26::stage52::(anonymous namespace)::Operation const&, float const*, unsigned char const*, int)+0x1b4>
+   2840e:	6686                	ld	a3,64(sp)
+   28410:	7ba2                	ld	s7,40(sp)
+   28412:	63c6                	ld	t2,80(sp)
+   28414:	67e6                	ld	a5,88(sp)
+   28416:	7e86                	ld	t4,96(sp)
+   28418:	7326                	ld	t1,104(sp)
+   2841a:	72c2                	ld	t0,48(sp)
+   2841c:	0016861b          	addiw	a2,a3,1
+   28420:	7ce2                	ld	s9,56(sp)
+   28422:	6526                	ld	a0,72(sp)
+   28424:	9a5e                	add	s4,s4,s7
+   28426:	00f30e33          	add	t3,t1,a5
+   2842a:	01d38833          	add	a6,t2,t4
+   2842e:	e2c299e3          	bne	t0,a2,28260 <y26::stage52::FullExecutor::Impl::execute_matmul(y26::stage52::FullExecutor::Impl*, y26::stage52::(anonymous namespace)::Operation const&, float const*, unsigned char const*, int)+0x18c>
+   28432:	6c52                	ld	s8,272(sp)
+   28434:	6d12                	ld	s10,256(sp)
+   28436:	7dee                	ld	s11,248(sp)
+   28438:	442c                	lw	a1,72(s0)
+   2843a:	dd02                	sw	zero,184(sp)
+   2843c:	1134                	addi	a3,sp,168
+   2843e:	000398b7          	lui	a7,0x39
+   28442:	4a288613          	addi	a2,a7,1186 # 394a2 <y26::stage52::FullExecutor::Impl::matmul_ime_job(void*, int, int)>
+   28446:	8522                	mv	a0,s0
+   28448:	f522                	sd	s0,168(sp)
+   2844a:	f94e                	sd	s3,176(sp)
+   2844c:	1924                	addi	s1,sp,184
+   2844e:	6e9130ef          	jal	3c336 <y26::stage52::FullExecutor::Impl::dispatch_workers(int, void (*)(void*, int, int), void*)>
+   28452:	408c                	lw	a1,0(s1)
+   28454:	00058a9b          	sext.w	s5,a1
+   28458:	000a9e63          	bnez	s5,28474 <y26::stage52::FullExecutor::Impl::execute_matmul(y26::stage52::FullExecutor::Impl*, y26::stage52::(anonymous namespace)::Operation const&, float const*, unsigned char const*, int)+0x3a0>
+   2845c:	6456                	ld	s0,336(sp)
+   2845e:	60f6                	ld	ra,344(sp)
+   28460:	64b6                	ld	s1,328(sp)
+   28462:	6916                	ld	s2,320(sp)
+   28464:	7a52                	ld	s4,304(sp)
+   28466:	7ab2                	ld	s5,296(sp)
+   28468:	7b12                	ld	s6,288(sp)
+   2846a:	6bf2                	ld	s7,280(sp)
+   2846c:	6cb2                	ld	s9,264(sp)
+   2846e:	79f2                	ld	s3,312(sp)
+   28470:	6135                	addi	sp,sp,352
+   28472:	8082                	ret
+   28474:	4541                	li	a0,16
+   28476:	e5aec0ef          	jal	14ad0 <__cxa_allocate_exception@plt>
+   2847a:	0005cb37          	lui	s6,0x5c
+   2847e:	490b0593          	addi	a1,s6,1168 # 5c490 <_IO_stdin_used+0xeb0>
+   28482:	842a                	mv	s0,a0
+   28484:	e0cec0ef          	jal	14a90 <std::runtime_error::runtime_error(char const*)@plt>
+   28488:	ea62                	sd	s8,272(sp)
+   2848a:	6755                	lui	a4,0x15
+   2848c:	ce070613          	addi	a2,a4,-800 # 14ce0 <std::runtime_error::~runtime_error()@plt>
+   28490:	00069937          	lui	s2,0x69
+   28494:	d0090593          	addi	a1,s2,-768 # 68d00 <typeinfo for std::runtime_error@GLIBCXX_3.4>
+   28498:	8522                	mv	a0,s0
+   2849a:	e26a                	sd	s10,256(sp)
+   2849c:	fdee                	sd	s11,248(sp)
+   2849e:	bc3ec0ef          	jal	15060 <__cxa_throw@plt>
+   284a2:	4541                	li	a0,16
+   284a4:	e2cec0ef          	jal	14ad0 <__cxa_allocate_exception@plt>
+   284a8:	0005ceb7          	lui	t4,0x5c
+   284ac:	4b0e8593          	addi	a1,t4,1200 # 5c4b0 <_IO_stdin_used+0xed0>
+   284b0:	842a                	mv	s0,a0
+   284b2:	ddeec0ef          	jal	14a90 <std::runtime_error::runtime_error(char const*)@plt>
+   284b6:	e6a6                	sd	s1,328(sp)
+   284b8:	e2ca                	sd	s2,320(sp)
+   284ba:	fa52                	sd	s4,304(sp)
+   284bc:	f656                	sd	s5,296(sp)
+   284be:	f25a                	sd	s6,288(sp)
+   284c0:	ee5e                	sd	s7,280(sp)
+   284c2:	ea62                	sd	s8,272(sp)
+   284c4:	e666                	sd	s9,264(sp)
+   284c6:	b7d1                	j	2848a <y26::stage52::FullExecutor::Impl::execute_matmul(y26::stage52::FullExecutor::Impl*, y26::stage52::(anonymous namespace)::Operation const&, float const*, unsigned char const*, int)+0x3b6>
+   284c8:	4541                	li	a0,16
+   284ca:	e06ec0ef          	jal	14ad0 <__cxa_allocate_exception@plt>
+   284ce:	0005cf37          	lui	t5,0x5c
+   284d2:	2b0f0593          	addi	a1,t5,688 # 5c2b0 <_IO_stdin_used+0xcd0>
+   284d6:	842a                	mv	s0,a0
+   284d8:	db8ec0ef          	jal	14a90 <std::runtime_error::runtime_error(char const*)@plt>
+   284dc:	bfe9                	j	284b6 <y26::stage52::FullExecutor::Impl::execute_matmul(y26::stage52::FullExecutor::Impl*, y26::stage52::(anonymous namespace)::Operation const&, float const*, unsigned char const*, int)+0x3e2>
+   284de:	e6a6                	sd	s1,328(sp)
+   284e0:	e2ca                	sd	s2,320(sp)
+   284e2:	fa52                	sd	s4,304(sp)
+   284e4:	f656                	sd	s5,296(sp)
+   284e6:	f25a                	sd	s6,288(sp)
+   284e8:	ee5e                	sd	s7,280(sp)
+   284ea:	ea62                	sd	s8,272(sp)
+   284ec:	e666                	sd	s9,264(sp)
+   284ee:	8c2a                	mv	s8,a0
+   284f0:	8522                	mv	a0,s0
+   284f2:	e26a                	sd	s10,256(sp)
+   284f4:	fdee                	sd	s11,248(sp)
+   284f6:	ecaec0ef          	jal	14bc0 <__cxa_free_exception@plt>
+   284fa:	8562                	mv	a0,s8
+   284fc:	bc5ec0ef          	jal	150c0 <_Unwind_Resume@plt>
+   28500:	bff9                	j	284de <y26::stage52::FullExecutor::Impl::execute_matmul(y26::stage52::FullExecutor::Impl*, y26::stage52::(anonymous namespace)::Operation const&, float const*, unsigned char const*, int)+0x40a>
+   28502:	ea62                	sd	s8,272(sp)
+   28504:	b7ed                	j	284ee <y26::stage52::FullExecutor::Impl::execute_matmul(y26::stage52::FullExecutor::Impl*, y26::stage52::(anonymous namespace)::Operation const&, float const*, unsigned char const*, int)+0x41a>
+
+.deps/custom_int8_engine/build-riscv-stage52/yolo26_k1x_int8:     file format elf64-littleriscv
+
+
+Disassembly of section .text:
+
+00000000000295f2 <y26::stage52::FullExecutor::Impl::execute_softmax(y26::stage52::FullExecutor::Impl*, y26::stage52::(anonymous namespace)::Operation const&, float const*, unsigned char const*, int)>:
+   295f2:	7998                	ld	a4,48(a1)
+   295f4:	7175                	addi	sp,sp,-144
+   295f6:	e506                	sd	ra,136(sp)
+   295f8:	4310                	lw	a2,0(a4)
+   295fa:	24064063          	bltz	a2,2983a <y26::stage52::FullExecutor::Impl::execute_softmax(y26::stage52::FullExecutor::Impl*, y26::stage52::(anonymous namespace)::Operation const&, float const*, unsigned char const*, int)+0x248>
+   295fe:	7134                	ld	a3,96(a0)
+   29600:	06853283          	ld	t0,104(a0)
+   29604:	87aa                	mv	a5,a0
+   29606:	aaaab537          	lui	a0,0xaaaab
+   2960a:	aab50313          	addi	t1,a0,-1365 # ffffffffaaaaaaab <__global_pointer$+0xffffffffaaa40e4b>
+   2960e:	02031813          	slli	a6,t1,0x20
+   29612:	40d283b3          	sub	t2,t0,a3
+   29616:	006808b3          	add	a7,a6,t1
+   2961a:	4053de13          	srai	t3,t2,0x5
+   2961e:	031e0eb3          	mul	t4,t3,a7
+   29622:	21d67c63          	bgeu	a2,t4,2983a <y26::stage52::FullExecutor::Impl::execute_softmax(y26::stage52::FullExecutor::Impl*, y26::stage52::(anonymous namespace)::Operation const&, float const*, unsigned char const*, int)+0x248>
+   29626:	00161f13          	slli	t5,a2,0x1
+   2962a:	cc747057          	vsetivli	zero,8,e8,mf2,ta,ma
+   2962e:	00cf0fb3          	add	t6,t5,a2
+   29632:	5e0030d7          	vmv.v.i	v1,0
+   29636:	005f9713          	slli	a4,t6,0x5
+   2963a:	cd717057          	vsetivli	zero,2,e32,mf2,ta,ma
+   2963e:	96ba                	add	a3,a3,a4
+   29640:	5208a157          	vid.v	v2
+   29644:	5690                	lw	a2,40(a3)
+   29646:	cc747057          	vsetivli	zero,8,e8,mf2,ta,ma
+   2964a:	02810813          	addi	a6,sp,40
+   2964e:	03010893          	addi	a7,sp,48
+   29652:	fff6029b          	addiw	t0,a2,-1
+   29656:	00229513          	slli	a0,t0,0x2
+   2965a:	00a68333          	add	t1,a3,a0
+   2965e:	02c32383          	lw	t2,44(t1)
+   29662:	020800a7          	vse8.v	v1,(a6)
+   29666:	020880a7          	vse8.v	v1,(a7)
+   2966a:	03810e93          	addi	t4,sp,56
+   2966e:	020e80a7          	vse8.v	v1,(t4)
+   29672:	6f09                	lui	t5,0x2
+   29674:	04010f93          	addi	t6,sp,64
+   29678:	020f80a7          	vse8.v	v1,(t6)
+   2967c:	00b0                	addi	a2,sp,72
+   2967e:	020600a7          	vse8.v	v1,(a2)
+   29682:	05010293          	addi	t0,sp,80
+   29686:	020280a7          	vse8.v	v1,(t0)
+   2968a:	05810313          	addi	t1,sp,88
+   2968e:	020300a7          	vse8.v	v1,(t1)
+   29692:	5e65                	li	t3,-7
+   29694:	cd717057          	vsetivli	zero,2,e32,mf2,ta,ma
+   29698:	05410813          	addi	a6,sp,84
+   2969c:	962e6057          	vmul.vx	v0,v2,t3
+   296a0:	01e78733          	add	a4,a5,t5
+   296a4:	ec873503          	ld	a0,-312(a4)
+   296a8:	f02e                	sd	a1,32(sp)
+   296aa:	ec3e                	sd	a5,24(sp)
+   296ac:	62b4                	ld	a3,64(a3)
+   296ae:	0203b1d7          	vadd.vi	v3,v0,7
+   296b2:	47ac                	lw	a1,72(a5)
+   296b4:	0276d3b3          	divu	t2,a3,t2
+   296b8:	020861a7          	vse32.v	v3,(a6)
+   296bc:	e49e                	sd	t2,72(sp)
+   296be:	c509                	beqz	a0,296c8 <y26::stage52::FullExecutor::Impl::execute_softmax(y26::stage52::FullExecutor::Impl*, y26::stage52::(anonymous namespace)::Operation const&, float const*, unsigned char const*, int)+0xd6>
+   296c0:	0547a883          	lw	a7,84(a5)
+   296c4:	0c088c63          	beqz	a7,2979c <y26::stage52::FullExecutor::Impl::execute_softmax(y26::stage52::FullExecutor::Impl*, y26::stage52::(anonymous namespace)::Operation const&, float const*, unsigned char const*, int)+0x1aa>
+   296c8:	e122                	sd	s0,128(sp)
+   296ca:	6409                	lui	s0,0x2
+   296cc:	fca6                	sd	s1,120(sp)
+   296ce:	008784b3          	add	s1,a5,s0
+   296d2:	e784b403          	ld	s0,-392(s1)
+   296d6:	f8ca                	sd	s2,112(sp)
+   296d8:	f4ce                	sd	s3,104(sp)
+   296da:	0e040863          	beqz	s0,297ca <y26::stage52::FullExecutor::Impl::execute_softmax(y26::stage52::FullExecutor::Impl*, y26::stage52::(anonymous namespace)::Operation const&, float const*, unsigned char const*, int)+0x1d8>
+   296de:	892e                	mv	s2,a1
+   296e0:	00b04363          	bgtz	a1,296e6 <y26::stage52::FullExecutor::Impl::execute_softmax(y26::stage52::FullExecutor::Impl*, y26::stage52::(anonymous namespace)::Operation const&, float const*, unsigned char const*, int)+0xf4>
+   296e4:	4905                	li	s2,1
+   296e6:	400c                	lw	a1,0(s0)
+   296e8:	0009099b          	sext.w	s3,s2
+   296ec:	0935cd63          	blt	a1,s3,29786 <y26::stage52::FullExecutor::Impl::execute_softmax(y26::stage52::FullExecutor::Impl*, y26::stage52::(anonymous namespace)::Operation const&, float const*, unsigned char const*, int)+0x194>
+   296f0:	04040993          	addi	s3,s0,64 # 2040 <(anonymous namespace)::g_thread_cluster0_hotpath_allowed+0x2040>
+   296f4:	854e                	mv	a0,s3
+   296f6:	0009049b          	sext.w	s1,s2
+   296fa:	eb6eb0ef          	jal	14db0 <pthread_mutex_lock@plt>
+   296fe:	12051c63          	bnez	a0,29836 <y26::stage52::FullExecutor::Impl::execute_softmax(y26::stage52::FullExecutor::Impl*, y26::stage52::(anonymous namespace)::Operation const&, float const*, unsigned char const*, int)+0x244>
+   29702:	10843503          	ld	a0,264(s0)
+   29706:	0003d7b7          	lui	a5,0x3d
+   2970a:	2d678e13          	addi	t3,a5,726 # 3d2d6 <y26::stage52::FullExecutor::Impl::range_job(void*, int, int)>
+   2970e:	00150e93          	addi	t4,a0,1
+   29712:	10042023          	sw	zero,256(s0)
+   29716:	01810f13          	addi	t5,sp,24
+   2971a:	13e43023          	sd	t5,288(s0)
+   2971e:	11d43423          	sd	t4,264(s0)
+   29722:	11c43c23          	sd	t3,280(s0)
+   29726:	0f242e23          	sw	s2,252(s0)
+   2972a:	854e                	mv	a0,s3
+   2972c:	ce4eb0ef          	jal	14c10 <pthread_mutex_unlock@plt>
+   29730:	09840513          	addi	a0,s0,152
+   29734:	8fdeb0ef          	jal	15030 <std::condition_variable::notify_all()@plt>
+   29738:	854e                	mv	a0,s3
+   2973a:	e44e                	sd	s3,8(sp)
+   2973c:	00010823          	sb	zero,16(sp)
+   29740:	e70eb0ef          	jal	14db0 <pthread_mutex_lock@plt>
+   29744:	0e051963          	bnez	a0,29836 <y26::stage52::FullExecutor::Impl::execute_softmax(y26::stage52::FullExecutor::Impl*, y26::stage52::(anonymous namespace)::Operation const&, float const*, unsigned char const*, int)+0x244>
+   29748:	4f85                	li	t6,1
+   2974a:	01f10823          	sb	t6,16(sp)
+   2974e:	0c840913          	addi	s2,s0,200
+   29752:	a029                	j	2975c <y26::stage52::FullExecutor::Impl::execute_softmax(y26::stage52::FullExecutor::Impl*, y26::stage52::(anonymous namespace)::Operation const&, float const*, unsigned char const*, int)+0x16a>
+   29754:	002c                	addi	a1,sp,8
+   29756:	854a                	mv	a0,s2
+   29758:	ad8eb0ef          	jal	14a30 <std::condition_variable::wait(std::unique_lock<std::mutex>&)@plt>
+   2975c:	10042703          	lw	a4,256(s0)
+   29760:	fe971ae3          	bne	a4,s1,29754 <y26::stage52::FullExecutor::Impl::execute_softmax(y26::stage52::FullExecutor::Impl*, y26::stage52::(anonymous namespace)::Operation const&, float const*, unsigned char const*, int)+0x162>
+   29764:	01014603          	lbu	a2,16(sp)
+   29768:	e20d                	bnez	a2,2978a <y26::stage52::FullExecutor::Impl::execute_softmax(y26::stage52::FullExecutor::Impl*, y26::stage52::(anonymous namespace)::Operation const&, float const*, unsigned char const*, int)+0x198>
+   2976a:	640a                	ld	s0,128(sp)
+   2976c:	74e6                	ld	s1,120(sp)
+   2976e:	7946                	ld	s2,112(sp)
+   29770:	79a6                	ld	s3,104(sp)
+   29772:	08b4                	addi	a3,sp,88
+   29774:	0006a803          	lw	a6,0(a3)
+   29778:	0008089b          	sext.w	a7,a6
+   2977c:	08089763          	bnez	a7,2980a <y26::stage52::FullExecutor::Impl::execute_softmax(y26::stage52::FullExecutor::Impl*, y26::stage52::(anonymous namespace)::Operation const&, float const*, unsigned char const*, int)+0x218>
+   29780:	60aa                	ld	ra,136(sp)
+   29782:	6149                	addi	sp,sp,144
+   29784:	8082                	ret
+   29786:	892e                	mv	s2,a1
+   29788:	b7a5                	j	296f0 <y26::stage52::FullExecutor::Impl::execute_softmax(y26::stage52::FullExecutor::Impl*, y26::stage52::(anonymous namespace)::Operation const&, float const*, unsigned char const*, int)+0xfe>
+   2978a:	6522                	ld	a0,8(sp)
+   2978c:	dd79                	beqz	a0,2976a <y26::stage52::FullExecutor::Impl::execute_softmax(y26::stage52::FullExecutor::Impl*, y26::stage52::(anonymous namespace)::Operation const&, float const*, unsigned char const*, int)+0x178>
+   2978e:	c82eb0ef          	jal	14c10 <pthread_mutex_unlock@plt>
+   29792:	640a                	ld	s0,128(sp)
+   29794:	74e6                	ld	s1,120(sp)
+   29796:	7946                	ld	s2,112(sp)
+   29798:	79a6                	ld	s3,104(sp)
+   2979a:	bfe1                	j	29772 <y26::stage52::FullExecutor::Impl::execute_softmax(y26::stage52::FullExecutor::Impl*, y26::stage52::(anonymous namespace)::Operation const&, float const*, unsigned char const*, int)+0x180>
+   2979c:	0003d3b7          	lui	t2,0x3d
+   297a0:	2d638613          	addi	a2,t2,726 # 3d2d6 <y26::stage52::FullExecutor::Impl::range_job(void*, int, int)>
+   297a4:	0834                	addi	a3,sp,24
+   297a6:	571260ef          	jal	50516 <y26::stage49::PersistentSlice::dispatch_external(int, void (*)(void*, int, int), void*)>
+   297aa:	d561                	beqz	a0,29772 <y26::stage52::FullExecutor::Impl::execute_softmax(y26::stage52::FullExecutor::Impl*, y26::stage52::(anonymous namespace)::Operation const&, float const*, unsigned char const*, int)+0x180>
+   297ac:	4541                	li	a0,16
+   297ae:	e122                	sd	s0,128(sp)
+   297b0:	b20eb0ef          	jal	14ad0 <__cxa_allocate_exception@plt>
+   297b4:	0005d7b7          	lui	a5,0x5d
+   297b8:	4e878593          	addi	a1,a5,1256 # 5d4e8 <_IO_stdin_used+0x1f08>
+   297bc:	842a                	mv	s0,a0
+   297be:	ad2eb0ef          	jal	14a90 <std::runtime_error::runtime_error(char const*)@plt>
+   297c2:	fca6                	sd	s1,120(sp)
+   297c4:	f8ca                	sd	s2,112(sp)
+   297c6:	f4ce                	sd	s3,104(sp)
+   297c8:	a819                	j	297de <y26::stage52::FullExecutor::Impl::execute_softmax(y26::stage52::FullExecutor::Impl*, y26::stage52::(anonymous namespace)::Operation const&, float const*, unsigned char const*, int)+0x1ec>
+   297ca:	4541                	li	a0,16
+   297cc:	b04eb0ef          	jal	14ad0 <__cxa_allocate_exception@plt>
+   297d0:	0005d337          	lui	t1,0x5d
+   297d4:	50830593          	addi	a1,t1,1288 # 5d508 <_IO_stdin_used+0x1f28>
+   297d8:	842a                	mv	s0,a0
+   297da:	ab6eb0ef          	jal	14a90 <std::runtime_error::runtime_error(char const*)@plt>
+   297de:	69d5                	lui	s3,0x15
+   297e0:	ce098613          	addi	a2,s3,-800 # 14ce0 <std::runtime_error::~runtime_error()@plt>
+   297e4:	00069eb7          	lui	t4,0x69
+   297e8:	d00e8593          	addi	a1,t4,-768 # 68d00 <typeinfo for std::runtime_error@GLIBCXX_3.4>
+   297ec:	8522                	mv	a0,s0
+   297ee:	873eb0ef          	jal	15060 <__cxa_throw@plt>
+   297f2:	fca6                	sd	s1,120(sp)
+   297f4:	f8ca                	sd	s2,112(sp)
+   297f6:	f4ce                	sd	s3,104(sp)
+   297f8:	8f2a                	mv	t5,a0
+   297fa:	8522                	mv	a0,s0
+   297fc:	847a                	mv	s0,t5
+   297fe:	bc2eb0ef          	jal	14bc0 <__cxa_free_exception@plt>
+   29802:	8522                	mv	a0,s0
+   29804:	8bdeb0ef          	jal	150c0 <_Unwind_Resume@plt>
+   29808:	bfc5                	j	297f8 <y26::stage52::FullExecutor::Impl::execute_softmax(y26::stage52::FullExecutor::Impl*, y26::stage52::(anonymous namespace)::Operation const&, float const*, unsigned char const*, int)+0x206>
+   2980a:	4541                	li	a0,16
+   2980c:	e122                	sd	s0,128(sp)
+   2980e:	ac2eb0ef          	jal	14ad0 <__cxa_allocate_exception@plt>
+   29812:	0005c5b7          	lui	a1,0x5c
+   29816:	4b058593          	addi	a1,a1,1200 # 5c4b0 <_IO_stdin_used+0xed0>
+   2981a:	842a                	mv	s0,a0
+   2981c:	a74eb0ef          	jal	14a90 <std::runtime_error::runtime_error(char const*)@plt>
+   29820:	b74d                	j	297c2 <y26::stage52::FullExecutor::Impl::execute_softmax(y26::stage52::FullExecutor::Impl*, y26::stage52::(anonymous namespace)::Operation const&, float const*, unsigned char const*, int)+0x1d0>
+   29822:	01014283          	lbu	t0,16(sp)
+   29826:	842a                	mv	s0,a0
+   29828:	fc028de3          	beqz	t0,29802 <y26::stage52::FullExecutor::Impl::execute_softmax(y26::stage52::FullExecutor::Impl*, y26::stage52::(anonymous namespace)::Operation const&, float const*, unsigned char const*, int)+0x210>
+   2982c:	0028                	addi	a0,sp,8
+   2982e:	2e1120ef          	jal	3c30e <std::unique_lock<std::mutex>::unlock()>
+   29832:	bfc1                	j	29802 <y26::stage52::FullExecutor::Impl::execute_softmax(y26::stage52::FullExecutor::Impl*, y26::stage52::(anonymous namespace)::Operation const&, float const*, unsigned char const*, int)+0x210>
+   29834:	bf7d                	j	297f2 <y26::stage52::FullExecutor::Impl::execute_softmax(y26::stage52::FullExecutor::Impl*, y26::stage52::(anonymous namespace)::Operation const&, float const*, unsigned char const*, int)+0x200>
+   29836:	b4aeb0ef          	jal	14b80 <std::__throw_system_error(int)@plt>
+   2983a:	4541                	li	a0,16
+   2983c:	e122                	sd	s0,128(sp)
+   2983e:	a92eb0ef          	jal	14ad0 <__cxa_allocate_exception@plt>
+   29842:	0005ce37          	lui	t3,0x5c
+   29846:	2b0e0593          	addi	a1,t3,688 # 5c2b0 <_IO_stdin_used+0xcd0>
+   2984a:	842a                	mv	s0,a0
+   2984c:	a44eb0ef          	jal	14a90 <std::runtime_error::runtime_error(char const*)@plt>
+   29850:	bf8d                	j	297c2 <y26::stage52::FullExecutor::Impl::execute_softmax(y26::stage52::FullExecutor::Impl*, y26::stage52::(anonymous namespace)::Operation const&, float const*, unsigned char const*, int)+0x1d0>
+   29852:	b745                	j	297f2 <y26::stage52::FullExecutor::Impl::execute_softmax(y26::stage52::FullExecutor::Impl*, y26::stage52::(anonymous namespace)::Operation const&, float const*, unsigned char const*, int)+0x200>

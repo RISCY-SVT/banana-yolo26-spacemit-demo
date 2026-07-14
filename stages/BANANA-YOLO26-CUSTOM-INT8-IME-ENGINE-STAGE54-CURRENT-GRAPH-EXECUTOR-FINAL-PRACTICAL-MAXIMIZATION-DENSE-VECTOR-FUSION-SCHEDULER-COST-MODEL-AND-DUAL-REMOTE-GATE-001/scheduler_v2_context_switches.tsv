@@ -1,0 +1,6 @@
+route	mean_us	p95_us	process_cpu_policy	idle_process_cpu_to_wall	status	control_mean_us	candidate_mean_us
+S0_condition_variable	185142.0	188083.0	sleeping	2.7e-05	compatibility	not-applicable	not-applicable
+S1_raw_epoch_spin	172506.0	174252.0	not-applicable	3.993455	selected_low_latency	not-applicable	not-applicable
+S2_pause_hint	172402.0	173509.0	not-applicable	not-applicable	no_material_gain	not-applicable	not-applicable
+S3_adaptive_spin_sleep	180408.0	181510.0	not-applicable	not-applicable	rejected	not-applicable	not-applicable
+S4_prepared_static_schedule	not-applicable	not-applicable	not-applicable	not-applicable	rejected_no_win	167551.5	167965.5

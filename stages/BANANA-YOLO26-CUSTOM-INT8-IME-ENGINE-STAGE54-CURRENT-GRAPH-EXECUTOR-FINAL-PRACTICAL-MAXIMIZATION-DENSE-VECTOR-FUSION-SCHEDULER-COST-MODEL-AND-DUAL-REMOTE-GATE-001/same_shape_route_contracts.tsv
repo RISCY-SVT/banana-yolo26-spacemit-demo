@@ -1,0 +1,5 @@
+shape_class	routes	same_input_weights_assets_layout_workers
+high_M_low_K_1x1	general_packed,resident_facade,direct_P1	1
+N80_1x1	general_packed,resident_facade,direct_P1	1
+3x3_stride1	general_packed,resident_P3_control	1
+3x3_stride2	general_packed,resident_P3_segmented	1

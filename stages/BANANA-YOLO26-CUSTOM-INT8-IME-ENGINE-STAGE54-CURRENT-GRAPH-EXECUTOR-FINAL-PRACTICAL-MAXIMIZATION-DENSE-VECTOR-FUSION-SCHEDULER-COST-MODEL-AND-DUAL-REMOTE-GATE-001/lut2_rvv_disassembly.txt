@@ -1,0 +1,320 @@
+
+.deps/custom_int8_engine/build-riscv-stage52/yolo26_k1x_int8:     file format elf64-littleriscv
+
+
+Disassembly of section .text:
+
+0000000000022202 <y26::stage52::FullExecutor::Impl::run_lut_chunk(y26::stage52::(anonymous namespace)::Operation const&, unsigned long, unsigned long)>:
+   22202:	7159                	addi	sp,sp,-112
+   22204:	e4ce                	sd	s3,72(sp)
+   22206:	89ae                	mv	s3,a1
+   22208:	558c                	lw	a1,40(a1)
+   2220a:	fc56                	sd	s5,56(sp)
+   2220c:	e0d2                	sd	s4,64(sp)
+   2220e:	e8ca                	sd	s2,80(sp)
+   22210:	eca6                	sd	s1,88(sp)
+   22212:	f0a2                	sd	s0,96(sp)
+   22214:	f486                	sd	ra,104(sp)
+   22216:	8ab2                	mv	s5,a2
+   22218:	8936                	mv	s2,a3
+   2221a:	8a2a                	mv	s4,a0
+   2221c:	dc1fd0ef          	jal	1ffdc <y26::stage52::FullExecutor::Impl::tensor(int) const>
+   22220:	0309b783          	ld	a5,48(s3)
+   22224:	84aa                	mv	s1,a0
+   22226:	8552                	mv	a0,s4
+   22228:	438c                	lw	a1,0(a5)
+   2222a:	db3fd0ef          	jal	1ffdc <y26::stage52::FullExecutor::Impl::tensor(int) const>
+   2222e:	0049a283          	lw	t0,4(s3)
+   22232:	470d                	li	a4,3
+   22234:	842a                	mv	s0,a0
+   22236:	20e28163          	beq	t0,a4,22438 <y26::stage52::FullExecutor::Impl::run_lut_chunk(y26::stage52::(anonymous namespace)::Operation const&, unsigned long, unsigned long)+0x236>
+   2223a:	4311                	li	t1,4
+   2223c:	24628e63          	beq	t0,t1,22498 <y26::stage52::FullExecutor::Impl::run_lut_chunk(y26::stage52::(anonymous namespace)::Operation const&, unsigned long, unsigned long)+0x296>
+   22240:	4485                	li	s1,1
+   22242:	4411                	li	s0,4
+   22244:	1f2af163          	bgeu	s5,s2,22426 <y26::stage52::FullExecutor::Impl::run_lut_chunk(y26::stage52::(anonymous namespace)::Operation const&, unsigned long, unsigned long)+0x224>
+   22248:	f85a                	sd	s6,48(sp)
+   2224a:	f45e                	sd	s7,40(sp)
+   2224c:	a2a1                	j	22394 <y26::stage52::FullExecutor::Impl::run_lut_chunk(y26::stage52::(anonymous namespace)::Operation const&, unsigned long, unsigned long)+0x192>
+   2224e:	0386ab03          	lw	s6,56(a3)
+   22252:	0346ae83          	lw	t4,52(a3)
+   22256:	0306af03          	lw	t5,48(a3)
+   2225a:	036adfb3          	divu	t6,s5,s6
+   2225e:	02c6ae03          	lw	t3,44(a3)
+   22262:	007f0893          	addi	a7,t5,7
+   22266:	0038d293          	srli	t0,a7,0x3
+   2226a:	03dfd333          	divu	t1,t6,t4
+   2226e:	03e357b3          	divu	a5,t1,t5
+   22272:	03e37733          	remu	a4,t1,t5
+   22276:	03c7f3b3          	remu	t2,a5,t3
+   2227a:	0007081b          	sext.w	a6,a4
+   2227e:	00787f13          	andi	t5,a6,7
+   22282:	00385513          	srli	a0,a6,0x3
+   22286:	03dff5b3          	remu	a1,t6,t4
+   2228a:	00cf0fb3          	add	t6,t5,a2
+   2228e:	0003869b          	sext.w	a3,t2
+   22292:	036af633          	remu	a2,s5,s6
+   22296:	00058e1b          	sext.w	t3,a1
+   2229a:	025688b3          	mul	a7,a3,t0
+   2229e:	0006029b          	sext.w	t0,a2
+   222a2:	00a88333          	add	t1,a7,a0
+   222a6:	03d30eb3          	mul	t4,t1,t4
+   222aa:	01ce87b3          	add	a5,t4,t3
+   222ae:	03678b33          	mul	s6,a5,s6
+   222b2:	005b03b3          	add	t2,s6,t0
+   222b6:	00339713          	slli	a4,t2,0x3
+   222ba:	01f706b3          	add	a3,a4,t6
+   222be:	9bb6                	add	s7,s7,a3
+   222c0:	000b8503          	lb	a0,0(s7)
+   222c4:	274390ef          	jal	5b538 <y26::int8_v1::semantic_code(signed char)>
+   222c8:	0049a583          	lw	a1,4(s3)
+   222cc:	832a                	mv	t1,a0
+   222ce:	10858763          	beq	a1,s0,223dc <y26::stage52::FullExecutor::Impl::run_lut_chunk(y26::stage52::(anonymous namespace)::Operation const&, unsigned long, unsigned long)+0x1da>
+   222d2:	1b09b503          	ld	a0,432(s3)
+   222d6:	0289ab83          	lw	s7,40(s3)
+   222da:	00650633          	add	a2,a0,t1
+   222de:	00060503          	lb	a0,0(a2)
+   222e2:	256390ef          	jal	5b538 <y26::int8_v1::semantic_code(signed char)>
+   222e6:	060a3383          	ld	t2,96(s4)
+   222ea:	001b9e93          	slli	t4,s7,0x1
+   222ee:	017e87b3          	add	a5,t4,s7
+   222f2:	00579713          	slli	a4,a5,0x5
+   222f6:	00e38b33          	add	s6,t2,a4
+   222fa:	230390ef          	jal	5b52a <y26::int8_v1::signed_storage(unsigned char)>
+   222fe:	058b2583          	lw	a1,88(s6)
+   22302:	050b3683          	ld	a3,80(s6)
+   22306:	10958363          	beq	a1,s1,2240c <y26::stage52::FullExecutor::Impl::run_lut_chunk(y26::stage52::(anonymous namespace)::Operation const&, unsigned long, unsigned long)+0x20a>
+   2230a:	028b2803          	lw	a6,40(s6)
+   2230e:	0e881f63          	bne	a6,s0,2240c <y26::stage52::FullExecutor::Impl::run_lut_chunk(y26::stage52::(anonymous namespace)::Operation const&, unsigned long, unsigned long)+0x20a>
+   22312:	038b2f03          	lw	t5,56(s6)
+   22316:	034b2f83          	lw	t6,52(s6)
+   2231a:	030b2283          	lw	t0,48(s6)
+   2231e:	03ead333          	divu	t1,s5,t5
+   22322:	02cb2e03          	lw	t3,44(s6)
+   22326:	00728893          	addi	a7,t0,7
+   2232a:	0038db93          	srli	s7,a7,0x3
+   2232e:	03f35633          	divu	a2,t1,t6
+   22332:	02565eb3          	divu	t4,a2,t0
+   22336:	02567733          	remu	a4,a2,t0
+   2233a:	03cef3b3          	remu	t2,t4,t3
+   2233e:	0007059b          	sext.w	a1,a4
+   22342:	0075f293          	andi	t0,a1,7
+   22346:	0035d813          	srli	a6,a1,0x3
+   2234a:	03f37b33          	remu	s6,t1,t6
+   2234e:	00d28333          	add	t1,t0,a3
+   22352:	0003879b          	sext.w	a5,t2
+   22356:	03eaf6b3          	remu	a3,s5,t5
+   2235a:	000b0e1b          	sext.w	t3,s6
+   2235e:	0a85                	addi	s5,s5,1
+   22360:	037788b3          	mul	a7,a5,s7
+   22364:	00068b9b          	sext.w	s7,a3
+   22368:	0a8a3783          	ld	a5,168(s4)
+   2236c:	01088633          	add	a2,a7,a6
+   22370:	03f60fb3          	mul	t6,a2,t6
+   22374:	01cf8eb3          	add	t4,t6,t3
+   22378:	03ee8f33          	mul	t5,t4,t5
+   2237c:	017f03b3          	add	t2,t5,s7
+   22380:	00339713          	slli	a4,t2,0x3
+   22384:	00670b33          	add	s6,a4,t1
+   22388:	016785b3          	add	a1,a5,s6
+   2238c:	00a58023          	sb	a0,0(a1)
+   22390:	09590963          	beq	s2,s5,22422 <y26::stage52::FullExecutor::Impl::run_lut_chunk(y26::stage52::(anonymous namespace)::Operation const&, unsigned long, unsigned long)+0x220>
+   22394:	0309b283          	ld	t0,48(s3)
+   22398:	060a3783          	ld	a5,96(s4)
+   2239c:	0a8a3b83          	ld	s7,168(s4)
+   223a0:	0002a303          	lw	t1,0(t0)
+   223a4:	00131713          	slli	a4,t1,0x1
+   223a8:	006703b3          	add	t2,a4,t1
+   223ac:	00539593          	slli	a1,t2,0x5
+   223b0:	00b786b3          	add	a3,a5,a1
+   223b4:	0586a803          	lw	a6,88(a3)
+   223b8:	6ab0                	ld	a2,80(a3)
+   223ba:	00980563          	beq	a6,s1,223c4 <y26::stage52::FullExecutor::Impl::run_lut_chunk(y26::stage52::(anonymous namespace)::Operation const&, unsigned long, unsigned long)+0x1c2>
+   223be:	5688                	lw	a0,40(a3)
+   223c0:	e88507e3          	beq	a0,s0,2224e <y26::stage52::FullExecutor::Impl::run_lut_chunk(y26::stage52::(anonymous namespace)::Operation const&, unsigned long, unsigned long)+0x4c>
+   223c4:	015606b3          	add	a3,a2,s5
+   223c8:	9bb6                	add	s7,s7,a3
+   223ca:	000b8503          	lb	a0,0(s7)
+   223ce:	16a390ef          	jal	5b538 <y26::int8_v1::semantic_code(signed char)>
+   223d2:	0049a583          	lw	a1,4(s3)
+   223d6:	832a                	mv	t1,a0
+   223d8:	ee859de3          	bne	a1,s0,222d2 <y26::stage52::FullExecutor::Impl::run_lut_chunk(y26::stage52::(anonymous namespace)::Operation const&, unsigned long, unsigned long)+0xd0>
+   223dc:	0309b803          	ld	a6,48(s3)
+   223e0:	060a3f03          	ld	t5,96(s4)
+   223e4:	0a8a3503          	ld	a0,168(s4)
+   223e8:	00482f83          	lw	t6,4(a6)
+   223ec:	8656                	mv	a2,s5
+   223ee:	00831b13          	slli	s6,t1,0x8
+   223f2:	001f9e13          	slli	t3,t6,0x1
+   223f6:	01fe08b3          	add	a7,t3,t6
+   223fa:	00589293          	slli	t0,a7,0x5
+   223fe:	005f05b3          	add	a1,t5,t0
+   22402:	d61ff0ef          	jal	22162 <y26::stage52::(anonymous namespace)::semantic(std::vector<signed char, std::allocator<signed char> > const&, y26::stage52::(anonymous namespace)::Tensor const&, unsigned long) [clone .isra.0]>
+   22406:	01650333          	add	t1,a0,s6
+   2240a:	b5e1                	j	222d2 <y26::stage52::FullExecutor::Impl::run_lut_chunk(y26::stage52::(anonymous namespace)::Operation const&, unsigned long, unsigned long)+0xd0>
+   2240c:	0a8a3783          	ld	a5,168(s4)
+   22410:	01568b33          	add	s6,a3,s5
+   22414:	0a85                	addi	s5,s5,1
+   22416:	016785b3          	add	a1,a5,s6
+   2241a:	00a58023          	sb	a0,0(a1)
+   2241e:	f7591be3          	bne	s2,s5,22394 <y26::stage52::FullExecutor::Impl::run_lut_chunk(y26::stage52::(anonymous namespace)::Operation const&, unsigned long, unsigned long)+0x192>
+   22422:	7b42                	ld	s6,48(sp)
+   22424:	7ba2                	ld	s7,40(sp)
+   22426:	7406                	ld	s0,96(sp)
+   22428:	70a6                	ld	ra,104(sp)
+   2242a:	7ae2                	ld	s5,56(sp)
+   2242c:	6a06                	ld	s4,64(sp)
+   2242e:	69a6                	ld	s3,72(sp)
+   22430:	6946                	ld	s2,80(sp)
+   22432:	64e6                	ld	s1,88(sp)
+   22434:	6165                	addi	sp,sp,112
+   22436:	8082                	ret
+   22438:	05852e03          	lw	t3,88(a0)
+   2243c:	0584ae83          	lw	t4,88(s1)
+   22440:	e1de10e3          	bne	t3,t4,22240 <y26::stage52::FullExecutor::Impl::run_lut_chunk(y26::stage52::(anonymous namespace)::Operation const&, unsigned long, unsigned long)+0x3e>
+   22444:	04853f03          	ld	t5,72(a0)
+   22448:	0484bf83          	ld	t6,72(s1)
+   2244c:	dfff1ae3          	bne	t5,t6,22240 <y26::stage52::FullExecutor::Impl::run_lut_chunk(y26::stage52::(anonymous namespace)::Operation const&, unsigned long, unsigned long)+0x3e>
+   22450:	6920                	ld	s0,80(a0)
+   22452:	68a4                	ld	s1,80(s1)
+   22454:	0a8a3a03          	ld	s4,168(s4)
+   22458:	008a8533          	add	a0,s5,s0
+   2245c:	009a8833          	add	a6,s5,s1
+   22460:	00aa0e33          	add	t3,s4,a0
+   22464:	41590ab3          	sub	s5,s2,s5
+   22468:	010a08b3          	add	a7,s4,a6
+   2246c:	1b09b903          	ld	s2,432(s3)
+   22470:	08000313          	li	t1,128
+   22474:	020a8163          	beqz	s5,22496 <y26::stage52::FullExecutor::Impl::run_lut_chunk(y26::stage52::(anonymous namespace)::Operation const&, unsigned long, unsigned long)+0x294>
+   22478:	0c0af2d7          	vsetvli	t0,s5,e8,m1,ta,ma
+   2247c:	020e0007          	vle8.v	v0,(t3)
+   22480:	2e034057          	vxor.vx	v0,v0,t1
+   22484:	06090087          	vluxei8.v	v1,(s2),v0
+   22488:	020880a7          	vse8.v	v1,(a7)
+   2248c:	9e16                	add	t3,t3,t0
+   2248e:	9896                	add	a7,a7,t0
+   22490:	405a8ab3          	sub	s5,s5,t0
+   22494:	b7c5                	j	22474 <y26::stage52::FullExecutor::Impl::run_lut_chunk(y26::stage52::(anonymous namespace)::Operation const&, unsigned long, unsigned long)+0x272>
+   22496:	bf41                	j	22426 <y26::stage52::FullExecutor::Impl::run_lut_chunk(y26::stage52::(anonymous namespace)::Operation const&, unsigned long, unsigned long)+0x224>
+   22498:	0309b383          	ld	t2,48(s3)
+   2249c:	8552                	mv	a0,s4
+   2249e:	0043a583          	lw	a1,4(t2)
+   224a2:	b3bfd0ef          	jal	1ffdc <y26::stage52::FullExecutor::Impl::tensor(int) const>
+   224a6:	4c2c                	lw	a1,88(s0)
+   224a8:	d8059ce3          	bnez	a1,22240 <y26::stage52::FullExecutor::Impl::run_lut_chunk(y26::stage52::(anonymous namespace)::Operation const&, unsigned long, unsigned long)+0x3e>
+   224ac:	4d30                	lw	a2,88(a0)
+   224ae:	d80619e3          	bnez	a2,22240 <y26::stage52::FullExecutor::Impl::run_lut_chunk(y26::stage52::(anonymous namespace)::Operation const&, unsigned long, unsigned long)+0x3e>
+   224b2:	4cb4                	lw	a3,88(s1)
+   224b4:	d80696e3          	bnez	a3,22240 <y26::stage52::FullExecutor::Impl::run_lut_chunk(y26::stage52::(anonymous namespace)::Operation const&, unsigned long, unsigned long)+0x3e>
+   224b8:	0284a803          	lw	a6,40(s1)
+   224bc:	02842883          	lw	a7,40(s0)
+   224c0:	d90890e3          	bne	a7,a6,22240 <y26::stage52::FullExecutor::Impl::run_lut_chunk(y26::stage52::(anonymous namespace)::Operation const&, unsigned long, unsigned long)+0x3e>
+   224c4:	02852e03          	lw	t3,40(a0)
+   224c8:	d71e1ce3          	bne	t3,a7,22240 <y26::stage52::FullExecutor::Impl::run_lut_chunk(y26::stage52::(anonymous namespace)::Operation const&, unsigned long, unsigned long)+0x3e>
+   224cc:	02c43e83          	ld	t4,44(s0)
+   224d0:	02c4bf03          	ld	t5,44(s1)
+   224d4:	d7ee96e3          	bne	t4,t5,22240 <y26::stage52::FullExecutor::Impl::run_lut_chunk(y26::stage52::(anonymous namespace)::Operation const&, unsigned long, unsigned long)+0x3e>
+   224d8:	03443f83          	ld	t6,52(s0)
+   224dc:	0344b783          	ld	a5,52(s1)
+   224e0:	d6ff90e3          	bne	t6,a5,22240 <y26::stage52::FullExecutor::Impl::run_lut_chunk(y26::stage52::(anonymous namespace)::Operation const&, unsigned long, unsigned long)+0x3e>
+   224e4:	02c53283          	ld	t0,44(a0)
+   224e8:	d5d29ce3          	bne	t0,t4,22240 <y26::stage52::FullExecutor::Impl::run_lut_chunk(y26::stage52::(anonymous namespace)::Operation const&, unsigned long, unsigned long)+0x3e>
+   224ec:	03453703          	ld	a4,52(a0)
+   224f0:	d4f718e3          	bne	a4,a5,22240 <y26::stage52::FullExecutor::Impl::run_lut_chunk(y26::stage52::(anonymous namespace)::Operation const&, unsigned long, unsigned long)+0x3e>
+   224f4:	0484b303          	ld	t1,72(s1)
+   224f8:	04843383          	ld	t2,72(s0)
+   224fc:	d46392e3          	bne	t2,t1,22240 <y26::stage52::FullExecutor::Impl::run_lut_chunk(y26::stage52::(anonymous namespace)::Operation const&, unsigned long, unsigned long)+0x3e>
+   22500:	652c                	ld	a1,72(a0)
+   22502:	d2b39fe3          	bne	t2,a1,22240 <y26::stage52::FullExecutor::Impl::run_lut_chunk(y26::stage52::(anonymous namespace)::Operation const&, unsigned long, unsigned long)+0x3e>
+   22506:	6609                	lui	a2,0x2
+   22508:	00ca0833          	add	a6,s4,a2
+   2250c:	68b4                	ld	a3,80(s1)
+   2250e:	6820                	ld	s0,80(s0)
+   22510:	0a8a3483          	ld	s1,168(s4)
+   22514:	6928                	ld	a0,80(a0)
+   22516:	f5384883          	lbu	a7,-173(a6)
+   2251a:	9426                	add	s0,s0,s1
+   2251c:	00a48a33          	add	s4,s1,a0
+   22520:	94b6                	add	s1,s1,a3
+   22522:	0a089763          	bnez	a7,225d0 <y26::stage52::FullExecutor::Impl::run_lut_chunk(y26::stage52::(anonymous namespace)::Operation const&, unsigned long, unsigned long)+0x3ce>
+   22526:	e86a                	sd	s10,16(sp)
+   22528:	ec66                	sd	s9,24(sp)
+   2252a:	4d11                	li	s10,4
+   2252c:	004a8c93          	addi	s9,s5,4
+   22530:	05996f63          	bltu	s2,s9,2258e <y26::stage52::FullExecutor::Impl::run_lut_chunk(y26::stage52::(anonymous namespace)::Operation const&, unsigned long, unsigned long)+0x38c>
+   22534:	f85a                	sd	s6,48(sp)
+   22536:	f062                	sd	s8,32(sp)
+   22538:	e46e                	sd	s11,8(sp)
+   2253a:	015a0c33          	add	s8,s4,s5
+   2253e:	01540db3          	add	s11,s0,s5
+   22542:	f45e                	sd	s7,40(sp)
+   22544:	4b01                	li	s6,0
+   22546:	9aa6                	add	s5,s5,s1
+   22548:	016d8bb3          	add	s7,s11,s6
+   2254c:	000b8503          	lb	a0,0(s7)
+   22550:	7e9380ef          	jal	5b538 <y26::int8_v1::semantic_code(signed char)>
+   22554:	016c0333          	add	t1,s8,s6
+   22558:	8baa                	mv	s7,a0
+   2255a:	00030503          	lb	a0,0(t1)
+   2255e:	7db380ef          	jal	5b538 <y26::int8_v1::semantic_code(signed char)>
+   22562:	1b09b383          	ld	t2,432(s3)
+   22566:	008b9593          	slli	a1,s7,0x8
+   2256a:	016a8633          	add	a2,s5,s6
+   2256e:	00b38833          	add	a6,t2,a1
+   22572:	9542                	add	a0,a0,a6
+   22574:	00050683          	lb	a3,0(a0)
+   22578:	0b05                	addi	s6,s6,1
+   2257a:	00d60023          	sb	a3,0(a2) # 2000 <(anonymous namespace)::g_thread_cluster0_hotpath_allowed+0x2000>
+   2257e:	fdab15e3          	bne	s6,s10,22548 <y26::stage52::FullExecutor::Impl::run_lut_chunk(y26::stage52::(anonymous namespace)::Operation const&, unsigned long, unsigned long)+0x346>
+   22582:	7b42                	ld	s6,48(sp)
+   22584:	7ba2                	ld	s7,40(sp)
+   22586:	7c02                	ld	s8,32(sp)
+   22588:	6da2                	ld	s11,8(sp)
+   2258a:	8ae6                	mv	s5,s9
+   2258c:	b745                	j	2252c <y26::stage52::FullExecutor::Impl::run_lut_chunk(y26::stage52::(anonymous namespace)::Operation const&, unsigned long, unsigned long)+0x32a>
+   2258e:	01540d33          	add	s10,s0,s5
+   22592:	092af963          	bgeu	s5,s2,22624 <y26::stage52::FullExecutor::Impl::run_lut_chunk(y26::stage52::(anonymous namespace)::Operation const&, unsigned long, unsigned long)+0x422>
+   22596:	f85a                	sd	s6,48(sp)
+   22598:	000d0503          	lb	a0,0(s10)
+   2259c:	79d380ef          	jal	5b538 <y26::int8_v1::semantic_code(signed char)>
+   225a0:	015a0e33          	add	t3,s4,s5
+   225a4:	8b2a                	mv	s6,a0
+   225a6:	000e0503          	lb	a0,0(t3)
+   225aa:	78f380ef          	jal	5b538 <y26::int8_v1::semantic_code(signed char)>
+   225ae:	1b09be83          	ld	t4,432(s3)
+   225b2:	008b1f13          	slli	t5,s6,0x8
+   225b6:	01548fb3          	add	t6,s1,s5
+   225ba:	01ee87b3          	add	a5,t4,t5
+   225be:	00a782b3          	add	t0,a5,a0
+   225c2:	00028703          	lb	a4,0(t0)
+   225c6:	0a85                	addi	s5,s5,1
+   225c8:	00ef8023          	sb	a4,0(t6)
+   225cc:	7b42                	ld	s6,48(sp)
+   225ce:	b7c1                	j	2258e <y26::stage52::FullExecutor::Impl::run_lut_chunk(y26::stage52::(anonymous namespace)::Operation const&, unsigned long, unsigned long)+0x38c>
+   225d0:	015408b3          	add	a7,s0,s5
+   225d4:	1b09b983          	ld	s3,432(s3)
+   225d8:	015a0433          	add	s0,s4,s5
+   225dc:	94d6                	add	s1,s1,s5
+   225de:	41590933          	sub	s2,s2,s5
+   225e2:	08000313          	li	t1,128
+   225e6:	02090e63          	beqz	s2,22622 <y26::stage52::FullExecutor::Impl::run_lut_chunk(y26::stage52::(anonymous namespace)::Operation const&, unsigned long, unsigned long)+0x420>
+   225ea:	0c0972d7          	vsetvli	t0,s2,e8,m1,ta,ma
+   225ee:	02088007          	vle8.v	v0,(a7)
+   225f2:	02040087          	vle8.v	v1,(s0)
+   225f6:	2e034057          	vxor.vx	v0,v0,t1
+   225fa:	2e1340d7          	vxor.vx	v1,v1,t1
+   225fe:	4a032157          	vzext.vf2	v2,v0
+   22602:	4a132257          	vzext.vf2	v4,v1
+   22606:	96243157          	vsll.vi	v2,v2,8
+   2260a:	2a220157          	vor.vv	v2,v2,v4
+   2260e:	0629d307          	vluxei16.v	v6,(s3),v2
+   22612:	02048327          	vse8.v	v6,(s1)
+   22616:	9896                	add	a7,a7,t0
+   22618:	9416                	add	s0,s0,t0
+   2261a:	9496                	add	s1,s1,t0
+   2261c:	40590933          	sub	s2,s2,t0
+   22620:	b7d9                	j	225e6 <y26::stage52::FullExecutor::Impl::run_lut_chunk(y26::stage52::(anonymous namespace)::Operation const&, unsigned long, unsigned long)+0x3e4>
+   22622:	b511                	j	22426 <y26::stage52::FullExecutor::Impl::run_lut_chunk(y26::stage52::(anonymous namespace)::Operation const&, unsigned long, unsigned long)+0x224>
+   22624:	6ce2                	ld	s9,24(sp)
+   22626:	6d42                	ld	s10,16(sp)
+   22628:	bbfd                	j	22426 <y26::stage52::FullExecutor::Impl::run_lut_chunk(y26::stage52::(anonymous namespace)::Operation const&, unsigned long, unsigned long)+0x224>
