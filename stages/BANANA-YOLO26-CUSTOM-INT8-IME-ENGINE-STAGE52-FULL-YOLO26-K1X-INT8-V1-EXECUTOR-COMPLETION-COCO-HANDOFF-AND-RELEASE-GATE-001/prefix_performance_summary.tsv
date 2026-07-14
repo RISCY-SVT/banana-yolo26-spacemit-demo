@@ -1,0 +1,2 @@
+surface	profiled_operations	profile_observations	wall_us	measurement
+prefix_input_through_model4_entry	24	96	128997.96775	sum of per-operation means across repeated instrumented observations; not headline timing

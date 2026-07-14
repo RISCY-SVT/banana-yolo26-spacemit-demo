@@ -1,0 +1,2 @@
+surface	profiled_operations	profile_observations	wall_us	measurement	stable_head_decode_mean_us
+model23_integer_schedule	42	168	118775.37725	sum of per-operation means across repeated instrumented observations; not headline timing	40356.3338

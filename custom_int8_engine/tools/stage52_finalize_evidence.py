@@ -51,7 +51,13 @@ def write_tsv(path: Path, rows: list[dict[str, object]]) -> None:
             if field not in fields:
                 fields.append(field)
     with path.open("w", newline="", encoding="utf-8") as stream:
-        writer = csv.DictWriter(stream, fieldnames=fields, delimiter="\t", extrasaction="ignore")
+        writer = csv.DictWriter(
+            stream,
+            fieldnames=fields,
+            delimiter="\t",
+            extrasaction="ignore",
+            lineterminator="\n",
+        )
         writer.writeheader()
         writer.writerows(rows)
 
@@ -141,6 +147,7 @@ def parse_ort(path: Path) -> tuple[list[dict[str, object]], dict[str, object]]:
 def parse_profile(path: Path, operations_path: Path) -> list[dict[str, object]]:
     operations = {int(row["index"]): row for row in read_tsv(operations_path)}
     rows: list[dict[str, object]] = []
+    observations: dict[int, int] = defaultdict(int)
     pattern = re.compile(r"^stage52_op\t(\d+)\t(.+)\t([0-9.]+)$")
     for line in path.read_text(encoding="utf-8").splitlines():
         match = pattern.match(line)
@@ -150,8 +157,10 @@ def parse_profile(path: Path, operations_path: Path) -> list[dict[str, object]]:
         operation = operations[index]
         name = match.group(2)
         model_match = re.search(r"/model\.(\d+)(?:/|$)", name)
+        observations[index] += 1
         rows.append({
             "index": index,
+            "observation": observations[index],
             "kind": operation["kind"],
             "name": name,
             "model": int(model_match.group(1)) if model_match else -1,
@@ -168,11 +177,17 @@ def aggregate_profile(rows: list[dict[str, object]], label: str,
     selected = [row for row in rows if predicate(row)]
     if not selected:
         raise ValueError(f"profile selection is empty: {label}")
+    by_index: dict[int, list[float]] = defaultdict(list)
+    for row in selected:
+        by_index[int(row["index"])].append(float(row["wall_us"]))
     return {
         "surface": label,
-        "profiled_operations": len(selected),
-        "wall_us": sum(float(row["wall_us"]) for row in selected),
-        "measurement": "single instrumented diagnostic; not headline timing",
+        "profiled_operations": len(by_index),
+        "profile_observations": len(selected),
+        "wall_us": sum(statistics.fmean(values) for values in by_index.values()),
+        "measurement": (
+            "sum of per-operation means across repeated instrumented observations; "
+            "not headline timing"),
     }
 
 
@@ -277,9 +292,9 @@ def write_markdown(path: Path, title: str, paragraphs: list[str]) -> None:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--stage", type=Path, required=True)
+    parser.add_argument("--e2c-control", type=Path, required=True)
     parser.add_argument("--safe", type=Path, required=True)
     parser.add_argument("--rr20", type=Path, required=True)
-    parser.add_argument("--e2c2", type=Path, required=True)
     parser.add_argument("--soak", type=Path, required=True)
     parser.add_argument("--ort", type=Path, required=True)
     parser.add_argument("--profile", type=Path, required=True)
@@ -288,30 +303,49 @@ def main() -> int:
     args = parser.parse_args()
 
     stage = args.stage
-    safe = parse_cli(args.safe, "k1x_int8_v1_sched_other")
-    rr20 = parse_cli(args.rr20, "k1x_int8_v1_sched_rr20")
-    e2c2 = parse_cli(args.e2c2, "k1x_int8_v1_e2c2_sidecar")
-    soak = parse_cli(args.soak, "k1x_int8_v1_sched_other_10000_soak")
+    e2c_control = parse_cli(args.e2c_control, "k1x_int8_v1_e2c_control")
+    safe = parse_cli(args.safe, "k1x_int8_v1_e2c2_sched_other")
+    rr20 = parse_cli(args.rr20, "k1x_int8_v1_e2c2_sched_rr20")
+    soak = parse_cli(args.soak, "k1x_int8_v1_e2c2_sched_other_10000_soak")
     ort_raw, ort_summary = parse_ort(args.ort)
-    stable_summaries = [summarize_cli(rows) for rows in (safe, rr20, e2c2)]
+    control_summary = summarize_cli(e2c_control)
+    stable_summaries = [summarize_cli(rows) for rows in (safe, rr20)]
     soak_summary = summarize_cli(soak)
 
-    write_tsv(stage / "full_model_performance_raw.tsv", safe + rr20 + e2c2)
-    write_tsv(stage / "full_model_performance_summary.tsv", stable_summaries)
-    write_tsv(stage / "full_model_long_soak.tsv", [soak_summary])
-    write_tsv(stage / "full_model_ort_comparison.tsv", [stable_summaries[0], ort_summary])
-    write_tsv(stage / "e2c2_performance_raw.tsv", e2c2)
-    write_tsv(stage / "e2c2_performance_summary.tsv", [stable_summaries[0], stable_summaries[2]])
+    comparison_fields = (
+        "surface", "samples", "mean_us", "stddev_us", "cv_pct", "min_us",
+        "median_us", "p90_us", "p95_us", "p99_us", "max_us",
+        "process_cpu_mean_us",
+    )
+    comparison_safe = {
+        field: stable_summaries[0].get(field, "not-reported")
+        for field in comparison_fields
+    }
+    comparison_safe["statistical_unit"] = "500 per-inference samples; 5 repeats x 100"
+    comparison_ort = {
+        field: ort_summary.get(field, "not-reported")
+        for field in comparison_fields
+    }
+    comparison_ort["samples"] = len(ort_raw)
+    comparison_ort["statistical_unit"] = str(ort_summary["statistical_unit"])
 
-    e2c2_gain = 1.0 - float(stable_summaries[2]["mean_us"]) / float(stable_summaries[0]["mean_us"])
+    write_tsv(stage / "full_model_performance_raw.tsv", safe + rr20 + e2c_control)
+    write_tsv(stage / "full_model_performance_summary.tsv",
+              stable_summaries + [control_summary])
+    write_tsv(stage / "full_model_long_soak.tsv", [soak_summary])
+    write_tsv(stage / "full_model_ort_comparison.tsv", [comparison_safe, comparison_ort])
+    write_tsv(stage / "e2c2_performance_raw.tsv", e2c_control + safe)
+    write_tsv(stage / "e2c2_performance_summary.tsv", [control_summary, stable_summaries[0]])
+
+    e2c2_gain = 1.0 - float(stable_summaries[0]["mean_us"]) / float(control_summary["mean_us"])
     e2c2_p99_regression = (
-        float(stable_summaries[2]["p99_us"]) / float(stable_summaries[0]["p99_us"]) - 1.0)
+        float(stable_summaries[0]["p99_us"]) / float(control_summary["p99_us"]) - 1.0)
     e2c2_selected = e2c2_gain >= 0.05 and e2c2_p99_regression <= 0.02
     write_markdown(stage / "e2c2_decision.md", "E2c2 decision", [
         "E2c2 remained byte-exact in its focused board test and uses explicit RVV. "
         f"Its full-model mean change was {e2c2_gain * 100.0:+.6f}% and its p99 change was "
-        f"{e2c2_p99_regression * 100.0:+.6f}% relative to selected E2c.",
-        ("E2c2 met the full-model selection gate and is selected." if e2c2_selected else
+        f"{e2c2_p99_regression * 100.0:+.6f}% relative to the E2c control.",
+        ("E2c2 met the full-model selection gate and is the release default." if e2c2_selected else
          "E2c2 did not meet the >=5% full-model gain with <=2% p99 regression gate. "
          "The executor retains exact E2c."),
     ])
@@ -368,6 +402,10 @@ def main() -> int:
         "arms failed in the dynamic loader before executor creation, produced identical error-log "
         "hashes, and are retained only as failed raw evidence. Every value in this report comes "
         "from the corrected arm, which passed explicit loader and version preflight.",
+        "The first preloaded-image attempt overlapped a stale Stage 52 process on the "
+        "same IME cores. That partial log is retained as `preloaded_pipeline.excluded-overlap.log` "
+        "and is excluded from every summary. The reported preloaded pipeline was rerun with no "
+        "other Stage 52 executor process present.",
         f"SCHED_OTHER mean was {float(safe_summary['mean_us']):.6f} us, p95 "
         f"{float(safe_summary['p95_us']):.6f} us, and p99 {float(safe_summary['p99_us']):.6f} us "
         f"({pure_fps:.6f} pure-model FPS). SCHED_RR priority 20 was measured only as a lab "

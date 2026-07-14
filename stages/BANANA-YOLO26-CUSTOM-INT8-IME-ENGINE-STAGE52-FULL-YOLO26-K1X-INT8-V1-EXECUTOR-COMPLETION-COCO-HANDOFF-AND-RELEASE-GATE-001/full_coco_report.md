@@ -5,6 +5,13 @@ on all 5,000 official COCO val2017 images. The run completed without an image
 failure and produced 721,755 predictions. The final prediction JSON SHA-256 is
 `cda5c8c7a46d61d9c90f6292001eea190cb8f6617efe647a33dc6134dd57ccda`.
 
+The full COCO run used the exact E2c Q62 implementation. E2c2 was promoted
+afterward as a byte-exact implementation of the same `K1X_INT8_V1` arithmetic:
+its package-channel, adversarial, F0-F7, and real-image boundary gates match
+E2c exactly. Consequently this is a contract-level accuracy result, not an
+approximation attributed to a different numerical route. E2c2 changes the
+implementation and timing only.
+
 ## Frozen surface
 
 - Model SHA-256: `30a94e4738606673b5e0a73499cbc977167f046f8fa8637d6040ce744f429c0c`

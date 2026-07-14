@@ -545,7 +545,7 @@ struct FullExecutor::Impl {
     std::size_t total_weight_bytes = 0;
     std::string error;
     bool controller_affinity_ok = false;
-    bool e2c2_enabled = false;
+    bool e2c2_enabled = true;
     bool ready = false;
 
     void run_optimized_core() {
@@ -1784,7 +1784,9 @@ int FullExecutor::prepare(const std::filesystem::path& package_dir,
         prepared.manifest = verified.manifest_sha256;
         prepared.config = config;
         prepared.controller_affinity_ok = pin_thread(config.controller_cpu);
-        prepared.e2c2_enabled = std::getenv("Y26_STAGE52_E2C2") != nullptr;
+        const char* e2c2_environment = std::getenv("Y26_STAGE52_E2C2");
+        prepared.e2c2_enabled = e2c2_environment == nullptr ||
+            std::string_view(e2c2_environment) != "0";
         std::size_t arena_bytes = 0;
         for (const Row& row : read_tsv(prepared.package / "tensors.tsv")) {
             Tensor tensor;

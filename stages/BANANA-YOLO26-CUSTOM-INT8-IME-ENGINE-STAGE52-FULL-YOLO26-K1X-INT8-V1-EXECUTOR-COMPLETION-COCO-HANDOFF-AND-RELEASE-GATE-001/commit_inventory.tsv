@@ -1,0 +1,4 @@
+sequence	commit	role	message
+1	610985e8ec5b56709bf2b6eff3c988a4fcaef796	checkpoint_1	Complete the YOLO26 K1X INT8 full executor
+2	9ef64a1bee977d3530b5f83e2c4e8552d2d55870	checkpoint_2	Harden the Stage52 executor handoff and accuracy evidence
+3	self	final	Finalize and release the YOLO26 K1X INT8 executor

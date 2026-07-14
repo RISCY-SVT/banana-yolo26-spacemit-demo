@@ -1,0 +1,2 @@
+surface	profiled_operations	profile_observations	wall_us	measurement	stable_matmul_softmax_mean_us
+model10_and_model22_attention_blocks	22	88	80562.56375	sum of per-operation means across repeated instrumented observations; not headline timing	44867.2252

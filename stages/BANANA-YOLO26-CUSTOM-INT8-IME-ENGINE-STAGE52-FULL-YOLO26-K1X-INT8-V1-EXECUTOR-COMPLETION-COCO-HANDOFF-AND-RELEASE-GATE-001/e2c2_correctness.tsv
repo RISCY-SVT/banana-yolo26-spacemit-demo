@@ -3,4 +3,4 @@ adversarial_i64_vectors	32	K1X_INT8_V1_Q62	byte_exact	yes	pass
 int32_extremes	8	K1X_INT8_V1_Q62	byte_exact	yes	pass
 positive_negative_signs	16	K1X_INT8_V1_Q62	byte_exact	yes	pass
 full_package_channels	8772	portable_cpp_scalar	F0-F7_full_boundary_comparison	yes	pass
-full_model_output	1800_float32_values	selected_E2c	F0_output_hash_comparison	yes	pending_stable_timing
+full_model_output	1800_float32_values	selected_E2c2	F0_output_hash_comparison	yes	pass_selected_stable_and_soak

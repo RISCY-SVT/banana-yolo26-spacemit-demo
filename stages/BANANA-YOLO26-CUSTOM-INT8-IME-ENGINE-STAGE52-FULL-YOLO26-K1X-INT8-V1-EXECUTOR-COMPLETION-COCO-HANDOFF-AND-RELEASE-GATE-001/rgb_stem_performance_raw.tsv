@@ -1,0 +1,9 @@
+index	observation	kind	name	model	wall_us	measurement
+1	1	conv_dense	/model.0/conv/Conv	0	14053.816	single instrumented diagnostic
+2	1	lut1	/model.0/act/Mul_output_0_QuantizeLinear	0	905.254	single instrumented diagnostic
+1	2	conv_dense	/model.0/conv/Conv	0	14065.482	single instrumented diagnostic
+2	2	lut1	/model.0/act/Mul_output_0_QuantizeLinear	0	908.713	single instrumented diagnostic
+1	3	conv_dense	/model.0/conv/Conv	0	14062.399	single instrumented diagnostic
+2	3	lut1	/model.0/act/Mul_output_0_QuantizeLinear	0	848.004	single instrumented diagnostic
+1	4	conv_dense	/model.0/conv/Conv	0	14028.399	single instrumented diagnostic
+2	4	lut1	/model.0/act/Mul_output_0_QuantizeLinear	0	914.046	single instrumented diagnostic

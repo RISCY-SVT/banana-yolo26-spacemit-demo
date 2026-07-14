@@ -8,3 +8,4 @@ F5_host_scalar_optimized_board	4	215	0xfe8293d27da4bc67	all boundary files byte-
 F6_host_scalar_optimized_board	4	215	0x7d0df1fa9d89722d	all boundary files byte-exact	pass
 F7_host_scalar_optimized_board	4	215	0x8b86aa75109f3f91	all boundary files byte-exact	pass
 COCO_val2017_full_repeat	5000	final_1x300x6	cda5c8c7a46d61d9c90f6292001eea190cb8f6617efe647a33dc6134dd57ccda	preliminary and final prediction JSON byte-identical	pass
+COCO_val2017_5000	5000	final_1x300x6	cda5c8c7a46d61d9c90f6292001eea190cb8f6617efe647a33dc6134dd57ccda	preliminary and final prediction JSON byte-identical	pass

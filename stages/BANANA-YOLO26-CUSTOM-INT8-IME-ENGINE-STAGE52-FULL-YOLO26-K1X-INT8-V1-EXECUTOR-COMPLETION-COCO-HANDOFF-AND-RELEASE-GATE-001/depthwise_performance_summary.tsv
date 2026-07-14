@@ -1,0 +1,2 @@
+surface	profiled_operations	profile_observations	wall_us	measurement	stable_grouped_conv_mean_us
+all_grouped_depthwise_conv	8	32	102854.4185	sum of per-operation means across repeated instrumented observations; not headline timing	102989.044

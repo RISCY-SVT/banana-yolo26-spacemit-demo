@@ -1,0 +1,2 @@
+surface	profiled_operations	profile_observations	wall_us	measurement
+model10_through_model22	104	416	171147.12075	sum of per-operation means across repeated instrumented observations; not headline timing

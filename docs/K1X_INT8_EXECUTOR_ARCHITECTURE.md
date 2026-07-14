@@ -8,7 +8,9 @@ The executor is a static AOT runtime for one frozen YOLO26n-640 profile.
 - Immutable packed weights and arithmetic assets are loaded during prepare.
 - Four persistent workers are pinned to CPU0-3. CPU4 is controller-only.
 - Dense Conv uses M12xN16 with exact tails, direct C8 A delivery, `smt.vmadot`,
-  and exact E2c Q62 `vsmul.e64` requantization.
+  and the selected exact E2c2 Q62 `vsmul.e64` requantization/store path. The
+  older E2c route remains available only as a diagnostic control by setting
+  `Y26_STAGE52_E2C2=0` before prepare.
 - Grouped/depthwise Conv uses a direct NCHWc8 integer path.
 - Attention uses packed static-shape integer MatMul and package-defined fixed
   Softmax.

@@ -25,4 +25,9 @@ IoU-averaged F1 proxy. It is not represented as a bootstrap confidence interval
 for COCO mAP. Complete metrics and per-class AP are in the Stage52
 `full_coco_report.md`.
 
+The 5,000-image run used exact E2c Q62. The release-default E2c2 route is
+byte-exact to E2c under the same `K1X_INT8_V1` contract across package-channel,
+adversarial, F0-F7, and real-image boundary gates; it changes timing, not this
+accuracy surface.
+
 Intermediate exactness does not substitute for this task-level evaluation.

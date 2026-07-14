@@ -15,6 +15,17 @@ The safe default is four IME workers pinned to CPU0-3, a controller on CPU4,
 and `SCHED_OTHER`. CPU4-7 never execute IME instructions. `rr20` is a bounded
 lab mode, not the deployment default.
 
+The Stage52 handoff was tested on Bianbu 2.2.1 with Linux 6.6.63
+`#2.2.7.2`, SpacemiT GCC 14.3.0, and board NVMe `/data`. Its frozen identities
+are:
+
+```text
+model SHA-256:
+  30a94e4738606673b5e0a73499cbc977167f046f8fa8637d6040ce744f429c0c
+package asset_hashes.tsv SHA-256:
+  d3b4cb794f1373aa712d77bab177a5f7da58530361c9af58c0caf5bbcd6dc75f
+```
+
 Start with:
 
 - [BUILDING_K1X_INT8_EXECUTOR.md](BUILDING_K1X_INT8_EXECUTOR.md)
