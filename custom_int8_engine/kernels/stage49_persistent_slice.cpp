@@ -300,10 +300,17 @@ public:
 
     WorkerPool(int requested, std::size_t panel_bytes, int cpu_base)
         : count_(std::clamp(requested, 1, kMaximumWorkers)), cpu_base_(cpu_base),
-          spin_mode_([]() {
+          spin_policy_([]() {
+              const char* policy = std::getenv("Y26_STAGE54_SPIN_POLICY");
+              if (policy != nullptr) {
+                  const std::string_view value(policy);
+                  if (value == "pause") return 2;
+                  if (value == "adaptive") return 3;
+                  if (value == "raw") return 1;
+              }
               const char* value = std::getenv("Y26_STAGE53_SPIN_POOL");
-              return value != nullptr && std::string_view(value) == "1";
-          }()) {
+              return value != nullptr && std::string_view(value) == "1" ? 1 : 0;
+          }()), spin_mode_(spin_policy_ != 0) {
         scratch_.resize(static_cast<std::size_t>(count_));
         for (WorkerScratch& scratch : scratch_) scratch.a_panel.resize(panel_bytes);
         threads_.reserve(static_cast<std::size_t>(count_));
@@ -399,8 +406,9 @@ public:
             context_ = context;
             spin_completed_.store(0, std::memory_order_relaxed);
             spin_generation_.fetch_add(1, std::memory_order_release);
+            std::size_t wait_iterations = 0;
             while (spin_completed_.load(std::memory_order_acquire) != completion_target_) {
-                asm volatile("" ::: "memory");
+                spin_wait(wait_iterations);
             }
             return;
         }
@@ -420,6 +428,39 @@ public:
     }
 
 private:
+    static void pause_hint() noexcept {
+#if defined(__riscv)
+        __asm__ volatile(
+            ".option push\n\t"
+            ".option arch,+zihintpause\n\t"
+            "pause\n\t"
+            ".option pop\n\t"
+            ::: "memory");
+#else
+        __asm__ volatile("" ::: "memory");
+#endif
+    }
+
+    void spin_wait(std::size_t& iterations) const noexcept {
+        ++iterations;
+        if (spin_policy_ == 2) {
+            pause_hint();
+            return;
+        }
+        if (spin_policy_ == 3) {
+            if (iterations < 256) {
+                __asm__ volatile("" ::: "memory");
+            } else if (iterations < 4096) {
+                pause_hint();
+            } else {
+                std::this_thread::sleep_for(std::chrono::microseconds(1));
+                iterations = 256;
+            }
+            return;
+        }
+        __asm__ volatile("" ::: "memory");
+    }
+
     void worker_loop(int index) {
         WorkerScratch& scratch = scratch_[static_cast<std::size_t>(index)];
         scratch.affinity_set = pin_current_thread(cpu_base_ + index);
@@ -438,9 +479,10 @@ private:
             std::string counter_event;
             if (spin_mode_) {
                 std::uint64_t generation = spin_generation_.load(std::memory_order_acquire);
+                std::size_t wait_iterations = 0;
                 while (generation == local_generation) {
                     if (spin_stopping_.load(std::memory_order_relaxed)) return;
-                    asm volatile("" ::: "memory");
+                    spin_wait(wait_iterations);
                     generation = spin_generation_.load(std::memory_order_acquire);
                 }
                 local_generation = generation;
@@ -533,6 +575,7 @@ private:
     void* context_ = nullptr;
     bool active_workers_only_ = false;
     bool stopping_ = false;
+    int spin_policy_ = 0;
     bool spin_mode_ = false;
     std::atomic<std::uint64_t> spin_generation_ {0};
     std::atomic<int> spin_completed_ {0};

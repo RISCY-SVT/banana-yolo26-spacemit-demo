@@ -10,6 +10,7 @@
 #include <charconv>
 #include <chrono>
 #include <condition_variable>
+#include <cstddef>
 #include <cstring>
 #include <fstream>
 #include <limits>
@@ -282,6 +283,52 @@ extern "C" __attribute__((noinline)) void y26_stage48_kernel_m12n16(const std::i
         Y26_STAGE48_STORE(v28) Y26_STAGE48_STORE(v30)
         :
         : [A] "r"(a), [B] "r"(b), [K] "r"(k_tiles), [C] "r"(c)
+        : "cc", "memory", "t0", "t1", "t2", "t3", "t4", "t5", "v0", "v1", "v2",
+          "v4", "v5", "v6", "v7", "v8", "v9", "v10", "v11", "v12", "v13",
+          "v14", "v15", "v16", "v17", "v18", "v19", "v20", "v21", "v22", "v23",
+          "v24", "v25", "v26", "v27", "v28", "v29", "v30", "v31");
+}
+
+extern "C" __attribute__((noinline)) void y26_stage54_kernel_direct_1x1_m12n16(
+    const std::int8_t* a,
+    std::ptrdiff_t a_channel_block_stride,
+    const std::int8_t* b,
+    int k_tiles,
+    std::int32_t* c) {
+    __asm__ volatile(
+        "vsetvli t0, zero, e32, m2\n\t"
+        Y26_STAGE48_INIT_ACC(v8) Y26_STAGE48_INIT_ACC(v10)
+        Y26_STAGE48_INIT_ACC(v12) Y26_STAGE48_INIT_ACC(v14)
+        Y26_STAGE48_INIT_ACC(v16) Y26_STAGE48_INIT_ACC(v18)
+        Y26_STAGE48_INIT_ACC(v20) Y26_STAGE48_INIT_ACC(v22)
+        Y26_STAGE48_INIT_ACC(v24) Y26_STAGE48_INIT_ACC(v26)
+        Y26_STAGE48_INIT_ACC(v28) Y26_STAGE48_INIT_ACC(v30)
+        "vsetvli t0, zero, e8, m1\n\t" "mv t1, %[K]\n\t"
+        "mv t3, %[A]\n\t" "mv t4, %[B]\n\t"
+        "1:\n\t"
+        "vle8.v v0, (t3)\n\t" "addi t5, t3, 32\n\t" "vle8.v v1, (t5)\n\t"
+        "addi t5, t3, 64\n\t" "vle8.v v2, (t5)\n\t"
+        "vle8.v v4, (t4)\n\t" "addi t5, t4, 32\n\t" "vle8.v v5, (t5)\n\t"
+        "addi t5, t4, 64\n\t" "vle8.v v6, (t5)\n\t"
+        "addi t5, t4, 96\n\t" "vle8.v v7, (t5)\n\t"
+        Y26_STAGE48_DOT(v8, v0, v4) Y26_STAGE48_DOT(v10, v1, v4)
+        Y26_STAGE48_DOT(v12, v2, v4) Y26_STAGE48_DOT(v14, v0, v5)
+        Y26_STAGE48_DOT(v16, v1, v5) Y26_STAGE48_DOT(v18, v2, v5)
+        Y26_STAGE48_DOT(v20, v0, v6) Y26_STAGE48_DOT(v22, v1, v6)
+        Y26_STAGE48_DOT(v24, v2, v6) Y26_STAGE48_DOT(v26, v0, v7)
+        Y26_STAGE48_DOT(v28, v1, v7) Y26_STAGE48_DOT(v30, v2, v7)
+        "add t3, t3, %[A_STRIDE]\n\t" "addi t4, t4, 128\n\t"
+        "addi t1, t1, -1\n\t" "bnez t1, 1b\n\t"
+        "vsetvli t0, zero, e32, m2\n\t" "mv t2, %[C]\n\t"
+        Y26_STAGE48_STORE(v8) Y26_STAGE48_STORE(v10)
+        Y26_STAGE48_STORE(v12) Y26_STAGE48_STORE(v14)
+        Y26_STAGE48_STORE(v16) Y26_STAGE48_STORE(v18)
+        Y26_STAGE48_STORE(v20) Y26_STAGE48_STORE(v22)
+        Y26_STAGE48_STORE(v24) Y26_STAGE48_STORE(v26)
+        Y26_STAGE48_STORE(v28) Y26_STAGE48_STORE(v30)
+        :
+        : [A] "r"(a), [A_STRIDE] "r"(a_channel_block_stride), [B] "r"(b),
+          [K] "r"(k_tiles), [C] "r"(c)
         : "cc", "memory", "t0", "t1", "t2", "t3", "t4", "t5", "v0", "v1", "v2",
           "v4", "v5", "v6", "v7", "v8", "v9", "v10", "v11", "v12", "v13",
           "v14", "v15", "v16", "v17", "v18", "v19", "v20", "v21", "v22", "v23",

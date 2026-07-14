@@ -30,6 +30,19 @@ void q62_vsmul_m63_i64x4_to_s8(const std::int64_t* values,
                                std::int64_t output_zero_point,
                                std::int8_t* output_s8) noexcept;
 
+// Stage54 E2c3 sidecar: one exact C8 requant/store, optionally followed by an
+// indexed byte LUT without a scalar lane loop or temporary output array.
+void q62_vsmul_m63_i64x8_to_s8(const std::int64_t* values,
+                               const std::int64_t* multipliers_m63,
+                               std::int64_t output_zero_point,
+                               std::int8_t* output_s8) noexcept;
+
+void q62_vsmul_m63_i64x8_lut_to_s8(const std::int64_t* values,
+                                   const std::int64_t* multipliers_m63,
+                                   std::int64_t output_zero_point,
+                                   const std::int8_t* lut_s8,
+                                   std::int8_t* output_s8) noexcept;
+
 VectorFixedPointResult end_q62_vector_rne(VectorFixedPointState* state) noexcept;
 
 // Test/diagnostic wrapper that brackets one vector operation and restores vcsr.

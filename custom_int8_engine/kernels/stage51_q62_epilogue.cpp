@@ -104,6 +104,85 @@ void q62_vsmul_m63_i64x4_to_s8(const std::int64_t* values,
 #endif
 }
 
+void q62_vsmul_m63_i64x8_to_s8(const std::int64_t* values,
+                               const std::int64_t* multipliers_m63,
+                               std::int64_t output_zero_point,
+                               std::int8_t* output_s8) noexcept {
+#if defined(__riscv)
+    const std::int64_t maximum = 255;
+    const std::int64_t signed_mask = 128;
+    asm volatile(
+        "vsetivli zero, 8, e64, m2, ta, ma\n\t"
+        "vle64.v v0, (%[values])\n\t"
+        "vle64.v v2, (%[multipliers])\n\t"
+        "vsmul.vv v4, v0, v2\n\t"
+        "vadd.vx v4, v4, %[zero_point]\n\t"
+        "vmax.vx v4, v4, zero\n\t"
+        "vmin.vx v4, v4, %[maximum]\n\t"
+        "vsetivli zero, 8, e32, m1, ta, ma\n\t"
+        "vnclipu.wi v6, v4, 0\n\t"
+        "vsetivli zero, 8, e16, mf2, ta, ma\n\t"
+        "vnclipu.wi v8, v6, 0\n\t"
+        "vsetivli zero, 8, e8, mf4, ta, ma\n\t"
+        "vnclipu.wi v10, v8, 0\n\t"
+        "vxor.vx v10, v10, %[signed_mask]\n\t"
+        "vse8.v v10, (%[output])\n\t"
+        :
+        : [values] "r"(values), [multipliers] "r"(multipliers_m63),
+          [zero_point] "r"(output_zero_point), [maximum] "r"(maximum),
+          [signed_mask] "r"(signed_mask), [output] "r"(output_s8)
+        : "v0", "v1", "v2", "v3", "v4", "v5", "v6", "v8", "v10", "memory");
+#else
+    for (int lane = 0; lane < 8; ++lane) {
+        const std::int64_t rounded = round_shift_right_even(
+            static_cast<Signed128>(values[lane]) *
+            static_cast<Signed128>(multipliers_m63[lane]), 63U);
+        const std::int64_t code = std::clamp(
+            rounded + output_zero_point, std::int64_t {0}, std::int64_t {255});
+        output_s8[lane] = static_cast<std::int8_t>(code - 128);
+    }
+#endif
+}
+
+void q62_vsmul_m63_i64x8_lut_to_s8(const std::int64_t* values,
+                                   const std::int64_t* multipliers_m63,
+                                   std::int64_t output_zero_point,
+                                   const std::int8_t* lut_s8,
+                                   std::int8_t* output_s8) noexcept {
+#if defined(__riscv)
+    const std::int64_t maximum = 255;
+    asm volatile(
+        "vsetivli zero, 8, e64, m2, ta, ma\n\t"
+        "vle64.v v0, (%[values])\n\t"
+        "vle64.v v2, (%[multipliers])\n\t"
+        "vsmul.vv v4, v0, v2\n\t"
+        "vadd.vx v4, v4, %[zero_point]\n\t"
+        "vmax.vx v4, v4, zero\n\t"
+        "vmin.vx v4, v4, %[maximum]\n\t"
+        "vsetivli zero, 8, e32, m1, ta, ma\n\t"
+        "vnclipu.wi v6, v4, 0\n\t"
+        "vsetivli zero, 8, e16, mf2, ta, ma\n\t"
+        "vnclipu.wi v8, v6, 0\n\t"
+        "vsetivli zero, 8, e8, mf4, ta, ma\n\t"
+        "vnclipu.wi v10, v8, 0\n\t"
+        "vluxei8.v v12, (%[lut]), v10\n\t"
+        "vse8.v v12, (%[output])\n\t"
+        :
+        : [values] "r"(values), [multipliers] "r"(multipliers_m63),
+          [zero_point] "r"(output_zero_point), [maximum] "r"(maximum),
+          [lut] "r"(lut_s8), [output] "r"(output_s8)
+        : "v0", "v1", "v2", "v3", "v4", "v5", "v6", "v8", "v10", "v12", "memory");
+#else
+    std::int8_t quantized[8] {};
+    q62_vsmul_m63_i64x8_to_s8(values, multipliers_m63, output_zero_point, quantized);
+    for (int lane = 0; lane < 8; ++lane) {
+        const std::uint8_t code = static_cast<std::uint8_t>(
+            static_cast<int>(quantized[lane]) + 128);
+        output_s8[lane] = lut_s8[code];
+    }
+#endif
+}
+
 VectorFixedPointResult end_q62_vector_rne(VectorFixedPointState* state) noexcept {
     VectorFixedPointResult result;
     if (state == nullptr || !state->active) return result;

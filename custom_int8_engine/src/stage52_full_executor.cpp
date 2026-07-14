@@ -12,6 +12,7 @@
 #include <chrono>
 #include <cmath>
 #include <condition_variable>
+#include <cstddef>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -39,11 +40,17 @@
 #if defined(Y26_K1X_ENABLE_IME_ASM) && defined(__riscv)
 extern "C" void y26_stage48_kernel_m12n16(
     const std::int8_t*, const std::int8_t*, int, std::int32_t*);
+extern "C" void y26_stage48_kernel_m8n16(
+    const std::int8_t*, const std::int8_t*, int, std::int32_t*);
 extern "C" void y26_stage53_kernel_m12n4(
     const std::int8_t*, const std::int8_t*, int, std::int32_t*);
 extern "C" void y26_stage53_kernel_m12n8(
     const std::int8_t*, const std::int8_t*, int, std::int32_t*);
+extern "C" void y26_stage54_kernel_direct_1x1_m12n16(
+    const std::int8_t*, std::ptrdiff_t, const std::int8_t*, int, std::int32_t*);
 extern "C" void y26_stage48_load_vlse64_4(const std::int8_t*, std::int8_t*);
+extern "C" void y26_stage49_load_vlseg2_pair_4(
+    const std::int8_t*, std::int8_t*, std::int8_t*);
 extern "C" void y26_stage49_load_contiguous_c8x4(const std::int8_t*, std::int8_t*);
 #endif
 
@@ -112,6 +119,33 @@ void run_m12n_live(const std::int8_t* a, const std::int8_t* b,
 #endif
 }
 
+void run_m8n16(const std::int8_t* a, const std::int8_t* b,
+               int k_tiles, std::int32_t* c) noexcept {
+#if defined(Y26_K1X_ENABLE_IME_ASM) && defined(__riscv)
+    y26_stage48_kernel_m8n16(a, b, k_tiles, c);
+#else
+    std::fill(c, c + 8 * kDenseN, 0);
+    for (int tile = 0; tile < k_tiles; ++tile) {
+        const auto* at = a + static_cast<std::size_t>(tile) * 8U * 8U;
+        const auto* bt = b + static_cast<std::size_t>(tile) * kDenseN * 8U;
+        for (int output_group = 0; output_group < 4; ++output_group) {
+            for (int row_group = 0; row_group < 2; ++row_group) {
+                auto* result = c + (output_group * 2 + row_group) * 16;
+                for (int row = 0; row < 4; ++row) {
+                    for (int output = 0; output < 4; ++output) {
+                        for (int lane = 0; lane < 8; ++lane) {
+                            result[row * 4 + output] +=
+                                static_cast<std::int32_t>(at[(row_group * 4 + row) * 8 + lane]) *
+                                static_cast<std::int32_t>(bt[(output_group * 4 + output) * 8 + lane]);
+                        }
+                    }
+                }
+            }
+        }
+    }
+#endif
+}
+
 void transform_lut_rvv(const std::int8_t* source, std::int8_t* destination,
                        const std::int8_t* lut, std::size_t count) noexcept {
 #if defined(Y26_K1X_ENABLE_IME_ASM) && defined(__riscv)
@@ -139,8 +173,121 @@ void transform_lut_rvv(const std::int8_t* source, std::int8_t* destination,
 #endif
 }
 
+void transform_lut2_rvv(const std::int8_t* left, const std::int8_t* right,
+                        std::int8_t* destination, const std::int8_t* lut,
+                        std::size_t count) noexcept {
+#if defined(Y26_K1X_ENABLE_IME_ASM) && defined(__riscv)
+    __asm__ volatile(
+        "li t1, 128\n\t"
+        "1:\n\t"
+        "beqz %[count], 2f\n\t"
+        "vsetvli t0, %[count], e8, m1, ta, ma\n\t"
+        "vle8.v v0, (%[left])\n\t"
+        "vle8.v v1, (%[right])\n\t"
+        "vxor.vx v0, v0, t1\n\t"
+        "vxor.vx v1, v1, t1\n\t"
+        "vzext.vf2 v2, v0\n\t"
+        "vzext.vf2 v4, v1\n\t"
+        "vsll.vi v2, v2, 8\n\t"
+        "vor.vv v2, v2, v4\n\t"
+        "vluxei16.v v6, (%[lut]), v2\n\t"
+        "vse8.v v6, (%[destination])\n\t"
+        "add %[left], %[left], t0\n\t"
+        "add %[right], %[right], t0\n\t"
+        "add %[destination], %[destination], t0\n\t"
+        "sub %[count], %[count], t0\n\t"
+        "j 1b\n\t"
+        "2:\n\t"
+        : [left] "+r"(left), [right] "+r"(right),
+          [destination] "+r"(destination), [count] "+r"(count)
+        : [lut] "r"(lut)
+        : "memory", "t0", "t1", "v0", "v1", "v2", "v3", "v4", "v5", "v6");
+#else
+    for (std::size_t index = 0; index < count; ++index) {
+        const std::uint8_t left_code = int8_v1::semantic_code(left[index]);
+        const std::uint8_t right_code = int8_v1::semantic_code(right[index]);
+        destination[index] = lut[static_cast<std::size_t>(left_code) * 256U + right_code];
+    }
+#endif
+}
+
+void softmax_max_sum_rvv(const std::int8_t* source, std::size_t count,
+                         const std::uint64_t* exp_q48,
+                         std::uint8_t* maximum, std::uint64_t* sum) noexcept {
+#if defined(Y26_K1X_ENABLE_IME_ASM) && defined(__riscv)
+    const std::int8_t* max_source = source;
+    std::size_t max_count = count;
+    std::uint64_t max_value = 0;
+    __asm__ volatile(
+        "vmv.s.x v2, zero\n\t"
+        "li t1, 128\n\t"
+        "1:\n\t"
+        "beqz %[count], 2f\n\t"
+        "vsetvli t0, %[count], e8, m1, ta, ma\n\t"
+        "vle8.v v0, (%[source])\n\t"
+        "vxor.vx v0, v0, t1\n\t"
+        "vredmaxu.vs v2, v0, v2\n\t"
+        "add %[source], %[source], t0\n\t"
+        "sub %[count], %[count], t0\n\t"
+        "j 1b\n\t"
+        "2:\n\t"
+        "vmv.x.s %[maximum], v2\n\t"
+        : [source] "+r"(max_source), [count] "+r"(max_count),
+          [maximum] "=r"(max_value)
+        :
+        : "memory", "t0", "t1", "v0", "v2");
+
+    const std::int8_t* sum_source = source;
+    std::size_t sum_count = count;
+    std::uint64_t sum_value = 0;
+    __asm__ volatile(
+        "vmv.s.x v4, zero\n\t"
+        "li t1, 128\n\t"
+        "1:\n\t"
+        "beqz %[count], 2f\n\t"
+        "vsetvli t0, %[count], e8, mf2, ta, ma\n\t"
+        "vle8.v v0, (%[source])\n\t"
+        "vxor.vx v0, v0, t1\n\t"
+        "vrsub.vx v0, v0, %[maximum]\n\t"
+        "vsetvli zero, t0, e64, m4, ta, ma\n\t"
+        "vluxei8.v v8, (%[lut]), v0\n\t"
+        "vredsum.vs v4, v8, v4\n\t"
+        "add %[source], %[source], t0\n\t"
+        "sub %[count], %[count], t0\n\t"
+        "j 1b\n\t"
+        "2:\n\t"
+        "vmv.x.s %[sum], v4\n\t"
+        : [source] "+r"(sum_source), [count] "+r"(sum_count), [sum] "=r"(sum_value)
+        : [maximum] "r"(max_value), [lut] "r"(exp_q48)
+        : "memory", "t0", "t1", "v0", "v4", "v8", "v9", "v10", "v11");
+    *maximum = static_cast<std::uint8_t>(max_value);
+    *sum = sum_value;
+#else
+    std::uint8_t max_value = 0;
+    for (std::size_t index = 0; index < count; ++index) {
+        max_value = std::max(max_value, int8_v1::semantic_code(source[index]));
+    }
+    std::uint64_t sum_value = 0;
+    for (std::size_t index = 0; index < count; ++index) {
+        sum_value += exp_q48[max_value - int8_v1::semantic_code(source[index])];
+    }
+    *maximum = max_value;
+    *sum = sum_value;
+#endif
+}
+
 double elapsed_us(Clock::time_point begin, Clock::time_point end) noexcept {
     return std::chrono::duration<double, std::micro>(end - begin).count();
+}
+
+std::int8_t quantize_input_f32(float value) noexcept {
+    const double scaled = static_cast<double>(value) * 255.0;
+    const double floor_value = std::floor(scaled);
+    const double fraction = scaled - floor_value;
+    std::int64_t rounded = static_cast<std::int64_t>(floor_value);
+    if (fraction > 0.5 || (fraction == 0.5 && (rounded & 1))) ++rounded;
+    return int8_v1::signed_storage(static_cast<std::uint8_t>(
+        std::clamp<std::int64_t>(rounded, 0, 255)));
 }
 
 std::vector<std::string> split(std::string_view text, char delimiter) {
@@ -381,6 +528,7 @@ struct Conv {
     std::vector<std::int64_t> corrected_bias;
     std::vector<std::int64_t> multiplier_m63;
     std::vector<std::int8_t> depthwise_weights_c8;
+    std::vector<std::int32_t> depthwise_corrected_bias_i32;
     std::vector<std::int8_t> stem_weights_tap_major;
     std::vector<std::int32_t> stem_corrected_bias_i32;
     int k_tiles = 0;
@@ -606,11 +754,29 @@ struct FullExecutor::Impl {
     std::size_t core_scratch_bytes = 0;
     std::size_t total_weight_bytes = 0;
     std::string error;
+    const float* current_float_input = nullptr;
     bool controller_affinity_ok = false;
     bool e2c2_enabled = true;
     bool small_n_enabled = true;
     bool rgb_stem_enabled = true;
     bool fused_lut_enabled = false;
+    bool direct_1x1_enabled = false;
+    bool e2c3_enabled = false;
+    bool dense_m8_enabled = false;
+    bool dense_weight_stationary_enabled = false;
+    int dense_partition = 0;
+    bool depthwise_v2_enabled = false;
+    bool depthwise_x2_enabled = false;
+    bool depthwise_border_v2_enabled = false;
+    bool lut2_rvv_enabled = false;
+    bool input_rvv_v2_enabled = false;
+    bool input_compact_c3_enabled = false;
+    bool input_stem_fused_enabled = false;
+    bool attention_v2_enabled = false;
+    bool head_v2_enabled = false;
+    bool dense_pack_rvv_enabled = false;
+    bool static_schedule_enabled = false;
+    std::vector<int> static_batch_end;
     bool ready = false;
     std::uint64_t profile_run_sequence = 0;
 
@@ -813,6 +979,7 @@ struct FullExecutor::Impl {
             throw std::runtime_error("depthwise accumulator exceeds int32");
         }
         conv.depthwise_weights_c8.resize(conv.weights.size());
+        conv.depthwise_corrected_bias_i32.resize(static_cast<std::size_t>(conv.output_c));
         const int channel_blocks = conv.output_c / 8;
         for (int channel_block = 0; channel_block < channel_blocks; ++channel_block) {
             for (int tap = 0; tap < 9; ++tap) {
@@ -825,7 +992,20 @@ struct FullExecutor::Impl {
             }
         }
         conv.multiplier_m63.resize(static_cast<std::size_t>(conv.output_c));
+        const std::int64_t input_correction = 128 - static_cast<std::int64_t>(input.zero_point);
         for (int channel = 0; channel < conv.output_c; ++channel) {
+            std::int64_t weight_sum = 0;
+            for (int tap = 0; tap < 9; ++tap) {
+                weight_sum += conv.weights[static_cast<std::size_t>(channel) * 9U + tap];
+            }
+            const std::int64_t corrected_bias =
+                conv.bias[static_cast<std::size_t>(channel)] + input_correction * weight_sum;
+            if (corrected_bias < std::numeric_limits<std::int32_t>::min() ||
+                corrected_bias > std::numeric_limits<std::int32_t>::max()) {
+                throw std::runtime_error("depthwise corrected bias exceeds int32");
+            }
+            conv.depthwise_corrected_bias_i32[static_cast<std::size_t>(channel)] =
+                static_cast<std::int32_t>(corrected_bias);
             const std::int64_t multiplier = conv.multiplier[static_cast<std::size_t>(channel)];
             if (conv.shift[static_cast<std::size_t>(channel)] != 62 || multiplier <= 0 ||
                 multiplier > std::numeric_limits<std::int64_t>::max() / 2) {
@@ -837,7 +1017,8 @@ struct FullExecutor::Impl {
     }
 
     void pack_dense_a(const Conv& conv, const Tensor& input, const std::int8_t* input_data,
-                      int output_w, int m_begin, int valid_rows, std::int8_t* panel) const noexcept {
+                      int output_w, int m_begin, int valid_rows, int m_block,
+                      std::int8_t* panel) const noexcept {
         const int input_blocks = conv.input_blocks;
         const std::int8_t padding = int8_v1::signed_storage(static_cast<std::uint8_t>(input.zero_point));
         for (int tile = 0; tile < conv.k_tiles; ++tile) {
@@ -845,9 +1026,9 @@ struct FullExecutor::Impl {
             const int kernel_position = tile / input_blocks;
             const int kernel_y = kernel_position / conv.kernel_w;
             const int kernel_x = kernel_position % conv.kernel_w;
-            for (int group = 0; group < kDenseM; group += 4) {
+            for (int group = 0; group < m_block; group += 4) {
                 std::int8_t* destination =
-                    panel + (static_cast<std::size_t>(tile) * kDenseM + group) * 8U;
+                    panel + (static_cast<std::size_t>(tile) * m_block + group) * 8U;
                 const int flat = m_begin + group;
                 const int output_y = flat / output_w;
                 const int output_x = flat % output_w;
@@ -900,6 +1081,59 @@ struct FullExecutor::Impl {
         }
     }
 
+    void pack_dense_a_p3(const Conv& conv, const Tensor& input,
+                         const std::int8_t* input_data, int output_w,
+                         int m_begin, int valid_rows, int m_block,
+                         std::int8_t* panel) const noexcept {
+        if (!dense_pack_rvv_enabled || m_block != kDenseM || conv.kernel_h != 3 ||
+            conv.kernel_w != 3 || conv.stride_h != 2 || conv.stride_w != 2) {
+            pack_dense_a(conv, input, input_data, output_w, m_begin, valid_rows, m_block, panel);
+            return;
+        }
+        for (int kernel_y = 0; kernel_y < 3; ++kernel_y) {
+            for (int channel_block = 0; channel_block < conv.input_blocks; ++channel_block) {
+                const int tile0 = kernel_y * 3 * conv.input_blocks + channel_block;
+                const int tile1 = tile0 + conv.input_blocks;
+                const int tile2 = tile1 + conv.input_blocks;
+                for (int group = 0; group < m_block; group += 4) {
+                    const int flat = m_begin + group;
+                    const int output_y = flat / output_w;
+                    const int output_x = flat % output_w;
+                    const int input_y = output_y * 2 - conv.pad_top + kernel_y;
+                    const int input_x = output_x * 2 - conv.pad_left;
+                    const bool complete = group + 4 <= valid_rows &&
+                        output_x + 3 < output_w && input_y >= 0 && input_y < input.dims[2] &&
+                        input_x >= 0 && input_x + 8 < input.dims[3];
+                    if (!complete) {
+                        pack_dense_a(conv, input, input_data, output_w, m_begin,
+                                     valid_rows, m_block, panel);
+                        return;
+                    }
+                    const std::size_t source_offset =
+                        ((static_cast<std::size_t>(channel_block) * input.dims[2] + input_y) *
+                         input.dims[3] + input_x) * 8U;
+                    const auto* source = input_data + source_offset;
+                    auto* destination0 = panel +
+                        (static_cast<std::size_t>(tile0) * m_block + group) * 8U;
+                    auto* destination1 = panel +
+                        (static_cast<std::size_t>(tile1) * m_block + group) * 8U;
+                    auto* destination2 = panel +
+                        (static_cast<std::size_t>(tile2) * m_block + group) * 8U;
+#if defined(Y26_K1X_ENABLE_IME_ASM) && defined(__riscv)
+                    y26_stage49_load_vlseg2_pair_4(source, destination0, destination1);
+                    y26_stage48_load_vlse64_4(source + 16, destination2);
+#else
+                    for (int row = 0; row < 4; ++row) {
+                        std::memcpy(destination0 + row * 8, source + row * 16, 8);
+                        std::memcpy(destination1 + row * 8, source + row * 16 + 8, 8);
+                        std::memcpy(destination2 + row * 8, source + row * 16 + 16, 8);
+                    }
+#endif
+                }
+            }
+        }
+    }
+
     struct ConvJob { Impl* self; const Operation* op; std::atomic<int> status {0}; };
     enum class RangeKind { input_quant, input_rgb, lut, transform, concat_branch, resize, matmul, softmax };
     struct RangeJob {
@@ -914,6 +1148,176 @@ struct FullExecutor::Impl {
         RangeKind kind = RangeKind::lut;
         std::atomic<int> status {0};
     };
+
+    struct StaticBarrier {
+        std::atomic<int> arrivals {0};
+        std::atomic<std::uint64_t> epoch {0};
+
+        void wait(int workers) noexcept {
+            const std::uint64_t observed = epoch.load(std::memory_order_acquire);
+            if (arrivals.fetch_add(1, std::memory_order_acq_rel) + 1 == workers) {
+                arrivals.store(0, std::memory_order_relaxed);
+                epoch.fetch_add(1, std::memory_order_release);
+                return;
+            }
+            unsigned spins = 0;
+            while (epoch.load(std::memory_order_acquire) == observed) {
+                if ((++spins & 4095U) == 0U) std::this_thread::yield();
+            }
+        }
+    };
+
+    struct StaticScheduleJob {
+        Impl* self = nullptr;
+        std::size_t begin = 0;
+        std::size_t end = 0;
+        const float* input = nullptr;
+        const std::uint8_t* rgb = nullptr;
+        int rgb_stride = 0;
+        StaticBarrier barrier;
+        std::atomic<int> status {0};
+    };
+
+    static bool static_schedule_eligible(OpKind kind) noexcept {
+        switch (kind) {
+            case OpKind::input_quant:
+            case OpKind::conv_dense:
+            case OpKind::conv_grouped:
+            case OpKind::lut1:
+            case OpKind::lut2:
+            case OpKind::split:
+            case OpKind::reshape:
+            case OpKind::transpose:
+            case OpKind::reshape_split_transpose:
+            case OpKind::resize:
+                return true;
+            case OpKind::concat:
+            case OpKind::matmul:
+            case OpKind::softmax_transpose:
+                return false;
+        }
+        return false;
+    }
+
+    std::size_t static_range_total(const Operation& operation) const {
+        const Tensor& output = tensor(operation.output);
+        if (operation.kind == OpKind::input_quant) {
+            return output.layout == Layout::feature_nchwc8 && output.rank == 4 &&
+                    output.dims[0] == 1 && output.dims[1] <= 8
+                ? static_cast<std::size_t>(output.dims[2]) * output.dims[3]
+                : output.logical_elements;
+        }
+        if (operation.kind == OpKind::lut1) {
+            const Tensor& input = tensor(operation.inputs[0]);
+            return input.layout == output.layout && input.storage_bytes == output.storage_bytes
+                ? output.storage_bytes : output.logical_elements;
+        }
+        if (operation.kind == OpKind::lut2) {
+            const Tensor& left = tensor(operation.inputs[0]);
+            const Tensor& right = tensor(operation.inputs[1]);
+            const bool raw = left.layout == Layout::feature_nchwc8 &&
+                right.layout == left.layout && output.layout == left.layout &&
+                left.rank == output.rank && right.rank == output.rank &&
+                left.dims == output.dims && right.dims == output.dims &&
+                left.storage_bytes == output.storage_bytes &&
+                right.storage_bytes == output.storage_bytes;
+            return raw ? output.storage_bytes : output.logical_elements;
+        }
+        if (operation.kind == OpKind::split || operation.kind == OpKind::reshape ||
+            operation.kind == OpKind::transpose ||
+            operation.kind == OpKind::reshape_split_transpose) {
+            const Tensor& input = tensor(operation.inputs[0]);
+            const bool raw_split = operation.kind == OpKind::split && operation.axis == 1 &&
+                input.layout == Layout::feature_nchwc8 && output.layout == input.layout &&
+                input.rank == 4 && output.rank == 4 && operation.split_offset % 8 == 0 &&
+                input.dims[2] == output.dims[2] && input.dims[3] == output.dims[3];
+            const bool raw_reshape = operation.kind == OpKind::reshape &&
+                input.layout == output.layout && input.storage_bytes == output.storage_bytes;
+            return raw_split || raw_reshape ? output.storage_bytes : output.logical_elements;
+        }
+        return output.logical_elements;
+    }
+
+    void run_static_operation_chunk(const Operation& operation, const float* input,
+                                    const std::uint8_t* rgb, int rgb_stride,
+                                    int worker, int workers) {
+        if (operation.skip_when_fused && fused_lut_enabled && !config.capture_boundaries) return;
+        if (operation.kind == OpKind::input_quant) {
+            if (input_stem_fused_enabled && !config.capture_boundaries && input != nullptr) return;
+            const std::size_t total = static_range_total(operation);
+            const std::size_t begin = total * static_cast<std::size_t>(worker) /
+                                      static_cast<std::size_t>(workers);
+            const std::size_t end = total * static_cast<std::size_t>(worker + 1) /
+                                    static_cast<std::size_t>(workers);
+            if (rgb == nullptr) run_input_chunk(operation, input, begin, end);
+            else run_input_rgb_chunk(operation, rgb, rgb_stride, begin, end);
+            return;
+        }
+        if (operation.kind == OpKind::conv_dense || operation.kind == OpKind::conv_grouped) {
+            if (config.compute == ComputeMode::optimized && rgb_stem_enabled &&
+                operation.conv.rgb_stem_rvv_eligible) {
+                run_rgb_stem_chunk(operation, worker, workers);
+            } else if (config.compute == ComputeMode::optimized && operation.conv.dense_ime_eligible) {
+                run_dense_conv_chunk(operation, worker, workers);
+            } else if (config.compute == ComputeMode::optimized &&
+                       operation.kind == OpKind::conv_grouped &&
+                       operation.conv.group == operation.conv.input_c &&
+                       operation.conv.group == operation.conv.output_c) {
+                run_depthwise_conv_chunk(operation, worker, workers);
+            } else {
+                run_conv_chunk(operation, worker, workers);
+            }
+            return;
+        }
+        const std::size_t total = static_range_total(operation);
+        const std::size_t begin = total * static_cast<std::size_t>(worker) /
+                                  static_cast<std::size_t>(workers);
+        const std::size_t end = total * static_cast<std::size_t>(worker + 1) /
+                                static_cast<std::size_t>(workers);
+        switch (operation.kind) {
+            case OpKind::lut1:
+            case OpKind::lut2: run_lut_chunk(operation, begin, end); break;
+            case OpKind::split:
+            case OpKind::reshape:
+            case OpKind::transpose:
+            case OpKind::reshape_split_transpose:
+                run_transform_chunk(operation, begin, end);
+                break;
+            case OpKind::resize: run_resize_chunk(operation, begin, end); break;
+            default: throw std::runtime_error("unsupported prepared-schedule operation");
+        }
+    }
+
+    static void static_schedule_job(void* opaque, int worker, int workers) {
+        auto& job = *static_cast<StaticScheduleJob*>(opaque);
+        for (std::size_t index = job.begin; index <= job.end; ++index) {
+            if (job.status.load(std::memory_order_relaxed) == 0) {
+                try {
+                    job.self->run_static_operation_chunk(
+                        job.self->operations[index], job.input, job.rgb, job.rgb_stride,
+                        worker, workers);
+                } catch (...) {
+                    job.status.store(1, std::memory_order_relaxed);
+                }
+            }
+            job.barrier.wait(workers);
+        }
+    }
+
+    void dispatch_static_batch(std::size_t begin, std::size_t end, const float* input,
+                               const std::uint8_t* rgb, int rgb_stride) {
+        StaticScheduleJob job;
+        job.self = this;
+        job.begin = begin;
+        job.end = end;
+        job.input = input;
+        job.rgb = rgb;
+        job.rgb_stride = rgb_stride;
+        dispatch_workers(config.workers, static_schedule_job, &job);
+        if (job.status.load(std::memory_order_relaxed) != 0) {
+            throw std::runtime_error("prepared static schedule worker failed");
+        }
+    }
 
     static void range_job(void* opaque, int worker, int workers) {
         auto& job = *static_cast<RangeJob*>(opaque);
@@ -982,6 +1386,11 @@ struct FullExecutor::Impl {
         const int output_w = output.dims[3];
         const int input_h = input.dims[2];
         const int input_w = input.dims[3];
+        const std::size_t input_pixel_stride =
+            input_compact_c3_enabled && !config.capture_boundaries ? 3U : 8U;
+        const bool fused_float_input = input_stem_fused_enabled && !config.capture_boundaries &&
+            current_float_input != nullptr;
+        const std::size_t input_plane = static_cast<std::size_t>(input_h) * input_w;
         const int total = output_h * output_w;
         const int begin = total * worker / workers;
         const int end = total * (worker + 1) / workers;
@@ -1006,12 +1415,18 @@ struct FullExecutor::Impl {
                 for (int kernel_x = 0; kernel_x < 3; ++kernel_x) {
                     const int input_x = output_x * 2 - conv.pad_left + kernel_x;
                     for (int input_channel = 0; input_channel < 3; ++input_channel) {
-                        const std::int8_t input_value =
-                            input_y < 0 || input_y >= input_h ||
-                            input_x < 0 || input_x >= input_w
-                            ? padding
-                            : input_data[(static_cast<std::size_t>(input_y) * input_w + input_x) * 8U +
-                                         static_cast<std::size_t>(input_channel)];
+                        const bool valid = input_y >= 0 && input_y < input_h &&
+                            input_x >= 0 && input_x < input_w;
+                        std::int8_t input_value = padding;
+                        if (valid) {
+                            input_value = fused_float_input
+                                ? quantize_input_f32(current_float_input[
+                                      static_cast<std::size_t>(input_channel) * input_plane +
+                                      static_cast<std::size_t>(input_y) * input_w + input_x])
+                                : input_data[(static_cast<std::size_t>(input_y) * input_w + input_x) *
+                                                 input_pixel_stride +
+                                             static_cast<std::size_t>(input_channel)];
+                        }
                         const int tap = (kernel_y * 3 + kernel_x) * 3 + input_channel;
                         const vint8mf2_t weight_i8 = __riscv_vle8_v_i8mf2(
                             conv.stem_weights_tap_major.data() + static_cast<std::size_t>(tap) * 16U,
@@ -1033,12 +1448,18 @@ struct FullExecutor::Impl {
                     for (int kernel_x = 0; kernel_x < 3; ++kernel_x) {
                         const int input_x = output_x * 2 - conv.pad_left + kernel_x;
                         for (int input_channel = 0; input_channel < 3; ++input_channel) {
-                            const std::int8_t input_value =
-                                input_y < 0 || input_y >= input_h ||
-                                input_x < 0 || input_x >= input_w
-                                ? padding
-                                : input_data[(static_cast<std::size_t>(input_y) * input_w + input_x) * 8U +
-                                             static_cast<std::size_t>(input_channel)];
+                            const bool valid = input_y >= 0 && input_y < input_h &&
+                                input_x >= 0 && input_x < input_w;
+                            std::int8_t input_value = padding;
+                            if (valid) {
+                                input_value = fused_float_input
+                                    ? quantize_input_f32(current_float_input[
+                                          static_cast<std::size_t>(input_channel) * input_plane +
+                                          static_cast<std::size_t>(input_y) * input_w + input_x])
+                                    : input_data[(static_cast<std::size_t>(input_y) * input_w + input_x) *
+                                                     input_pixel_stride +
+                                                 static_cast<std::size_t>(input_channel)];
+                            }
                             const int tap = (kernel_y * 3 + kernel_x) * 3 + input_channel;
                             sum += static_cast<std::int32_t>(input_value) *
                                 conv.stem_weights_tap_major[
@@ -1072,6 +1493,121 @@ struct FullExecutor::Impl {
         }
     }
 
+    void store_dense_block(const Operation& operation, const Conv& conv,
+                           const Tensor& output, std::int8_t* output_data,
+                           DenseScratch& scratch, int m_block, int m_begin,
+                           int valid_rows, int n_block, bool fuse_lut) {
+        const int output_m = output.dims[2] * output.dims[3];
+        const int row_groups = m_block / 4;
+        for (int output_group = 0; output_group < 4;) {
+            const int channel_begin = n_block * kDenseN + output_group * 4;
+            if (channel_begin >= conv.output_c) break;
+            const int paired_channels = std::min(8, conv.output_c - channel_begin);
+            if (e2c3_enabled && conv.e2c_compatible && e2c2_enabled &&
+                paired_channels == 8 && output_group + 1 < 4) {
+                for (int row = 0; row < valid_rows; ++row) {
+                    const int row_group = row / 4;
+                    const int row_inner = row % 4;
+                    const std::int32_t* raw_low = scratch.c.data() +
+                        (output_group * row_groups + row_group) * 16 + row_inner * 4;
+                    const std::int32_t* raw_high = scratch.c.data() +
+                        ((output_group + 1) * row_groups + row_group) * 16 + row_inner * 4;
+                    alignas(64) std::array<std::int64_t, 8> corrected {};
+                    for (int lane = 0; lane < 4; ++lane) {
+                        corrected[static_cast<std::size_t>(lane)] =
+                            static_cast<std::int64_t>(raw_low[lane]) +
+                            conv.corrected_bias[static_cast<std::size_t>(channel_begin + lane)];
+                        corrected[static_cast<std::size_t>(lane + 4)] =
+                            static_cast<std::int64_t>(raw_high[lane]) +
+                            conv.corrected_bias[static_cast<std::size_t>(channel_begin + lane + 4)];
+                    }
+                    const std::size_t destination =
+                        ((static_cast<std::size_t>(channel_begin / 8) * output_m +
+                          m_begin + row) * 8U);
+                    if (fuse_lut) {
+                        stage51::q62_vsmul_m63_i64x8_lut_to_s8(
+                            corrected.data(), conv.multiplier_m63.data() + channel_begin,
+                            output.zero_point, operation.fused_lut.data(),
+                            output_data + destination);
+                    } else {
+                        stage51::q62_vsmul_m63_i64x8_to_s8(
+                            corrected.data(), conv.multiplier_m63.data() + channel_begin,
+                            output.zero_point, output_data + destination);
+                    }
+                }
+                output_group += 2;
+                continue;
+            }
+            const int valid_channels = std::min(4, conv.output_c - channel_begin);
+            for (int row = 0; row < valid_rows; ++row) {
+                const int row_group = row / 4;
+                const int row_inner = row % 4;
+                const std::int32_t* raw = scratch.c.data() +
+                    (output_group * row_groups + row_group) * 16 + row_inner * 4;
+                alignas(32) std::array<std::int64_t, 4> corrected {};
+                alignas(32) std::array<std::int64_t, 4> multipliers {};
+                alignas(32) std::array<std::int64_t, 4> rounded {};
+                for (int lane = 0; lane < valid_channels; ++lane) {
+                    const int channel = channel_begin + lane;
+                    corrected[static_cast<std::size_t>(lane)] =
+                        static_cast<std::int64_t>(raw[lane]) +
+                        conv.corrected_bias[static_cast<std::size_t>(channel)];
+                    multipliers[static_cast<std::size_t>(lane)] =
+                        conv.multiplier_m63[static_cast<std::size_t>(channel)];
+                }
+                if (conv.e2c_compatible && valid_channels == 4) {
+                    if (e2c2_enabled) {
+                        const std::size_t destination =
+                            ((static_cast<std::size_t>(channel_begin / 8) * output_m +
+                              m_begin + row) * 8U + static_cast<std::size_t>(channel_begin % 8));
+                        if (fuse_lut) {
+                            alignas(8) std::array<std::int8_t, 4> quantized_storage {};
+                            stage51::q62_vsmul_m63_i64x4_to_s8(
+                                corrected.data(), multipliers.data(), output.zero_point,
+                                quantized_storage.data());
+                            for (int lane = 0; lane < 4; ++lane) {
+                                output_data[destination + static_cast<std::size_t>(lane)] =
+                                    operation.fused_lut[int8_v1::semantic_code(
+                                        quantized_storage[static_cast<std::size_t>(lane)])];
+                            }
+                        } else {
+                            stage51::q62_vsmul_m63_i64x4_to_s8(
+                                corrected.data(), multipliers.data(), output.zero_point,
+                                output_data + destination);
+                        }
+                        continue;
+                    }
+                    stage51::q62_vsmul_m63_i64x4(
+                        corrected.data(), multipliers.data(), rounded.data());
+                }
+                for (int lane = 0; lane < valid_channels; ++lane) {
+                    const int channel = channel_begin + lane;
+                    std::uint8_t quantized = 0;
+                    if (conv.e2c_compatible && valid_channels == 4) {
+                        quantized = static_cast<std::uint8_t>(std::clamp<std::int64_t>(
+                            rounded[static_cast<std::size_t>(lane)] + output.zero_point, 0, 255));
+                    } else {
+                        const int8_v1::RequantAsset asset {
+                            conv.multiplier[static_cast<std::size_t>(channel)],
+                            conv.shift[static_cast<std::size_t>(channel)], output.zero_point, 0, 255,
+                        };
+                        if (!int8_v1::requantize_u8(
+                                corrected[static_cast<std::size_t>(lane)], asset, &quantized)) {
+                            throw std::runtime_error("dense Conv requantization failed");
+                        }
+                    }
+                    const std::size_t destination =
+                        ((static_cast<std::size_t>(channel / 8) * output_m + m_begin + row) * 8U +
+                         static_cast<std::size_t>(channel % 8));
+                    output_data[destination] = fuse_lut
+                        ? operation.fused_lut[quantized]
+                        : int8_v1::signed_storage(quantized);
+                }
+            }
+            ++output_group;
+        }
+    }
+
     void run_dense_conv_chunk(const Operation& operation, int worker, int workers) {
         const Conv& conv = operation.conv;
         const Tensor& input = tensor(operation.inputs[0]);
@@ -1083,96 +1619,83 @@ struct FullExecutor::Impl {
         auto* output_data = arena.data() + store_output.offset;
         DenseScratch& scratch = dense_scratch[static_cast<std::size_t>(worker)];
         const int output_m = output.dims[2] * output.dims[3];
-        const int tiles = (output_m + kDenseM - 1) / kDenseM;
-        const int tile_begin = tiles * worker / workers;
-        const int tile_end = tiles * (worker + 1) / workers;
+        const int m_block = dense_m8_enabled && conv.output_c % kDenseN == 0 ? 8 : kDenseM;
+        const int tiles = (output_m + m_block - 1) / m_block;
+        int tile_begin = tiles * worker / workers;
+        int tile_end = tiles * (worker + 1) / workers;
+        int n_begin = 0;
+        int n_end = conv.n_blocks;
+        if (dense_partition == 1) {
+            tile_begin = 0;
+            tile_end = tiles;
+            n_begin = conv.n_blocks * worker / workers;
+            n_end = conv.n_blocks * (worker + 1) / workers;
+        } else if (dense_partition == 2 && workers >= 4) {
+            const int spatial_group = worker / 2;
+            const int output_group = worker % 2;
+            tile_begin = tiles * spatial_group / 2;
+            tile_end = tiles * (spatial_group + 1) / 2;
+            n_begin = conv.n_blocks * output_group / 2;
+            n_end = conv.n_blocks * (output_group + 1) / 2;
+        }
         stage51::VectorFixedPointState vector_state;
         if (conv.e2c_compatible && !stage51::begin_q62_vector_rne(&vector_state)) {
             throw std::runtime_error("cannot establish Q62 vector state");
         }
-        for (int tile = tile_begin; tile < tile_end; ++tile) {
-            const int m_begin = tile * kDenseM;
-            const int valid_rows = std::min(kDenseM, output_m - m_begin);
-            pack_dense_a(conv, input, input_data, output.dims[3], m_begin, valid_rows, scratch.a.data());
-            for (int n_block = 0; n_block < conv.n_blocks; ++n_block) {
-                const std::int8_t* packed = conv.packed_weights.data() +
-                    static_cast<std::size_t>(n_block) * conv.k_tiles * kDenseN * 8U;
-                const int live_channels = std::min(kDenseN, conv.output_c - n_block * kDenseN);
-                if (small_n_enabled) {
-                    run_m12n_live(
-                        scratch.a.data(), packed, conv.k_tiles, live_channels, scratch.c.data());
-                } else {
-                    run_m12n16(scratch.a.data(), packed, conv.k_tiles, scratch.c.data());
-                }
-                for (int output_group = 0; output_group < 4; ++output_group) {
-                    const int channel_begin = n_block * kDenseN + output_group * 4;
-                    if (channel_begin >= conv.output_c) continue;
-                    const int valid_channels = std::min(4, conv.output_c - channel_begin);
-                    for (int row = 0; row < valid_rows; ++row) {
-                        const int row_group = row / 4;
-                        const int row_inner = row % 4;
-                        const std::int32_t* raw = scratch.c.data() +
-                            (output_group * 3 + row_group) * 16 + row_inner * 4;
-                        alignas(32) std::array<std::int64_t, 4> corrected {};
-                        alignas(32) std::array<std::int64_t, 4> multipliers {};
-                        alignas(32) std::array<std::int64_t, 4> rounded {};
-                        for (int lane = 0; lane < valid_channels; ++lane) {
-                            const int channel = channel_begin + lane;
-                            corrected[static_cast<std::size_t>(lane)] =
-                                static_cast<std::int64_t>(raw[lane]) +
-                                conv.corrected_bias[static_cast<std::size_t>(channel)];
-                            multipliers[static_cast<std::size_t>(lane)] =
-                                conv.multiplier_m63[static_cast<std::size_t>(channel)];
-                        }
-                        if (conv.e2c_compatible && valid_channels == 4) {
-                            if (e2c2_enabled) {
-                                const std::size_t destination =
-                                    ((static_cast<std::size_t>(channel_begin / 8) * output_m + m_begin + row) * 8U +
-                                     static_cast<std::size_t>(channel_begin % 8));
-                                if (fuse_lut) {
-                                    alignas(8) std::array<std::int8_t, 4> quantized_storage {};
-                                    stage51::q62_vsmul_m63_i64x4_to_s8(
-                                        corrected.data(), multipliers.data(), output.zero_point,
-                                        quantized_storage.data());
-                                    for (int lane = 0; lane < 4; ++lane) {
-                                        output_data[destination + static_cast<std::size_t>(lane)] =
-                                            operation.fused_lut[int8_v1::semantic_code(
-                                                quantized_storage[static_cast<std::size_t>(lane)])];
-                                    }
-                                } else {
-                                    stage51::q62_vsmul_m63_i64x4_to_s8(
-                                        corrected.data(), multipliers.data(), output.zero_point,
-                                        output_data + destination);
-                                }
-                                continue;
-                            }
-                            stage51::q62_vsmul_m63_i64x4(
-                                corrected.data(), multipliers.data(), rounded.data());
-                        }
-                        for (int lane = 0; lane < valid_channels; ++lane) {
-                            const int channel = channel_begin + lane;
-                            std::uint8_t quantized = 0;
-                            if (conv.e2c_compatible && valid_channels == 4) {
-                                quantized = static_cast<std::uint8_t>(std::clamp<std::int64_t>(
-                                    rounded[static_cast<std::size_t>(lane)] + output.zero_point, 0, 255));
-                            } else {
-                                const int8_v1::RequantAsset asset {
-                                    conv.multiplier[static_cast<std::size_t>(channel)],
-                                    conv.shift[static_cast<std::size_t>(channel)], output.zero_point, 0, 255,
-                                };
-                                if (!int8_v1::requantize_u8(
-                                        corrected[static_cast<std::size_t>(lane)], asset, &quantized)) {
-                                    throw std::runtime_error("dense Conv requantization failed");
-                                }
-                            }
-                            const std::size_t destination =
-                                ((static_cast<std::size_t>(channel / 8) * output_m + m_begin + row) * 8U +
-                                 static_cast<std::size_t>(channel % 8));
-                            output_data[destination] = fuse_lut
-                                ? operation.fused_lut[quantized]
-                                : int8_v1::signed_storage(quantized);
-                        }
+        const bool direct_1x1_shape = direct_1x1_enabled && m_block == kDenseM &&
+            conv.kernel_h == 1 && conv.kernel_w == 1 && conv.stride_h == 1 &&
+            conv.stride_w == 1 && conv.pad_top == 0 && conv.pad_left == 0 &&
+            conv.input_c % 8 == 0 && conv.output_c % kDenseN == 0 &&
+            input.dims[2] == output.dims[2] && input.dims[3] == output.dims[3];
+        const auto execute_block = [&](int m_begin, int valid_rows,
+                                       [[maybe_unused]] bool direct_1x1_tile, int n_block) {
+            const std::int8_t* packed = conv.packed_weights.data() +
+                static_cast<std::size_t>(n_block) * conv.k_tiles * kDenseN * 8U;
+            const int live_channels = std::min(kDenseN, conv.output_c - n_block * kDenseN);
+#if defined(Y26_K1X_ENABLE_IME_ASM) && defined(__riscv)
+            if (direct_1x1_tile) {
+                const auto channel_block_stride = static_cast<std::ptrdiff_t>(
+                    static_cast<std::size_t>(input.dims[2]) * input.dims[3] * 8U);
+                y26_stage54_kernel_direct_1x1_m12n16(
+                    input_data + static_cast<std::size_t>(m_begin) * 8U,
+                    channel_block_stride, packed, conv.k_tiles, scratch.c.data());
+            } else
+#endif
+            if (m_block == 8) {
+                run_m8n16(scratch.a.data(), packed, conv.k_tiles, scratch.c.data());
+            } else if (small_n_enabled) {
+                run_m12n_live(
+                    scratch.a.data(), packed, conv.k_tiles, live_channels, scratch.c.data());
+            } else {
+                run_m12n16(scratch.a.data(), packed, conv.k_tiles, scratch.c.data());
+            }
+            store_dense_block(operation, conv, output, output_data, scratch,
+                              m_block, m_begin, valid_rows, n_block, fuse_lut);
+        };
+        if (dense_weight_stationary_enabled && direct_1x1_shape) {
+            for (int n_block = n_begin; n_block < n_end; ++n_block) {
+                for (int tile = tile_begin; tile < tile_end; ++tile) {
+                    const int m_begin = tile * m_block;
+                    const int valid_rows = std::min(m_block, output_m - m_begin);
+                    const bool direct_1x1_tile = valid_rows == kDenseM;
+                    if (!direct_1x1_tile) {
+                        pack_dense_a_p3(conv, input, input_data, output.dims[3], m_begin,
+                                        valid_rows, m_block, scratch.a.data());
                     }
+                    execute_block(m_begin, valid_rows, direct_1x1_tile, n_block);
+                }
+            }
+        } else {
+            for (int tile = tile_begin; tile < tile_end; ++tile) {
+                const int m_begin = tile * m_block;
+                const int valid_rows = std::min(m_block, output_m - m_begin);
+                const bool direct_1x1_tile = direct_1x1_shape && valid_rows == kDenseM;
+                if (!direct_1x1_tile) {
+                    pack_dense_a_p3(conv, input, input_data, output.dims[3], m_begin,
+                                    valid_rows, m_block, scratch.a.data());
+                }
+                for (int n_block = n_begin; n_block < n_end; ++n_block) {
+                    execute_block(m_begin, valid_rows, direct_1x1_tile, n_block);
                 }
             }
         }
@@ -1252,22 +1775,48 @@ struct FullExecutor::Impl {
         const int begin = total_rows * worker / workers;
         const int end = total_rows * (worker + 1) / workers;
         const auto* input_data = arena.data() + input.offset;
-        auto* output_data = arena.data() + output.offset;
+        const bool fuse_lut = depthwise_v2_enabled && fused_lut_enabled &&
+            !config.capture_boundaries && operation.fused_lut_output >= 0;
+        const Tensor& store_output = fuse_lut ? tensor(operation.fused_lut_output) : output;
+        auto* output_data = arena.data() + store_output.offset;
         const std::int64_t input_correction = 128 - input.zero_point;
         stage51::VectorFixedPointState vector_state;
         if (!stage51::begin_q62_vector_rne(&vector_state)) {
             throw std::runtime_error("cannot establish depthwise Q62 vector state");
         }
         alignas(32) std::array<std::int32_t, 8> accumulator {};
+        alignas(32) [[maybe_unused]] std::array<std::int32_t, 8> accumulator_pair {};
         alignas(32) std::array<std::int64_t, 4> corrected {};
+        alignas(64) std::array<std::int64_t, 8> corrected_c8 {};
+        alignas(8) std::array<std::int8_t, 8> padding_c8 {};
+        padding_c8.fill(int8_v1::signed_storage(static_cast<std::uint8_t>(input.zero_point)));
         for (int row_task = begin; row_task < end; ++row_task) {
             const int channel_block = row_task / output_h;
             const int output_y = row_task % output_h;
             const auto* packed_weights = conv.depthwise_weights_c8.data() +
                 static_cast<std::size_t>(channel_block) * 9U * 8U;
             const auto* bias = conv.bias.data() + static_cast<std::size_t>(channel_block) * 8U;
+            [[maybe_unused]] const auto* corrected_bias = conv.depthwise_corrected_bias_i32.data() +
+                static_cast<std::size_t>(channel_block) * 8U;
             const auto* multipliers = conv.multiplier_m63.data() +
                 static_cast<std::size_t>(channel_block) * 8U;
+            const auto store_c8 = [&](const std::int32_t* values, int output_x) {
+                const std::size_t output_physical =
+                    ((static_cast<std::size_t>(channel_block) * output_h + output_y) * output_w +
+                     output_x) * 8U;
+                for (int lane = 0; lane < 8; ++lane) {
+                    corrected_c8[static_cast<std::size_t>(lane)] = values[lane];
+                }
+                if (fuse_lut) {
+                    stage51::q62_vsmul_m63_i64x8_lut_to_s8(
+                        corrected_c8.data(), multipliers, output.zero_point,
+                        operation.fused_lut.data(), output_data + output_physical);
+                } else {
+                    stage51::q62_vsmul_m63_i64x8_to_s8(
+                        corrected_c8.data(), multipliers, output.zero_point,
+                        output_data + output_physical);
+                }
+            };
             for (int output_x = 0; output_x < output_w; ++output_x) {
                 [[maybe_unused]] const bool interior =
                     output_y > 0 && output_y + 1 < output_h &&
@@ -1275,9 +1824,11 @@ struct FullExecutor::Impl {
                     input_h == output_h && input_w == output_w &&
                     conv.pad_top == 1 && conv.pad_left == 1;
 #if defined(__riscv_vector)
-                if (interior) {
+                if (depthwise_v2_enabled && depthwise_x2_enabled && interior &&
+                    output_x + 2 < output_w) {
                     constexpr std::size_t kLanes = 8;
-                    vint32m1_t sum = __riscv_vle32_v_i32m1(bias, kLanes);
+                    vint32m1_t sum0 = __riscv_vle32_v_i32m1(corrected_bias, kLanes);
+                    vint32m1_t sum1 = sum0;
                     for (int kernel_y = 0; kernel_y < 3; ++kernel_y) {
                         for (int kernel_x = 0; kernel_x < 3; ++kernel_x) {
                             const int tap = kernel_y * 3 + kernel_x;
@@ -1285,13 +1836,52 @@ struct FullExecutor::Impl {
                                 ((static_cast<std::size_t>(channel_block) * input_h +
                                   output_y + kernel_y - 1) * input_w +
                                   output_x + kernel_x - 1) * 8U;
+                            const vint8mf4_t weight_i8 = __riscv_vle8_v_i8mf4(
+                                packed_weights + static_cast<std::size_t>(tap) * 8U, kLanes);
+                            const vint32m1_t weight_i32 =
+                                __riscv_vsext_vf4_i32m1(weight_i8, kLanes);
+                            const vint32m1_t input0_i32 = __riscv_vsext_vf4_i32m1(
+                                __riscv_vle8_v_i8mf4(input_data + input_physical, kLanes), kLanes);
+                            const vint32m1_t input1_i32 = __riscv_vsext_vf4_i32m1(
+                                __riscv_vle8_v_i8mf4(input_data + input_physical + 8U, kLanes), kLanes);
+                            sum0 = __riscv_vmacc_vv_i32m1(sum0, input0_i32, weight_i32, kLanes);
+                            sum1 = __riscv_vmacc_vv_i32m1(sum1, input1_i32, weight_i32, kLanes);
+                        }
+                    }
+                    __riscv_vse32_v_i32m1(accumulator.data(), sum0, kLanes);
+                    __riscv_vse32_v_i32m1(accumulator_pair.data(), sum1, kLanes);
+                    store_c8(accumulator.data(), output_x);
+                    store_c8(accumulator_pair.data(), output_x + 1);
+                    ++output_x;
+                    continue;
+                }
+                if (interior || (depthwise_v2_enabled && depthwise_border_v2_enabled)) {
+                    constexpr std::size_t kLanes = 8;
+                    vint32m1_t sum = __riscv_vle32_v_i32m1(
+                        depthwise_v2_enabled ? corrected_bias : bias, kLanes);
+                    for (int kernel_y = 0; kernel_y < 3; ++kernel_y) {
+                        for (int kernel_x = 0; kernel_x < 3; ++kernel_x) {
+                            const int tap = kernel_y * 3 + kernel_x;
+                            const int input_y = output_y - conv.pad_top + kernel_y;
+                            const int input_x = output_x - conv.pad_left + kernel_x;
+                            const bool valid = input_y >= 0 && input_y < input_h &&
+                                input_x >= 0 && input_x < input_w;
+                            const std::int8_t* input_pointer = padding_c8.data();
+                            if (valid) {
+                                const std::size_t input_physical =
+                                    ((static_cast<std::size_t>(channel_block) * input_h + input_y) *
+                                     input_w + input_x) * 8U;
+                                input_pointer = input_data + input_physical;
+                            }
                             const vint8mf4_t input_i8 =
-                                __riscv_vle8_v_i8mf4(input_data + input_physical, kLanes);
+                                __riscv_vle8_v_i8mf4(input_pointer, kLanes);
                             const vint8mf4_t weight_i8 = __riscv_vle8_v_i8mf4(
                                 packed_weights + static_cast<std::size_t>(tap) * 8U, kLanes);
                             vint32m1_t input_i32 = __riscv_vsext_vf4_i32m1(input_i8, kLanes);
-                            input_i32 = __riscv_vadd_vx_i32m1(
-                                input_i32, static_cast<std::int32_t>(input_correction), kLanes);
+                            if (!depthwise_v2_enabled) {
+                                input_i32 = __riscv_vadd_vx_i32m1(
+                                    input_i32, static_cast<std::int32_t>(input_correction), kLanes);
+                            }
                             const vint32m1_t weight_i32 =
                                 __riscv_vsext_vf4_i32m1(weight_i8, kLanes);
                             sum = __riscv_vmacc_vv_i32m1(sum, input_i32, weight_i32, kLanes);
@@ -1321,10 +1911,12 @@ struct FullExecutor::Impl {
                         accumulator[static_cast<std::size_t>(lane)] = static_cast<std::int32_t>(sum);
                     }
                 }
-                const std::size_t output_physical =
-                    ((static_cast<std::size_t>(channel_block) * output_h + output_y) * output_w +
-                     output_x) * 8U;
-                for (int half = 0; half < 2; ++half) {
+                if (depthwise_v2_enabled) {
+                    store_c8(accumulator.data(), output_x);
+                } else for (int half = 0; half < 2; ++half) {
+                    const std::size_t output_physical =
+                        ((static_cast<std::size_t>(channel_block) * output_h + output_y) * output_w +
+                         output_x) * 8U;
                     for (int lane = 0; lane < 4; ++lane) {
                         corrected[static_cast<std::size_t>(lane)] =
                             accumulator[static_cast<std::size_t>(half * 4 + lane)];
@@ -1369,6 +1961,11 @@ struct FullExecutor::Impl {
                 const auto* left_data = arena.data() + input.offset;
                 const auto* right_data = arena.data() + right.offset;
                 auto* output_data = arena.data() + output.offset;
+                if (lut2_rvv_enabled) {
+                    transform_lut2_rvv(left_data + begin, right_data + begin,
+                                       output_data + begin, operation.lut.data(), end - begin);
+                    return;
+                }
                 std::size_t index = begin;
                 for (; index + 4U <= end; index += 4U) {
                     if (index + 64U < end) {
@@ -2060,14 +2657,19 @@ struct FullExecutor::Impl {
             for (std::size_t row = begin; row < end; ++row) {
                 const auto* source_row = source + row * static_cast<std::size_t>(width);
                 std::uint8_t maximum = 0;
-                for (int column = 0; column < width; ++column) {
-                    maximum = std::max(maximum, int8_v1::semantic_code(source_row[column]));
-                }
                 std::uint64_t sum = 0;
-                for (int column = 0; column < width; ++column) {
-                    const std::uint8_t difference = static_cast<std::uint8_t>(
-                        maximum - int8_v1::semantic_code(source_row[column]));
-                    sum += operation.exp_q48[difference];
+                if (attention_v2_enabled) {
+                    softmax_max_sum_rvv(source_row, static_cast<std::size_t>(width),
+                                        operation.exp_q48.data(), &maximum, &sum);
+                } else {
+                    for (int column = 0; column < width; ++column) {
+                        maximum = std::max(maximum, int8_v1::semantic_code(source_row[column]));
+                    }
+                    for (int column = 0; column < width; ++column) {
+                        const std::uint8_t difference = static_cast<std::uint8_t>(
+                            maximum - int8_v1::semantic_code(source_row[column]));
+                        sum += operation.exp_q48[difference];
+                    }
                 }
 
                 // Exact quotient work is shared by every equal score in a row.
@@ -2144,6 +2746,9 @@ struct FullExecutor::Impl {
             output.dims[0] == 1 && output.dims[1] > 0 && output.dims[1] <= 8) {
             const std::size_t plane = static_cast<std::size_t>(output.dims[2]) * output.dims[3];
             auto* destination = arena.data() + output.offset;
+            const bool compact_c3 = input_compact_c3_enabled && !config.capture_boundaries &&
+                output.dims[1] == 3;
+            const std::size_t pixel_stride = compact_c3 ? 3U : 8U;
 #if defined(__riscv_vector)
             alignas(32) std::array<std::int32_t, 8> converted {};
             std::size_t spatial = begin;
@@ -2158,17 +2763,40 @@ struct FullExecutor::Impl {
                         value, __RISCV_FRM_RNE, vl);
                     code = __riscv_vmax_vx_i32m1(code, 0, vl);
                     code = __riscv_vmin_vx_i32m1(code, 255, vl);
-                    __riscv_vse32_v_i32m1(converted.data(), code, vl);
-                    for (std::size_t lane = 0; lane < vl; ++lane) {
-                        destination[(spatial + lane) * 8U + static_cast<std::size_t>(channel)] =
-                            int8_v1::signed_storage(
-                                static_cast<std::uint8_t>(converted[lane]));
+                    if (input_rvv_v2_enabled) {
+                        const vuint32m1_t unsigned_code = __riscv_vreinterpret_v_i32m1_u32m1(code);
+                        const vuint16mf2_t code_u16 =
+                            __riscv_vncvt_x_x_w_u16mf2(unsigned_code, vl);
+                        vuint8mf4_t code_u8 = __riscv_vncvt_x_x_w_u8mf4(code_u16, vl);
+                        code_u8 = __riscv_vxor_vx_u8mf4(code_u8, 128U, vl);
+                        __riscv_vsse8_v_u8mf4(
+                            reinterpret_cast<std::uint8_t*>(destination) + spatial * pixel_stride +
+                                static_cast<std::size_t>(channel),
+                            static_cast<std::ptrdiff_t>(pixel_stride), code_u8, vl);
+                    } else {
+                        __riscv_vse32_v_i32m1(converted.data(), code, vl);
+                        for (std::size_t lane = 0; lane < vl; ++lane) {
+                            destination[(spatial + lane) * pixel_stride +
+                                        static_cast<std::size_t>(channel)] =
+                                int8_v1::signed_storage(
+                                    static_cast<std::uint8_t>(converted[lane]));
+                        }
                     }
                 }
-                for (std::size_t lane = 0; lane < vl; ++lane) {
-                    std::fill(destination + (spatial + lane) * 8U + output.dims[1],
-                              destination + (spatial + lane + 1U) * 8U,
-                              int8_v1::signed_storage(0));
+                if (input_rvv_v2_enabled && !compact_c3) {
+                    const vuint8mf4_t padding = __riscv_vmv_v_x_u8mf4(128U, vl);
+                    for (int channel = output.dims[1]; channel < 8; ++channel) {
+                        __riscv_vsse8_v_u8mf4(
+                            reinterpret_cast<std::uint8_t*>(destination) + spatial * pixel_stride +
+                                static_cast<std::size_t>(channel),
+                            static_cast<std::ptrdiff_t>(pixel_stride), padding, vl);
+                    }
+                } else if (!compact_c3) {
+                    for (std::size_t lane = 0; lane < vl; ++lane) {
+                        std::fill(destination + (spatial + lane) * pixel_stride + output.dims[1],
+                                  destination + (spatial + lane + 1U) * pixel_stride,
+                                  int8_v1::signed_storage(0));
+                    }
                 }
                 spatial += vl;
             }
@@ -2181,13 +2809,15 @@ struct FullExecutor::Impl {
                     const double fraction = scaled - floor_value;
                     std::int64_t rounded = static_cast<std::int64_t>(floor_value);
                     if (fraction > 0.5 || (fraction == 0.5 && (rounded & 1))) ++rounded;
-                    destination[spatial * 8U + static_cast<std::size_t>(channel)] =
+                    destination[spatial * pixel_stride + static_cast<std::size_t>(channel)] =
                         int8_v1::signed_storage(static_cast<std::uint8_t>(
                             std::clamp<std::int64_t>(rounded, 0, 255)));
                 }
-                std::fill(destination + spatial * 8U + output.dims[1],
-                          destination + (spatial + 1U) * 8U,
-                          int8_v1::signed_storage(0));
+                if (!compact_c3) {
+                    std::fill(destination + spatial * pixel_stride + output.dims[1],
+                              destination + (spatial + 1U) * pixel_stride,
+                              int8_v1::signed_storage(0));
+                }
             }
 #endif
             return;
@@ -2209,16 +2839,20 @@ struct FullExecutor::Impl {
         if (output.layout == Layout::feature_nchwc8 && output.rank == 4 &&
             output.dims[0] == 1 && output.dims[1] == 3) {
             auto* destination = arena.data() + output.offset;
+            const bool compact_c3 = input_compact_c3_enabled && !config.capture_boundaries;
+            const std::size_t pixel_stride = compact_c3 ? 3U : 8U;
             const std::size_t width = static_cast<std::size_t>(output.dims[3]);
             for (std::size_t spatial = begin; spatial < end; ++spatial) {
                 const std::size_t y = spatial / width;
                 const std::size_t x = spatial % width;
                 const auto* source = rgb + y * static_cast<std::size_t>(stride) + x * 3U;
-                auto* output_pixel = destination + spatial * 8U;
+                auto* output_pixel = destination + spatial * pixel_stride;
                 output_pixel[0] = int8_v1::signed_storage(source[0]);
                 output_pixel[1] = int8_v1::signed_storage(source[1]);
                 output_pixel[2] = int8_v1::signed_storage(source[2]);
-                std::fill(output_pixel + 3, output_pixel + 8, int8_v1::signed_storage(0));
+                if (!compact_c3) {
+                    std::fill(output_pixel + 3, output_pixel + 8, int8_v1::signed_storage(0));
+                }
             }
             return;
         }
@@ -2235,6 +2869,10 @@ struct FullExecutor::Impl {
 
     static void execute_input(Impl* self, const Operation& operation, const float* input,
                               const std::uint8_t* rgb, int rgb_stride) {
+        if (self->input_stem_fused_enabled && !self->config.capture_boundaries &&
+            input != nullptr) {
+            return;
+        }
         const Tensor& output = self->tensor(operation.output);
         RangeJob job;
         job.self = self;
@@ -2314,9 +2952,9 @@ struct FullExecutor::Impl {
     };
 
     struct Candidate {
-        std::uint32_t score_q24 = 0;
-        int point_slot = 0;
-        int class_index = 0;
+        std::uint32_t score_q24;
+        int point_slot;
+        int class_index;
     };
 
     void decode_head(float* output) {
@@ -2385,8 +3023,16 @@ struct FullExecutor::Impl {
                 : left.point_index < right.point_index;
         };
         std::partial_sort(points.begin(), points.begin() + 300, points.end(), point_compare);
-        std::array<Candidate, 300 * 80> candidates {};
+        auto candidate_compare = [](const Candidate& left, const Candidate& right) {
+            if (left.score_q24 != right.score_q24) return left.score_q24 > right.score_q24;
+            if (left.point_slot != right.point_slot) return left.point_slot < right.point_slot;
+            return left.class_index < right.class_index;
+        };
+        std::array<Candidate, 300 * 80> candidate_storage;
+        Candidate* candidates = candidate_storage.data();
         std::size_t candidate_count = 0;
+        std::array<Candidate, 300> candidate_heap;
+        std::size_t heap_size = 0;
         for (int slot = 0; slot < 300; ++slot) {
             const Point& point = points[static_cast<std::size_t>(slot)];
             const HeadScale& scale = head[static_cast<std::size_t>(point.scale_index)];
@@ -2397,17 +3043,31 @@ struct FullExecutor::Impl {
                 const std::size_t physical =
                     (static_cast<std::size_t>(class_index / 8) * pixels + point.local_index) * 8U +
                     static_cast<std::size_t>(class_index % 8);
-                candidates[candidate_count++] = {
+                const Candidate candidate {
                     scale.cls_q24[int8_v1::semantic_code(cls_data[physical])], slot, class_index};
+                if (!head_v2_enabled) {
+                    candidate_storage[candidate_count++] = candidate;
+                } else if (heap_size < candidate_heap.size()) {
+                    candidate_heap[heap_size++] = candidate;
+                    if (heap_size == candidate_heap.size()) {
+                        std::make_heap(candidate_heap.begin(), candidate_heap.end(), candidate_compare);
+                    }
+                } else if (candidate_compare(candidate, candidate_heap.front())) {
+                    std::pop_heap(candidate_heap.begin(), candidate_heap.end(), candidate_compare);
+                    candidate_heap.back() = candidate;
+                    std::push_heap(candidate_heap.begin(), candidate_heap.end(), candidate_compare);
+                }
             }
         }
-        auto candidate_compare = [](const Candidate& left, const Candidate& right) {
-            if (left.score_q24 != right.score_q24) return left.score_q24 > right.score_q24;
-            if (left.point_slot != right.point_slot) return left.point_slot < right.point_slot;
-            return left.class_index < right.class_index;
-        };
-        std::partial_sort(candidates.begin(), candidates.begin() + 300,
-                          candidates.begin() + static_cast<std::ptrdiff_t>(candidate_count), candidate_compare);
+        if (head_v2_enabled) {
+            std::sort_heap(candidate_heap.begin(), candidate_heap.end(), candidate_compare);
+            candidates = candidate_heap.data();
+            candidate_count = candidate_heap.size();
+        } else {
+            std::partial_sort(candidate_storage.begin(), candidate_storage.begin() + 300,
+                              candidate_storage.begin() + static_cast<std::ptrdiff_t>(candidate_count),
+                              candidate_compare);
+        }
         for (int detection = 0; detection < 300; ++detection) {
             const Candidate& candidate = candidates[static_cast<std::size_t>(detection)];
             const Point& point = points[static_cast<std::size_t>(candidate.point_slot)];
@@ -2454,6 +3114,60 @@ int FullExecutor::prepare(const std::filesystem::path& package_dir,
         const char* fused_lut_environment = std::getenv("Y26_STAGE53_FUSED_LUT");
         prepared.fused_lut_enabled = fused_lut_environment != nullptr &&
             std::string_view(fused_lut_environment) == "1";
+        const char* direct_1x1_environment = std::getenv("Y26_STAGE54_DIRECT_1X1");
+        prepared.direct_1x1_enabled = direct_1x1_environment != nullptr &&
+            std::string_view(direct_1x1_environment) == "1";
+        const char* e2c3_environment = std::getenv("Y26_STAGE54_E2C3");
+        prepared.e2c3_enabled = e2c3_environment != nullptr &&
+            std::string_view(e2c3_environment) == "1";
+        const char* dense_m8_environment = std::getenv("Y26_STAGE54_DENSE_M8");
+        prepared.dense_m8_enabled = dense_m8_environment != nullptr &&
+            std::string_view(dense_m8_environment) == "1";
+        const char* dense_weight_stationary_environment =
+            std::getenv("Y26_STAGE54_DENSE_WEIGHT_STATIONARY");
+        prepared.dense_weight_stationary_enabled =
+            dense_weight_stationary_environment != nullptr &&
+            std::string_view(dense_weight_stationary_environment) == "1";
+        const char* dense_partition_environment = std::getenv("Y26_STAGE54_DENSE_PARTITION");
+        if (dense_partition_environment != nullptr) {
+            const std::string_view partition(dense_partition_environment);
+            if (partition == "output") prepared.dense_partition = 1;
+            else if (partition == "2d") prepared.dense_partition = 2;
+        }
+        const char* dense_pack_rvv_environment = std::getenv("Y26_STAGE54_DENSE_PACK_RVV");
+        prepared.dense_pack_rvv_enabled = dense_pack_rvv_environment != nullptr &&
+            std::string_view(dense_pack_rvv_environment) == "1";
+        const char* static_schedule_environment = std::getenv("Y26_STAGE54_STATIC_SCHEDULE");
+        prepared.static_schedule_enabled = static_schedule_environment != nullptr &&
+            std::string_view(static_schedule_environment) == "1";
+        const char* depthwise_v2_environment = std::getenv("Y26_STAGE54_DEPTHWISE_V2");
+        prepared.depthwise_v2_enabled = depthwise_v2_environment != nullptr &&
+            std::string_view(depthwise_v2_environment) == "1";
+        const char* depthwise_x2_environment = std::getenv("Y26_STAGE54_DEPTHWISE_X2");
+        prepared.depthwise_x2_enabled = depthwise_x2_environment != nullptr &&
+            std::string_view(depthwise_x2_environment) == "1";
+        const char* depthwise_border_v2_environment =
+            std::getenv("Y26_STAGE54_DEPTHWISE_BORDER_V2");
+        prepared.depthwise_border_v2_enabled = depthwise_border_v2_environment != nullptr &&
+            std::string_view(depthwise_border_v2_environment) == "1";
+        const char* lut2_rvv_environment = std::getenv("Y26_STAGE54_LUT2_RVV");
+        prepared.lut2_rvv_enabled = lut2_rvv_environment != nullptr &&
+            std::string_view(lut2_rvv_environment) == "1";
+        const char* input_rvv_v2_environment = std::getenv("Y26_STAGE54_INPUT_RVV_V2");
+        prepared.input_rvv_v2_enabled = input_rvv_v2_environment != nullptr &&
+            std::string_view(input_rvv_v2_environment) == "1";
+        const char* input_compact_c3_environment = std::getenv("Y26_STAGE54_INPUT_COMPACT_C3");
+        prepared.input_compact_c3_enabled = input_compact_c3_environment != nullptr &&
+            std::string_view(input_compact_c3_environment) == "1";
+        const char* input_stem_fused_environment = std::getenv("Y26_STAGE54_INPUT_STEM_FUSED");
+        prepared.input_stem_fused_enabled = input_stem_fused_environment != nullptr &&
+            std::string_view(input_stem_fused_environment) == "1";
+        const char* attention_v2_environment = std::getenv("Y26_STAGE54_ATTENTION_V2");
+        prepared.attention_v2_enabled = attention_v2_environment != nullptr &&
+            std::string_view(attention_v2_environment) == "1";
+        const char* head_v2_environment = std::getenv("Y26_STAGE54_HEAD_V2");
+        prepared.head_v2_enabled = head_v2_environment != nullptr &&
+            std::string_view(head_v2_environment) == "1";
         std::size_t arena_bytes = 0;
         for (const Row& row : read_tsv(prepared.package / "tensors.tsv")) {
             Tensor tensor;
@@ -2602,7 +3316,10 @@ int FullExecutor::prepare(const std::filesystem::path& package_dir,
         for (std::size_t index = 0; index + 1 < prepared.operations.size(); ++index) {
             Operation& conv_operation = prepared.operations[index];
             Operation& lut_operation = prepared.operations[index + 1];
-            if (conv_operation.kind != OpKind::conv_dense || lut_operation.kind != OpKind::lut1 ||
+            const bool fusable_conv = conv_operation.kind == OpKind::conv_dense ||
+                (prepared.depthwise_v2_enabled && conv_operation.kind == OpKind::conv_grouped &&
+                 conv_operation.conv.depthwise_rvv_eligible);
+            if (!fusable_conv || lut_operation.kind != OpKind::lut1 ||
                 lut_operation.inputs.size() != 1 || lut_operation.inputs[0] != conv_operation.output ||
                 tensor_input_uses[static_cast<std::size_t>(conv_operation.output)] != 1 ||
                 lut_operation.lut.size() != 256) {
@@ -2735,6 +3452,31 @@ int FullExecutor::prepare(const std::filesystem::path& package_dir,
             prepared.core_scratch_bytes = prepared.optimized_core->arena_bytes();
             prepared.arena.resize(prepared.core_scratch_offset + prepared.core_scratch_bytes);
         }
+        prepared.static_batch_end.assign(prepared.operations.size(), -1);
+        if (prepared.static_schedule_enabled) {
+            std::size_t cursor = 0;
+            while (cursor < prepared.operations.size()) {
+                if (prepared.core_start_operation >= 0 &&
+                    cursor == static_cast<std::size_t>(prepared.core_start_operation)) {
+                    cursor = static_cast<std::size_t>(prepared.core_end_operation + 1);
+                    continue;
+                }
+                if (!Impl::static_schedule_eligible(prepared.operations[cursor].kind)) {
+                    ++cursor;
+                    continue;
+                }
+                const std::size_t begin = cursor;
+                while (cursor < prepared.operations.size() &&
+                       Impl::static_schedule_eligible(prepared.operations[cursor].kind) &&
+                       !(prepared.core_start_operation >= 0 &&
+                         cursor == static_cast<std::size_t>(prepared.core_start_operation))) {
+                    ++cursor;
+                }
+                if (cursor - begin >= 2U) {
+                    prepared.static_batch_end[begin] = static_cast<int>(cursor - 1U);
+                }
+            }
+        }
         if (!prepared.optimized_core || config.scheduler != SchedulerMode::safe) {
             prepared.pool = std::make_unique<WorkerPool>(
                 config.workers, config.worker_cpu_begin, config.scheduler);
@@ -2764,9 +3506,19 @@ int FullExecutor::run_input_surface(const float* input, const std::uint8_t* rgb,
     if (!impl_ || !impl_->ready || output == nullptr || output_count != 300U * 6U ||
         ((input == nullptr) == (rgb == nullptr))) return 1;
     try {
+        impl_->current_float_input = input;
         RunTiming local;
         const bool profile_operations = std::getenv("Y26_STAGE52_PROFILE_OPS") != nullptr ||
                                         std::getenv("Y26_STAGE53_PROFILE_OPS") != nullptr;
+        int diagnostic_stop_after = -1;
+        if (const char* stop = std::getenv("Y26_STAGE54_STOP_AFTER_OP"); stop != nullptr) {
+            const char* end = stop + std::strlen(stop);
+            const auto parsed = std::from_chars(stop, end, diagnostic_stop_after);
+            if (parsed.ec != std::errc {} || parsed.ptr != end || diagnostic_stop_after < 0) {
+                throw std::runtime_error("invalid Y26_STAGE54_STOP_AFTER_OP");
+            }
+        }
+        bool diagnostic_stopped = false;
         std::vector<OperationProfileSample> profile_samples;
         if (profile_operations) profile_samples.reserve(impl_->operations.size() + 8U);
         const std::clock_t process_cpu_begin = std::clock();
@@ -2778,6 +3530,15 @@ int FullExecutor::run_input_surface(const float* input, const std::uint8_t* rgb,
         const auto total_begin = Clock::now();
         for (std::size_t operation_index = 0; operation_index < impl_->operations.size(); ++operation_index) {
             const Operation& operation = impl_->operations[operation_index];
+            const int static_end = impl_->static_schedule_enabled && !profile_operations &&
+                    !impl_->config.capture_boundaries
+                ? impl_->static_batch_end[operation_index] : -1;
+            if (static_end >= static_cast<int>(operation_index)) {
+                impl_->dispatch_static_batch(operation_index, static_cast<std::size_t>(static_end),
+                                             input, rgb, rgb_stride);
+                operation_index = static_cast<std::size_t>(static_end);
+                continue;
+            }
             if (operation.skip_when_fused && impl_->fused_lut_enabled &&
                 !impl_->config.capture_boundaries) {
                 if (profile_operations) {
@@ -2840,13 +3601,21 @@ int FullExecutor::run_input_surface(const float* input, const std::uint8_t* rgb,
                     captured[index] = int8_v1::signed_storage(impl_->code(operation.output, index));
                 }
             }
+            if (operation.index == diagnostic_stop_after) {
+                diagnostic_stopped = true;
+                break;
+            }
         }
-        const auto head_begin = Clock::now();
-        impl_->decode_head(output);
-        local.head_us = elapsed_us(head_begin, Clock::now());
-        if (profile_operations) {
-            profile_samples.push_back(OperationProfileSample {
-                -1, -1, "head_decode", "full_executor", "final_head_decode", local.head_us});
+        if (diagnostic_stopped) {
+            std::fill(output, output + output_count, 0.0F);
+        } else {
+            const auto head_begin = Clock::now();
+            impl_->decode_head(output);
+            local.head_us = elapsed_us(head_begin, Clock::now());
+            if (profile_operations) {
+                profile_samples.push_back(OperationProfileSample {
+                    -1, -1, "head_decode", "full_executor", "final_head_decode", local.head_us});
+            }
         }
         local.total_us = elapsed_us(total_begin, Clock::now());
         const std::clock_t process_cpu_end = std::clock();
@@ -2882,8 +3651,10 @@ int FullExecutor::run_input_surface(const float* input, const std::uint8_t* rgb,
                 profile_samples.size());
         }
         if (timing != nullptr) *timing = local;
+        impl_->current_float_input = nullptr;
         return 0;
     } catch (const std::exception& error) {
+        impl_->current_float_input = nullptr;
         impl_->error = error.what();
         return 3;
     }
