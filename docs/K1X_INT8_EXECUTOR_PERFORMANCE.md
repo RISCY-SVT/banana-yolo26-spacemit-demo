@@ -40,20 +40,20 @@ condition-variable compatibility route, 10/100/5:
   p99:     266546 us
 
 epoch-spin selected route, 10,000-run soak:
-  mean:    239005.393800 us
-  median:  238389.500000 us
-  p95:     241507.250000 us
-  p99:     249745.030000 us
-  p99.9:   260719.017000 us
-  max:     262593.000000 us
+  mean:    240043.539700 us
+  median:  239529.500000 us
+  p95:     242403.200000 us
+  p99:     250091.230000 us
+  p99.9:   260405.010000 us
+  max:     263494.000000 us
 
 matched B120 ORT CPU0-3 intra4, 500 per-inference samples:
   mean:    456266.315376 us
   p95:     459138.349850 us
 ```
 
-The final-source fixed-input mean is 52.369663% lower than the reproduced
-Stage52 executor and 47.424565% lower than matched B120 ORT. This is about
+The final-source fixed-input mean is 52.369614% lower than the reproduced
+Stage52 executor and 47.424562% lower than matched B120 ORT. This is about
 2.10x and 1.90x faster, respectively. It is still approximately 4.17
 inferences/s, not 20 FPS.
 
@@ -70,7 +70,7 @@ output decode:                    5.403788 us
 complete preloaded pipeline: 253694.519464 us
 ```
 
-The separate 5,000-image COCO pass measured approximately 229493.500451 us
+The separate 5,000-image COCO pass measured approximately 229406.609224 us
 per-image executor mean. It includes real image-dependent head work and is not
 substituted for the fixed-input benchmark.
 
