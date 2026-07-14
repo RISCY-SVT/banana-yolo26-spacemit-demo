@@ -23,11 +23,16 @@ cmake -S "$repo/custom_int8_engine" -B "$build_root/static" \
   "${common[@]}" -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX="$install_root"
 cmake --build "$build_root/static" -j"${JOBS:-4}"
 cmake --install "$build_root/static"
+static_cli="$build_root/yolo26_k1x_int8.static-install"
+cp -p "$install_root/bin/yolo26_k1x_int8" "$static_cli"
 
 cmake -S "$repo/custom_int8_engine" -B "$build_root/shared" \
   "${common[@]}" -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX="$install_root"
 cmake --build "$build_root/shared" -j"${JOBS:-4}"
 cmake --install "$build_root/shared"
+
+# Keep the faster static CLI while still shipping both library variants.
+install -m 0755 "$static_cli" "$install_root/bin/yolo26_k1x_int8"
 
 strip_tool=${STRIP:-riscv64-unknown-linux-gnu-strip}
 command -v "$strip_tool" >/dev/null
