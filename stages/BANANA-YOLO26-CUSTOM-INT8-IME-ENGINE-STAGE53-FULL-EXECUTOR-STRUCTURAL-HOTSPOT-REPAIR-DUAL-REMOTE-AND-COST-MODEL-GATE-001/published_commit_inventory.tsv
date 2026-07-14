@@ -1,0 +1,7 @@
+sequence	commit	publication_scope	github_status	gitlab_status
+0	c98212b6db56a7a27a0d26b645a7158dc36c5ff6	accepted Stage52 baseline	prestage-parity	prestage-parity
+1	5c2180cbef36aa42535f1faea859de4cc3d1d97d	Stage53 structural implementation	pending-final-fast-forward	pending-final-fast-forward
+2	720ad1fdb988e7a0e3e874cdefc3dea5a6279d83	Stage53 exact soak evidence	pending-final-fast-forward	pending-final-fast-forward
+3	534881509feb2a34e5ce7aa33b6ceaf9580d2224	Stage53 selected static CLI	pending-final-fast-forward	pending-final-fast-forward
+4	b84c9dfbbefdf7003df998d7e2ec510d595d6358	Stage53 complete evidence	pending-final-fast-forward	pending-final-fast-forward
+5	containing-commit	Stage53 publication records	verified in post-push command ledger	verified in post-push command ledger

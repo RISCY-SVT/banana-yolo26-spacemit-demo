@@ -1,0 +1,5 @@
+phase	remote	branch	local_head	remote_head	status	evidence
+prestage	github	yolo26-custom-int8-engine	c98212b6db56a7a27a0d26b645a7158dc36c5ff6	c98212b6db56a7a27a0d26b645a7158dc36c5ff6	parity	prestage command ledger
+prestage	gitlab-rd	yolo26-custom-int8-engine	c98212b6db56a7a27a0d26b645a7158dc36c5ff6	c98212b6db56a7a27a0d26b645a7158dc36c5ff6	parity	prestage command ledger
+final	github	yolo26-custom-int8-engine	containing-commit	verified-post-push	post-commit-verification	final command ledger and result packet
+final	gitlab-rd	yolo26-custom-int8-engine	containing-commit	verified-post-push	post-commit-verification	final command ledger and result packet
