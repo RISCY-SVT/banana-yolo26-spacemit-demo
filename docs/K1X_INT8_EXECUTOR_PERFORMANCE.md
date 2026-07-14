@@ -16,6 +16,40 @@ preloaded-image pipeline
 COCO one-pass per-image executor
 ```
 
+## Stage54 Final Practical Maximization
+
+Stage54 retains exact `K1X_INT8_V1`, the Stage53 package, NCHWc8, and the
+selected compiler contract. It adds shape-dispatched direct 1x1/P3 dense
+delivery, exact E2c3 C8 LUT/store, depthwise V2, explicit RVV input conversion
+with compact C3 stem input, and bounded head V2.
+
+```text
+condition-variable compatibility, fixed input, 10/100/5:
+  mean:    180238 us
+  median:  179922 us
+  p95:     182678 us
+  p99:     183556 us
+
+epoch-spin low latency, fixed input, 10/100/5:
+  mean:    167735 us
+  median:  167225 us
+  p95:     170693 us
+  p99:     178804 us
+  max:     183210 us
+  rate:    5.961784 inferences/s
+
+100-image in-memory corpus executor mean:
+  166140.760690 us
+
+preloaded-image complete pipeline mean:
+  190754.405260 us
+```
+
+The low-latency mean is 30.08% below the accepted Stage53 239884.016 us
+surface and more than 60% below matched B120 ORT. Full COCO and the 10,000-run
+soak are frozen in the Stage54 report and release manifest. This remains below
+6 FPS, not 20 FPS.
+
 ## Stage53 Optimized Research
 
 The selected Stage53 arithmetic, layout, and static graph remain

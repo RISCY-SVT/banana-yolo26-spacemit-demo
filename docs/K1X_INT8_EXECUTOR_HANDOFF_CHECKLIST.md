@@ -11,9 +11,11 @@
 - [ ] CPU0-3 worker affinity passes; CPU4-7 IME count is zero.
 - [ ] FRM and vector CSR restoration tests pass.
 - [ ] Full COCO result and prediction hash match the Stage52 functional-reference
-      report and the byte-identical Stage53 optimized-research result.
+      report and the byte-identical Stage53/Stage54 optimized-research results.
+- [ ] `config/k1x-int8-executor-stage54.env` is sourced before prepare for the
+      Stage54 operator profile.
 - [ ] The intended wake policy is explicit: condition-variable compatibility or
-      `Y26_STAGE53_SPIN_POOL=1` optimized research.
+      `Y26_STAGE53_SPIN_POOL=1` dedicated-board low latency.
 - [ ] Full-model timing and the corresponding 10,000-run soak match the reported
       statistical surface and wake policy.
 - [ ] Optional `rr20` is disabled unless a dedicated lab operator enables it.

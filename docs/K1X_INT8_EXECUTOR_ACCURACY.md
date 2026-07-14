@@ -31,4 +31,8 @@ shown above. Therefore its COCO metrics are exactly the accepted Stage52
 values; this conclusion is based on the complete prediction surface rather
 than intermediate equality alone.
 
+Stage54 ran the final shape-specialized E2c3 route over all 5,000 images. It
+again produced 721,755 predictions and the same byte-for-byte SHA-256. The
+Stage54 task-level accuracy delta versus Stage53 is therefore exactly zero.
+
 Intermediate exactness does not substitute for this task-level evaluation.

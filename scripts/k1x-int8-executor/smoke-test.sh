@@ -4,6 +4,13 @@ set -euo pipefail
 root=${1:-/data/k1x-yolo26-int8-executor}
 input=${2:-"$root/fixtures/bus_640_nchw_f32.bin"}
 output=${3:-"$root/outputs/smoke.json"}
+if [[ -r "$root/config/k1x-int8-executor-stage54.env" ]]; then
+  set -a
+  # shellcheck disable=SC1091
+  source "$root/config/k1x-int8-executor-stage54.env"
+  set +a
+fi
+unset Y26_STAGE53_SPIN_POOL
 mkdir -p "$(dirname "$output")"
 "$root/bin/yolo26_k1x_int8" --version
 manifest=$(sha256sum "$root/package/asset_hashes.tsv" | awk '{print $1}')

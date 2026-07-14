@@ -51,7 +51,10 @@ profile and trusted `asset_hashes.tsv` SHA-256 must match the prepared
 `K1X_INT8_V1_YOLO26N_640_FULL_GRAPH_001` package; arbitrary profiles are
 rejected.
 
-The ABI does not change for Stage53. Setting `Y26_STAGE53_SPIN_POOL=1` before
+The ABI does not change for Stage54. Source
+`config/k1x-int8-executor-stage54.env` before `y26_executor_prepare()` to
+select the validated Stage54 exact operator routes. Setting
+`Y26_STAGE53_SPIN_POOL=1` before
 `y26_executor_prepare()` selects the measured epoch-spin research wake policy;
 leaving it unset retains condition-variable wakeup. The setting is captured
 when the handle prepares and must not be changed while that handle is active.

@@ -10,7 +10,7 @@ The release bundle deploys to:
 ```
 
 A versioned optimized-research bundle may use a child such as
-`/data/k1x-yolo26-int8-executor/stage53-optimized-research`; this keeps both
+`/data/k1x-yolo26-int8-executor/stage54-optimized-research`; this keeps both
 handoffs on NVMe without replacing the Stage52 functional reference.
 
 `config/k1x-int8-executor-safe.conf` records the supported package root,
@@ -39,12 +39,20 @@ not execute IME instructions on CPU4-7. Use `--scheduler rr20` only on a
 dedicated lab board with sufficient privileges, a watchdog, and a cleanup
 path. It is not the default.
 
-The Stage53 epoch-spin wake policy is also opt-in and remains SCHED_OTHER:
+The Stage54 exact operator profile is explicit and independent from wake policy:
+
+```bash
+set -a
+source /data/k1x-yolo26-int8-executor/stage54-optimized-research/config/k1x-int8-executor-stage54.env
+set +a
+```
+
+The dedicated-board epoch-spin wake policy is opt-in and remains SCHED_OTHER:
 
 ```bash
 Y26_STAGE53_SPIN_POOL=1 \
-  /data/k1x-yolo26-int8-executor/stage53-optimized-research/bin/yolo26_k1x_int8 \
-  --package /data/k1x-yolo26-int8-executor/stage53-optimized-research/package \
+  /data/k1x-yolo26-int8-executor/stage54-optimized-research/bin/yolo26_k1x_int8 \
+  --package /data/k1x-yolo26-int8-executor/stage54-optimized-research/package \
   --image /data/example/bus.jpg --input-mode image \
   --output-json /data/example/bus-stage53.json \
   --threads 4 --pin 0-3 --scheduler safe --verify
@@ -53,6 +61,10 @@ Y26_STAGE53_SPIN_POOL=1 \
 It keeps worker CPUs active between prepared schedule epochs and therefore
 uses more process CPU than the condition-variable compatibility mode. Enable
 it only on a dedicated measured workload.
+
+The bundled benchmark wrapper accepts an optional fourth argument:
+`compatibility` or `low-latency`. Both source the Stage54 operator profile;
+only `low-latency` enables epoch-spin.
 
 `smoke-test.sh` validates package identity, loader resolution, CLI execution,
 and deterministic output before handoff. `uninstall.sh` removes only the

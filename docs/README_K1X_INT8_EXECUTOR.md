@@ -13,11 +13,12 @@ static numeric operation schedule.
 
 The compatibility default is four IME workers pinned to CPU0-3, a controller
 on CPU4, `SCHED_OTHER`, and condition-variable worker wakeup. CPU4-7 never
-execute IME instructions. Stage53 also validates an opt-in SCHED_OTHER epoch
-spin mode for the optimized-research benchmark; it reduces latency at the cost
-of higher process CPU occupancy. `rr20` remains a bounded lab mode.
+execute IME instructions. The Stage54 exact operator profile is recorded in
+`config/k1x-int8-executor-stage54.env`. An opt-in SCHED_OTHER epoch-spin mode
+reduces latency at the cost of higher process CPU occupancy. `rr20` remains a
+bounded lab mode.
 
-The Stage52 functional-reference handoff and Stage53 optimized-research update
+The Stage52 functional-reference handoff and Stage53/Stage54 optimized-research updates
 were tested on Bianbu 2.2.1 with Linux 6.6.63
 `#2.2.7.2`, SpacemiT GCC 14.3.0, and board NVMe `/data`. Its frozen identities
 are:
@@ -28,6 +29,8 @@ model SHA-256:
 Stage52 package asset_hashes.tsv SHA-256:
   d3b4cb794f1373aa712d77bab177a5f7da58530361c9af58c0caf5bbcd6dc75f
 Stage53 package asset_hashes.tsv SHA-256:
+  fab4a72cf524ce0a205ceca0384144f2eee7bc79dff3f4db8b7208614e8407be
+Stage54 package asset_hashes.tsv SHA-256:
   fab4a72cf524ce0a205ceca0384144f2eee7bc79dff3f4db8b7208614e8407be
 ```
 

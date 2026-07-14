@@ -27,7 +27,8 @@ cp -a "$install_root/lib/." "$output/lib/"
 cp -a "$install_root/include/." "$output/include/"
 cp -a "$package/." "$output/package/"
 cp -a "$fixture" "$output/fixtures/bus_640_nchw_f32.bin"
-cp -a "$repo/config/k1x-int8-executor-safe.conf" "$output/config/"
+cp -a "$repo/config/k1x-int8-executor-safe.conf" \
+  "$repo/config/k1x-int8-executor-stage54.env" "$output/config/"
 cp -a "$repo"/docs/{README_K1X_INT8_EXECUTOR.md,BUILDING_K1X_INT8_EXECUTOR.md,DEPLOYING_K1X_INT8_EXECUTOR.md,K1X_INT8_EXECUTOR_API.md,K1X_INT8_MODEL_PACKAGE_FORMAT.md,K1X_INT8_EXECUTOR_ARCHITECTURE.md,K1X_INT8_EXECUTOR_CORRECTNESS.md,K1X_INT8_EXECUTOR_ACCURACY.md,K1X_INT8_EXECUTOR_PERFORMANCE.md,K1X_INT8_EXECUTOR_LIMITATIONS.md,K1X_INT8_EXECUTOR_TROUBLESHOOTING.md,K1X_INT8_EXECUTOR_HANDOFF_CHECKLIST.md,K1X_INT8_EXECUTOR_NOTICES.md} "$output/docs/"
 cp -a "$repo"/scripts/k1x-int8-executor/{build.sh,package.sh,deploy.sh,smoke-test.sh,benchmark.sh,uninstall.sh,create-release.sh} "$output/scripts/"
 opencv_root=${Y26_K1X_OPENCV_ROOT:-/data/opencv/install-k1x-gtk3}
