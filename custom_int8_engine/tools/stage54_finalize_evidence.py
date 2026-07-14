@@ -181,9 +181,11 @@ def candidate_rows() -> dict[str, list[dict[str, object]]]:
         ],
         "scheduler": [
             {"route": "S0_condition_variable", "mean_us": 185142.0,
-             "p95_us": 188083.0, "process_cpu_policy": "sleeping", "status": "compatibility"},
+             "p95_us": 188083.0, "process_cpu_policy": "sleeping",
+             "idle_process_cpu_to_wall": 0.000027, "status": "compatibility"},
             {"route": "S1_raw_epoch_spin", "mean_us": 172506.0,
-             "p95_us": 174252.0, "status": "selected_low_latency"},
+             "p95_us": 174252.0, "idle_process_cpu_to_wall": 3.993455,
+             "status": "selected_low_latency"},
             {"route": "S2_pause_hint", "mean_us": 172402.0,
              "p95_us": 173509.0, "status": "no_material_gain"},
             {"route": "S3_adaptive_spin_sleep", "mean_us": 180408.0,
@@ -375,6 +377,11 @@ def write_candidate_evidence(
         "Keep condition-variable SCHED_OTHER as compatibility and raw epoch-spin SCHED_OTHER as "
         "the dedicated-board low-latency profile. Pause was neutral, adaptive sleep was slower, "
         "and S4 static scheduling did not beat dispatch. Thermal/process-CPU costs are explicit.",
+        "The 1802-second thermal trace reached 80 C while all CPU0-4 frequency samples remained "
+        "at 1.6 GHz. With a prepared executor idle for five seconds, condition-variable process "
+        "CPU/wall was 0.000027 and epoch-spin was 3.993455. A bounded concurrent NVMe-read probe "
+        "raised the low-latency mean from 167411.836 us to 178697.360 us (+6.741175%). No reliable "
+        "board power sensor was available.",
         f"Raw evidence: `{raw_root}`.",
     ])
 
@@ -388,6 +395,7 @@ def main() -> int:
     parser.add_argument("--final-cv", type=Path, required=True)
     parser.add_argument("--final-spin", type=Path, required=True)
     parser.add_argument("--final-soak", type=Path, required=True)
+    parser.add_argument("--final-cv-soak", type=Path, required=True)
     parser.add_argument("--ort", type=Path, required=True)
     parser.add_argument("--pipeline", type=Path, required=True)
     parser.add_argument("--real-corpus", type=Path, required=True)
@@ -414,6 +422,9 @@ def main() -> int:
     final_cv_raw, final_cv = parse_cli(args.final_cv, "stage54_condition_variable")
     final_spin_raw, final_spin = parse_cli(args.final_spin, "stage54_epoch_spin")
     soak_raw, soak = parse_cli(args.final_soak, "stage54_epoch_spin_10000_soak")
+    cv_soak_raw, cv_soak = parse_cli(
+        args.final_cv_soak, "stage54_condition_variable_10000_soak"
+    )
     ort_raw, ort = parse_ort(args.ort)
     pipeline_raw, pipeline_summary = parse_pipeline(args.pipeline)
     real_rows, real_mean = parse_real_corpus(args.real_corpus)
@@ -422,13 +433,22 @@ def main() -> int:
 
     if sha256(args.coco_json) != PREDICTION_SHA256:
         raise ValueError("final COCO prediction JSON is not byte-identical to Stage53")
-    if final_spin["output_hashes"] != "0xd43f5e018b415631":
-        raise ValueError("unexpected final F0 output hash")
-    if int(final_spin["cpu4_7_ime_count"]) != 0:
-        raise ValueError("CPU4-7 IME execution detected")
-    if len(soak_raw) != 10000:
-        raise ValueError(f"expected 10000 soak samples, found {len(soak_raw)}")
-
+    for name, rows, result, expected_samples in (
+        ("stage53 condition-variable", stage53_cv_raw, stage53_cv, 500),
+        ("stage53 epoch-spin", stage53_spin_raw, stage53_spin, 500),
+        ("Stage54 condition-variable", final_cv_raw, final_cv, 500),
+        ("Stage54 epoch-spin", final_spin_raw, final_spin, 500),
+        ("Stage54 epoch-spin soak", soak_raw, soak, 10000),
+        ("Stage54 condition-variable soak", cv_soak_raw, cv_soak, 10000),
+    ):
+        if len(rows) != expected_samples:
+            raise ValueError(
+                f"{name}: expected {expected_samples} samples, found {len(rows)}"
+            )
+        if result["output_hashes"] != "0xd43f5e018b415631":
+            raise ValueError(f"{name}: unexpected F0 output hash")
+        if int(result["cpu4_7_ime_count"]) != 0:
+            raise ValueError(f"{name}: CPU4-7 IME execution detected")
     for name in ("dense_shape_census.tsv", "dense_shape_ranked.tsv", "dense_category_reconciliation.tsv"):
         copy_normalized(args.dense_dir / name, stage / name)
     for source, destination in (
@@ -493,9 +513,18 @@ def main() -> int:
     write_candidate_evidence(stage, candidate_rows(), categories, args.raw_root)
 
     write_tsv(stage / "final_model_performance_raw.tsv", final_cv_raw + final_spin_raw)
-    write_tsv(stage / "final_model_performance_summary.tsv", [final_cv, final_spin, soak, ort])
-    write_tsv(stage / "final_model_long_soak.tsv", [{**soak, "raw_samples": len(soak_raw),
-                                                       "raw_evidence": str(args.final_soak)}])
+    write_tsv(
+        stage / "final_model_performance_summary.tsv",
+        [final_cv, final_spin, soak, cv_soak, ort],
+    )
+    write_tsv(stage / "final_model_long_soak.tsv", [
+        {**soak, "raw_samples": len(soak_raw), "raw_evidence": str(args.final_soak)},
+        {
+            **cv_soak,
+            "raw_samples": len(cv_soak_raw),
+            "raw_evidence": str(args.final_cv_soak),
+        },
+    ])
     write_tsv(stage / "final_real_corpus_timing.tsv", real_rows)
     write_tsv(stage / "final_image_pipeline_timing.tsv", pipeline_summary)
     write_tsv(stage / "final_ort_comparison.tsv", ort_raw)
@@ -541,15 +570,20 @@ def main() -> int:
         f"{float(pipeline_total['mean_us']):.6f} us.",
         f"The 10000-run soak recorded p99 {float(soak['p99_us']):.6f} us, p99.9 "
         f"{float(soak['p999_us']):.6f} us, and max {float(soak['max_us']):.6f} us.",
+        f"The separate 10000-run compatibility soak recorded mean "
+        f"{float(cv_soak['mean_us']):.6f} us, p99 {float(cv_soak['p99_us']):.6f} us, "
+        f"and max {float(cv_soak['max_us']):.6f} us.",
     ])
 
     write_tsv(stage / "scheduler_v2_thermal.tsv", read_tsv(args.thermal))
     write_tsv(stage / "pmu_dense_shapes.tsv", read_tsv(args.pmu))
     write_md(stage / "pmu_final_report.md", "PMU final report", [
-        "The stage-owned per-worker perf_event_open helper measured cycles, instructions, "
-        "task-clock, context switches, and CPU migrations with time_running equal to time_enabled "
-        "for the full model. The board has no installed perf binary and no authoritative X60 "
-        "cache/stall mapping, so no such events are invented.",
+        "The stage-owned CPU-wide perf_event_open helper measured cycles, instructions, "
+        "task-clock, context switches, and CPU migrations per CPU around the exact full-model "
+        "workload, with time_running equal to time_enabled. These counts include any unrelated "
+        "activity on CPU0-4 and are not presented as worker-owned counters. The board has no "
+        "installed perf binary and no authoritative X60 cache/stall mapping, so no such events "
+        "are invented.",
         "CPU-wide prefix subtraction for individual dense rows was repeated but remained noisy "
         "and sign-changing; those rows are retained as diagnostic only. Wall time is selection authority.",
     ])

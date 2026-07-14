@@ -25,18 +25,32 @@ with compact C3 stem input, and bounded head V2.
 
 ```text
 condition-variable compatibility, fixed input, 10/100/5:
-  mean:    180238 us
-  median:  179922 us
-  p95:     182678 us
-  p99:     183556 us
+  mean:    180237.700 us
+  median:  179921.500 us
+  p95:     182678.350 us
+  p99:     183556.020 us
 
 epoch-spin low latency, fixed input, 10/100/5:
-  mean:    167735 us
-  median:  167225 us
-  p95:     170693 us
-  p99:     178804 us
-  max:     183210 us
-  rate:    5.961784 inferences/s
+  mean:    167411.836 us
+  median:  167151.500 us
+  p95:     169621.050 us
+  p99:     173464.770 us
+  max:     200475.000 us
+  rate:    5.973293 inferences/s
+
+epoch-spin low latency, 10,000-run soak:
+  mean:    167738.026600 us
+  p95:     170529.100000 us
+  p99:     177433.070000 us
+  p99.9:   182884.190000 us
+  max:     186348.000000 us
+
+condition-variable compatibility, 10,000-run soak:
+  mean:    180403.108600 us
+  p95:     183174.050000 us
+  p99:     190387.200000 us
+  p99.9:   197072.411000 us
+  max:     214786.000000 us
 
 100-image in-memory corpus executor mean:
   166140.760690 us
@@ -45,10 +59,11 @@ preloaded-image complete pipeline mean:
   190754.405260 us
 ```
 
-The low-latency mean is 30.08% below the accepted Stage53 239884.016 us
-surface and more than 60% below matched B120 ORT. Full COCO and the 10,000-run
-soak are frozen in the Stage54 report and release manifest. This remains below
-6 FPS, not 20 FPS.
+The post-freeze low-latency mean is 30.211342% below the accepted Stage53
+239884.016 us surface and 63.444709% below the reproduced matched B120 ORT
+457968.821588 us mean. Full COCO and both 10,000-run scheduler soaks are frozen
+in the Stage54 report and release manifest. This remains below 6 FPS, not
+20 FPS.
 
 ## Stage53 Optimized Research
 
