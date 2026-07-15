@@ -1,0 +1,6 @@
+symbol	present_in_disassembly	implementation	board_execution	approved_cpus
+y26_stage54_kernel_direct_1x1_m12n16	1	explicit assembly/intrinsics	exact	CPU0-3 workers
+q62_e2c4_i32x4x2_bias_to_s8	1	explicit assembly/intrinsics	exact	CPU0-3 workers
+q62_e2c4_i32x4x2_bias_lut_to_s8	1	explicit assembly/intrinsics	exact	CPU0-3 workers
+run_lut_chunk	1	explicit assembly/intrinsics	exact	CPU0-3 workers
+run_softmax_chunk	1	explicit assembly/intrinsics	exact	CPU0-3 workers

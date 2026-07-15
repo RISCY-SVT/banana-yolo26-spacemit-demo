@@ -1,0 +1,3 @@
+arm	flags	exact	board	status	fault	full_model_gain_gate
+C0	-march=rv64gcv_zvfh -mabi=lp64d -mtune=spacemit-x60 -funroll-loops -O3 -DNDEBUG	1	pass	selected		not-applicable
+Stage54_LTO_reproduction				rejected	vsext.vf4 in run_rgb_stem_chunk	not_reached

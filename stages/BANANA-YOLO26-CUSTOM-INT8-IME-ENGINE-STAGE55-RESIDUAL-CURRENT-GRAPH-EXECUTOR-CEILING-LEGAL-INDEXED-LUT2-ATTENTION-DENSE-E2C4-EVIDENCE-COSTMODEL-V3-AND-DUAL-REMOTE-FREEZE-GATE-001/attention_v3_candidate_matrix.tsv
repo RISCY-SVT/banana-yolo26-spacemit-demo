@@ -1,0 +1,5 @@
+route	exact	status
+A0_scalar_Q48_exp_lookup	1	control
+A3_legal_e16_offsets_e64_vluxei16	1	selected
+SoA_reconstruction		not_needed-after-direct-route-win
+producer_direct_pack		not-selected-subphase-prediction-below-gate

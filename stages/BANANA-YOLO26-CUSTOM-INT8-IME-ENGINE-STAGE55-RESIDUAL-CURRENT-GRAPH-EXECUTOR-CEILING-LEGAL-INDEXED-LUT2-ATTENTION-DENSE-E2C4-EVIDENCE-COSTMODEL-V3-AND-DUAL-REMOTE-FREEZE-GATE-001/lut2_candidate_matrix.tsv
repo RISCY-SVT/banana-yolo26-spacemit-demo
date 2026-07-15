@@ -1,0 +1,5 @@
+route	exact	status	exact_tables
+L2_control_direct_scalar	1	control	not-applicable
+L2A_corrected_vluxei16	1	selected	not-applicable
+L2B_pure_add_factorization		proof-sidecar	6
+L2C_composite_factorization		rejected-no-proof	0

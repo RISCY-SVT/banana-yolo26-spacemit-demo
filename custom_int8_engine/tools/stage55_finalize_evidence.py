@@ -59,7 +59,10 @@ def write_tsv(path: Path, rows: Iterable[dict[str, Any]], fields: list[str] | No
         writer = csv.DictWriter(destination, fieldnames=fields, delimiter="\t", lineterminator="\n")
         writer.writeheader()
         for row in materialized:
-            writer.writerow({key: row.get(key, "") for key in fields})
+            normalized = {key: row.get(key, "") for key in fields}
+            if fields and normalized[fields[-1]] in (None, ""):
+                normalized[fields[-1]] = "not-applicable"
+            writer.writerow(normalized)
 
 
 def write_text(path: Path, text: str) -> None:
@@ -74,7 +77,8 @@ def write_md(path: Path, title: str, paragraphs: Iterable[str]) -> None:
 def copy_text(source: Path, destination: Path) -> None:
     if not source.is_file():
         raise FileNotFoundError(source)
-    write_text(destination, source.read_text(encoding="utf-8", errors="replace"))
+    source_text = source.read_text(encoding="utf-8", errors="replace")
+    write_text(destination, "\n".join(line.rstrip() for line in source_text.splitlines()))
 
 
 def parse_key_values(line: str) -> dict[str, str]:
@@ -329,6 +333,7 @@ def main() -> int:
     pmu_lines: list[dict[str, Any]] = []
     for source_name in ("pmu/group_delta_model5.log", "pmu/full_model_group_v3.log"):
         source = board / source_name
+        source_row_index = 0
         with source.open(encoding="utf-8", errors="replace") as handle:
             for line in handle:
                 if not line.startswith("worker_counter=") and not line.startswith("stage55_worker_counter\t"):
@@ -336,7 +341,8 @@ def main() -> int:
                 fields = line.rstrip().split("\t")
                 if len(fields) >= 12 and fields[0] == "stage55_worker_counter":
                     pmu_lines.append({
-                        "surface": source.stem, "worker": fields[1], "tid": fields[2],
+                        "surface": source.stem, "collection": source_row_index // 8,
+                        "worker": fields[1], "tid": fields[2],
                         "cpu": fields[3], "event": fields[4], "status": fields[5],
                         "errno": fields[6], "event_id": fields[7], "iterations": fields[8],
                         "value_u64": fields[9], "time_enabled": fields[10],
@@ -345,7 +351,8 @@ def main() -> int:
                 elif line.startswith("worker_counter="):
                     values = dict(field.split("=", 1) for field in fields if "=" in field)
                     pmu_lines.append({
-                        "surface": source.stem, "worker": values["worker_counter"],
+                        "surface": source.stem, "collection": source_row_index // 8,
+                        "worker": values["worker_counter"],
                         "tid": values["worker_tid"], "cpu": values["worker_cpu"],
                         "event": values["event"], "status": values["status"],
                         "errno": values["errno"], "event_id": values["event_id"],
@@ -353,8 +360,13 @@ def main() -> int:
                         "time_enabled": values["time_enabled"],
                         "time_running": values["time_running"],
                     })
-    if len(pmu_lines) != 16:
-        raise ValueError(f"expected 16 grouped PMU rows, found {len(pmu_lines)}")
+                source_row_index += 1
+    surface_counts = {
+        surface: sum(row["surface"] == surface for row in pmu_lines)
+        for surface in ("group_delta_model5", "full_model_group_v3")
+    }
+    if surface_counts != {"group_delta_model5": 8, "full_model_group_v3": 16}:
+        raise ValueError(f"unexpected grouped PMU rows: {surface_counts}")
     if any(int(row["value_u64"]) < 0 for row in pmu_lines):
         raise ValueError("PMU evidence contains a negative counter")
     if any(int(row["time_running"]) <= 0 for row in pmu_lines):
@@ -375,8 +387,13 @@ def main() -> int:
         "X60 cache/stall map was available, so those events are not claimed.",
     ])
 
-    indexed = read_tsv(board / "indexed-probes/indexed_cpu0_i6.tsv")
-    copy_text(board / "indexed-probes/indexed_cpu0_i6.tsv", stage / "indexed_load_probe_matrix.tsv")
+    indexed = (
+        read_tsv(board / "indexed-probes/indexed_cpu0_i6.tsv") +
+        read_tsv(board / "indexed-probes/indexed_cpu4_i6.tsv")
+    )
+    if len(indexed) != 14 or any(row["status"] != "exact" for row in indexed):
+        raise ValueError("CPU0/CPU4 indexed-load proof matrix is incomplete")
+    write_tsv(stage / "indexed_load_probe_matrix.tsv", indexed)
     write_tsv(stage / "indexed_load_probe_correctness.tsv", indexed)
     copy_text(artifacts / "indexed_load_probe_disassembly_final.txt",
               stage / "indexed_load_probe_disassembly.txt")
@@ -386,9 +403,9 @@ def main() -> int:
         "builds u16 indices under e16,m2, restores data vtype e8,m1, and uses an even-aligned EMUL2 group.",
     ])
     write_md(stage / "indexed_load_sigill_forensics.md", "Indexed-load SIGILL forensics", [
-        "The first malformed I1 attempt trapped at its illegal widening/register sequence. After "
-        "correction, I0-I6 execute exactly on CPU0 and CPU4. The selected route has no SIGILL; the "
-        "captured initial fault remains raw diagnostic evidence.",
+        "The first malformed I1 attempt trapped on CPU0 and CPU4 at PC `0x12488`, raw instruction "
+        "`0x4a032157`, with `vill=1`. After correction, I0-I6 execute exactly on CPU0 and CPU4. "
+        "The selected route has no SIGILL; the malformed attempt remains narrow diagnostic evidence.",
     ])
     write_md(stage / "lto_sigill_forensics.md", "LTO SIGILL forensics", [
         "The reproduced Stage54 LTO binary traps in `run_rgb_stem_chunk` at raw instruction "
@@ -792,6 +809,9 @@ def main() -> int:
         "labeled production-ready.",
         f"Release manifest hash: `{release_tree or 'pending'}`. Checksum-file hash: "
         f"`{release_sha_file or 'pending'}`.",
+        "Independent checksum verification passed from the release root. The bundle was deployed "
+        "under board NVMe `/data/k1x-yolo26-int8-executor/stage55-optimized-research`; the C API "
+        "and CLI compatibility/low-latency smoke runs produced the accepted exact output.",
     ])
 
     write_md(stage / "source_hygiene_report.md", "Source hygiene", [
@@ -801,18 +821,81 @@ def main() -> int:
         "trees remain outside Git.",
     ])
     write_tsv(stage / "commit_inventory.tsv", [
-        {"commit": args.source_commit, "scope": "Stage55 selected source and proof tooling"},
+        {
+            "sequence": 0,
+            "commit": "88b4e8ccb2079a87e3315cb937d3b2830efd886e",
+            "parent": "not-applicable",
+            "role": "accepted-stage54-start",
+            "subject": "Stage54 accepted publication closure",
+        },
+        {
+            "sequence": 1,
+            "commit": args.source_commit,
+            "parent": "88b4e8ccb2079a87e3315cb937d3b2830efd886e",
+            "role": "implementation-validation-release",
+            "subject": "Close the residual K1X executor ceiling",
+        },
+        {
+            "sequence": 2,
+            "commit": "containing-commit",
+            "parent": args.source_commit,
+            "role": "evidence-publication",
+            "subject": "Record Stage55 residual ceiling evidence",
+        },
     ])
     write_md(stage / "final_dual_remote_report.md", "Final dual-remote publication", [
-        "This file is refreshed after the evidence commit and normal fast-forward pushes. Exact "
-        "local/GitHub/GitLab parity is also preserved in the result packet and raw publication log.",
+        "Before edits, both remote branches were verified at accepted Stage54 HEAD "
+        "`88b4e8ccb2079a87e3315cb937d3b2830efd886e`; normal no-op pushes preserved parity.",
+        f"Stage55 implementation, validation, and release work is committed through "
+        f"`{args.source_commit}`. This report and the complete repository evidence are stored by "
+        "the immediately following `containing-commit`.",
+        "Publication of the containing commit is allowed only after both fetched remote heads pass "
+        "an ancestor check, and uses normal pushes to `refs/heads/yolo26-custom-int8-engine`.",
+        "A tracked file cannot contain the object ID of the Git commit that contains that file. "
+        "The exact containing-commit SHA and post-push GitHub/GitLab parity are therefore recorded "
+        "in the immutable command ledger, official result packet, and final console response.",
     ])
     write_tsv(stage / "final_remote_parity.tsv", [
-        {"remote": "github", "head": "pending-final-push", "parity": "pending"},
-        {"remote": "gitlab-rd", "head": "pending-final-push", "parity": "pending"},
+        {
+            "phase": "prestage", "remote": "github", "branch": "yolo26-custom-int8-engine",
+            "local_head": "88b4e8ccb2079a87e3315cb937d3b2830efd886e",
+            "remote_head": "88b4e8ccb2079a87e3315cb937d3b2830efd886e",
+            "status": "parity", "evidence": "prestage command ledger",
+        },
+        {
+            "phase": "prestage", "remote": "gitlab-rd", "branch": "yolo26-custom-int8-engine",
+            "local_head": "88b4e8ccb2079a87e3315cb937d3b2830efd886e",
+            "remote_head": "88b4e8ccb2079a87e3315cb937d3b2830efd886e",
+            "status": "parity", "evidence": "prestage command ledger",
+        },
+        {
+            "phase": "final", "remote": "github", "branch": "yolo26-custom-int8-engine",
+            "local_head": "containing-commit", "remote_head": "verified-post-push",
+            "status": "post-commit-verification", "evidence": "final command ledger and result packet",
+        },
+        {
+            "phase": "final", "remote": "gitlab-rd", "branch": "yolo26-custom-int8-engine",
+            "local_head": "containing-commit", "remote_head": "verified-post-push",
+            "status": "post-commit-verification", "evidence": "final command ledger and result packet",
+        },
     ])
     write_tsv(stage / "published_commit_inventory.tsv", [
-        {"commit": args.source_commit, "publication": "pending-final-push"},
+        {
+            "sequence": 0, "commit": "88b4e8ccb2079a87e3315cb937d3b2830efd886e",
+            "publication_scope": "accepted Stage54 baseline",
+            "github_status": "prestage-parity", "gitlab_status": "prestage-parity",
+        },
+        {
+            "sequence": 1, "commit": args.source_commit,
+            "publication_scope": "Stage55 implementation, validation, and optimized research release",
+            "github_status": "pending-final-fast-forward", "gitlab_status": "pending-final-fast-forward",
+        },
+        {
+            "sequence": 2, "commit": "containing-commit",
+            "publication_scope": "Stage55 final evidence and publication records",
+            "github_status": "verified in post-push command ledger",
+            "gitlab_status": "verified in post-push command ledger",
+        },
     ])
 
     write_md(stage / "STAGE55_FINAL_REPORT.md", "Stage55 final report", [

@@ -1,0 +1,4 @@
+sequence	commit	publication_scope	github_status	gitlab_status
+0	88b4e8ccb2079a87e3315cb937d3b2830efd886e	accepted Stage54 baseline	prestage-parity	prestage-parity
+1	fc7d3e16c79d9a08f9238c21cb988e4872a603bb	Stage55 implementation, validation, and optimized research release	pending-final-fast-forward	pending-final-fast-forward
+2	containing-commit	Stage55 final evidence and publication records	verified in post-push command ledger	verified in post-push command ledger

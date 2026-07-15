@@ -1,0 +1,6 @@
+route	status
+DW2_selected	control
+DW3c_E2c4	timing-scout-not-selected-below-1pct-prediction
+DW3a_x4	not-opened-after-corrected-profile-below-gate
+DW3b_halo	not-opened-after-corrected-profile-below-gate
+DW3d_hoisted	covered-by-DW2-weight-reuse

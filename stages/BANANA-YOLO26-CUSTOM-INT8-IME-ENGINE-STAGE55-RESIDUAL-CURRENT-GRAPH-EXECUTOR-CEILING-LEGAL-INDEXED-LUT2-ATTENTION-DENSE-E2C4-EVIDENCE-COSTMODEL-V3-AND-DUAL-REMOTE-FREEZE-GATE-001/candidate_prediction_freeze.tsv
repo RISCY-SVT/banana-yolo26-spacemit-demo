@@ -1,0 +1,6 @@
+timestamp_utc	candidate	control_mean_us	affected_mean_us_before	affected_mean_us_predicted	predicted_full_mean_us	predicted_delta_pct	measurement_status
+2026-07-15T07:51:00Z	corrected_lut2_indexed	167608.000	11069.965	9896.280	166434.315	-0.700247	single-run-smoke-excluded-from-headline; frozen-before-1000-sample-ABBA
+2026-07-15T08:11:00Z	attention_v3_vluxei16_q48	164582.280	21935.852	19936.100	162582.528	-1.215048	single-run-smoke-excluded-from-headline; frozen-before-500-sample-per-arm-ABBA
+2026-07-15T08:31:36Z	e2c4_integrated_dense	162062.620	83320.605	74549.300	153291.315	-5.412293	single-run-smoke-excluded-from-headline; frozen-before-500-sample-per-arm-ABBA
+2026-07-15T08:38:57Z	dense_family_a_weight_stationary_high_m_low_k	149603.114	70365.015	69999.000	149237.099	-0.244657	20-sample-scout-excluded-from-headline; frozen-before-500-sample-per-arm-ABBA
+2026-07-15T08:38:57Z	dense_family_b_m8_small_m_large_k	149603.114	70365.015	71500.000	150738.099	0.758663	20-sample-scout-excluded-from-headline; frozen-before-500-sample-per-arm-ABBA

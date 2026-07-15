@@ -1,0 +1,4 @@
+family	condition	route	selected
+A	1x1,s1,Cin<=96,M>=6400,N%16==0	M12N16 weight-stationary direct-P1	1
+B	3x3,M<=1600,K>=576,N%16==0	M8	0
+fallback	all other exact dense shapes	M12N16 A-stationary spatial	1

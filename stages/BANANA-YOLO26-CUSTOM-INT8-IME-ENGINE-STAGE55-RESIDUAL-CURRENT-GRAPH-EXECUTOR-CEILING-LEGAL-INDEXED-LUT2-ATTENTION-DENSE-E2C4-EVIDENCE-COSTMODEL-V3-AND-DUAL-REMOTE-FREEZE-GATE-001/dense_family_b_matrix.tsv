@@ -1,0 +1,5 @@
+route	status
+B0_M12_A_stationary	selected_control
+B1_weight_stationary	prior-global-no-win
+B2_per_shape_M8	rejected-full-model
+B3_static_partition	prior-no-win

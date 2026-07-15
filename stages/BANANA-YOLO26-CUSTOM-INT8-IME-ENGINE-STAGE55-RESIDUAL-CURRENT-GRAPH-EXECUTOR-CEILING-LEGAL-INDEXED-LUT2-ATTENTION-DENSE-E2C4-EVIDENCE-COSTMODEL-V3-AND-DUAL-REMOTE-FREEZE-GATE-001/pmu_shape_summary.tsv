@@ -1,0 +1,9 @@
+surface	collection	worker	tid	cpu	event	status	errno	event_id	iterations	value_u64	time_enabled	time_running
+group_delta_model5	0	0	311693	0	cycles	available	0	762	1	18892639	11801917	11801917
+group_delta_model5	0	0	311693	0	instructions	available	0	766	1	13057162	11801917	11801917
+group_delta_model5	0	1	311694	1	cycles	available	0	759	1	20290140	12682041	12682041
+group_delta_model5	0	1	311694	1	instructions	available	0	765	1	13415486	12682041	12682041
+group_delta_model5	0	2	311695	2	cycles	available	0	761	1	20152287	12593958	12593958
+group_delta_model5	0	2	311695	2	instructions	available	0	763	1	12929467	12593958	12593958
+group_delta_model5	0	3	311696	3	cycles	available	0	760	1	20084016	12550833	12550833
+group_delta_model5	0	3	311696	3	instructions	available	0	764	1	13168349	12550833	12550833

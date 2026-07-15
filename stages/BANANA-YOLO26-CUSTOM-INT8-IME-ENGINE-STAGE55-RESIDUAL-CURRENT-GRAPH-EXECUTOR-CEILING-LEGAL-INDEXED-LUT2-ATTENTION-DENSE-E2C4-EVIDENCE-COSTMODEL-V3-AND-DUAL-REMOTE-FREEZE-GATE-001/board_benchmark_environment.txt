@@ -1,0 +1,8 @@
+Banana-Pi BPI-F3 / SpacemiT K1X
+CPU0-3 IME workers
+CPU4 controller
+SCHED_OTHER
+performance governor
+1600000 kHz
+Bianbu 2.2.1
+Linux 6.6.63

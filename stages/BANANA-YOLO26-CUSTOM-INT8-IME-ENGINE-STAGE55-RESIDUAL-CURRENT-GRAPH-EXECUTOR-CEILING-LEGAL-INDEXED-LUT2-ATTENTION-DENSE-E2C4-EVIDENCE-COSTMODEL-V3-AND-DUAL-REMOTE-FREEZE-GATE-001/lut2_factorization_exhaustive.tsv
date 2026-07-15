@@ -1,0 +1,21 @@
+operation_index	table_sha256	expression_class	pairs_tested	rational_mismatches	rational_first_mismatch	factor_shift	left_multiplier	right_multiplier	factor_mismatches	factor_first_mismatch	maximum_term_bits	factorable
+10	2c6576995440f9d4378e0e580118034c88df26f69106e79917cc324e9fac62bd	add_mul_sigmoid_composite	0	not-applicable		-1	0	0	not-attempted-without-proof		0	0
+21	2b07728fe7e245839317c69f17b97a86dd2ed530b164a023e3c83be68898f002	add_mul_sigmoid_composite	0	not-applicable		-1	0	0	not-attempted-without-proof		0	0
+35	6cf587155f4f972ce8be39b7ee949f131a17585c5a032397f167ba787ed50f11	add_mul_sigmoid_composite	0	not-applicable		-1	0	0	not-attempted-without-proof		0	0
+39	95b6383552c0aad489346ac1e63c03ade76e7ccdaa3be993578e25b3c52be542	add_mul_sigmoid_composite	0	not-applicable		-1	0	0	not-attempted-without-proof		0	0
+55	a923529ebcf1c82f5c513dd02ca5572bf7e41ed1cf51f91d53e7208fa21d8ab3	add_mul_sigmoid_composite	0	not-applicable		-1	0	0	not-attempted-without-proof		0	0
+59	036577ccb04d8cc33d56c29cedcaafcdebe43843fabc21eb45d83c2c78bc025a	add_mul_sigmoid_composite	0	not-applicable		-1	0	0	not-attempted-without-proof		0	0
+68	b1d5ccb3057c88f1a35ef56f3a6f6b4824dd6b30456549b5e0fcb1af65f4baeb	add_mul_sigmoid_composite	0	not-applicable		-1	0	0	not-attempted-without-proof		0	0
+80	96d6f3a683306fca59d146674e8645d250535028e720a3724a38b085ce09b736	pure_add	65536	0		19	853283	832593	0		27	1
+82	14145b9b40083e1184b68cc0c7dbb317c7a19682e6de3cca3afa9940f660354f	pure_add	65536	0		20	760045	800679	0		28	1
+86	3c9d4874bba01ff7dfa48d1ffaaff3b1e5801ff5704256c9ee84784918905e6e	pure_add	65536	0		20	794783	691034	0		27	1
+98	12c1a9ab778bc60268fb7ef65dd105ffb397b34baad0164b5e3688eb475a74c9	add_mul_sigmoid_composite	0	not-applicable		-1	0	0	not-attempted-without-proof		0	0
+102	d9a922f876ab93bf2fa49d1ce6065f2c4ce0e403aea4b41b4fb7cb9953c94954	add_mul_sigmoid_composite	0	not-applicable		-1	0	0	not-attempted-without-proof		0	0
+116	fbb81d09758256b7a5ae5fc9f4ba733d2782adc31af91d54356c7ffe5b698922	add_mul_sigmoid_composite	0	not-applicable		-1	0	0	not-attempted-without-proof		0	0
+120	64868f78465e32d6cc4a8c871d327d4f33273605cf1732e54ced6e3c011f0b64	add_mul_sigmoid_composite	0	not-applicable		-1	0	0	not-attempted-without-proof		0	0
+150	9870829a338eae597ac5771c8a49a3f1341944a69c88574f98ce36de69d86033	add_mul_sigmoid_composite	0	not-applicable		-1	0	0	not-attempted-without-proof		0	0
+154	71be396d02bddb1b56afd837f548e88a379fa735fd39948408b23dff6523b772	add_mul_sigmoid_composite	0	not-applicable		-1	0	0	not-attempted-without-proof		0	0
+180	e73f1d2af9f3c0fb2b41cee634300dfc8a13c99b3de44cb46324916bfe938840	add_mul_sigmoid_composite	0	not-applicable		-1	0	0	not-attempted-without-proof		0	0
+191	d68c57e988f3f0ea5dd5a334bf6471838e4fd6c8dd98b3e8ac5174fecbdef153	pure_add	65536	0		23	7190465	8447291	0		31	1
+193	86c62441765e64553c25f2c5947034dc399816a01a7a985a13e81e1e6e643ab2	pure_add	65536	0		22	2344393	2603186	0		30	1
+197	0ac1615d3c7e860c91b2d1721209c89965ef68b170c3becc9b65a93b9edb277b	pure_add	65536	0		21	2161932	2500415	0		29	1

@@ -1,0 +1,5 @@
+route	status
+A0_selected_P1	control
+A1/A2_weight_stationary_B_block_across_M	selected
+A3_effective_N32	rejected-register-budget
+A4_E2c4	selected

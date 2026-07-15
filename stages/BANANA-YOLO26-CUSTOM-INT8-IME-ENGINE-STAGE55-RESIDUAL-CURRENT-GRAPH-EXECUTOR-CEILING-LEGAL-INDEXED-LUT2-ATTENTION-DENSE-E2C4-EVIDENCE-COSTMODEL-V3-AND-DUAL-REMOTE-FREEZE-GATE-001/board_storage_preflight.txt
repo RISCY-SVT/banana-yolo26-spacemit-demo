@@ -1,0 +1,1 @@
+NVMe /data mounted and writable; board root on /data; target eMMC exceptions: 0

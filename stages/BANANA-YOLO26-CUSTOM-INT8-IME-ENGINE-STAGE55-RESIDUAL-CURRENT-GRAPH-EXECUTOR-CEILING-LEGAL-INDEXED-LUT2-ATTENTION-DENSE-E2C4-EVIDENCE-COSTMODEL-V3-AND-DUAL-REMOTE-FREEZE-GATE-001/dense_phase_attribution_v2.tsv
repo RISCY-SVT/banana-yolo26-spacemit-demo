@@ -1,0 +1,10 @@
+evidence	source	measurement
+A_delivery	shape lattice + route dispatcher	direct P1 eliminates full M12xK panel for eligible 1x1
+weight_traffic	packed asset bytes + Family A ordering	Family A retains one B block across M tiles
+vmadot	per-worker grouped PMU + selected disassembly	unsigned cycles/instructions; explicit smt.vmadot symbols
+epilogue	E2c4 500-sample ABBA	dense 84471.454800 to 70365.015200 us
+store	E2c4 contract	direct contiguous C8 store; no corrected[8] stack roundtrip
+barrier	full-model raw samples	CV voluntary context switches versus zero worker voluntary switches in spin
+worker_imbalance	per-worker PMU rows	worker-specific cycles/instructions/time_running retained
+text_size	final ELF symbol inventory	recorded in dense_text_size_v2.tsv
+full_model_AB	e2c4 and dense Family A/B ABBA	distinct raw and summary files

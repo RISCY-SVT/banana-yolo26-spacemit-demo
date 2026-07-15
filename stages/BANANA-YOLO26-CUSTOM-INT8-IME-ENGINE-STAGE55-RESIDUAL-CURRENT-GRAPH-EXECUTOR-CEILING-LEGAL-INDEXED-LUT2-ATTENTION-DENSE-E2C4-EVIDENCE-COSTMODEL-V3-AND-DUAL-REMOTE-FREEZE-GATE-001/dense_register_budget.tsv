@@ -1,0 +1,4 @@
+candidate	vector_accumulators	temporary_groups	register_safe	selected
+Family_A_weight_stationary_M12N16	12	bounded	1	1
+giant_M12N32	24	insufficient_budget	0	0
+Family_B_M8	8	safe	1	0

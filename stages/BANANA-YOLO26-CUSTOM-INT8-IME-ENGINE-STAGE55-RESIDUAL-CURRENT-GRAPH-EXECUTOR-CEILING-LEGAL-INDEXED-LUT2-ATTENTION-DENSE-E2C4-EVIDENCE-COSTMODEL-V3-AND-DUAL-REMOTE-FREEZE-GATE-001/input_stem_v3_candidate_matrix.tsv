@@ -1,0 +1,5 @@
+route	status
+Stage54_RVV_quantize_compact_C3	selected-control
+prequantize_compact_C3_once_direct_stem	already-identical-to-control
+repeat_float_quantization_in_taps	Stage54-rejected
+camera_RGB_u8_sidecar	not-headline-contract

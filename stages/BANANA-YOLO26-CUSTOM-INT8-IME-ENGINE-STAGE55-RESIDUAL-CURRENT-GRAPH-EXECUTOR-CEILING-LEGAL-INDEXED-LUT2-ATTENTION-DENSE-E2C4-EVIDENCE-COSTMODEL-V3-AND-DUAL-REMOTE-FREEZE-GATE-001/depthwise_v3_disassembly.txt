@@ -1,0 +1,133 @@
+
+.deps/custom_int8_engine/build-riscv-stage52/yolo26_k1x_int8:     file format elf64-littleriscv
+
+
+Disassembly of section .text:
+
+000000000005e8ea <y26::stage51::q62_e2c4_i32x4x2_bias_to_s8(int const*, int const*, long const*, long const*, long, signed char*)>:
+   5e8ea:	0ff00813          	li	a6,255
+   5e8ee:	08000893          	li	a7,128
+   5e8f2:	cd727057          	vsetivli	zero,4,e32,mf2,ta,ma
+   5e8f6:	02056007          	vle32.v	v0,(a0)
+   5e8fa:	0205e087          	vle32.v	v1,(a1)
+   5e8fe:	c6006157          	vwcvt.x.x.v	v2,v0
+   5e902:	c6106257          	vwcvt.x.x.v	v4,v1
+   5e906:	cd827057          	vsetivli	zero,4,e64,m1,ta,ma
+   5e90a:	02067307          	vle64.v	v6,(a2)
+   5e90e:	02060293          	addi	t0,a2,32
+   5e912:	0202f387          	vle64.v	v7,(t0)
+   5e916:	02230157          	vadd.vv	v2,v2,v6
+   5e91a:	02438257          	vadd.vv	v4,v4,v7
+   5e91e:	c9927057          	vsetivli	zero,4,e64,m2,tu,ma
+   5e922:	5e010457          	vmv.v.v	v8,v2
+   5e926:	c9947057          	vsetivli	zero,8,e64,m2,tu,ma
+   5e92a:	3a423457          	vslideup.vi	v8,v4,4
+   5e92e:	0206f507          	vle64.v	v10,(a3)
+   5e932:	9e850657          	vsmul.vv	v12,v8,v10
+   5e936:	02c74657          	vadd.vx	v12,v12,a4
+   5e93a:	1ec04657          	vmax.vx	v12,v12,zero
+   5e93e:	16c84657          	vmin.vx	v12,v12,a6
+   5e942:	cd047057          	vsetivli	zero,8,e32,m1,ta,ma
+   5e946:	bac03757          	vnclipu.wi	v14,v12,0
+   5e94a:	ccf47057          	vsetivli	zero,8,e16,mf2,ta,ma
+   5e94e:	bae03857          	vnclipu.wi	v16,v14,0
+   5e952:	cc647057          	vsetivli	zero,8,e8,mf4,ta,ma
+   5e956:	bb003957          	vnclipu.wi	v18,v16,0
+   5e95a:	2f28c957          	vxor.vx	v18,v18,a7
+   5e95e:	02078927          	vse8.v	v18,(a5)
+   5e962:	8082                	ret
+
+000000000005e964 <y26::stage51::q62_e2c4_i32x4x2_bias_lut_to_s8(int const*, int const*, long const*, long const*, long, signed char const*, signed char*)>:
+   5e964:	0ff00893          	li	a7,255
+   5e968:	cd727057          	vsetivli	zero,4,e32,mf2,ta,ma
+   5e96c:	02056007          	vle32.v	v0,(a0)
+   5e970:	0205e087          	vle32.v	v1,(a1)
+   5e974:	c6006157          	vwcvt.x.x.v	v2,v0
+   5e978:	c6106257          	vwcvt.x.x.v	v4,v1
+   5e97c:	cd827057          	vsetivli	zero,4,e64,m1,ta,ma
+   5e980:	02067307          	vle64.v	v6,(a2)
+   5e984:	02060293          	addi	t0,a2,32
+   5e988:	0202f387          	vle64.v	v7,(t0)
+   5e98c:	02230157          	vadd.vv	v2,v2,v6
+   5e990:	02438257          	vadd.vv	v4,v4,v7
+   5e994:	c9927057          	vsetivli	zero,4,e64,m2,tu,ma
+   5e998:	5e010457          	vmv.v.v	v8,v2
+   5e99c:	c9947057          	vsetivli	zero,8,e64,m2,tu,ma
+   5e9a0:	3a423457          	vslideup.vi	v8,v4,4
+   5e9a4:	0206f507          	vle64.v	v10,(a3)
+   5e9a8:	9e850657          	vsmul.vv	v12,v8,v10
+   5e9ac:	02c74657          	vadd.vx	v12,v12,a4
+   5e9b0:	1ec04657          	vmax.vx	v12,v12,zero
+   5e9b4:	16c8c657          	vmin.vx	v12,v12,a7
+   5e9b8:	cd047057          	vsetivli	zero,8,e32,m1,ta,ma
+   5e9bc:	bac03757          	vnclipu.wi	v14,v12,0
+   5e9c0:	ccf47057          	vsetivli	zero,8,e16,mf2,ta,ma
+   5e9c4:	bae03857          	vnclipu.wi	v16,v14,0
+   5e9c8:	cc647057          	vsetivli	zero,8,e8,mf4,ta,ma
+   5e9cc:	bb003957          	vnclipu.wi	v18,v16,0
+   5e9d0:	07278a07          	vluxei8.v	v20,(a5),v18
+   5e9d4:	02080a27          	vse8.v	v20,(a6)
+   5e9d8:	8082                	ret
+
+000000000005e9da <y26::stage51::end_q62_vector_rne(y26::stage51::VectorFixedPointState*)>:
+   5e9da:	c501                	beqz	a0,5e9e2 <y26::stage51::end_q62_vector_rne(y26::stage51::VectorFixedPointState*)+0x8>
+   5e9dc:	00454783          	lbu	a5,4(a0)
+   5e9e0:	eb91                	bnez	a5,5e9f4 <y26::stage51::end_q62_vector_rne(y26::stage51::VectorFixedPointState*)+0x1a>
+   5e9e2:	4601                	li	a2,0
+   5e9e4:	4581                	li	a1,0
+   5e9e6:	0085981b          	slliw	a6,a1,0x8
+   5e9ea:	0ff67893          	zext.b	a7,a2
+   5e9ee:	0108e533          	or	a0,a7,a6
+   5e9f2:	8082                	ret
+   5e9f4:	00052283          	lw	t0,0(a0)
+   5e9f8:	00902373          	csrr	t1,vxsat
+   5e9fc:	00f29073          	csrw	vcsr,t0
+   5ea00:	00f026f3          	csrr	a3,vcsr
+   5ea04:	4118                	lw	a4,0(a0)
+   5ea06:	0076f393          	andi	t2,a3,7
+   5ea0a:	00050223          	sb	zero,4(a0)
+   5ea0e:	40770533          	sub	a0,a4,t2
+   5ea12:	00153593          	seqz	a1,a0
+   5ea16:	00137613          	andi	a2,t1,1
+   5ea1a:	0085981b          	slliw	a6,a1,0x8
+   5ea1e:	0ff67893          	zext.b	a7,a2
+   5ea22:	0108e533          	or	a0,a7,a6
+   5ea26:	8082                	ret
+
+000000000005ea28 <y26::stage51::q62_vsmul_m63_i64x4_guarded(long const*, long const*, long*, y26::stage51::VectorFixedPointResult*)>:
+   5ea28:	cd39                	beqz	a0,5ea86 <y26::stage51::q62_vsmul_m63_i64x4_guarded(long const*, long const*, long*, y26::stage51::VectorFixedPointResult*)+0x5e>
+   5ea2a:	cdb1                	beqz	a1,5ea86 <y26::stage51::q62_vsmul_m63_i64x4_guarded(long const*, long const*, long*, y26::stage51::VectorFixedPointResult*)+0x5e>
+   5ea2c:	ce29                	beqz	a2,5ea86 <y26::stage51::q62_vsmul_m63_i64x4_guarded(long const*, long const*, long*, y26::stage51::VectorFixedPointResult*)+0x5e>
+   5ea2e:	cea1                	beqz	a3,5ea86 <y26::stage51::q62_vsmul_m63_i64x4_guarded(long const*, long const*, long*, y26::stage51::VectorFixedPointResult*)+0x5e>
+   5ea30:	00f02773          	csrr	a4,vcsr
+   5ea34:	00f15073          	csrwi	vcsr,2
+   5ea38:	00777293          	andi	t0,a4,7
+   5ea3c:	cd827057          	vsetivli	zero,4,e64,m1,ta,ma
+   5ea40:	02057007          	vle64.v	v0,(a0)
+   5ea44:	0205f087          	vle64.v	v1,(a1)
+   5ea48:	9e008157          	vsmul.vv	v2,v0,v1
+   5ea4c:	02067127          	vse64.v	v2,(a2)
+   5ea50:	00902673          	csrr	a2,vxsat
+   5ea54:	00f29073          	csrw	vcsr,t0
+   5ea58:	00f027f3          	csrr	a5,vcsr
+   5ea5c:	0077f313          	andi	t1,a5,7
+   5ea60:	405303b3          	sub	t2,t1,t0
+   5ea64:	0013b513          	seqz	a0,t2
+   5ea68:	00167593          	andi	a1,a2,1
+   5ea6c:	00a680a3          	sb	a0,1(a3)
+   5ea70:	00157813          	andi	a6,a0,1
+   5ea74:	00b68023          	sb	a1,0(a3)
+   5ea78:	00080763          	beqz	a6,5ea86 <y26::stage51::q62_vsmul_m63_i64x4_guarded(long const*, long const*, long*, y26::stage51::VectorFixedPointResult*)+0x5e>
+   5ea7c:	0ff5f693          	zext.b	a3,a1
+   5ea80:	0016c513          	xori	a0,a3,1
+   5ea84:	8082                	ret
+   5ea86:	4501                	li	a0,0
+   5ea88:	8082                	ret
+
+000000000005ea8a <(anonymous namespace)::y26_vmadot_4x4x8_ime_unguarded(signed char const*, signed char const*, int*, bool)>:
+   5ea8a:	c295                	beqz	a3,5eaae <(anonymous namespace)::y26_vmadot_4x4x8_ime_unguarded(signed char const*, signed char const*, int*, bool)+0x24>
+   5ea8c:	011072d7          	vsetvli	t0,zero,e32,m2,tu,mu
+   5ea90:	02066e07          	vle32.v	v28,(a2)
+   5ea94:	000072d7          	vsetvli	t0,zero,e8,m1,tu,mu
+   5ea98:	02050007          	vle8.v	v0,(a0)
+   5ea9c:	02058087          	vle8.v	v1,(a1)
