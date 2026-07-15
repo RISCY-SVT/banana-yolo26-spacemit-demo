@@ -12,17 +12,20 @@
 - Package hashes detect accidental corruption and stale artifacts. They do not
   claim cryptographic authenticity.
 - `SCHED_RR` requires privileges and careful lab operation. `SCHED_OTHER` is
-  the supported policy. The opt-in Stage54 epoch-spin wake mode consumes more
-  process CPU than the condition-variable compatibility mode and is therefore
-  labeled optimized research rather than a general-purpose default.
+  the supported policy. The opt-in Stage55 frame-gated epoch-spin mode consumes
+  more process CPU during inference than condition-variable compatibility, but
+  parks workers between frames. It remains optimized research, not a
+  general-purpose default.
 - Legacy float-QDQ output is not the exact arithmetic authority.
 - The dedicated compact-C3 RGB stem, direct 1x1, P3 stride-2, N4/N8 kernels,
   RVV depthwise path, and direct
   attention transforms are specific to the frozen shapes. They are not generic
   operator implementations for arbitrary models.
-- Some low-impact Split/Reshape/LUT/Concat surfaces retain measured direct or
-  reference implementations. Indexed RVV LUT2 and attention V2 candidates
-  assembled but trapped on this board and are not selected.
+- Some low-impact Split/Reshape/Concat surfaces retain measured direct or
+  reference implementations. Stage55 corrected the legal indexed register and
+  vtype contracts and selected exact indexed RVV LUT2 and attention exp lookup.
+- Cost-model V3 predicts current-graph composition well, but held-out novel
+  shapes retain high worst-case error and require direct measurement.
 - This release does not include a camera service, default demo-backend change,
   model training, QAT, a student model, or Q31 promotion.
 - Production readiness and 20 FPS are not claimed.

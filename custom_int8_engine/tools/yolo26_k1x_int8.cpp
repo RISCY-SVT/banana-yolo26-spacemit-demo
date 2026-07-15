@@ -14,6 +14,7 @@
 #include <numeric>
 #include <stdexcept>
 #include <string>
+#include <thread>
 #include <vector>
 
 #if defined(Y26_K1X_HAVE_OPENCV)
@@ -32,6 +33,7 @@ struct Options {
     int warmup = 0;
     int runs = 1;
     int repeats = 1;
+    int inter_frame_gap_us = 0;
     bool benchmark = false;
     bool verify = false;
     bool version = false;
@@ -56,6 +58,7 @@ Options parse(int argc, char** argv) {
         else if (argument == "--warmup") options.warmup = std::stoi(next());
         else if (argument == "--runs") options.runs = std::stoi(next());
         else if (argument == "--repeats") options.repeats = std::stoi(next());
+        else if (argument == "--inter-frame-gap-us") options.inter_frame_gap_us = std::stoi(next());
         else if (argument == "--scheduler") {
             const std::string value = next();
             if (value == "safe") options.scheduler = Y26_SCHEDULER_SAFE;
@@ -188,7 +191,9 @@ int main(int argc, char** argv) {
             throw std::runtime_error("--input-mode must be preprocessed-f32, rgb640-u8, or image");
         }
         if (options.threads < 1 || options.threads > 4 || options.warmup < 0 ||
-            options.runs < 1 || options.repeats < 1) throw std::runtime_error("invalid numeric option");
+            options.runs < 1 || options.repeats < 1 || options.inter_frame_gap_us < 0) {
+            throw std::runtime_error("invalid numeric option");
+        }
         const std::string manifest = y26::int8_v1::sha256_file(options.package / "asset_hashes.tsv");
         std::unique_ptr<y26_executor, decltype(&y26_executor_destroy)> executor(
             y26_executor_create(), y26_executor_destroy);
@@ -264,6 +269,11 @@ int main(int argc, char** argv) {
                               << "\tcpu4_7_ime_count=" << timing.cpu4_7_ime_count
                               << "\thash=0x"
                               << std::hex << timing.output_hash << std::dec << '\n';
+                }
+                if (options.inter_frame_gap_us > 0 &&
+                    (repeat + 1 != options.repeats || run + 1 != options.runs)) {
+                    std::this_thread::sleep_for(
+                        std::chrono::microseconds(options.inter_frame_gap_us));
                 }
             }
         }

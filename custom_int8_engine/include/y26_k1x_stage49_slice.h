@@ -39,14 +39,19 @@ struct RunOptions {
     int workers = 4;
     bool profile_phases = false;
     bool capture_intermediates = false;
+    bool counter_collection_already_started = false;
     std::string counter_event;
 };
 
 struct WorkerCounter {
     int worker = -1;
+    int worker_tid = -1;
+    int worker_cpu = -1;
     std::string event;
     std::string status;
     int error_number = 0;
+    std::uint64_t event_id = 0;
+    std::uint64_t iterations = 0;
     std::uint64_t count = 0;
     std::uint64_t time_enabled = 0;
     std::uint64_t time_running = 0;
@@ -108,6 +113,10 @@ public:
     int bind_external_tensor(int tensor_id, std::int8_t* data, std::size_t bytes);
     void clear_external_tensor_bindings() noexcept;
     int dispatch_external(int active_workers, ExternalJob job, void* context);
+    void begin_active_window() noexcept;
+    void end_active_window() noexcept;
+    void begin_worker_counter_collection(const std::string& event_group);
+    std::vector<WorkerCounter> worker_counters() const;
     bool worker_affinity_ok() const noexcept;
 
     int run_model5(const std::int8_t* model4_postactivation_nchwc8_s8,

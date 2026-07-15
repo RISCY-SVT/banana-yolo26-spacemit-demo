@@ -51,13 +51,13 @@ profile and trusted `asset_hashes.tsv` SHA-256 must match the prepared
 `K1X_INT8_V1_YOLO26N_640_FULL_GRAPH_001` package; arbitrary profiles are
 rejected.
 
-The ABI does not change for Stage54. Source
-`config/k1x-int8-executor-stage54.env` before `y26_executor_prepare()` to
-select the validated Stage54 exact operator routes. Setting
-`Y26_STAGE53_SPIN_POOL=1` before
-`y26_executor_prepare()` selects the measured epoch-spin research wake policy;
-leaving it unset retains condition-variable wakeup. The setting is captured
-when the handle prepares and must not be changed while that handle is active.
+The ABI does not change for Stage55. Source
+`config/k1x-int8-executor-stage55.env` before `y26_executor_prepare()` to
+select the validated Stage55 exact operator routes. Setting both
+`Y26_STAGE53_SPIN_POOL=1` and `Y26_STAGE55_FRAME_GATED_SPIN=1` before prepare
+selects the measured frame-gated epoch-spin research policy; leaving them unset
+retains condition-variable wakeup. These settings are captured when the handle
+prepares and must not be changed while that handle is active.
 
 The ABI returns `Y26_STATUS_INVALID_ARGUMENT`, `Y26_STATUS_PACKAGE_ERROR`,
 `Y26_STATUS_RUNTIME_ERROR`, or `Y26_STATUS_UNSUPPORTED` without throwing C++

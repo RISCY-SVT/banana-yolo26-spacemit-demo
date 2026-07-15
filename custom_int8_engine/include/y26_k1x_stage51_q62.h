@@ -43,6 +43,23 @@ void q62_vsmul_m63_i64x8_lut_to_s8(const std::int64_t* values,
                                    const std::int8_t* lut_s8,
                                    std::int8_t* output_s8) noexcept;
 
+// Stage55 E2c4 sidecar: widen two C4 accumulator groups, add C8 corrected
+// bias, requantize, and store without constructing an intermediate i64 array.
+void q62_e2c4_i32x4x2_bias_to_s8(const std::int32_t* values_low,
+                                 const std::int32_t* values_high,
+                                 const std::int64_t* corrected_bias,
+                                 const std::int64_t* multipliers_m63,
+                                 std::int64_t output_zero_point,
+                                 std::int8_t* output_s8) noexcept;
+
+void q62_e2c4_i32x4x2_bias_lut_to_s8(const std::int32_t* values_low,
+                                     const std::int32_t* values_high,
+                                     const std::int64_t* corrected_bias,
+                                     const std::int64_t* multipliers_m63,
+                                     std::int64_t output_zero_point,
+                                     const std::int8_t* lut_s8,
+                                     std::int8_t* output_s8) noexcept;
+
 VectorFixedPointResult end_q62_vector_rne(VectorFixedPointState* state) noexcept;
 
 // Test/diagnostic wrapper that brackets one vector operation and restores vcsr.

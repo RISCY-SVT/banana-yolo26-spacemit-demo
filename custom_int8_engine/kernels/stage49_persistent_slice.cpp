@@ -232,14 +232,23 @@ struct WorkerScratch {
     std::vector<std::int8_t> a_panel;
     std::array<std::int32_t, 12 * kNBlock> c_tile {};
     int observed_cpu = -1;
+    int tid = -1;
     bool affinity_set = false;
-    int counter_fd = -1;
-    int counter_error = 0;
-    std::string counter_event;
-    std::string counter_status = "disabled";
-    std::uint64_t counter_value = 0;
-    std::uint64_t counter_time_enabled = 0;
-    std::uint64_t counter_time_running = 0;
+    struct Counter {
+        int fd = -1;
+        int error_number = 0;
+        std::uint64_t id = 0;
+        std::string event;
+        std::string status = "disabled";
+        std::uint64_t value = 0;
+        std::uint64_t time_enabled = 0;
+        std::uint64_t time_running = 0;
+    };
+    std::string counter_group;
+    std::vector<Counter> counters;
+    std::uint64_t counter_iterations = 0;
+    std::uint64_t counter_last_time_enabled = 0;
+    std::uint64_t counter_last_time_running = 0;
 };
 
 struct PerfEventSpec {
@@ -247,10 +256,14 @@ struct PerfEventSpec {
     std::uint64_t config = 0;
 };
 
-struct PerfReadValue {
-    std::uint64_t value = 0;
+struct PerfGroupRead {
+    std::uint64_t nr = 0;
     std::uint64_t time_enabled = 0;
     std::uint64_t time_running = 0;
+    struct Value {
+        std::uint64_t value = 0;
+        std::uint64_t id = 0;
+    } values[8] {};
 };
 
 bool perf_event_spec(std::string_view name, PerfEventSpec* event) noexcept {
@@ -272,7 +285,7 @@ bool perf_event_spec(std::string_view name, PerfEventSpec* event) noexcept {
 #endif
 }
 
-int open_thread_perf_event(std::string_view name) noexcept {
+int open_thread_perf_event(std::string_view name, int group_fd, bool leader) noexcept {
 #if defined(__linux__)
     PerfEventSpec event;
     if (!perf_event_spec(name, &event)) {
@@ -283,15 +296,109 @@ int open_thread_perf_event(std::string_view name) noexcept {
     attributes.type = event.type;
     attributes.size = sizeof(attributes);
     attributes.config = event.config;
-    attributes.disabled = 1;
+    attributes.disabled = leader ? 1U : 0U;
+    attributes.exclude_kernel = 1;
     attributes.exclude_hv = 1;
-    attributes.read_format = PERF_FORMAT_TOTAL_TIME_ENABLED | PERF_FORMAT_TOTAL_TIME_RUNNING;
-    return static_cast<int>(syscall(__NR_perf_event_open, &attributes, 0, -1, -1, 0));
+    attributes.read_format = leader
+        ? PERF_FORMAT_GROUP | PERF_FORMAT_TOTAL_TIME_ENABLED |
+              PERF_FORMAT_TOTAL_TIME_RUNNING | PERF_FORMAT_ID
+        : 0;
+    return static_cast<int>(syscall(__NR_perf_event_open, &attributes, 0, -1,
+                                    group_fd, PERF_FLAG_FD_CLOEXEC));
 #else
     (void)name;
+    (void)group_fd;
+    (void)leader;
     errno = ENOSYS;
     return -1;
 #endif
+}
+
+std::vector<std::string> split_counter_group(std::string_view group) {
+    std::vector<std::string> events;
+    std::size_t begin = 0;
+    while (begin < group.size()) {
+        const std::size_t comma = group.find(',', begin);
+        const std::size_t end = comma == std::string_view::npos ? group.size() : comma;
+        if (end > begin) events.emplace_back(group.substr(begin, end - begin));
+        if (comma == std::string_view::npos) break;
+        begin = comma + 1;
+    }
+    return events;
+}
+
+void close_counter_group(WorkerScratch& scratch) noexcept {
+#if defined(__linux__)
+    for (WorkerScratch::Counter& counter : scratch.counters) {
+        if (counter.fd >= 0) close(counter.fd);
+        counter.fd = -1;
+    }
+#endif
+    scratch.counters.clear();
+    scratch.counter_group.clear();
+    scratch.counter_iterations = 0;
+    scratch.counter_last_time_enabled = 0;
+    scratch.counter_last_time_running = 0;
+}
+
+void open_counter_group(WorkerScratch& scratch, std::string_view group) {
+    close_counter_group(scratch);
+    scratch.counter_group.assign(group);
+    const std::vector<std::string> events = split_counter_group(group);
+    if (events.empty()) return;
+
+    scratch.counters.reserve(events.size());
+    int leader_fd = -1;
+    int group_error = 0;
+    for (std::size_t index = 0; index < events.size(); ++index) {
+        WorkerScratch::Counter& counter = scratch.counters.emplace_back();
+        counter.event = events[index];
+        if (group_error != 0) {
+            counter.error_number = group_error;
+            counter.status = "group-unavailable";
+            continue;
+        }
+        counter.fd = open_thread_perf_event(counter.event, leader_fd, index == 0);
+        if (counter.fd < 0) {
+            group_error = errno;
+            counter.error_number = group_error;
+            counter.status = "unavailable";
+            continue;
+        }
+        if (index == 0) leader_fd = counter.fd;
+#if defined(__linux__)
+        if (ioctl(counter.fd, PERF_EVENT_IOC_ID, &counter.id) != 0) {
+            group_error = errno;
+            counter.error_number = group_error;
+            counter.status = "unavailable";
+            continue;
+        }
+#endif
+        counter.status = "available";
+    }
+    if (group_error != 0) {
+        for (WorkerScratch::Counter& counter : scratch.counters) {
+#if defined(__linux__)
+            if (counter.fd >= 0) close(counter.fd);
+#endif
+            counter.fd = -1;
+            if (counter.error_number == 0) counter.error_number = group_error;
+            counter.status = "group-unavailable";
+        }
+    }
+}
+
+void reset_counter_values(WorkerScratch& scratch) noexcept {
+    scratch.counter_iterations = 0;
+    for (WorkerScratch::Counter& counter : scratch.counters) {
+        counter.value = 0;
+        counter.time_enabled = 0;
+        counter.time_running = 0;
+        if (counter.fd >= 0) {
+            counter.error_number = 0;
+            counter.status = "available";
+        }
+    }
 }
 
 class WorkerPool {
@@ -310,7 +417,10 @@ public:
               }
               const char* value = std::getenv("Y26_STAGE53_SPIN_POOL");
               return value != nullptr && std::string_view(value) == "1" ? 1 : 0;
-          }()), spin_mode_(spin_policy_ != 0) {
+          }()), spin_mode_(spin_policy_ != 0), frame_gated_spin_([]() {
+              const char* value = std::getenv("Y26_STAGE55_FRAME_GATED_SPIN");
+              return value != nullptr && std::string_view(value) == "1";
+          }()) {
         scratch_.resize(static_cast<std::size_t>(count_));
         for (WorkerScratch& scratch : scratch_) scratch.a_panel.resize(panel_bytes);
         threads_.reserve(static_cast<std::size_t>(count_));
@@ -325,12 +435,9 @@ public:
         if (spin_mode_) {
             spin_stopping_.store(true, std::memory_order_relaxed);
             spin_generation_.fetch_add(1, std::memory_order_release);
+            active_window_cv_.notify_all();
             for (std::thread& thread : threads_) if (thread.joinable()) thread.join();
-#if defined(__linux__)
-            for (WorkerScratch& scratch : scratch_) {
-                if (scratch.counter_fd >= 0) close(scratch.counter_fd);
-            }
-#endif
+            for (WorkerScratch& scratch : scratch_) close_counter_group(scratch);
             return;
         }
         {
@@ -340,17 +447,24 @@ public:
         }
         start_cv_.notify_all();
         for (std::thread& thread : threads_) if (thread.joinable()) thread.join();
-#if defined(__linux__)
-        for (WorkerScratch& scratch : scratch_) {
-            if (scratch.counter_fd >= 0) close(scratch.counter_fd);
-        }
-#endif
+        for (WorkerScratch& scratch : scratch_) close_counter_group(scratch);
     }
 
     WorkerPool(const WorkerPool&) = delete;
     WorkerPool& operator=(const WorkerPool&) = delete;
 
     int capacity() const noexcept { return count_; }
+
+    void begin_active_window() noexcept {
+        if (!spin_mode_ || !frame_gated_spin_) return;
+        active_window_.store(true, std::memory_order_release);
+        active_window_cv_.notify_all();
+    }
+
+    void end_active_window() noexcept {
+        if (!spin_mode_ || !frame_gated_spin_) return;
+        active_window_.store(false, std::memory_order_release);
+    }
 
     bool affinity_ok() const noexcept {
         for (const WorkerScratch& scratch : scratch_) {
@@ -366,22 +480,12 @@ public:
         {
             std::lock_guard lock(mutex_);
             counter_event_.assign(event);
-            for (WorkerScratch& scratch : scratch_) {
-                scratch.counter_value = 0;
-                scratch.counter_time_enabled = 0;
-                scratch.counter_time_running = 0;
-                scratch.counter_error = 0;
-                scratch.counter_status = event.empty() ? "disabled" : "pending";
-            }
+            for (WorkerScratch& scratch : scratch_) reset_counter_values(scratch);
         }
         if (!event.empty()) {
             dispatch(count_, [](void*, int, WorkerScratch&) {}, nullptr,
                      SchedulerStrategy::all_workers_complete);
-            for (WorkerScratch& scratch : scratch_) {
-                scratch.counter_value = 0;
-                scratch.counter_time_enabled = 0;
-                scratch.counter_time_running = 0;
-            }
+            for (WorkerScratch& scratch : scratch_) reset_counter_values(scratch);
         }
     }
 
@@ -390,9 +494,12 @@ public:
         counters.reserve(scratch_.size());
         for (std::size_t index = 0; index < scratch_.size(); ++index) {
             const WorkerScratch& scratch = scratch_[index];
-            counters.push_back({static_cast<int>(index), scratch.counter_event, scratch.counter_status,
-                                scratch.counter_error, scratch.counter_value,
-                                scratch.counter_time_enabled, scratch.counter_time_running});
+            for (const WorkerScratch::Counter& counter : scratch.counters) {
+                counters.push_back({static_cast<int>(index), scratch.tid, scratch.observed_cpu,
+                                    counter.event, counter.status, counter.error_number,
+                                    counter.id, scratch.counter_iterations, counter.value, counter.time_enabled,
+                                    counter.time_running});
+            }
         }
         return counters;
     }
@@ -465,6 +572,9 @@ private:
         WorkerScratch& scratch = scratch_[static_cast<std::size_t>(index)];
         scratch.affinity_set = pin_current_thread(cpu_base_ + index);
         scratch.observed_cpu = current_cpu();
+#if defined(__linux__)
+        scratch.tid = static_cast<int>(syscall(SYS_gettid));
+#endif
         {
             std::lock_guard lock(mutex_);
             ++ready_;
@@ -478,12 +588,28 @@ private:
             bool active_workers_only = false;
             std::string counter_event;
             if (spin_mode_) {
+                if (frame_gated_spin_ && !active_window_.load(std::memory_order_acquire)) {
+                    std::unique_lock lock(mutex_);
+                    active_window_cv_.wait(lock, [&]() {
+                        return spin_stopping_.load(std::memory_order_relaxed) ||
+                            active_window_.load(std::memory_order_acquire);
+                    });
+                    if (spin_stopping_.load(std::memory_order_relaxed)) return;
+                }
                 std::uint64_t generation = spin_generation_.load(std::memory_order_acquire);
                 std::size_t wait_iterations = 0;
                 while (generation == local_generation) {
                     if (spin_stopping_.load(std::memory_order_relaxed)) return;
+                    if (frame_gated_spin_ &&
+                        !active_window_.load(std::memory_order_acquire)) {
+                        break;
+                    }
                     spin_wait(wait_iterations);
                     generation = spin_generation_.load(std::memory_order_acquire);
+                }
+                if (frame_gated_spin_ &&
+                    !active_window_.load(std::memory_order_acquire)) {
+                    continue;
                 }
                 local_generation = generation;
                 if (spin_stopping_.load(std::memory_order_relaxed)) return;
@@ -506,40 +632,66 @@ private:
             if (index < active && job != nullptr) {
                 scratch.observed_cpu = current_cpu();
                 const bool count = !counter_event.empty();
-                if (count && scratch.counter_event != counter_event) {
-#if defined(__linux__)
-                    if (scratch.counter_fd >= 0) close(scratch.counter_fd);
-#endif
-                    scratch.counter_fd = open_thread_perf_event(counter_event);
-                    scratch.counter_error = scratch.counter_fd < 0 ? errno : 0;
-                    scratch.counter_event = counter_event;
-                    scratch.counter_status = scratch.counter_fd < 0 ? "unavailable" : "available";
+                if (count && scratch.counter_group != counter_event) {
+                    open_counter_group(scratch, counter_event);
                 }
                 bool counter_started = false;
 #if defined(__linux__)
-                if (count && scratch.counter_fd >= 0) {
-                    if (ioctl(scratch.counter_fd, PERF_EVENT_IOC_RESET, 0) == 0 &&
-                        ioctl(scratch.counter_fd, PERF_EVENT_IOC_ENABLE, 0) == 0) {
+                const int leader_fd = !scratch.counters.empty() ? scratch.counters.front().fd : -1;
+                if (count && leader_fd >= 0) {
+                    if (ioctl(leader_fd, PERF_EVENT_IOC_RESET, PERF_IOC_FLAG_GROUP) == 0 &&
+                        ioctl(leader_fd, PERF_EVENT_IOC_ENABLE, PERF_IOC_FLAG_GROUP) == 0) {
                         counter_started = true;
                     } else {
-                        scratch.counter_error = errno;
-                        scratch.counter_status = "unavailable";
+                        for (WorkerScratch::Counter& counter : scratch.counters) {
+                            counter.error_number = errno;
+                            counter.status = "unavailable";
+                        }
                     }
                 }
 #endif
                 job(context, index, scratch);
 #if defined(__linux__)
                 if (counter_started) {
-                    PerfReadValue value;
-                    if (ioctl(scratch.counter_fd, PERF_EVENT_IOC_DISABLE, 0) != 0 ||
-                        read(scratch.counter_fd, &value, sizeof(value)) != static_cast<ssize_t>(sizeof(value))) {
-                        scratch.counter_error = errno;
-                        scratch.counter_status = "unavailable";
+                    const int leader_fd = scratch.counters.front().fd;
+                    PerfGroupRead values;
+                    const std::size_t expected_size = 3U * sizeof(std::uint64_t) +
+                        2U * sizeof(std::uint64_t) * scratch.counters.size();
+                    const ssize_t bytes = ioctl(leader_fd, PERF_EVENT_IOC_DISABLE,
+                                                PERF_IOC_FLAG_GROUP) == 0
+                        ? read(leader_fd, &values, sizeof(values))
+                        : -1;
+                    if (bytes < 0 || static_cast<std::size_t>(bytes) < expected_size ||
+                        values.nr != scratch.counters.size()) {
+                        const int failure = errno == 0 ? EIO : errno;
+                        for (WorkerScratch::Counter& counter : scratch.counters) {
+                            counter.error_number = failure;
+                            counter.status = "unavailable";
+                        }
                     } else {
-                        scratch.counter_value += value.value;
-                        scratch.counter_time_enabled += value.time_enabled;
-                        scratch.counter_time_running += value.time_running;
-                        scratch.counter_status = value.time_running == 0 ? "unmapped-or-unsupported" : "available";
+                        const std::uint64_t enabled_delta = values.time_enabled >= scratch.counter_last_time_enabled
+                            ? values.time_enabled - scratch.counter_last_time_enabled
+                            : values.time_enabled;
+                        const std::uint64_t running_delta = values.time_running >= scratch.counter_last_time_running
+                            ? values.time_running - scratch.counter_last_time_running
+                            : values.time_running;
+                        scratch.counter_last_time_enabled = values.time_enabled;
+                        scratch.counter_last_time_running = values.time_running;
+                        ++scratch.counter_iterations;
+                        for (std::size_t value_index = 0; value_index < values.nr; ++value_index) {
+                            const PerfGroupRead::Value& value = values.values[value_index];
+                            const auto found = std::find_if(
+                                scratch.counters.begin(), scratch.counters.end(),
+                                [&](const WorkerScratch::Counter& counter) {
+                                    return counter.id == value.id;
+                                });
+                            if (found == scratch.counters.end()) continue;
+                            found->value += value.value;
+                            found->time_enabled += enabled_delta;
+                            found->time_running += running_delta;
+                            found->status = running_delta == 0
+                                ? "unmapped-or-unsupported" : "available";
+                        }
                     }
                 }
 #endif
@@ -566,6 +718,7 @@ private:
     std::condition_variable start_cv_;
     std::condition_variable done_cv_;
     std::condition_variable ready_cv_;
+    std::condition_variable active_window_cv_;
     std::uint64_t generation_ = 0;
     int active_ = 0;
     int completed_ = 0;
@@ -577,9 +730,11 @@ private:
     bool stopping_ = false;
     int spin_policy_ = 0;
     bool spin_mode_ = false;
+    bool frame_gated_spin_ = false;
     std::atomic<std::uint64_t> spin_generation_ {0};
     std::atomic<int> spin_completed_ {0};
     std::atomic<bool> spin_stopping_ {false};
+    std::atomic<bool> active_window_ {false};
     std::string counter_event_;
 };
 
@@ -1785,7 +1940,9 @@ int execute_range(PersistentSlice::Impl& executor, int first_operation, int last
         *timing = {};
         timing->operations.reserve(static_cast<std::size_t>(last_operation - first_operation + 1));
     }
-    executor.pool->begin_counter_collection(options.counter_event);
+    if (!options.counter_collection_already_started) {
+        executor.pool->begin_counter_collection(options.counter_event);
+    }
     if (options.capture_intermediates) {
         executor.captured_tensors.clear();
         executor.captured_tensors.resize(executor.tensors.size());
@@ -1963,6 +2120,26 @@ int PersistentSlice::dispatch_external(int active_workers, ExternalJob job, void
         },
         &dispatch, SchedulerStrategy::active_workers_complete);
     return Y26_CONV_STATUS_SUCCESS;
+}
+
+void PersistentSlice::begin_active_window() noexcept {
+    if (impl_ && impl_->pool) impl_->pool->begin_active_window();
+}
+
+void PersistentSlice::end_active_window() noexcept {
+    if (impl_ && impl_->pool) impl_->pool->end_active_window();
+}
+
+void PersistentSlice::begin_worker_counter_collection(const std::string& event_group) {
+    if (impl_ && impl_->ready && impl_->pool) {
+        impl_->pool->begin_counter_collection(event_group);
+    }
+}
+
+std::vector<WorkerCounter> PersistentSlice::worker_counters() const {
+    return impl_ && impl_->ready && impl_->pool
+        ? impl_->pool->worker_counters()
+        : std::vector<WorkerCounter> {};
 }
 
 bool PersistentSlice::worker_affinity_ok() const noexcept {

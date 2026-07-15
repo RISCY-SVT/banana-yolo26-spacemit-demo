@@ -16,6 +16,54 @@ preloaded-image pipeline
 COCO one-pass per-image executor
 ```
 
+## Stage55 Residual Ceiling
+
+Stage55 keeps the Stage54 package, arithmetic, layout, compiler, and public
+API. It restores V1 stream head selection after a 1,000-sample-per-arm ABBA,
+adds legal indexed RVV LUT2 and Q48 attention lookup, exact E2c4 C8,
+prepare-time dense Family A dispatch, and frame-gated epoch spin. Workers park
+between frames and use epoch spin only inside an active inference window.
+
+```text
+condition-variable compatibility, fixed input, 10/100/5:
+  mean:    162447.546 us
+  median:  161702.500 us
+  p95:     166485.750 us
+  p99:     175538.580 us
+
+frame-gated low latency, fixed input, 10/100/5:
+  mean:    149603.240 us
+  median:  149083.000 us
+  p95:     153748.300 us
+  p99:     159241.830 us
+  max:     162339.000 us
+  rate:    6.684347 inferences/s
+
+frame-gated low latency, 10,000-run soak:
+  mean:    149598.790900 us
+  median:  149062.500000 us
+  p95:     152636.150000 us
+  p99:     158975.130000 us
+  p99.9:   203354.276000 us
+  max:     211671.000000 us
+
+100-image in-memory corpus executor mean:
+  149183.628410 us
+
+preloaded-image complete pipeline mean:
+  172265.633994 us
+
+matched B120 ORT, 500 per-inference samples:
+  mean:    455028.164774 us
+  p95:     457913.059850 us
+```
+
+The selected fixed-input mean is 10.637597% below the official Stage54
+167411.836 us surface and 67.122202% below the matched B120 ORT mean. The
+5,000-image COCO prediction JSON is byte-identical to Stage54 and retains
+0.3707408944391919 mAP50-95. This is approximately 6.68 inferences/s, not
+20 FPS, and is not a production-readiness claim.
+
 ## Stage54 Final Practical Maximization
 
 Stage54 retains exact `K1X_INT8_V1`, the Stage53 package, NCHWc8, and the

@@ -6,18 +6,23 @@ input=${2:-"$root/fixtures/bus_640_nchw_f32.bin"}
 output=${3:-"$root/outputs/benchmark.json"}
 profile=${4:-compatibility}
 
-if [[ -r "$root/config/k1x-int8-executor-stage54.env" ]]; then
+operator_profile="$root/config/k1x-int8-executor-stage55.env"
+if [[ ! -r "$operator_profile" ]]; then
+  operator_profile="$root/config/k1x-int8-executor-stage54.env"
+fi
+if [[ -r "$operator_profile" ]]; then
   set -a
   # shellcheck disable=SC1091
-  source "$root/config/k1x-int8-executor-stage54.env"
+  source "$operator_profile"
   set +a
 fi
 case "$profile" in
   compatibility)
-    unset Y26_STAGE53_SPIN_POOL
+    unset Y26_STAGE53_SPIN_POOL Y26_STAGE55_FRAME_GATED_SPIN
     ;;
   low-latency)
     export Y26_STAGE53_SPIN_POOL=1
+    export Y26_STAGE55_FRAME_GATED_SPIN=1
     ;;
   *)
     echo "unknown profile: $profile (expected compatibility or low-latency)" >&2

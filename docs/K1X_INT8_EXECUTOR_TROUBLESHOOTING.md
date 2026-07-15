@@ -26,10 +26,12 @@ hashes. Compare per-inference samples using the same statistical unit. Disable
 diagnostic boundary capture and operation profiling for headline timing.
 
 The condition-variable wake policy is used when `Y26_STAGE53_SPIN_POOL` is
-unset or has any value other than the literal `1`. The optimized-research
-epoch-spin policy requires `Y26_STAGE53_SPIN_POOL=1` before executor prepare.
-It intentionally consumes more process CPU; do not mistake that occupancy for
-a worker leak or enable it on a shared system without measuring the impact.
+unset. The optimized-research policy requires both `Y26_STAGE53_SPIN_POOL=1`
+and `Y26_STAGE55_FRAME_GATED_SPIN=1` before executor prepare. It consumes more
+process CPU while a frame runs, then parks workers at the end of the active
+window. If idle CPU remains high between frames, verify the frame-gated variable
+was exported before prepare and that every run exits through the active-window
+guard.
 
 ## Different Detections
 

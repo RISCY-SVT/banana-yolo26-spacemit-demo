@@ -183,6 +183,118 @@ void q62_vsmul_m63_i64x8_lut_to_s8(const std::int64_t* values,
 #endif
 }
 
+void q62_e2c4_i32x4x2_bias_to_s8(const std::int32_t* values_low,
+                                 const std::int32_t* values_high,
+                                 const std::int64_t* corrected_bias,
+                                 const std::int64_t* multipliers_m63,
+                                 std::int64_t output_zero_point,
+                                 std::int8_t* output_s8) noexcept {
+#if defined(__riscv)
+    const std::int64_t maximum = 255;
+    const std::int64_t signed_mask = 128;
+    asm volatile(
+        "vsetivli zero, 4, e32, mf2, ta, ma\n\t"
+        "vle32.v v0, (%[values_low])\n\t"
+        "vle32.v v1, (%[values_high])\n\t"
+        "vwadd.vx v2, v0, zero\n\t"
+        "vwadd.vx v4, v1, zero\n\t"
+        "vsetivli zero, 4, e64, m1, ta, ma\n\t"
+        "vle64.v v6, (%[bias])\n\t"
+        "addi t0, %[bias], 32\n\t"
+        "vle64.v v7, (t0)\n\t"
+        "vadd.vv v2, v2, v6\n\t"
+        "vadd.vv v4, v4, v7\n\t"
+        "vsetivli zero, 4, e64, m2, tu, ma\n\t"
+        "vmv.v.v v8, v2\n\t"
+        "vsetivli zero, 8, e64, m2, tu, ma\n\t"
+        "vslideup.vi v8, v4, 4\n\t"
+        "vle64.v v10, (%[multipliers])\n\t"
+        "vsmul.vv v12, v8, v10\n\t"
+        "vadd.vx v12, v12, %[zero_point]\n\t"
+        "vmax.vx v12, v12, zero\n\t"
+        "vmin.vx v12, v12, %[maximum]\n\t"
+        "vsetivli zero, 8, e32, m1, ta, ma\n\t"
+        "vnclipu.wi v14, v12, 0\n\t"
+        "vsetivli zero, 8, e16, mf2, ta, ma\n\t"
+        "vnclipu.wi v16, v14, 0\n\t"
+        "vsetivli zero, 8, e8, mf4, ta, ma\n\t"
+        "vnclipu.wi v18, v16, 0\n\t"
+        "vxor.vx v18, v18, %[signed_mask]\n\t"
+        "vse8.v v18, (%[output])\n\t"
+        :
+        : [values_low] "r"(values_low), [values_high] "r"(values_high),
+          [bias] "r"(corrected_bias), [multipliers] "r"(multipliers_m63),
+          [zero_point] "r"(output_zero_point), [maximum] "r"(maximum),
+          [signed_mask] "r"(signed_mask), [output] "r"(output_s8)
+        : "t0", "v0", "v1", "v2", "v3", "v4", "v5", "v6", "v7",
+          "v8", "v9", "v10", "v11", "v12", "v13", "v14", "v16", "v18", "memory");
+#else
+    std::int64_t corrected[8] {};
+    for (int lane = 0; lane < 4; ++lane) {
+        corrected[lane] = static_cast<std::int64_t>(values_low[lane]) + corrected_bias[lane];
+        corrected[lane + 4] = static_cast<std::int64_t>(values_high[lane]) + corrected_bias[lane + 4];
+    }
+    q62_vsmul_m63_i64x8_to_s8(
+        corrected, multipliers_m63, output_zero_point, output_s8);
+#endif
+}
+
+void q62_e2c4_i32x4x2_bias_lut_to_s8(const std::int32_t* values_low,
+                                     const std::int32_t* values_high,
+                                     const std::int64_t* corrected_bias,
+                                     const std::int64_t* multipliers_m63,
+                                     std::int64_t output_zero_point,
+                                     const std::int8_t* lut_s8,
+                                     std::int8_t* output_s8) noexcept {
+#if defined(__riscv)
+    const std::int64_t maximum = 255;
+    asm volatile(
+        "vsetivli zero, 4, e32, mf2, ta, ma\n\t"
+        "vle32.v v0, (%[values_low])\n\t"
+        "vle32.v v1, (%[values_high])\n\t"
+        "vwadd.vx v2, v0, zero\n\t"
+        "vwadd.vx v4, v1, zero\n\t"
+        "vsetivli zero, 4, e64, m1, ta, ma\n\t"
+        "vle64.v v6, (%[bias])\n\t"
+        "addi t0, %[bias], 32\n\t"
+        "vle64.v v7, (t0)\n\t"
+        "vadd.vv v2, v2, v6\n\t"
+        "vadd.vv v4, v4, v7\n\t"
+        "vsetivli zero, 4, e64, m2, tu, ma\n\t"
+        "vmv.v.v v8, v2\n\t"
+        "vsetivli zero, 8, e64, m2, tu, ma\n\t"
+        "vslideup.vi v8, v4, 4\n\t"
+        "vle64.v v10, (%[multipliers])\n\t"
+        "vsmul.vv v12, v8, v10\n\t"
+        "vadd.vx v12, v12, %[zero_point]\n\t"
+        "vmax.vx v12, v12, zero\n\t"
+        "vmin.vx v12, v12, %[maximum]\n\t"
+        "vsetivli zero, 8, e32, m1, ta, ma\n\t"
+        "vnclipu.wi v14, v12, 0\n\t"
+        "vsetivli zero, 8, e16, mf2, ta, ma\n\t"
+        "vnclipu.wi v16, v14, 0\n\t"
+        "vsetivli zero, 8, e8, mf4, ta, ma\n\t"
+        "vnclipu.wi v18, v16, 0\n\t"
+        "vluxei8.v v20, (%[lut]), v18\n\t"
+        "vse8.v v20, (%[output])\n\t"
+        :
+        : [values_low] "r"(values_low), [values_high] "r"(values_high),
+          [bias] "r"(corrected_bias), [multipliers] "r"(multipliers_m63),
+          [zero_point] "r"(output_zero_point), [maximum] "r"(maximum),
+          [lut] "r"(lut_s8), [output] "r"(output_s8)
+        : "t0", "v0", "v1", "v2", "v3", "v4", "v5", "v6", "v7",
+          "v8", "v9", "v10", "v11", "v12", "v13", "v14", "v16", "v18", "v20", "memory");
+#else
+    std::int64_t corrected[8] {};
+    for (int lane = 0; lane < 4; ++lane) {
+        corrected[lane] = static_cast<std::int64_t>(values_low[lane]) + corrected_bias[lane];
+        corrected[lane + 4] = static_cast<std::int64_t>(values_high[lane]) + corrected_bias[lane + 4];
+    }
+    q62_vsmul_m63_i64x8_lut_to_s8(
+        corrected, multipliers_m63, output_zero_point, lut_s8, output_s8);
+#endif
+}
+
 VectorFixedPointResult end_q62_vector_rne(VectorFixedPointState* state) noexcept {
     VectorFixedPointResult result;
     if (state == nullptr || !state->active) return result;

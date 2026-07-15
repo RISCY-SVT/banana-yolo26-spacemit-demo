@@ -58,12 +58,29 @@ int main() {
         }
         std::array<std::int8_t, 8> actual {};
         std::array<std::int8_t, 8> actual_lut {};
+        std::array<std::int32_t, 4> raw_low {};
+        std::array<std::int32_t, 4> raw_high {};
+        std::array<std::int64_t, 8> corrected_bias {};
+        std::array<std::int8_t, 8> actual_e2c4 {};
+        std::array<std::int8_t, 8> actual_e2c4_lut {};
+        for (std::size_t lane = 0; lane < 4; ++lane) {
+            raw_low[lane] = static_cast<std::int32_t>(values[lane] / 2);
+            raw_high[lane] = static_cast<std::int32_t>(values[lane + 4] / 2);
+            corrected_bias[lane] = values[lane] - raw_low[lane];
+            corrected_bias[lane + 4] = values[lane + 4] - raw_high[lane];
+        }
         y26::stage51::VectorFixedPointState state;
         if (!y26::stage51::begin_q62_vector_rne(&state)) return 5;
         y26::stage51::q62_vsmul_m63_i64x8_to_s8(
             values.data(), m63_8.data(), 117, actual.data());
         y26::stage51::q62_vsmul_m63_i64x8_lut_to_s8(
             values.data(), m63_8.data(), 117, inverse_lut.data(), actual_lut.data());
+        y26::stage51::q62_e2c4_i32x4x2_bias_to_s8(
+            raw_low.data(), raw_high.data(), corrected_bias.data(), m63_8.data(),
+            117, actual_e2c4.data());
+        y26::stage51::q62_e2c4_i32x4x2_bias_lut_to_s8(
+            raw_low.data(), raw_high.data(), corrected_bias.data(), m63_8.data(),
+            117, inverse_lut.data(), actual_e2c4_lut.data());
         const auto result = y26::stage51::end_q62_vector_rne(&state);
         if (!result.restored || result.saturated) return 6;
         for (std::size_t lane = 0; lane < actual.size(); ++lane) {
@@ -71,8 +88,10 @@ int main() {
             std::uint8_t expected = 0;
             if (!y26::int8_v1::requantize_u8(values[lane], asset, &expected)) return 7;
             if (actual[lane] != y26::int8_v1::signed_storage(expected) ||
-                actual_lut[lane] != inverse_lut[expected]) {
-                std::cerr << "E2c3 mismatch at lane " << lane << '\n';
+                actual_lut[lane] != inverse_lut[expected] ||
+                actual_e2c4[lane] != y26::int8_v1::signed_storage(expected) ||
+                actual_e2c4_lut[lane] != inverse_lut[expected]) {
+                std::cerr << "E2c3/E2c4 mismatch at lane " << lane << '\n';
                 return 8;
             }
         }

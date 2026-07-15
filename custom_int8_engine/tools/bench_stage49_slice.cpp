@@ -547,8 +547,11 @@ int profile(PersistentSlice& executor, const Options& options, bool slice) {
                                  ? 0.0
                                  : static_cast<double>(counter.time_enabled) /
                                        static_cast<double>(counter.time_running);
-        std::cout << "worker_counter=" << counter.worker << "\tevent=" << counter.event
+        std::cout << "worker_counter=" << counter.worker << "\tworker_tid=" << counter.worker_tid
+                  << "\tworker_cpu=" << counter.worker_cpu << "\tevent=" << counter.event
                   << "\tstatus=" << counter.status << "\terrno=" << counter.error_number
+                  << "\tevent_id=" << counter.event_id
+                  << "\titerations=" << counter.iterations
                   << "\tcount=" << counter.count << "\ttime_enabled=" << counter.time_enabled
                   << "\ttime_running=" << counter.time_running << "\tscale=" << scale << '\n';
     }
@@ -589,8 +592,11 @@ int profile_operation(PersistentSlice& executor, const Options& options) {
                                  ? 0.0
                                  : static_cast<double>(counter.time_enabled) /
                                        static_cast<double>(counter.time_running);
-        std::cout << "worker_counter=" << counter.worker << "\tevent=" << counter.event
+        std::cout << "worker_counter=" << counter.worker << "\tworker_tid=" << counter.worker_tid
+                  << "\tworker_cpu=" << counter.worker_cpu << "\tevent=" << counter.event
                   << "\tstatus=" << counter.status << "\terrno=" << counter.error_number
+                  << "\tevent_id=" << counter.event_id
+                  << "\titerations=" << counter.iterations
                   << "\tcount=" << counter.count << "\ttime_enabled=" << counter.time_enabled
                   << "\ttime_running=" << counter.time_running << "\tscale=" << scale << '\n';
     }

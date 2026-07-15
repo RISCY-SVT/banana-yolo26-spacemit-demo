@@ -43,6 +43,31 @@ struct RunTiming {
     int cpu4_7_ime_count = 0;
 };
 
+struct DiagnosticConvShapeResult {
+    int operation_index = -1;
+    std::string operation_name;
+    std::string operation_kind;
+    int output_h = 0;
+    int output_w = 0;
+    int output_c = 0;
+    int input_c = 0;
+    int kernel_h = 0;
+    int kernel_w = 0;
+    int stride_h = 0;
+    int stride_w = 0;
+    int m = 0;
+    int n = 0;
+    int k = 0;
+    std::size_t working_set_bytes = 0;
+    std::size_t packed_weight_bytes = 0;
+    double mean_us = 0.0;
+    double median_us = 0.0;
+    double p95_us = 0.0;
+    double maximum_us = 0.0;
+    std::uint64_t output_hash = 0;
+    bool deterministic = false;
+};
+
 class FullExecutor {
 public:
     struct Impl;
@@ -65,6 +90,13 @@ public:
     int run_rgb(const std::uint8_t* rgb, int width, int height, int row_stride_bytes,
                 float* output_1x300x6, std::size_t output_count,
                 RunTiming* timing);
+
+    // Diagnostic-only exact-shape timing. Dimensions may only shrink a prepared
+    // package operation, so all arithmetic assets and selected kernels remain unchanged.
+    int diagnostic_benchmark_conv_shape(int operation_index, int output_h,
+                                        int output_w, int output_channels,
+                                        int warmup, int runs,
+                                        DiagnosticConvShapeResult* result);
 
     int copy_boundary(int tensor_id, std::uint8_t* output, std::size_t bytes) const;
     int copy_output(float* output_1x300x6, std::size_t output_count) const;

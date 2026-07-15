@@ -475,6 +475,17 @@ if(Y26_K1X_BUILD_TOOLS)
     target_link_libraries(stage51_q62_vsmul_probe PRIVATE y26_k1x_custom_int8_engine)
     target_compile_options(stage51_q62_vsmul_probe PRIVATE -Wall -Wextra -Wpedantic)
 
+    add_executable(stage55_indexed_load_probe
+        tools/stage55_indexed_load_probe.cpp
+    )
+    target_compile_options(stage55_indexed_load_probe PRIVATE -Wall -Wextra -Wpedantic)
+
+    add_executable(stage55_shape_lattice
+        tools/stage55_shape_lattice.cpp
+    )
+    target_link_libraries(stage55_shape_lattice PRIVATE y26_k1x_custom_int8_engine Threads::Threads)
+    target_compile_options(stage55_shape_lattice PRIVATE -Wall -Wextra -Wpedantic)
+
     add_executable(yolo26_k1x_int8
         tools/yolo26_k1x_int8.cpp
     )
