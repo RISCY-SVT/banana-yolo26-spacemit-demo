@@ -1,0 +1,4 @@
+profile	command_line	selected
+B0	"command: cat /proc/cmdline
+earlyprintk quiet splash plymouth.ignore-serial-consoles plymouth.prefer-fbcon clk_ignore_unused swiotlb=65536 workqueue.default_affinity_scope=system rootwait rootfstype=ext4 root=UUID=5119a65b-d8ac-40a5-abbf-53ac55626d21 earlycon=sbi console=ttyS0,115200n8 loglevel=8 rdinit=/init"	1
+B1-B3	not-created	0

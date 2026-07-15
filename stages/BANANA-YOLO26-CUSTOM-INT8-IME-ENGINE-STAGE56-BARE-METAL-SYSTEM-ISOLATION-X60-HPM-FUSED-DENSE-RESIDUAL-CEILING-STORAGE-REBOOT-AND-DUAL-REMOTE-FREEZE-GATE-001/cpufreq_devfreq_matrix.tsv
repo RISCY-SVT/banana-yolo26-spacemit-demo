@@ -1,0 +1,3 @@
+arm	cpu_governor	cpu_max_khz	devfreq	status
+O0-O2	performance	1600000	not-exposed	selected-existing-max-OPP
+O3	performance	1600000	not-exposed	no-incremental-gain

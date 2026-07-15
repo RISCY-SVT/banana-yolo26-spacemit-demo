@@ -1,0 +1,4 @@
+location	warm_mean_us	per_inference_file_io	selection
+NVMe_warm	149436.856000	0	NVMe
+tmpfs_warm	148980.664000	0	rejected
+eMMC_warm	148742.736000	0	rejected

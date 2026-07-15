@@ -1,0 +1,5 @@
+phase	remote	local_head	remote_head	status
+prestage	github	c7dd62da3f62f46975240eb414b2f0ca149ceddf	c7dd62da3f62f46975240eb414b2f0ca149ceddf	exact
+prestage	gitlab-rd	c7dd62da3f62f46975240eb414b2f0ca149ceddf	c7dd62da3f62f46975240eb414b2f0ca149ceddf	exact
+final	github	containing-commit	verified-post-push	command-ledger
+final	gitlab-rd	containing-commit	verified-post-push	command-ledger

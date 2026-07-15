@@ -1,0 +1,5 @@
+route	status
+S0_compact-C3-RVV	selected-control
+S1_compact-K32-IME	exact-rejected
+S2_fused-float-K32	not-opened-after-S1-no-win
+S3_RGB-u8-sidecar	not-headline-contract

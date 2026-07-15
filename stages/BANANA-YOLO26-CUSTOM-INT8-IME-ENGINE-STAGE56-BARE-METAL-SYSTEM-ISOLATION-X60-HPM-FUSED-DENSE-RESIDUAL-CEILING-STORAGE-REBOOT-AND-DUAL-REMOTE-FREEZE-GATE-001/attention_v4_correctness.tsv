@@ -1,0 +1,11 @@
+fixture	integer_boundaries	portable_scalar	board_scalar	board_optimized	final_output	status
+F0	215	exact	exact	exact	exact	pass
+F1	215	exact	exact	exact	exact	pass
+F2	215	exact	exact	exact	exact	pass
+F3	215	exact	exact	exact	exact	pass
+F4	215	exact	exact	exact	exact	pass
+F5	215	exact	exact	exact	exact	pass
+F6	215	exact	exact	exact	exact	pass
+F7	215	exact	exact	exact	exact	pass
+bus	215	exact	exact	exact	exact	pass
+Zidane	215	exact	exact	exact	exact	pass

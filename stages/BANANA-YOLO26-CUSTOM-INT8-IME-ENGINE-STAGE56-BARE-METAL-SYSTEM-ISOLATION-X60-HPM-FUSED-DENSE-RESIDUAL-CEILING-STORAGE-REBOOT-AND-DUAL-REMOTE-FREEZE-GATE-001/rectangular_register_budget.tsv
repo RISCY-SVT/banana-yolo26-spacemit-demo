@@ -1,0 +1,6 @@
+route	status
+R1_M8N24	bounded-composition
+R2_M24N8	bounded-composition
+R3_paired_M12N16	existing-composition
+R4_M8_effective_N32	register-safe-composition
+R5_weight_stationary	bounded-small-M

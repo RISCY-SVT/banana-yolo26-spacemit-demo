@@ -55,11 +55,15 @@ def write_tsv(path: Path, rows: Iterable[dict[str, Any]],
                 if field not in fields:
                     fields.append(field)
     with path.open("w", newline="", encoding="utf-8") as destination:
-        writer = csv.DictWriter(destination, fieldnames=fields, delimiter="\t",
-                                lineterminator="\n")
-        writer.writeheader()
+        writer = csv.writer(destination, delimiter="\t", lineterminator="\n")
+        writer.writerow(fields)
         for row in materialized:
-            writer.writerow({field: row.get(field, "") for field in fields})
+            values = [row.get(field, "") for field in fields]
+            values = [value.rstrip(" \t") if isinstance(value, str) else value
+                      for value in values]
+            while values and values[-1] in (None, ""):
+                values.pop()
+            writer.writerow(values)
 
 
 def write_text(path: Path, text: str) -> None:
@@ -74,7 +78,10 @@ def write_md(path: Path, title: str, paragraphs: Iterable[str]) -> None:
 def copy_text(source: Path, destination: Path) -> None:
     if not source.is_file():
         raise FileNotFoundError(source)
-    write_text(destination, source.read_text(encoding="utf-8", errors="replace"))
+    text = source.read_text(encoding="utf-8", errors="replace")
+    if destination.suffix == ".tsv":
+        text = "\n".join(line.rstrip(" \t") for line in text.splitlines())
+    write_text(destination, text)
 
 
 def parse_fields(line: str) -> dict[str, str]:

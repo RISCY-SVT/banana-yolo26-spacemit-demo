@@ -1,0 +1,2 @@
+arm	services	action	rollback
+O2	cups,cups-browsed,bluetooth,ModemManager,packagekit	stop-if-active	restore-preexisting-active-state

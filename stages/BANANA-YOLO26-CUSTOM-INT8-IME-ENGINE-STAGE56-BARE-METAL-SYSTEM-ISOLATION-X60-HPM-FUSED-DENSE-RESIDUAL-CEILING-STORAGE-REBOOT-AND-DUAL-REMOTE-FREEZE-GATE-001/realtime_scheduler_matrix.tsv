@@ -1,0 +1,2 @@
+surface	samples	mean_us	stddev_us	cv_pct	median_us	p90_us	p95_us	p99_us	p999_us	max_us	process_cpu_mean_us	voluntary_cs_mean	involuntary_cs_mean	output_hash	cpu4_7_ime_count
+O6_FIFO10	500	155511.962000	17914.283027	11.519553	147983.500000	196912.500000	198047.200000	200558.860000	201529.212000	201635.000000	729542.794000	0.046000	0.780000	0xd43f5e018b415631	0

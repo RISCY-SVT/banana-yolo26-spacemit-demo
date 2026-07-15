@@ -1,0 +1,5 @@
+route	status
+spatial-control	selected
+2D-MxN-static	exact-rejected-below-0.5pct-gate
+M8	rejected
+weight-stationary	rejected

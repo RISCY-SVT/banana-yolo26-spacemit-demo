@@ -1,0 +1,23 @@
+fold	role	resolution	shape_class	operation_index	kind	m	n	k	kernel	stride	selected_route	measured_us	predicted_us	absolute_percentage_error_pct	high_uncertainty	next_use_policy	median_absolute_percentage_error_pct	mean_absolute_percentage_error_pct	p90_absolute_percentage_error_pct	worst_absolute_percentage_error_pct
+stratified-shape-class-v4	held-out-exact-shape	416	dense_1x1_k256	108	conv_dense	2704	64	256	1x1	1x1	direct-strided-n16	966.589	1137.6828963885407	17.70079075889966	no	model-eligible
+stratified-shape-class-v4	held-out-exact-shape	512	dense_1x1_k32	5	conv_dense	16384	32	32	1x1	1x1	family-a-weight-stationary-n16	1369.03	2677.0984990106253	95.54710262087941	yes	direct-measure-required
+stratified-shape-class-v4	held-out-exact-shape	448	dense_1x1_k384	90	conv_dense	784	128	384	1x1	1x1	direct-strided-n16	799.592	733.9135264718324	8.213998330169337	no	model-eligible
+stratified-shape-class-v4	held-out-exact-shape	480	dense_1x1_k48	12	conv_dense	14400	64	48	1x1	1x1	family-a-weight-stationary-n16	2542.15	2763.2369904121038	8.696850713455289	no	model-eligible
+stratified-shape-class-v4	held-out-exact-shape	416	dense_1x1_k96	124	conv_dense	2704	64	96	1x1	1x1	direct-strided-n16	546.913	560.7573242185924	2.531357678203374	no	model-eligible
+stratified-shape-class-v4	held-out-exact-shape	512	dense_1x1_n80_k128	167	conv_dense	1024	80	128	1x1	1x1	direct-strided-n16	519.112	414.8535612596434	20.083997045022375	no	model-eligible
+stratified-shape-class-v4	held-out-exact-shape	448	dense_1x1_n80_k256	206	conv_dense	196	80	256	1x1	1x1	direct-strided-n16	90.6009	102.49646624010643	13.12963363510344	no	model-eligible
+stratified-shape-class-v4	held-out-exact-shape	480	dense_1x1_n80_k64	133	conv_dense	3600	80	64	1x1	1x1	direct-strided-n16	801.763	882.842849870938	10.112695381420444	no	model-eligible
+stratified-shape-class-v4	held-out-exact-shape	416	dense_1x1_n80_k80	144	conv_dense	2704	80	80	1x1	1x1	direct-strided-n16	633.495	635.6482453364541	0.33989934197651434	no	model-eligible
+stratified-shape-class-v4	held-out-exact-shape	640	dense_1x1_n_tail_k384	63	conv_dense	400	32	384	1x1	1x1	direct-strided-n16	110.075	174.96367438010608	58.94951113341457	yes	direct-measure-required
+stratified-shape-class-v4	held-out-exact-shape	448	dense_3x3s1_k1152	161	conv_dense	784	16	1152	3x3	1x1	packed-p1-n16	648.303	659.0836068012082	1.6628963310686904	no	model-eligible
+stratified-shape-class-v4	held-out-exact-shape	480	dense_3x3s1_k144	113	conv_dense	3600	16	144	3x3	1x1	packed-p1-n16	370.642	368.7926464988946	0.4989595083949967	no	model-eligible
+stratified-shape-class-v4	held-out-exact-shape	416	dense_3x3s1_k2304	201	conv_dense	169	16	2304	3x3	1x1	packed-p1-n16	329.978	353.75753906022584	7.206401354098101	no	model-eligible
+stratified-shape-class-v4	held-out-exact-shape	512	dense_3x3s1_k576	127	conv_dense	4096	16	576	3x3	1x1	packed-p1-n16	2158.41	1780.8425378042123	17.492851784220218	no	model-eligible
+stratified-shape-class-v4	held-out-exact-shape	448	dense_3x3s1_k72	9	conv_dense	12544	16	72	3x3	1x1	packed-p1-n16	812.228	816.3010693214145	0.5014687158549755	no	model-eligible
+stratified-shape-class-v4	held-out-exact-shape	480	dense_3x3s2_k144	3	conv_dense	14400	32	144	3x3	2x2	p3-segmented-n16	1910.18	1893.1438609523573	0.8918604030846721	no	model-eligible
+stratified-shape-class-v4	held-out-exact-shape	416	dense_3x3s2_k576	14	conv_dense	2704	64	576	3x3	2x2	p3-segmented-n16	1781.52	1803.3312028935686	1.2243030049378414	no	model-eligible
+stratified-shape-class-v4	held-out-exact-shape	512	depthwise_c128	162	conv_grouped	1024	128	1152	3x3	1x1	depthwise-v2-c8	483.702	483.5189748103931	0.037838419028016095	no	model-eligible
+stratified-shape-class-v4	held-out-exact-shape	448	depthwise_c256	202	conv_grouped	196	256	2304	3x3	1x1	depthwise-v2-c8	198.151	209.36758677787424	5.660625875152902	no	model-eligible
+stratified-shape-class-v4	held-out-exact-shape	480	depthwise_c64	128	conv_grouped	3600	64	576	3x3	1x1	depthwise-v2-c8	806.086	813.6899506382305	0.943317541581228	no	model-eligible
+stratified-shape-class-v4	held-out-exact-shape	416	depthwise_c80	173	conv_grouped	676	80	720	3x3	1x1	depthwise-v2-c8	202.444	202.80678453366184	0.1792024133399123	no	model-eligible
+aggregate	stratified-non-overlapping-shape-summary	384/416/448/480/512/640	21 measured classes	all	dense-and-depthwise	varied	varied	varied	1x1/3x3	1/2	shape-interpolation-plus-resolution-residual	21 held-out observations	not-a-tail-sum	not-a-tail-model	directly-measure-flagged-cache-conflict-and-tail-classes	do-not-select-novel-high-uncertainty-shapes-without-board-measurement	5.660625875152902	12.93359818996695	20.083997045022375	95.54710262087941

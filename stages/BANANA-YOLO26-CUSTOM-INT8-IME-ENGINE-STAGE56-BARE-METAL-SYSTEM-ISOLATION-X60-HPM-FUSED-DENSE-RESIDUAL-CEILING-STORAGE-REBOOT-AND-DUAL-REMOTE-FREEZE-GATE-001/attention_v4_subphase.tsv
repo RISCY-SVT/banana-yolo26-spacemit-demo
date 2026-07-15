@@ -1,0 +1,7 @@
+source	phase	samples	mean_us	p95_us	full_model_p95_us
+Stage55-calibrated-control	matmul_compute	70	7046.381142857143	7120.751249999999
+Stage55-calibrated-control	matmul_pack	70	6014.870442857143	6297.96495
+Stage55-calibrated-control	softmax_max_sum	70	1926.8219857142856	1992.5019000000002
+Stage55-calibrated-control	softmax_normalize_transpose	70	22856.539614285713	23021.24205
+Stage56-full-family-ABBA	attention_family_control	500	20895.549800	not-isolated	153480.650000
+Stage56-full-family-ABBA	attention_family_direct_pack	500	17156.898400	not-isolated	152828.850000

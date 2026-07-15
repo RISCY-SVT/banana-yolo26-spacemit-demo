@@ -1,0 +1,6 @@
+sequence	commit	role
+0	c7dd62da3f62f46975240eb414b2f0ca149ceddf	accepted-stage55-start
+1	56025cfc1164d3831073528b25cc933997a1f6fa	stage56-executor-and-system-profile-implementation
+2	2f4cf451e19ba16ddb353a77baf80514e6936bab	stage56-timing-documentation-and-trace-provenance
+3	e685c7d8966e0615f95603b0372715dd5fb27742	stage56-release-rollback-controller-fix
+4	containing-commit	stage56-evidence-release-publication

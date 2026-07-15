@@ -1,0 +1,24 @@
+command: bash -lc while\ IFS=\ read\ -r\ f\;\ do\ printf\ \"\[%s\]\\n\"\ \"\$f\"\;\ od\ -An\ -tx4\ -v\ \"\$f\"\ 2\>/dev/null\ \|\|\ od\ -An\ -tx1\ -v\ \"\$f\"\;\ done\ \<\ \<\(find\ /sys/firmware/devicetree/base\ -type\ f\ \\\(\ -name\ \"riscv\,event-to-mhpmevent\"\ -o\ -name\ \"riscv\,event-to-mhpmcounters\"\ -o\ -name\ \"riscv\,raw-event-to-mhpmcounters\"\ \\\)\ -print\ 2\>/dev/null\ \|\ sort\)
+[/sys/firmware/devicetree/base/pmu/riscv,event-to-mhpmcounters]
+ 05000000 06000000 f8ff0700 08000000
+ 09000000 f8ff0700 00000100 03000100
+ f8ff0700 08000100 09000100 f8ff0700
+ 0c000100 0d000100 f8ff0700 19000100
+ 19000100 f8ff0700 1b000100 1b000100
+ f8ff0700 21000100 21000100 f8ff0700
+[/sys/firmware/devicetree/base/pmu/riscv,event-to-mhpmevent]
+ 05000000 00000000 01000000 06000000
+ 00000000 02000000 08000000 00000000
+ 03000000 09000000 00000000 04000000
+ 00000100 00000000 06000000 01000100
+ 00000000 05000000 02000100 00000000
+ 0a000000 03000100 00000000 09000000
+ 08000100 00000000 0c000000 09000100
+ 00000000 0b000000 0c000100 00000000
+ 0e000000 0d000100 00000000 0d000000
+ 19000100 00000000 15000000 1b000100
+ 00000000 19000000 21000100 00000000
+ 1b000000
+[/sys/firmware/devicetree/base/pmu/riscv,raw-event-to-mhpmcounters]
+ 00000000 00000000 ffffffff 00ffffff
+ f8ff0700

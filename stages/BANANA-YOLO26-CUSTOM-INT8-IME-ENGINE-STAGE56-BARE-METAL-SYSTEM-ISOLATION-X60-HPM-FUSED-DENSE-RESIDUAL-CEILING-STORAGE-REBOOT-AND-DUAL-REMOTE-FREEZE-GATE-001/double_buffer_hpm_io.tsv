@@ -1,0 +1,2 @@
+preprocessor_cpus	executor_cpus	cpu4_7_ime_count	contention_effect
+5-7	0-4	0	executor mean 150193.093 us versus pure selected 142413 us

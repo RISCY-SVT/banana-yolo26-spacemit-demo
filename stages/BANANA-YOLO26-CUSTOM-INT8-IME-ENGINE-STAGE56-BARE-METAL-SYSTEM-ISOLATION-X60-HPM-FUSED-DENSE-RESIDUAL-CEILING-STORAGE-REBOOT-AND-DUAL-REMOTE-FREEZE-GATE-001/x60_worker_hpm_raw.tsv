@@ -1,0 +1,1025 @@
+scope	source_file	sample	operation_index	M	N	K	worker	cpu	event	status	errno	event_id	iterations	raw_u64	time_enabled	time_running	scaled_count	tid
+shape	shapes_backend_stalls.log	0	5	25600	32	32	0	0	cycles	available	0	1072	5	15144698	9458167	9458167	15144698.000000
+shape	shapes_backend_stalls.log	0	5	25600	32	32	0	0	backend_stalls	available	0	1074	5	7258215	9458167	9458167	7258215.000000
+shape	shapes_backend_stalls.log	0	5	25600	32	32	1	1	cycles	available	0	1071	5	15179482	9492916	9492916	15179482.000000
+shape	shapes_backend_stalls.log	0	5	25600	32	32	1	1	backend_stalls	available	0	1073	5	7308233	9492916	9492916	7308233.000000
+shape	shapes_backend_stalls.log	0	5	25600	32	32	2	2	cycles	available	0	1075	5	15223040	9520665	9520665	15223040.000000
+shape	shapes_backend_stalls.log	0	5	25600	32	32	2	2	backend_stalls	available	0	1076	5	7359628	9520665	9520665	7359628.000000
+shape	shapes_backend_stalls.log	0	5	25600	32	32	3	3	cycles	available	0	1077	5	15263264	9523960	9523960	15263264.000000
+shape	shapes_backend_stalls.log	0	5	25600	32	32	3	3	backend_stalls	available	0	1078	5	7382065	9523960	9523960	7382065.000000
+shape	shapes_backend_stalls.log	0	12	25600	64	48	0	0	cycles	available	0	1072	5	38722000	24202333	24202333	38722000.000000
+shape	shapes_backend_stalls.log	0	12	25600	64	48	0	0	backend_stalls	available	0	1074	5	22929650	24202333	24202333	22929650.000000
+shape	shapes_backend_stalls.log	0	12	25600	64	48	1	1	cycles	available	0	1071	5	38521168	24062665	24062665	38521168.000000
+shape	shapes_backend_stalls.log	0	12	25600	64	48	1	1	backend_stalls	available	0	1073	5	22584396	24062665	24062665	22584396.000000
+shape	shapes_backend_stalls.log	0	12	25600	64	48	2	2	cycles	available	0	1075	5	38693846	24194415	24194415	38693846.000000
+shape	shapes_backend_stalls.log	0	12	25600	64	48	2	2	backend_stalls	available	0	1076	5	22878930	24194415	24194415	22878930.000000
+shape	shapes_backend_stalls.log	0	12	25600	64	48	3	3	cycles	available	0	1077	5	38642294	24145875	24145875	38642294.000000
+shape	shapes_backend_stalls.log	0	12	25600	64	48	3	3	backend_stalls	available	0	1078	5	22723919	24145875	24145875	22723919.000000
+shape	shapes_backend_stalls.log	0	124	6400	64	96	0	0	cycles	available	0	1072	5	10458732	6528000	6528000	10458732.000000
+shape	shapes_backend_stalls.log	0	124	6400	64	96	0	0	backend_stalls	available	0	1074	5	5919355	6528000	6528000	5919355.000000
+shape	shapes_backend_stalls.log	0	124	6400	64	96	1	1	cycles	available	0	1071	5	10874414	6809542	6809542	10874414.000000
+shape	shapes_backend_stalls.log	0	124	6400	64	96	1	1	backend_stalls	available	0	1073	5	6375168	6809542	6809542	6375168.000000
+shape	shapes_backend_stalls.log	0	124	6400	64	96	2	2	cycles	available	0	1075	5	10295612	6434460	6434460	10295612.000000
+shape	shapes_backend_stalls.log	0	124	6400	64	96	2	2	backend_stalls	available	0	1076	5	5773862	6434460	6434460	5773862.000000
+shape	shapes_backend_stalls.log	0	124	6400	64	96	3	3	cycles	available	0	1077	5	10656810	6667207	6667207	10656810.000000
+shape	shapes_backend_stalls.log	0	124	6400	64	96	3	3	backend_stalls	available	0	1078	5	6077310	6667207	6667207	6077310.000000
+shape	shapes_backend_stalls.log	0	133	6400	80	64	0	0	cycles	available	0	1072	5	10012490	6255582	6255582	10012490.000000
+shape	shapes_backend_stalls.log	0	133	6400	80	64	0	0	backend_stalls	available	0	1074	5	4664957	6255582	6255582	4664957.000000
+shape	shapes_backend_stalls.log	0	133	6400	80	64	1	1	cycles	available	0	1071	5	9963831	6215625	6215625	9963831.000000
+shape	shapes_backend_stalls.log	0	133	6400	80	64	1	1	backend_stalls	available	0	1073	5	4573502	6215625	6215625	4573502.000000
+shape	shapes_backend_stalls.log	0	133	6400	80	64	2	2	cycles	available	0	1075	5	10045258	6279000	6279000	10045258.000000
+shape	shapes_backend_stalls.log	0	133	6400	80	64	2	2	backend_stalls	available	0	1076	5	4702418	6279000	6279000	4702418.000000
+shape	shapes_backend_stalls.log	0	133	6400	80	64	3	3	cycles	available	0	1077	5	10085891	6310085	6310085	10085891.000000
+shape	shapes_backend_stalls.log	0	133	6400	80	64	3	3	backend_stalls	available	0	1078	5	4651124	6310085	6310085	4651124.000000
+shape	shapes_backend_stalls.log	0	144	6400	80	80	0	0	cycles	available	0	1072	5	11610348	7262331	7262331	11610348.000000
+shape	shapes_backend_stalls.log	0	144	6400	80	80	0	0	backend_stalls	available	0	1074	5	6082998	7262331	7262331	6082998.000000
+shape	shapes_backend_stalls.log	0	144	6400	80	80	1	1	cycles	available	0	1071	5	11464988	7172168	7172168	11464988.000000
+shape	shapes_backend_stalls.log	0	144	6400	80	80	1	1	backend_stalls	available	0	1073	5	5808954	7172168	7172168	5808954.000000
+shape	shapes_backend_stalls.log	0	144	6400	80	80	2	2	cycles	available	0	1075	5	11291563	7057374	7057374	11291563.000000
+shape	shapes_backend_stalls.log	0	144	6400	80	80	2	2	backend_stalls	available	0	1076	5	5850861	7057374	7057374	5850861.000000
+shape	shapes_backend_stalls.log	0	144	6400	80	80	3	3	cycles	available	0	1077	5	11552192	7213998	7213998	11552192.000000
+shape	shapes_backend_stalls.log	0	144	6400	80	80	3	3	backend_stalls	available	0	1078	5	6034535	7213998	7213998	6034535.000000
+shape	shapes_backend_stalls.log	0	206	400	80	256	0	0	cycles	available	0	1072	5	1293330	808459	808459	1293330.000000
+shape	shapes_backend_stalls.log	0	206	400	80	256	0	0	backend_stalls	available	0	1074	5	771810	808459	808459	771810.000000
+shape	shapes_backend_stalls.log	0	206	400	80	256	1	1	cycles	available	0	1071	5	1397612	882457	882457	1397612.000000
+shape	shapes_backend_stalls.log	0	206	400	80	256	1	1	backend_stalls	available	0	1073	5	855924	882457	882457	855924.000000
+shape	shapes_backend_stalls.log	0	206	400	80	256	2	2	cycles	available	0	1075	5	1272445	794707	794707	1272445.000000
+shape	shapes_backend_stalls.log	0	206	400	80	256	2	2	backend_stalls	available	0	1076	5	759603	794707	794707	759603.000000
+shape	shapes_backend_stalls.log	0	206	400	80	256	3	3	cycles	available	0	1077	5	1383554	875374	875374	1383554.000000
+shape	shapes_backend_stalls.log	0	206	400	80	256	3	3	backend_stalls	available	0	1078	5	837437	875374	875374	837437.000000
+shape	shapes_backend_stalls.log	0	161	1600	16	1152	0	0	cycles	available	0	1072	5	10295434	6436750	6436750	10295434.000000
+shape	shapes_backend_stalls.log	0	161	1600	16	1152	0	0	backend_stalls	available	0	1074	5	5824931	6436750	6436750	5824931.000000
+shape	shapes_backend_stalls.log	0	161	1600	16	1152	1	1	cycles	available	0	1071	5	10568525	6614582	6614582	10568525.000000
+shape	shapes_backend_stalls.log	0	161	1600	16	1152	1	1	backend_stalls	available	0	1073	5	5981436	6614582	6614582	5981436.000000
+shape	shapes_backend_stalls.log	0	161	1600	16	1152	2	2	cycles	available	0	1075	5	10304179	6447790	6447790	10304179.000000
+shape	shapes_backend_stalls.log	0	161	1600	16	1152	2	2	backend_stalls	available	0	1076	5	5856388	6447790	6447790	5856388.000000
+shape	shapes_backend_stalls.log	0	161	1600	16	1152	3	3	cycles	available	0	1077	5	10474111	6559207	6559207	10474111.000000
+shape	shapes_backend_stalls.log	0	161	1600	16	1152	3	3	backend_stalls	available	0	1078	5	5906721	6559207	6559207	5906721.000000
+shape	shapes_backend_stalls.log	0	201	400	16	2304	0	0	cycles	available	0	1072	5	4486499	2811711	2811711	4486499.000000
+shape	shapes_backend_stalls.log	0	201	400	16	2304	0	0	backend_stalls	available	0	1074	5	2139068	2811711	2811711	2139068.000000
+shape	shapes_backend_stalls.log	0	201	400	16	2304	1	1	cycles	available	0	1071	5	5057135	3174084	3174084	5057135.000000
+shape	shapes_backend_stalls.log	0	201	400	16	2304	1	1	backend_stalls	available	0	1073	5	2436696	3174084	3174084	2436696.000000
+shape	shapes_backend_stalls.log	0	201	400	16	2304	2	2	cycles	available	0	1075	5	4457690	2789748	2789748	4457690.000000
+shape	shapes_backend_stalls.log	0	201	400	16	2304	2	2	backend_stalls	available	0	1076	5	2167248	2789748	2789748	2167248.000000
+shape	shapes_backend_stalls.log	0	201	400	16	2304	3	3	cycles	available	0	1077	5	4981227	3128834	3128834	4981227.000000
+shape	shapes_backend_stalls.log	0	201	400	16	2304	3	3	backend_stalls	available	0	1078	5	2424582	3128834	3128834	2424582.000000
+shape	shapes_dtlb_read_miss.log	0	5	25600	32	32	0	0	cycles	available	0	1117	5	15137613	9452334	9452334	15137613.000000
+shape	shapes_dtlb_read_miss.log	0	5	25600	32	32	0	0	dtlb_read_miss	available	0	1118	5	2272	9452334	9452334	2272.000000
+shape	shapes_dtlb_read_miss.log	0	5	25600	32	32	1	1	cycles	available	0	1111	5	15177067	9480126	9480126	15177067.000000
+shape	shapes_dtlb_read_miss.log	0	5	25600	32	32	1	1	dtlb_read_miss	available	0	1114	5	2328	9480126	9480126	2328.000000
+shape	shapes_dtlb_read_miss.log	0	5	25600	32	32	2	2	cycles	available	0	1112	5	15144694	9460750	9460750	15144694.000000
+shape	shapes_dtlb_read_miss.log	0	5	25600	32	32	2	2	dtlb_read_miss	available	0	1113	5	3714	9460750	9460750	3714.000000
+shape	shapes_dtlb_read_miss.log	0	5	25600	32	32	3	3	cycles	available	0	1115	5	15383069	9634501	9634501	15383069.000000
+shape	shapes_dtlb_read_miss.log	0	5	25600	32	32	3	3	dtlb_read_miss	available	0	1116	5	2545	9634501	9634501	2545.000000
+shape	shapes_dtlb_read_miss.log	0	12	25600	64	48	0	0	cycles	available	0	1117	5	38564715	24092167	24092167	38564715.000000
+shape	shapes_dtlb_read_miss.log	0	12	25600	64	48	0	0	dtlb_read_miss	available	0	1118	5	70478	24092167	24092167	70478.000000
+shape	shapes_dtlb_read_miss.log	0	12	25600	64	48	1	1	cycles	available	0	1111	5	38572266	24090416	24090416	38572266.000000
+shape	shapes_dtlb_read_miss.log	0	12	25600	64	48	1	1	dtlb_read_miss	available	0	1114	5	61823	24090416	24090416	61823.000000
+shape	shapes_dtlb_read_miss.log	0	12	25600	64	48	2	2	cycles	available	0	1112	5	38706514	24208873	24208873	38706514.000000
+shape	shapes_dtlb_read_miss.log	0	12	25600	64	48	2	2	dtlb_read_miss	available	0	1113	5	90315	24208873	24208873	90315.000000
+shape	shapes_dtlb_read_miss.log	0	12	25600	64	48	3	3	cycles	available	0	1115	5	38509501	24077500	24077500	38509501.000000
+shape	shapes_dtlb_read_miss.log	0	12	25600	64	48	3	3	dtlb_read_miss	available	0	1116	5	64457	24077500	24077500	64457.000000
+shape	shapes_dtlb_read_miss.log	0	124	6400	64	96	0	0	cycles	available	0	1117	5	10683994	6681123	6681123	10683994.000000
+shape	shapes_dtlb_read_miss.log	0	124	6400	64	96	0	0	dtlb_read_miss	available	0	1118	5	39798	6681123	6681123	39798.000000
+shape	shapes_dtlb_read_miss.log	0	124	6400	64	96	1	1	cycles	available	0	1111	5	10966105	6861958	6861958	10966105.000000
+shape	shapes_dtlb_read_miss.log	0	124	6400	64	96	1	1	dtlb_read_miss	available	0	1114	5	39906	6861958	6861958	39906.000000
+shape	shapes_dtlb_read_miss.log	0	124	6400	64	96	2	2	cycles	available	0	1112	5	10364546	6473666	6473666	10364546.000000
+shape	shapes_dtlb_read_miss.log	0	124	6400	64	96	2	2	dtlb_read_miss	available	0	1113	5	40530	6473666	6473666	40530.000000
+shape	shapes_dtlb_read_miss.log	0	124	6400	64	96	3	3	cycles	available	0	1115	5	10443709	6533419	6533419	10443709.000000
+shape	shapes_dtlb_read_miss.log	0	124	6400	64	96	3	3	dtlb_read_miss	available	0	1116	5	39396	6533419	6533419	39396.000000
+shape	shapes_dtlb_read_miss.log	0	133	6400	80	64	0	0	cycles	available	0	1117	5	10087646	6306000	6306000	10087646.000000
+shape	shapes_dtlb_read_miss.log	0	133	6400	80	64	0	0	dtlb_read_miss	available	0	1118	5	22894	6306000	6306000	22894.000000
+shape	shapes_dtlb_read_miss.log	0	133	6400	80	64	1	1	cycles	available	0	1111	5	10034710	6271332	6271332	10034710.000000
+shape	shapes_dtlb_read_miss.log	0	133	6400	80	64	1	1	dtlb_read_miss	available	0	1114	5	22777	6271332	6271332	22777.000000
+shape	shapes_dtlb_read_miss.log	0	133	6400	80	64	2	2	cycles	available	0	1112	5	10081565	6307790	6307790	10081565.000000
+shape	shapes_dtlb_read_miss.log	0	133	6400	80	64	2	2	dtlb_read_miss	available	0	1113	5	26791	6307790	6307790	26791.000000
+shape	shapes_dtlb_read_miss.log	0	133	6400	80	64	3	3	cycles	available	0	1115	5	10069184	6285543	6285543	10069184.000000
+shape	shapes_dtlb_read_miss.log	0	133	6400	80	64	3	3	dtlb_read_miss	available	0	1116	5	22395	6285543	6285543	22395.000000
+shape	shapes_dtlb_read_miss.log	0	144	6400	80	80	0	0	cycles	available	0	1117	5	11519036	7193001	7193001	11519036.000000
+shape	shapes_dtlb_read_miss.log	0	144	6400	80	80	0	0	dtlb_read_miss	available	0	1118	5	36850	7193001	7193001	36850.000000
+shape	shapes_dtlb_read_miss.log	0	144	6400	80	80	1	1	cycles	available	0	1111	5	11530427	7203666	7203666	11530427.000000
+shape	shapes_dtlb_read_miss.log	0	144	6400	80	80	1	1	dtlb_read_miss	available	0	1114	5	37907	7203666	7203666	37907.000000
+shape	shapes_dtlb_read_miss.log	0	144	6400	80	80	2	2	cycles	available	0	1112	5	11565929	7219251	7219251	11565929.000000
+shape	shapes_dtlb_read_miss.log	0	144	6400	80	80	2	2	dtlb_read_miss	available	0	1113	5	39021	7219251	7219251	39021.000000
+shape	shapes_dtlb_read_miss.log	0	144	6400	80	80	3	3	cycles	available	0	1115	5	11827654	7409668	7409668	11827654.000000
+shape	shapes_dtlb_read_miss.log	0	144	6400	80	80	3	3	dtlb_read_miss	available	0	1116	5	38222	7409668	7409668	38222.000000
+shape	shapes_dtlb_read_miss.log	0	206	400	80	256	0	0	cycles	available	0	1117	5	1273456	795169	795169	1273456.000000
+shape	shapes_dtlb_read_miss.log	0	206	400	80	256	0	0	dtlb_read_miss	available	0	1118	5	6098	795169	795169	6098.000000
+shape	shapes_dtlb_read_miss.log	0	206	400	80	256	1	1	cycles	available	0	1111	5	1401114	883541	883541	1401114.000000
+shape	shapes_dtlb_read_miss.log	0	206	400	80	256	1	1	dtlb_read_miss	available	0	1114	5	6817	883541	883541	6817.000000
+shape	shapes_dtlb_read_miss.log	0	206	400	80	256	2	2	cycles	available	0	1112	5	1297288	812792	812792	1297288.000000
+shape	shapes_dtlb_read_miss.log	0	206	400	80	256	2	2	dtlb_read_miss	available	0	1113	5	6308	812792	812792	6308.000000
+shape	shapes_dtlb_read_miss.log	0	206	400	80	256	3	3	cycles	available	0	1115	5	1344845	850417	850417	1344845.000000
+shape	shapes_dtlb_read_miss.log	0	206	400	80	256	3	3	dtlb_read_miss	available	0	1116	5	6335	850417	850417	6335.000000
+shape	shapes_dtlb_read_miss.log	0	161	1600	16	1152	0	0	cycles	available	0	1117	5	10293286	6436458	6436458	10293286.000000
+shape	shapes_dtlb_read_miss.log	0	161	1600	16	1152	0	0	dtlb_read_miss	available	0	1118	5	24836	6436458	6436458	24836.000000
+shape	shapes_dtlb_read_miss.log	0	161	1600	16	1152	1	1	cycles	available	0	1111	5	10592341	6627750	6627750	10592341.000000
+shape	shapes_dtlb_read_miss.log	0	161	1600	16	1152	1	1	dtlb_read_miss	available	0	1114	5	26181	6627750	6627750	26181.000000
+shape	shapes_dtlb_read_miss.log	0	161	1600	16	1152	2	2	cycles	available	0	1112	5	10313324	6450875	6450875	10313324.000000
+shape	shapes_dtlb_read_miss.log	0	161	1600	16	1152	2	2	dtlb_read_miss	available	0	1113	5	25258	6450875	6450875	25258.000000
+shape	shapes_dtlb_read_miss.log	0	161	1600	16	1152	3	3	cycles	available	0	1115	5	10466674	6550918	6550918	10466674.000000
+shape	shapes_dtlb_read_miss.log	0	161	1600	16	1152	3	3	dtlb_read_miss	available	0	1116	5	24842	6550918	6550918	24842.000000
+shape	shapes_dtlb_read_miss.log	0	201	400	16	2304	0	0	cycles	available	0	1117	5	4498888	2813957	2813957	4498888.000000
+shape	shapes_dtlb_read_miss.log	0	201	400	16	2304	0	0	dtlb_read_miss	available	0	1118	5	9270	2813957	2813957	9270.000000
+shape	shapes_dtlb_read_miss.log	0	201	400	16	2304	1	1	cycles	available	0	1111	5	5181075	3254418	3254418	5181075.000000
+shape	shapes_dtlb_read_miss.log	0	201	400	16	2304	1	1	dtlb_read_miss	available	0	1114	5	10749	3254418	3254418	10749.000000
+shape	shapes_dtlb_read_miss.log	0	201	400	16	2304	2	2	cycles	available	0	1112	5	4612018	2890624	2890624	4612018.000000
+shape	shapes_dtlb_read_miss.log	0	201	400	16	2304	2	2	dtlb_read_miss	available	0	1113	5	9472	2890624	2890624	9472.000000
+shape	shapes_dtlb_read_miss.log	0	201	400	16	2304	3	3	cycles	available	0	1115	5	4936066	3099081	3099081	4936066.000000
+shape	shapes_dtlb_read_miss.log	0	201	400	16	2304	3	3	dtlb_read_miss	available	0	1116	5	10122	3099081	3099081	10122.000000
+shape	shapes_dtlb_write_miss.log	0	5	25600	32	32	0	0	cycles	available	0	1123	5	15262140	9553042	9553042	15262140.000000
+shape	shapes_dtlb_write_miss.log	0	5	25600	32	32	0	0	dtlb_write_miss	available	0	1124	5	859	9553042	9553042	859.000000
+shape	shapes_dtlb_write_miss.log	0	5	25600	32	32	1	1	cycles	available	0	1120	5	15076702	9415167	9415167	15076702.000000
+shape	shapes_dtlb_write_miss.log	0	5	25600	32	32	1	1	dtlb_write_miss	available	0	1121	5	593	9415167	9415167	593.000000
+shape	shapes_dtlb_write_miss.log	0	5	25600	32	32	2	2	cycles	available	0	1119	5	15222918	9518209	9518209	15222918.000000
+shape	shapes_dtlb_write_miss.log	0	5	25600	32	32	2	2	dtlb_write_miss	available	0	1122	5	2424	9518209	9518209	2424.000000
+shape	shapes_dtlb_write_miss.log	0	5	25600	32	32	3	3	cycles	available	0	1125	5	15203849	9504541	9504541	15203849.000000
+shape	shapes_dtlb_write_miss.log	0	5	25600	32	32	3	3	dtlb_write_miss	available	0	1126	5	1177	9504541	9504541	1177.000000
+shape	shapes_dtlb_write_miss.log	0	12	25600	64	48	0	0	cycles	available	0	1123	5	39050392	24407251	24407251	39050392.000000
+shape	shapes_dtlb_write_miss.log	0	12	25600	64	48	0	0	dtlb_write_miss	available	0	1124	5	14783	24407251	24407251	14783.000000
+shape	shapes_dtlb_write_miss.log	0	12	25600	64	48	1	1	cycles	available	0	1120	5	38786450	24249041	24249041	38786450.000000
+shape	shapes_dtlb_write_miss.log	0	12	25600	64	48	1	1	dtlb_write_miss	available	0	1121	5	12432	24249041	24249041	12432.000000
+shape	shapes_dtlb_write_miss.log	0	12	25600	64	48	2	2	cycles	available	0	1119	5	39076768	24416625	24416625	39076768.000000
+shape	shapes_dtlb_write_miss.log	0	12	25600	64	48	2	2	dtlb_write_miss	available	0	1122	5	23523	24416625	24416625	23523.000000
+shape	shapes_dtlb_write_miss.log	0	12	25600	64	48	3	3	cycles	available	0	1125	5	39350892	24599791	24599791	39350892.000000
+shape	shapes_dtlb_write_miss.log	0	12	25600	64	48	3	3	dtlb_write_miss	available	0	1126	5	15793	24599791	24599791	15793.000000
+shape	shapes_dtlb_write_miss.log	0	124	6400	64	96	0	0	cycles	available	0	1123	5	10507791	6568417	6568417	10507791.000000
+shape	shapes_dtlb_write_miss.log	0	124	6400	64	96	0	0	dtlb_write_miss	available	0	1124	5	5270	6568417	6568417	5270.000000
+shape	shapes_dtlb_write_miss.log	0	124	6400	64	96	1	1	cycles	available	0	1120	5	10561521	6609543	6609543	10561521.000000
+shape	shapes_dtlb_write_miss.log	0	124	6400	64	96	1	1	dtlb_write_miss	available	0	1121	5	5219	6609543	6609543	5219.000000
+shape	shapes_dtlb_write_miss.log	0	124	6400	64	96	2	2	cycles	available	0	1119	5	9915260	6189374	6189374	9915260.000000
+shape	shapes_dtlb_write_miss.log	0	124	6400	64	96	2	2	dtlb_write_miss	available	0	1122	5	6408	6189374	6189374	6408.000000
+shape	shapes_dtlb_write_miss.log	0	124	6400	64	96	3	3	cycles	available	0	1125	5	10491640	6566668	6566668	10491640.000000
+shape	shapes_dtlb_write_miss.log	0	124	6400	64	96	3	3	dtlb_write_miss	available	0	1126	5	5085	6566668	6566668	5085.000000
+shape	shapes_dtlb_write_miss.log	0	133	6400	80	64	0	0	cycles	available	0	1123	5	9820272	6145914	6145914	9820272.000000
+shape	shapes_dtlb_write_miss.log	0	133	6400	80	64	0	0	dtlb_write_miss	available	0	1124	5	5710	6145914	6145914	5710.000000
+shape	shapes_dtlb_write_miss.log	0	133	6400	80	64	1	1	cycles	available	0	1120	5	9792101	6116169	6116169	9792101.000000
+shape	shapes_dtlb_write_miss.log	0	133	6400	80	64	1	1	dtlb_write_miss	available	0	1121	5	5689	6116169	6116169	5689.000000
+shape	shapes_dtlb_write_miss.log	0	133	6400	80	64	2	2	cycles	available	0	1119	5	9848950	6162208	6162208	9848950.000000
+shape	shapes_dtlb_write_miss.log	0	133	6400	80	64	2	2	dtlb_write_miss	available	0	1122	5	6834	6162208	6162208	6834.000000
+shape	shapes_dtlb_write_miss.log	0	133	6400	80	64	3	3	cycles	available	0	1125	5	9908863	6193876	6193876	9908863.000000
+shape	shapes_dtlb_write_miss.log	0	133	6400	80	64	3	3	dtlb_write_miss	available	0	1126	5	5039	6193876	6193876	5039.000000
+shape	shapes_dtlb_write_miss.log	0	144	6400	80	80	0	0	cycles	available	0	1123	5	11153529	6981251	6981251	11153529.000000
+shape	shapes_dtlb_write_miss.log	0	144	6400	80	80	0	0	dtlb_write_miss	available	0	1124	5	6278	6981251	6981251	6278.000000
+shape	shapes_dtlb_write_miss.log	0	144	6400	80	80	1	1	cycles	available	0	1120	5	10954081	6844457	6844457	10954081.000000
+shape	shapes_dtlb_write_miss.log	0	144	6400	80	80	1	1	dtlb_write_miss	available	0	1121	5	5081	6844457	6844457	5081.000000
+shape	shapes_dtlb_write_miss.log	0	144	6400	80	80	2	2	cycles	available	0	1119	5	11153427	6967877	6967877	11153427.000000
+shape	shapes_dtlb_write_miss.log	0	144	6400	80	80	2	2	dtlb_write_miss	available	0	1122	5	7603	6967877	6967877	7603.000000
+shape	shapes_dtlb_write_miss.log	0	144	6400	80	80	3	3	cycles	available	0	1125	5	11401466	7130125	7130125	11401466.000000
+shape	shapes_dtlb_write_miss.log	0	144	6400	80	80	3	3	dtlb_write_miss	available	0	1126	5	5589	7130125	7130125	5589.000000
+shape	shapes_dtlb_write_miss.log	0	206	400	80	256	0	0	cycles	available	0	1123	5	1284707	807208	807208	1284707.000000
+shape	shapes_dtlb_write_miss.log	0	206	400	80	256	0	0	dtlb_write_miss	available	0	1124	5	539	807208	807208	539.000000
+shape	shapes_dtlb_write_miss.log	0	206	400	80	256	1	1	cycles	available	0	1120	5	1403187	888792	888792	1403187.000000
+shape	shapes_dtlb_write_miss.log	0	206	400	80	256	1	1	dtlb_write_miss	available	0	1121	5	537	888792	888792	537.000000
+shape	shapes_dtlb_write_miss.log	0	206	400	80	256	2	2	cycles	available	0	1119	5	1296833	813207	813207	1296833.000000
+shape	shapes_dtlb_write_miss.log	0	206	400	80	256	2	2	dtlb_write_miss	available	0	1122	5	670	813207	813207	670.000000
+shape	shapes_dtlb_write_miss.log	0	206	400	80	256	3	3	cycles	available	0	1125	5	1357945	860753	860753	1357945.000000
+shape	shapes_dtlb_write_miss.log	0	206	400	80	256	3	3	dtlb_write_miss	available	0	1126	5	584	860753	860753	584.000000
+shape	shapes_dtlb_write_miss.log	0	161	1600	16	1152	0	0	cycles	available	0	1123	5	10302123	6440752	6440752	10302123.000000
+shape	shapes_dtlb_write_miss.log	0	161	1600	16	1152	0	0	dtlb_write_miss	available	0	1124	5	1097	6440752	6440752	1097.000000
+shape	shapes_dtlb_write_miss.log	0	161	1600	16	1152	1	1	cycles	available	0	1120	5	10568458	6617292	6617292	10568458.000000
+shape	shapes_dtlb_write_miss.log	0	161	1600	16	1152	1	1	dtlb_write_miss	available	0	1121	5	1359	6617292	6617292	1359.000000
+shape	shapes_dtlb_write_miss.log	0	161	1600	16	1152	2	2	cycles	available	0	1119	5	10231844	6399207	6399207	10231844.000000
+shape	shapes_dtlb_write_miss.log	0	161	1600	16	1152	2	2	dtlb_write_miss	available	0	1122	5	1072	6399207	6399207	1072.000000
+shape	shapes_dtlb_write_miss.log	0	161	1600	16	1152	3	3	cycles	available	0	1125	5	10466891	6558499	6558499	10466891.000000
+shape	shapes_dtlb_write_miss.log	0	161	1600	16	1152	3	3	dtlb_write_miss	available	0	1126	5	799	6558499	6558499	799.000000
+shape	shapes_dtlb_write_miss.log	0	201	400	16	2304	0	0	cycles	available	0	1123	5	4456844	2788583	2788583	4456844.000000
+shape	shapes_dtlb_write_miss.log	0	201	400	16	2304	0	0	dtlb_write_miss	available	0	1124	5	471	2788583	2788583	471.000000
+shape	shapes_dtlb_write_miss.log	0	201	400	16	2304	1	1	cycles	available	0	1120	5	5045871	3161917	3161917	5045871.000000
+shape	shapes_dtlb_write_miss.log	0	201	400	16	2304	1	1	dtlb_write_miss	available	0	1121	5	650	3161917	3161917	650.000000
+shape	shapes_dtlb_write_miss.log	0	201	400	16	2304	2	2	cycles	available	0	1119	5	4527818	2838627	2838627	4527818.000000
+shape	shapes_dtlb_write_miss.log	0	201	400	16	2304	2	2	dtlb_write_miss	available	0	1122	5	544	2838627	2838627	544.000000
+shape	shapes_dtlb_write_miss.log	0	201	400	16	2304	3	3	cycles	available	0	1125	5	4864121	3047791	3047791	4864121.000000
+shape	shapes_dtlb_write_miss.log	0	201	400	16	2304	3	3	dtlb_write_miss	available	0	1126	5	588	3047791	3047791	588.000000
+shape	shapes_frontend_stalls.log	0	5	25600	32	32	0	0	cycles	available	0	1069	5	15289540	9553251	9553251	15289540.000000
+shape	shapes_frontend_stalls.log	0	5	25600	32	32	0	0	frontend_stalls	available	0	1070	5	126854	9553251	9553251	126854.000000
+shape	shapes_frontend_stalls.log	0	5	25600	32	32	1	1	cycles	available	0	1063	5	15021058	9383834	9383834	15021058.000000
+shape	shapes_frontend_stalls.log	0	5	25600	32	32	1	1	frontend_stalls	available	0	1065	5	89568	9383834	9383834	89568.000000
+shape	shapes_frontend_stalls.log	0	5	25600	32	32	2	2	cycles	available	0	1067	5	15191464	9501543	9501543	15191464.000000
+shape	shapes_frontend_stalls.log	0	5	25600	32	32	2	2	frontend_stalls	available	0	1068	5	78897	9501543	9501543	78897.000000
+shape	shapes_frontend_stalls.log	0	5	25600	32	32	3	3	cycles	available	0	1064	5	15067343	9397917	9397917	15067343.000000
+shape	shapes_frontend_stalls.log	0	5	25600	32	32	3	3	frontend_stalls	available	0	1066	5	133155	9397917	9397917	133155.000000
+shape	shapes_frontend_stalls.log	0	12	25600	64	48	0	0	cycles	available	0	1069	5	38516581	24073958	24073958	38516581.000000
+shape	shapes_frontend_stalls.log	0	12	25600	64	48	0	0	frontend_stalls	available	0	1070	5	229309	24073958	24073958	229309.000000
+shape	shapes_frontend_stalls.log	0	12	25600	64	48	1	1	cycles	available	0	1063	5	38340839	23956958	23956958	38340839.000000
+shape	shapes_frontend_stalls.log	0	12	25600	64	48	1	1	frontend_stalls	available	0	1065	5	277197	23956958	23956958	277197.000000
+shape	shapes_frontend_stalls.log	0	12	25600	64	48	2	2	cycles	available	0	1067	5	38610702	24141918	24141918	38610702.000000
+shape	shapes_frontend_stalls.log	0	12	25600	64	48	2	2	frontend_stalls	available	0	1068	5	200159	24141918	24141918	200159.000000
+shape	shapes_frontend_stalls.log	0	12	25600	64	48	3	3	cycles	available	0	1064	5	38828097	24270040	24270040	38828097.000000
+shape	shapes_frontend_stalls.log	0	12	25600	64	48	3	3	frontend_stalls	available	0	1066	5	312826	24270040	24270040	312826.000000
+shape	shapes_frontend_stalls.log	0	124	6400	64	96	0	0	cycles	available	0	1069	5	11211212	7024168	7024168	11211212.000000
+shape	shapes_frontend_stalls.log	0	124	6400	64	96	0	0	frontend_stalls	available	0	1070	5	90865	7024168	7024168	90865.000000
+shape	shapes_frontend_stalls.log	0	124	6400	64	96	1	1	cycles	available	0	1063	5	10521022	6576250	6576250	10521022.000000
+shape	shapes_frontend_stalls.log	0	124	6400	64	96	1	1	frontend_stalls	available	0	1065	5	89941	6576250	6576250	89941.000000
+shape	shapes_frontend_stalls.log	0	124	6400	64	96	2	2	cycles	available	0	1067	5	10533562	6589542	6589542	10533562.000000
+shape	shapes_frontend_stalls.log	0	124	6400	64	96	2	2	frontend_stalls	available	0	1068	5	64855	6589542	6589542	64855.000000
+shape	shapes_frontend_stalls.log	0	124	6400	64	96	3	3	cycles	available	0	1064	5	10458716	6527709	6527709	10458716.000000
+shape	shapes_frontend_stalls.log	0	124	6400	64	96	3	3	frontend_stalls	available	0	1066	5	130304	6527709	6527709	130304.000000
+shape	shapes_frontend_stalls.log	0	133	6400	80	64	0	0	cycles	available	0	1069	5	10087757	6313875	6313875	10087757.000000
+shape	shapes_frontend_stalls.log	0	133	6400	80	64	0	0	frontend_stalls	available	0	1070	5	95417	6313875	6313875	95417.000000
+shape	shapes_frontend_stalls.log	0	133	6400	80	64	1	1	cycles	available	0	1063	5	10021317	6273458	6273458	10021317.000000
+shape	shapes_frontend_stalls.log	0	133	6400	80	64	1	1	frontend_stalls	available	0	1065	5	97742	6273458	6273458	97742.000000
+shape	shapes_frontend_stalls.log	0	133	6400	80	64	2	2	cycles	available	0	1067	5	9977161	6221959	6221959	9977161.000000
+shape	shapes_frontend_stalls.log	0	133	6400	80	64	2	2	frontend_stalls	available	0	1068	5	68979	6221959	6221959	68979.000000
+shape	shapes_frontend_stalls.log	0	133	6400	80	64	3	3	cycles	available	0	1064	5	10207598	6376874	6376874	10207598.000000
+shape	shapes_frontend_stalls.log	0	133	6400	80	64	3	3	frontend_stalls	available	0	1066	5	107862	6376874	6376874	107862.000000
+shape	shapes_frontend_stalls.log	0	144	6400	80	80	0	0	cycles	available	0	1069	5	13873832	8674833	8674833	13873832.000000
+shape	shapes_frontend_stalls.log	0	144	6400	80	80	0	0	frontend_stalls	available	0	1070	5	107178	8674833	8674833	107178.000000
+shape	shapes_frontend_stalls.log	0	144	6400	80	80	1	1	cycles	available	0	1063	5	11358977	7101042	7101042	11358977.000000
+shape	shapes_frontend_stalls.log	0	144	6400	80	80	1	1	frontend_stalls	available	0	1065	5	93891	7101042	7101042	93891.000000
+shape	shapes_frontend_stalls.log	0	144	6400	80	80	2	2	cycles	available	0	1067	5	11268841	7058543	7058543	11268841.000000
+shape	shapes_frontend_stalls.log	0	144	6400	80	80	2	2	frontend_stalls	available	0	1068	5	91815	7058543	7058543	91815.000000
+shape	shapes_frontend_stalls.log	0	144	6400	80	80	3	3	cycles	available	0	1064	5	11833766	7398334	7398334	11833766.000000
+shape	shapes_frontend_stalls.log	0	144	6400	80	80	3	3	frontend_stalls	available	0	1066	5	131634	7398334	7398334	131634.000000
+shape	shapes_frontend_stalls.log	0	206	400	80	256	0	0	cycles	available	0	1069	5	1297285	816084	816084	1297285.000000
+shape	shapes_frontend_stalls.log	0	206	400	80	256	0	0	frontend_stalls	available	0	1070	5	15045	816084	816084	15045.000000
+shape	shapes_frontend_stalls.log	0	206	400	80	256	1	1	cycles	available	0	1063	5	1383133	874208	874208	1383133.000000
+shape	shapes_frontend_stalls.log	0	206	400	80	256	1	1	frontend_stalls	available	0	1065	5	13362	874208	874208	13362.000000
+shape	shapes_frontend_stalls.log	0	206	400	80	256	2	2	cycles	available	0	1067	5	1268127	790998	790998	1268127.000000
+shape	shapes_frontend_stalls.log	0	206	400	80	256	2	2	frontend_stalls	available	0	1068	5	14207	790998	790998	14207.000000
+shape	shapes_frontend_stalls.log	0	206	400	80	256	3	3	cycles	available	0	1064	5	1354128	856749	856749	1354128.000000
+shape	shapes_frontend_stalls.log	0	206	400	80	256	3	3	frontend_stalls	available	0	1066	5	20706	856749	856749	20706.000000
+shape	shapes_frontend_stalls.log	0	161	1600	16	1152	0	0	cycles	available	0	1069	5	10246614	6402542	6402542	10246614.000000
+shape	shapes_frontend_stalls.log	0	161	1600	16	1152	0	0	frontend_stalls	available	0	1070	5	53250	6402542	6402542	53250.000000
+shape	shapes_frontend_stalls.log	0	161	1600	16	1152	1	1	cycles	available	0	1063	5	10563492	6611084	6611084	10563492.000000
+shape	shapes_frontend_stalls.log	0	161	1600	16	1152	1	1	frontend_stalls	available	0	1065	5	110113	6611084	6611084	110113.000000
+shape	shapes_frontend_stalls.log	0	161	1600	16	1152	2	2	cycles	available	0	1067	5	10232655	6400751	6400751	10232655.000000
+shape	shapes_frontend_stalls.log	0	161	1600	16	1152	2	2	frontend_stalls	available	0	1068	5	43526	6400751	6400751	43526.000000
+shape	shapes_frontend_stalls.log	0	161	1600	16	1152	3	3	cycles	available	0	1064	5	10482654	6567752	6567752	10482654.000000
+shape	shapes_frontend_stalls.log	0	161	1600	16	1152	3	3	frontend_stalls	available	0	1066	5	115815	6567752	6567752	115815.000000
+shape	shapes_frontend_stalls.log	0	201	400	16	2304	0	0	cycles	available	0	1069	5	4582436	2870540	2870540	4582436.000000
+shape	shapes_frontend_stalls.log	0	201	400	16	2304	0	0	frontend_stalls	available	0	1070	5	45819	2870540	2870540	45819.000000
+shape	shapes_frontend_stalls.log	0	201	400	16	2304	1	1	cycles	available	0	1063	5	5092311	3196792	3196792	5092311.000000
+shape	shapes_frontend_stalls.log	0	201	400	16	2304	1	1	frontend_stalls	available	0	1065	5	51369	3196792	3196792	51369.000000
+shape	shapes_frontend_stalls.log	0	201	400	16	2304	2	2	cycles	available	0	1067	5	4528476	2828794	2828794	4528476.000000
+shape	shapes_frontend_stalls.log	0	201	400	16	2304	2	2	frontend_stalls	available	0	1068	5	31725	2828794	2828794	31725.000000
+shape	shapes_frontend_stalls.log	0	201	400	16	2304	3	3	cycles	available	0	1064	5	5032619	3164375	3164375	5032619.000000
+shape	shapes_frontend_stalls.log	0	201	400	16	2304	3	3	frontend_stalls	available	0	1066	5	71853	3164375	3164375	71853.000000
+shape	shapes_instructions.log	0	5	25600	32	32	0	0	cycles	available	0	1056	5	15111640	9445126	9445126	15111640.000000
+shape	shapes_instructions.log	0	5	25600	32	32	0	0	instructions	available	0	1059	5	10533569	9445126	9445126	10533569.000000
+shape	shapes_instructions.log	0	5	25600	32	32	1	1	cycles	available	0	1058	5	15050644	9401041	9401041	15050644.000000
+shape	shapes_instructions.log	0	5	25600	32	32	1	1	instructions	available	0	1062	5	10551777	9401041	9401041	10551777.000000
+shape	shapes_instructions.log	0	5	25600	32	32	2	2	cycles	available	0	1057	5	15152436	9475711	9475711	15152436.000000
+shape	shapes_instructions.log	0	5	25600	32	32	2	2	instructions	available	0	1061	5	10544553	9475711	9475711	10544553.000000
+shape	shapes_instructions.log	0	5	25600	32	32	3	3	cycles	available	0	1055	5	15100334	9441084	9441084	15100334.000000
+shape	shapes_instructions.log	0	5	25600	32	32	3	3	instructions	available	0	1060	5	10551115	9441084	9441084	10551115.000000
+shape	shapes_instructions.log	0	12	25600	64	48	0	0	cycles	available	0	1056	5	38580157	24115332	24115332	38580157.000000
+shape	shapes_instructions.log	0	12	25600	64	48	0	0	instructions	available	0	1059	5	21638625	24115332	24115332	21638625.000000
+shape	shapes_instructions.log	0	12	25600	64	48	1	1	cycles	available	0	1058	5	38384861	23977542	23977542	38384861.000000
+shape	shapes_instructions.log	0	12	25600	64	48	1	1	instructions	available	0	1062	5	21679153	23977542	23977542	21679153.000000
+shape	shapes_instructions.log	0	12	25600	64	48	2	2	cycles	available	0	1057	5	38661277	24180751	24180751	38661277.000000
+shape	shapes_instructions.log	0	12	25600	64	48	2	2	instructions	available	0	1061	5	21642068	24180751	24180751	21642068.000000
+shape	shapes_instructions.log	0	12	25600	64	48	3	3	cycles	available	0	1055	5	38573872	24110626	24110626	38573872.000000
+shape	shapes_instructions.log	0	12	25600	64	48	3	3	instructions	available	0	1060	5	21675339	24110626	24110626	21675339.000000
+shape	shapes_instructions.log	0	124	6400	64	96	0	0	cycles	available	0	1056	5	10498297	6577082	6577082	10498297.000000
+shape	shapes_instructions.log	0	124	6400	64	96	0	0	instructions	available	0	1059	5	5871028	6577082	6577082	5871028.000000
+shape	shapes_instructions.log	0	124	6400	64	96	1	1	cycles	available	0	1058	5	11245755	7023164	7023164	11245755.000000
+shape	shapes_instructions.log	0	124	6400	64	96	1	1	instructions	available	0	1062	5	5918099	7023164	7023164	5918099.000000
+shape	shapes_instructions.log	0	124	6400	64	96	2	2	cycles	available	0	1057	5	10066233	6284624	6284624	10066233.000000
+shape	shapes_instructions.log	0	124	6400	64	96	2	2	instructions	available	0	1061	5	5869328	6284624	6284624	5869328.000000
+shape	shapes_instructions.log	0	124	6400	64	96	3	3	cycles	available	0	1055	5	11245717	7027001	7027001	11245717.000000
+shape	shapes_instructions.log	0	124	6400	64	96	3	3	instructions	available	0	1060	5	5930010	7027001	7027001	5930010.000000
+shape	shapes_instructions.log	0	133	6400	80	64	0	0	cycles	available	0	1056	5	9829224	6136707	6136707	9829224.000000
+shape	shapes_instructions.log	0	133	6400	80	64	0	0	instructions	available	0	1059	5	6951805	6136707	6136707	6951805.000000
+shape	shapes_instructions.log	0	133	6400	80	64	1	1	cycles	available	0	1058	5	9908963	6213499	6213499	9908963.000000
+shape	shapes_instructions.log	0	133	6400	80	64	1	1	instructions	available	0	1062	5	7004009	6213499	6213499	7004009.000000
+shape	shapes_instructions.log	0	133	6400	80	64	2	2	cycles	available	0	1057	5	9809042	6125041	6125041	9809042.000000
+shape	shapes_instructions.log	0	133	6400	80	64	2	2	instructions	available	0	1061	5	6951199	6125041	6125041	6951199.000000
+shape	shapes_instructions.log	0	133	6400	80	64	3	3	cycles	available	0	1055	5	10031721	6264043	6264043	10031721.000000
+shape	shapes_instructions.log	0	133	6400	80	64	3	3	instructions	available	0	1060	5	7011122	6264043	6264043	7011122.000000
+shape	shapes_instructions.log	0	144	6400	80	80	0	0	cycles	available	0	1056	5	11194594	7007584	7007584	11194594.000000
+shape	shapes_instructions.log	0	144	6400	80	80	0	0	instructions	available	0	1059	5	7130470	7007584	7007584	7130470.000000
+shape	shapes_instructions.log	0	144	6400	80	80	1	1	cycles	available	0	1058	5	11010138	6880790	6880790	11010138.000000
+shape	shapes_instructions.log	0	144	6400	80	80	1	1	instructions	available	0	1062	5	7183920	6880790	6880790	7183920.000000
+shape	shapes_instructions.log	0	144	6400	80	80	2	2	cycles	available	0	1057	5	10878016	6792623	6792623	10878016.000000
+shape	shapes_instructions.log	0	144	6400	80	80	2	2	instructions	available	0	1061	5	7130470	6792623	6792623	7130470.000000
+shape	shapes_instructions.log	0	144	6400	80	80	3	3	cycles	available	0	1055	5	11376000	7114917	7114917	11376000.000000
+shape	shapes_instructions.log	0	144	6400	80	80	3	3	instructions	available	0	1060	5	7198195	7114917	7114917	7198195.000000
+shape	shapes_instructions.log	0	206	400	80	256	0	0	cycles	available	0	1056	5	1274599	796792	796792	1274599.000000
+shape	shapes_instructions.log	0	206	400	80	256	0	0	instructions	available	0	1059	5	572130	796792	796792	572130.000000
+shape	shapes_instructions.log	0	206	400	80	256	1	1	cycles	available	0	1058	5	1443573	910458	910458	1443573.000000
+shape	shapes_instructions.log	0	206	400	80	256	1	1	instructions	available	0	1062	5	646014	910458	910458	646014.000000
+shape	shapes_instructions.log	0	206	400	80	256	2	2	cycles	available	0	1057	5	1244467	778376	778376	1244467.000000
+shape	shapes_instructions.log	0	206	400	80	256	2	2	instructions	available	0	1061	5	572130	778376	778376	572130.000000
+shape	shapes_instructions.log	0	206	400	80	256	3	3	cycles	available	0	1055	5	1401930	884709	884709	1401930.000000
+shape	shapes_instructions.log	0	206	400	80	256	3	3	instructions	available	0	1060	5	647342	884709	884709	647342.000000
+shape	shapes_instructions.log	0	161	1600	16	1152	0	0	cycles	available	0	1056	5	10131987	6335080	6335080	10131987.000000
+shape	shapes_instructions.log	0	161	1600	16	1152	0	0	instructions	available	0	1059	5	6199679	6335080	6335080	6199679.000000
+shape	shapes_instructions.log	0	161	1600	16	1152	1	1	cycles	available	0	1058	5	10485000	6566166	6566166	10485000.000000
+shape	shapes_instructions.log	0	161	1600	16	1152	1	1	instructions	available	0	1062	5	6410294	6566166	6566166	6410294.000000
+shape	shapes_instructions.log	0	161	1600	16	1152	2	2	cycles	available	0	1057	5	10122897	6329917	6329917	10122897.000000
+shape	shapes_instructions.log	0	161	1600	16	1152	2	2	instructions	available	0	1061	5	6173995	6329917	6329917	6173995.000000
+shape	shapes_instructions.log	0	161	1600	16	1152	3	3	cycles	available	0	1055	5	10271188	6432292	6432292	10271188.000000
+shape	shapes_instructions.log	0	161	1600	16	1152	3	3	instructions	available	0	1060	5	6378778	6432292	6432292	6378778.000000
+shape	shapes_instructions.log	0	201	400	16	2304	0	0	cycles	available	0	1056	5	4440251	2776791	2776791	4440251.000000
+shape	shapes_instructions.log	0	201	400	16	2304	0	0	instructions	available	0	1059	5	3125597	2776791	2776791	3125597.000000
+shape	shapes_instructions.log	0	201	400	16	2304	1	1	cycles	available	0	1058	5	5092799	3198043	3198043	5092799.000000
+shape	shapes_instructions.log	0	201	400	16	2304	1	1	instructions	available	0	1062	5	3578699	3198043	3198043	3578699.000000
+shape	shapes_instructions.log	0	201	400	16	2304	2	2	cycles	available	0	1057	5	4510542	2827917	2827917	4510542.000000
+shape	shapes_instructions.log	0	201	400	16	2304	2	2	instructions	available	0	1061	5	3117022	2827917	2827917	3117022.000000
+shape	shapes_instructions.log	0	201	400	16	2304	3	3	cycles	available	0	1055	5	4931299	3092792	3092792	4931299.000000
+shape	shapes_instructions.log	0	201	400	16	2304	3	3	instructions	available	0	1060	5	3454263	3092792	3092792	3454263.000000
+shape	shapes_itlb_read_miss.log	0	5	25600	32	32	0	0	cycles	available	0	1131	5	15106463	9447208	9447208	15106463.000000
+shape	shapes_itlb_read_miss.log	0	5	25600	32	32	0	0	itlb_read_miss	available	0	1132	5	107	9447208	9447208	107.000000
+shape	shapes_itlb_read_miss.log	0	5	25600	32	32	1	1	cycles	available	0	1128	5	15213367	9507084	9507084	15213367.000000
+shape	shapes_itlb_read_miss.log	0	5	25600	32	32	1	1	itlb_read_miss	available	0	1130	5	102	9507084	9507084	102.000000
+shape	shapes_itlb_read_miss.log	0	5	25600	32	32	2	2	cycles	available	0	1133	5	15114894	9434915	9434915	15114894.000000
+shape	shapes_itlb_read_miss.log	0	5	25600	32	32	2	2	itlb_read_miss	available	0	1134	5	105	9434915	9434915	105.000000
+shape	shapes_itlb_read_miss.log	0	5	25600	32	32	3	3	cycles	available	0	1127	5	15098956	9425543	9425543	15098956.000000
+shape	shapes_itlb_read_miss.log	0	5	25600	32	32	3	3	itlb_read_miss	available	0	1129	5	108	9425543	9425543	108.000000
+shape	shapes_itlb_read_miss.log	0	12	25600	64	48	0	0	cycles	available	0	1131	5	38428425	24023124	24023124	38428425.000000
+shape	shapes_itlb_read_miss.log	0	12	25600	64	48	0	0	itlb_read_miss	available	0	1132	5	121	24023124	24023124	121.000000
+shape	shapes_itlb_read_miss.log	0	12	25600	64	48	1	1	cycles	available	0	1128	5	38191261	23854914	23854914	38191261.000000
+shape	shapes_itlb_read_miss.log	0	12	25600	64	48	1	1	itlb_read_miss	available	0	1130	5	108	23854914	23854914	108.000000
+shape	shapes_itlb_read_miss.log	0	12	25600	64	48	2	2	cycles	available	0	1133	5	38664614	24163751	24163751	38664614.000000
+shape	shapes_itlb_read_miss.log	0	12	25600	64	48	2	2	itlb_read_miss	available	0	1134	5	129	24163751	24163751	129.000000
+shape	shapes_itlb_read_miss.log	0	12	25600	64	48	3	3	cycles	available	0	1127	5	38538791	24091500	24091500	38538791.000000
+shape	shapes_itlb_read_miss.log	0	12	25600	64	48	3	3	itlb_read_miss	available	0	1129	5	137	24091500	24091500	137.000000
+shape	shapes_itlb_read_miss.log	0	124	6400	64	96	0	0	cycles	available	0	1131	5	10403518	6508376	6508376	10403518.000000
+shape	shapes_itlb_read_miss.log	0	124	6400	64	96	0	0	itlb_read_miss	available	0	1132	5	101	6508376	6508376	101.000000
+shape	shapes_itlb_read_miss.log	0	124	6400	64	96	1	1	cycles	available	0	1128	5	10201071	6376876	6376876	10201071.000000
+shape	shapes_itlb_read_miss.log	0	124	6400	64	96	1	1	itlb_read_miss	available	0	1130	5	109	6376876	6376876	109.000000
+shape	shapes_itlb_read_miss.log	0	124	6400	64	96	2	2	cycles	available	0	1133	5	9998303	6248917	6248917	9998303.000000
+shape	shapes_itlb_read_miss.log	0	124	6400	64	96	2	2	itlb_read_miss	available	0	1134	5	106	6248917	6248917	106.000000
+shape	shapes_itlb_read_miss.log	0	124	6400	64	96	3	3	cycles	available	0	1127	5	10823871	6760497	6760497	10823871.000000
+shape	shapes_itlb_read_miss.log	0	124	6400	64	96	3	3	itlb_read_miss	available	0	1129	5	107	6760497	6760497	107.000000
+shape	shapes_itlb_read_miss.log	0	133	6400	80	64	0	0	cycles	available	0	1131	5	10159545	6364545	6364545	10159545.000000
+shape	shapes_itlb_read_miss.log	0	133	6400	80	64	0	0	itlb_read_miss	available	0	1132	5	113	6364545	6364545	113.000000
+shape	shapes_itlb_read_miss.log	0	133	6400	80	64	1	1	cycles	available	0	1128	5	10055620	6280875	6280875	10055620.000000
+shape	shapes_itlb_read_miss.log	0	133	6400	80	64	1	1	itlb_read_miss	available	0	1130	5	110	6280875	6280875	110.000000
+shape	shapes_itlb_read_miss.log	0	133	6400	80	64	2	2	cycles	available	0	1133	5	9982381	6231708	6231708	9982381.000000
+shape	shapes_itlb_read_miss.log	0	133	6400	80	64	2	2	itlb_read_miss	available	0	1134	5	115	6231708	6231708	115.000000
+shape	shapes_itlb_read_miss.log	0	133	6400	80	64	3	3	cycles	available	0	1127	5	10197795	6368666	6368666	10197795.000000
+shape	shapes_itlb_read_miss.log	0	133	6400	80	64	3	3	itlb_read_miss	available	0	1129	5	137	6368666	6368666	137.000000
+shape	shapes_itlb_read_miss.log	0	144	6400	80	80	0	0	cycles	available	0	1131	5	11265164	7046291	7046291	11265164.000000
+shape	shapes_itlb_read_miss.log	0	144	6400	80	80	0	0	itlb_read_miss	available	0	1132	5	106	7046291	7046291	106.000000
+shape	shapes_itlb_read_miss.log	0	144	6400	80	80	1	1	cycles	available	0	1128	5	11118822	6937373	6937373	11118822.000000
+shape	shapes_itlb_read_miss.log	0	144	6400	80	80	1	1	itlb_read_miss	available	0	1130	5	102	6937373	6937373	102.000000
+shape	shapes_itlb_read_miss.log	0	144	6400	80	80	2	2	cycles	available	0	1133	5	11124393	6954792	6954792	11124393.000000
+shape	shapes_itlb_read_miss.log	0	144	6400	80	80	2	2	itlb_read_miss	available	0	1134	5	109	6954792	6954792	109.000000
+shape	shapes_itlb_read_miss.log	0	144	6400	80	80	3	3	cycles	available	0	1127	5	11520071	7206999	7206999	11520071.000000
+shape	shapes_itlb_read_miss.log	0	144	6400	80	80	3	3	itlb_read_miss	available	0	1129	5	116	7206999	7206999	116.000000
+shape	shapes_itlb_read_miss.log	0	206	400	80	256	0	0	cycles	available	0	1131	5	1306773	816668	816668	1306773.000000
+shape	shapes_itlb_read_miss.log	0	206	400	80	256	0	0	itlb_read_miss	available	0	1132	5	104	816668	816668	104.000000
+shape	shapes_itlb_read_miss.log	0	206	400	80	256	1	1	cycles	available	0	1128	5	1410038	892250	892250	1410038.000000
+shape	shapes_itlb_read_miss.log	0	206	400	80	256	1	1	itlb_read_miss	available	0	1130	5	95	892250	892250	95.000000
+shape	shapes_itlb_read_miss.log	0	206	400	80	256	2	2	cycles	available	0	1133	5	1297623	813294	813294	1297623.000000
+shape	shapes_itlb_read_miss.log	0	206	400	80	256	2	2	itlb_read_miss	available	0	1134	5	101	813294	813294	101.000000
+shape	shapes_itlb_read_miss.log	0	206	400	80	256	3	3	cycles	available	0	1127	5	1423623	899583	899583	1423623.000000
+shape	shapes_itlb_read_miss.log	0	206	400	80	256	3	3	itlb_read_miss	available	0	1129	5	109	899583	899583	109.000000
+shape	shapes_itlb_read_miss.log	0	161	1600	16	1152	0	0	cycles	available	0	1131	5	10115184	6324292	6324292	10115184.000000
+shape	shapes_itlb_read_miss.log	0	161	1600	16	1152	0	0	itlb_read_miss	available	0	1132	5	107	6324292	6324292	107.000000
+shape	shapes_itlb_read_miss.log	0	161	1600	16	1152	1	1	cycles	available	0	1128	5	10563643	6612460	6612460	10563643.000000
+shape	shapes_itlb_read_miss.log	0	161	1600	16	1152	1	1	itlb_read_miss	available	0	1130	5	106	6612460	6612460	106.000000
+shape	shapes_itlb_read_miss.log	0	161	1600	16	1152	2	2	cycles	available	0	1133	5	10100958	6316082	6316082	10100958.000000
+shape	shapes_itlb_read_miss.log	0	161	1600	16	1152	2	2	itlb_read_miss	available	0	1134	5	111	6316082	6316082	111.000000
+shape	shapes_itlb_read_miss.log	0	161	1600	16	1152	3	3	cycles	available	0	1127	5	10335481	6471751	6471751	10335481.000000
+shape	shapes_itlb_read_miss.log	0	161	1600	16	1152	3	3	itlb_read_miss	available	0	1129	5	117	6471751	6471751	117.000000
+shape	shapes_itlb_read_miss.log	0	201	400	16	2304	0	0	cycles	available	0	1131	5	4410361	2760625	2760625	4410361.000000
+shape	shapes_itlb_read_miss.log	0	201	400	16	2304	0	0	itlb_read_miss	available	0	1132	5	109	2760625	2760625	109.000000
+shape	shapes_itlb_read_miss.log	0	201	400	16	2304	1	1	cycles	available	0	1128	5	5076557	3182043	3182043	5076557.000000
+shape	shapes_itlb_read_miss.log	0	201	400	16	2304	1	1	itlb_read_miss	available	0	1130	5	109	3182043	3182043	109.000000
+shape	shapes_itlb_read_miss.log	0	201	400	16	2304	2	2	cycles	available	0	1133	5	4458589	2798460	2798460	4458589.000000
+shape	shapes_itlb_read_miss.log	0	201	400	16	2304	2	2	itlb_read_miss	available	0	1134	5	107	2798460	2798460	107.000000
+shape	shapes_itlb_read_miss.log	0	201	400	16	2304	3	3	cycles	available	0	1127	5	4928900	3089667	3089667	4928900.000000
+shape	shapes_itlb_read_miss.log	0	201	400	16	2304	3	3	itlb_read_miss	available	0	1129	5	111	3089667	3089667	111.000000
+shape	shapes_l1d_read_access.log	0	5	25600	32	32	0	0	cycles	available	0	1079	5	15154917	9466333	9466333	15154917.000000
+shape	shapes_l1d_read_access.log	0	5	25600	32	32	0	0	l1d_read_access	available	0	1082	5	2687067	9466333	9466333	2687067.000000
+shape	shapes_l1d_read_access.log	0	5	25600	32	32	1	1	cycles	available	0	1080	5	15172838	9489585	9489585	15172838.000000
+shape	shapes_l1d_read_access.log	0	5	25600	32	32	1	1	l1d_read_access	available	0	1081	5	2692127	9489585	9489585	2692127.000000
+shape	shapes_l1d_read_access.log	0	5	25600	32	32	2	2	cycles	available	0	1085	5	15165302	9481626	9481626	15165302.000000
+shape	shapes_l1d_read_access.log	0	5	25600	32	32	2	2	l1d_read_access	available	0	1086	5	2687122	9481626	9481626	2687122.000000
+shape	shapes_l1d_read_access.log	0	5	25600	32	32	3	3	cycles	available	0	1083	5	15363589	9600875	9600875	15363589.000000
+shape	shapes_l1d_read_access.log	0	5	25600	32	32	3	3	l1d_read_access	available	0	1084	5	2690567	9600875	9600875	2690567.000000
+shape	shapes_l1d_read_access.log	0	12	25600	64	48	0	0	cycles	available	0	1079	5	38875522	24297541	24297541	38875522.000000
+shape	shapes_l1d_read_access.log	0	12	25600	64	48	0	0	l1d_read_access	available	0	1082	5	7953211	24297541	24297541	7953211.000000
+shape	shapes_l1d_read_access.log	0	12	25600	64	48	1	1	cycles	available	0	1080	5	38786909	24240543	24240543	38786909.000000
+shape	shapes_l1d_read_access.log	0	12	25600	64	48	1	1	l1d_read_access	available	0	1081	5	7968118	24240543	24240543	7968118.000000
+shape	shapes_l1d_read_access.log	0	12	25600	64	48	2	2	cycles	available	0	1085	5	39044201	24409459	24409459	39044201.000000
+shape	shapes_l1d_read_access.log	0	12	25600	64	48	2	2	l1d_read_access	available	0	1086	5	7953190	24409459	24409459	7953190.000000
+shape	shapes_l1d_read_access.log	0	12	25600	64	48	3	3	cycles	available	0	1083	5	39034404	24396250	24396250	39034404.000000
+shape	shapes_l1d_read_access.log	0	12	25600	64	48	3	3	l1d_read_access	available	0	1084	5	7962770	24396250	24396250	7962770.000000
+shape	shapes_l1d_read_access.log	0	124	6400	64	96	0	0	cycles	available	0	1079	5	10514895	6586211	6586211	10514895.000000
+shape	shapes_l1d_read_access.log	0	124	6400	64	96	0	0	l1d_read_access	available	0	1082	5	1639276	6586211	6586211	1639276.000000
+shape	shapes_l1d_read_access.log	0	124	6400	64	96	1	1	cycles	available	0	1080	5	10596212	6617000	6617000	10596212.000000
+shape	shapes_l1d_read_access.log	0	124	6400	64	96	1	1	l1d_read_access	available	0	1081	5	1651608	6617000	6617000	1651608.000000
+shape	shapes_l1d_read_access.log	0	124	6400	64	96	2	2	cycles	available	0	1085	5	10291294	6427791	6427791	10291294.000000
+shape	shapes_l1d_read_access.log	0	124	6400	64	96	2	2	l1d_read_access	available	0	1086	5	1639291	6427791	6427791	1639291.000000
+shape	shapes_l1d_read_access.log	0	124	6400	64	96	3	3	cycles	available	0	1083	5	10727123	6708124	6708124	10727123.000000
+shape	shapes_l1d_read_access.log	0	124	6400	64	96	3	3	l1d_read_access	available	0	1084	5	1651078	6708124	6708124	1651078.000000
+shape	shapes_l1d_read_access.log	0	133	6400	80	64	0	0	cycles	available	0	1079	5	9847931	6167915	6167915	9847931.000000
+shape	shapes_l1d_read_access.log	0	133	6400	80	64	0	0	l1d_read_access	available	0	1082	5	1862727	6167915	6167915	1862727.000000
+shape	shapes_l1d_read_access.log	0	133	6400	80	64	1	1	cycles	available	0	1080	5	9737739	6072876	6072876	9737739.000000
+shape	shapes_l1d_read_access.log	0	133	6400	80	64	1	1	l1d_read_access	available	0	1081	5	1876712	6072876	6072876	1876712.000000
+shape	shapes_l1d_read_access.log	0	133	6400	80	64	2	2	cycles	available	0	1085	5	9761840	6099789	6099789	9761840.000000
+shape	shapes_l1d_read_access.log	0	133	6400	80	64	2	2	l1d_read_access	available	0	1086	5	1862722	6099789	6099789	1862722.000000
+shape	shapes_l1d_read_access.log	0	133	6400	80	64	3	3	cycles	available	0	1083	5	9891458	6183291	6183291	9891458.000000
+shape	shapes_l1d_read_access.log	0	133	6400	80	64	3	3	l1d_read_access	available	0	1084	5	1874389	6183291	6183291	1874389.000000
+shape	shapes_l1d_read_access.log	0	144	6400	80	80	0	0	cycles	available	0	1079	5	11254906	7032583	7032583	11254906.000000
+shape	shapes_l1d_read_access.log	0	144	6400	80	80	0	0	l1d_read_access	available	0	1082	5	1955846	7032583	7032583	1955846.000000
+shape	shapes_l1d_read_access.log	0	144	6400	80	80	1	1	cycles	available	0	1080	5	11045838	6905167	6905167	11045838.000000
+shape	shapes_l1d_read_access.log	0	144	6400	80	80	1	1	l1d_read_access	available	0	1081	5	1970528	6905167	6905167	1970528.000000
+shape	shapes_l1d_read_access.log	0	144	6400	80	80	2	2	cycles	available	0	1085	5	11123635	6945042	6945042	11123635.000000
+shape	shapes_l1d_read_access.log	0	144	6400	80	80	2	2	l1d_read_access	available	0	1086	5	1955851	6945042	6945042	1955851.000000
+shape	shapes_l1d_read_access.log	0	144	6400	80	80	3	3	cycles	available	0	1083	5	11462273	7174708	7174708	11462273.000000
+shape	shapes_l1d_read_access.log	0	144	6400	80	80	3	3	l1d_read_access	available	0	1084	5	1969040	7174708	7174708	1969040.000000
+shape	shapes_l1d_read_access.log	0	206	400	80	256	0	0	cycles	available	0	1079	5	1290236	810541	810541	1290236.000000
+shape	shapes_l1d_read_access.log	0	206	400	80	256	0	0	l1d_read_access	available	0	1082	5	179957	810541	810541	179957.000000
+shape	shapes_l1d_read_access.log	0	206	400	80	256	1	1	cycles	available	0	1080	5	1396435	882460	882460	1396435.000000
+shape	shapes_l1d_read_access.log	0	206	400	80	256	1	1	l1d_read_access	available	0	1081	5	202347	882460	882460	202347.000000
+shape	shapes_l1d_read_access.log	0	206	400	80	256	2	2	cycles	available	0	1085	5	1278813	798584	798584	1278813.000000
+shape	shapes_l1d_read_access.log	0	206	400	80	256	2	2	l1d_read_access	available	0	1086	5	179922	798584	798584	179922.000000
+shape	shapes_l1d_read_access.log	0	206	400	80	256	3	3	cycles	available	0	1083	5	1347544	851123	851123	1347544.000000
+shape	shapes_l1d_read_access.log	0	206	400	80	256	3	3	l1d_read_access	available	0	1084	5	199027	851123	851123	199027.000000
+shape	shapes_l1d_read_access.log	0	161	1600	16	1152	0	0	cycles	available	0	1079	5	10248502	6409709	6409709	10248502.000000
+shape	shapes_l1d_read_access.log	0	161	1600	16	1152	0	0	l1d_read_access	available	0	1082	5	1511961	6409709	6409709	1511961.000000
+shape	shapes_l1d_read_access.log	0	161	1600	16	1152	1	1	cycles	available	0	1080	5	10544465	6598211	6598211	10544465.000000
+shape	shapes_l1d_read_access.log	0	161	1600	16	1152	1	1	l1d_read_access	available	0	1081	5	1578444	6598211	6598211	1578444.000000
+shape	shapes_l1d_read_access.log	0	161	1600	16	1152	2	2	cycles	available	0	1085	5	10296824	6442498	6442498	10296824.000000
+shape	shapes_l1d_read_access.log	0	161	1600	16	1152	2	2	l1d_read_access	available	0	1086	5	1521707	6442498	6442498	1521707.000000
+shape	shapes_l1d_read_access.log	0	161	1600	16	1152	3	3	cycles	available	0	1083	5	10427652	6528376	6528376	10427652.000000
+shape	shapes_l1d_read_access.log	0	161	1600	16	1152	3	3	l1d_read_access	available	0	1084	5	1552651	6528376	6528376	1552651.000000
+shape	shapes_l1d_read_access.log	0	201	400	16	2304	0	0	cycles	available	0	1079	5	4499751	2819043	2819043	4499751.000000
+shape	shapes_l1d_read_access.log	0	201	400	16	2304	0	0	l1d_read_access	available	0	1082	5	745970	2819043	2819043	745970.000000
+shape	shapes_l1d_read_access.log	0	201	400	16	2304	1	1	cycles	available	0	1080	5	5105756	3198874	3198874	5105756.000000
+shape	shapes_l1d_read_access.log	0	201	400	16	2304	1	1	l1d_read_access	available	0	1081	5	870577	3198874	3198874	870577.000000
+shape	shapes_l1d_read_access.log	0	201	400	16	2304	2	2	cycles	available	0	1085	5	4540489	2847917	2847917	4540489.000000
+shape	shapes_l1d_read_access.log	0	201	400	16	2304	2	2	l1d_read_access	available	0	1086	5	759281	2847917	2847917	759281.000000
+shape	shapes_l1d_read_access.log	0	201	400	16	2304	3	3	cycles	available	0	1083	5	4935937	3099834	3099834	4935937.000000
+shape	shapes_l1d_read_access.log	0	201	400	16	2304	3	3	l1d_read_access	available	0	1084	5	814426	3099834	3099834	814426.000000
+shape	shapes_l1d_read_miss.log	0	5	25600	32	32	0	0	cycles	available	0	1093	5	15163403	9479167	9479167	15163403.000000
+shape	shapes_l1d_read_miss.log	0	5	25600	32	32	0	0	l1d_read_miss	available	0	1094	5	33851	9479167	9479167	33851.000000
+shape	shapes_l1d_read_miss.log	0	5	25600	32	32	1	1	cycles	available	0	1088	5	15284611	9553794	9553794	15284611.000000
+shape	shapes_l1d_read_miss.log	0	5	25600	32	32	1	1	l1d_read_miss	available	0	1090	5	33906	9553794	9553794	33906.000000
+shape	shapes_l1d_read_miss.log	0	5	25600	32	32	2	2	cycles	available	0	1091	5	15274528	9559041	9559041	15274528.000000
+shape	shapes_l1d_read_miss.log	0	5	25600	32	32	2	2	l1d_read_miss	available	0	1092	5	33036	9559041	9559041	33036.000000
+shape	shapes_l1d_read_miss.log	0	5	25600	32	32	3	3	cycles	available	0	1087	5	15340544	9595002	9595002	15340544.000000
+shape	shapes_l1d_read_miss.log	0	5	25600	32	32	3	3	l1d_read_miss	available	0	1089	5	34616	9595002	9595002	34616.000000
+shape	shapes_l1d_read_miss.log	0	12	25600	64	48	0	0	cycles	available	0	1093	5	38564487	24111289	24111289	38564487.000000
+shape	shapes_l1d_read_miss.log	0	12	25600	64	48	0	0	l1d_read_miss	available	0	1094	5	149573	24111289	24111289	149573.000000
+shape	shapes_l1d_read_miss.log	0	12	25600	64	48	1	1	cycles	available	0	1088	5	38276934	23912874	23912874	38276934.000000
+shape	shapes_l1d_read_miss.log	0	12	25600	64	48	1	1	l1d_read_miss	available	0	1090	5	149454	23912874	23912874	149454.000000
+shape	shapes_l1d_read_miss.log	0	12	25600	64	48	2	2	cycles	available	0	1091	5	38610422	24129460	24129460	38610422.000000
+shape	shapes_l1d_read_miss.log	0	12	25600	64	48	2	2	l1d_read_miss	available	0	1092	5	151674	24129460	24129460	151674.000000
+shape	shapes_l1d_read_miss.log	0	12	25600	64	48	3	3	cycles	available	0	1087	5	38729933	24214335	24214335	38729933.000000
+shape	shapes_l1d_read_miss.log	0	12	25600	64	48	3	3	l1d_read_miss	available	0	1089	5	148818	24214335	24214335	148818.000000
+shape	shapes_l1d_read_miss.log	0	124	6400	64	96	0	0	cycles	available	0	1093	5	9955491	6225126	6225126	9955491.000000
+shape	shapes_l1d_read_miss.log	0	124	6400	64	96	0	0	l1d_read_miss	available	0	1094	5	26906	6225126	6225126	26906.000000
+shape	shapes_l1d_read_miss.log	0	124	6400	64	96	1	1	cycles	available	0	1088	5	11723782	7325251	7325251	11723782.000000
+shape	shapes_l1d_read_miss.log	0	124	6400	64	96	1	1	l1d_read_miss	available	0	1090	5	33210	7325251	7325251	33210.000000
+shape	shapes_l1d_read_miss.log	0	124	6400	64	96	2	2	cycles	available	0	1091	5	10252823	6418331	6418331	10252823.000000
+shape	shapes_l1d_read_miss.log	0	124	6400	64	96	2	2	l1d_read_miss	available	0	1092	5	29448	6418331	6418331	29448.000000
+shape	shapes_l1d_read_miss.log	0	124	6400	64	96	3	3	cycles	available	0	1087	5	10564353	6604583	6604583	10564353.000000
+shape	shapes_l1d_read_miss.log	0	124	6400	64	96	3	3	l1d_read_miss	available	0	1089	5	29966	6604583	6604583	29966.000000
+shape	shapes_l1d_read_miss.log	0	133	6400	80	64	0	0	cycles	available	0	1093	5	9944498	6209874	6209874	9944498.000000
+shape	shapes_l1d_read_miss.log	0	133	6400	80	64	0	0	l1d_read_miss	available	0	1094	5	12650	6209874	6209874	12650.000000
+shape	shapes_l1d_read_miss.log	0	133	6400	80	64	1	1	cycles	available	0	1088	5	9931554	6206372	6206372	9931554.000000
+shape	shapes_l1d_read_miss.log	0	133	6400	80	64	1	1	l1d_read_miss	available	0	1090	5	11966	6206372	6206372	11966.000000
+shape	shapes_l1d_read_miss.log	0	133	6400	80	64	2	2	cycles	available	0	1091	5	9966724	6241541	6241541	9966724.000000
+shape	shapes_l1d_read_miss.log	0	133	6400	80	64	2	2	l1d_read_miss	available	0	1092	5	13206	6241541	6241541	13206.000000
+shape	shapes_l1d_read_miss.log	0	133	6400	80	64	3	3	cycles	available	0	1087	5	10035279	6280749	6280749	10035279.000000
+shape	shapes_l1d_read_miss.log	0	133	6400	80	64	3	3	l1d_read_miss	available	0	1089	5	13109	6280749	6280749	13109.000000
+shape	shapes_l1d_read_miss.log	0	144	6400	80	80	0	0	cycles	available	0	1093	5	11879456	7423665	7423665	11879456.000000
+shape	shapes_l1d_read_miss.log	0	144	6400	80	80	0	0	l1d_read_miss	available	0	1094	5	24956	7423665	7423665	24956.000000
+shape	shapes_l1d_read_miss.log	0	144	6400	80	80	1	1	cycles	available	0	1088	5	11448926	7142334	7142334	11448926.000000
+shape	shapes_l1d_read_miss.log	0	144	6400	80	80	1	1	l1d_read_miss	available	0	1090	5	22752	7142334	7142334	22752.000000
+shape	shapes_l1d_read_miss.log	0	144	6400	80	80	2	2	cycles	available	0	1091	5	11636287	7275877	7275877	11636287.000000
+shape	shapes_l1d_read_miss.log	0	144	6400	80	80	2	2	l1d_read_miss	available	0	1092	5	24469	7275877	7275877	24469.000000
+shape	shapes_l1d_read_miss.log	0	144	6400	80	80	3	3	cycles	available	0	1087	5	11682974	7312832	7312832	11682974.000000
+shape	shapes_l1d_read_miss.log	0	144	6400	80	80	3	3	l1d_read_miss	available	0	1089	5	23741	7312832	7312832	23741.000000
+shape	shapes_l1d_read_miss.log	0	206	400	80	256	0	0	cycles	available	0	1093	5	1288046	803042	803042	1288046.000000
+shape	shapes_l1d_read_miss.log	0	206	400	80	256	0	0	l1d_read_miss	available	0	1094	5	5560	803042	803042	5560.000000
+shape	shapes_l1d_read_miss.log	0	206	400	80	256	1	1	cycles	available	0	1088	5	1382895	877335	877335	1382895.000000
+shape	shapes_l1d_read_miss.log	0	206	400	80	256	1	1	l1d_read_miss	available	0	1090	5	6083	877335	877335	6083.000000
+shape	shapes_l1d_read_miss.log	0	206	400	80	256	2	2	cycles	available	0	1091	5	1271581	797166	797166	1271581.000000
+shape	shapes_l1d_read_miss.log	0	206	400	80	256	2	2	l1d_read_miss	available	0	1092	5	5525	797166	797166	5525.000000
+shape	shapes_l1d_read_miss.log	0	206	400	80	256	3	3	cycles	available	0	1087	5	1346115	851252	851252	1346115.000000
+shape	shapes_l1d_read_miss.log	0	206	400	80	256	3	3	l1d_read_miss	available	0	1089	5	5782	851252	851252	5782.000000
+shape	shapes_l1d_read_miss.log	0	161	1600	16	1152	0	0	cycles	available	0	1093	5	10265550	6415416	6415416	10265550.000000
+shape	shapes_l1d_read_miss.log	0	161	1600	16	1152	0	0	l1d_read_miss	available	0	1094	5	36646	6415416	6415416	36646.000000
+shape	shapes_l1d_read_miss.log	0	161	1600	16	1152	1	1	cycles	available	0	1088	5	10542511	6602625	6602625	10542511.000000
+shape	shapes_l1d_read_miss.log	0	161	1600	16	1152	1	1	l1d_read_miss	available	0	1090	5	35061	6602625	6602625	35061.000000
+shape	shapes_l1d_read_miss.log	0	161	1600	16	1152	2	2	cycles	available	0	1091	5	10329877	6466249	6466249	10329877.000000
+shape	shapes_l1d_read_miss.log	0	161	1600	16	1152	2	2	l1d_read_miss	available	0	1092	5	36008	6466249	6466249	36008.000000
+shape	shapes_l1d_read_miss.log	0	161	1600	16	1152	3	3	cycles	available	0	1087	5	10404264	6516126	6516126	10404264.000000
+shape	shapes_l1d_read_miss.log	0	161	1600	16	1152	3	3	l1d_read_miss	available	0	1089	5	35675	6516126	6516126	35675.000000
+shape	shapes_l1d_read_miss.log	0	201	400	16	2304	0	0	cycles	available	0	1093	5	4404729	2755083	2755083	4404729.000000
+shape	shapes_l1d_read_miss.log	0	201	400	16	2304	0	0	l1d_read_miss	available	0	1094	5	7131	2755083	2755083	7131.000000
+shape	shapes_l1d_read_miss.log	0	201	400	16	2304	1	1	cycles	available	0	1088	5	5024304	3154169	3154169	5024304.000000
+shape	shapes_l1d_read_miss.log	0	201	400	16	2304	1	1	l1d_read_miss	available	0	1090	5	7319	3154169	3154169	7319.000000
+shape	shapes_l1d_read_miss.log	0	201	400	16	2304	2	2	cycles	available	0	1091	5	4459911	2797043	2797043	4459911.000000
+shape	shapes_l1d_read_miss.log	0	201	400	16	2304	2	2	l1d_read_miss	available	0	1092	5	7214	2797043	2797043	7214.000000
+shape	shapes_l1d_read_miss.log	0	201	400	16	2304	3	3	cycles	available	0	1087	5	4904690	3080665	3080665	4904690.000000
+shape	shapes_l1d_read_miss.log	0	201	400	16	2304	3	3	l1d_read_miss	available	0	1089	5	7987	3080665	3080665	7987.000000
+shape	shapes_l1i_read_access.log	0	5	25600	32	32	0	0	cycles	available	0	1096	5	15093895	9429500	9429500	15093895.000000
+shape	shapes_l1i_read_access.log	0	5	25600	32	32	0	0	l1i_read_access	available	0	1098	5	6599138	9429500	9429500	6599138.000000
+shape	shapes_l1i_read_access.log	0	5	25600	32	32	1	1	cycles	available	0	1095	5	15141946	9468710	9468710	15141946.000000
+shape	shapes_l1i_read_access.log	0	5	25600	32	32	1	1	l1i_read_access	available	0	1097	5	6663286	9468710	9468710	6663286.000000
+shape	shapes_l1i_read_access.log	0	5	25600	32	32	2	2	cycles	available	0	1101	5	15148888	9456335	9456335	15148888.000000
+shape	shapes_l1i_read_access.log	0	5	25600	32	32	2	2	l1i_read_access	available	0	1102	5	6600482	9456335	9456335	6600482.000000
+shape	shapes_l1i_read_access.log	0	5	25600	32	32	3	3	cycles	available	0	1099	5	15152702	9473669	9473669	15152702.000000
+shape	shapes_l1i_read_access.log	0	5	25600	32	32	3	3	l1i_read_access	available	0	1100	5	6650602	9473669	9473669	6650602.000000
+shape	shapes_l1i_read_access.log	0	12	25600	64	48	0	0	cycles	available	0	1096	5	38672110	24180666	24180666	38672110.000000
+shape	shapes_l1i_read_access.log	0	12	25600	64	48	0	0	l1i_read_access	available	0	1098	5	13782099	24180666	24180666	13782099.000000
+shape	shapes_l1i_read_access.log	0	12	25600	64	48	1	1	cycles	available	0	1095	5	38611150	24140709	24140709	38611150.000000
+shape	shapes_l1i_read_access.log	0	12	25600	64	48	1	1	l1i_read_access	available	0	1097	5	13808563	24140709	24140709	13808563.000000
+shape	shapes_l1i_read_access.log	0	12	25600	64	48	2	2	cycles	available	0	1101	5	38623131	24131456	24131456	38623131.000000
+shape	shapes_l1i_read_access.log	0	12	25600	64	48	2	2	l1i_read_access	available	0	1102	5	13713411	24131456	24131456	13713411.000000
+shape	shapes_l1i_read_access.log	0	12	25600	64	48	3	3	cycles	available	0	1099	5	38584628	24113914	24113914	38584628.000000
+shape	shapes_l1i_read_access.log	0	12	25600	64	48	3	3	l1i_read_access	available	0	1100	5	13876949	24113914	24113914	13876949.000000
+shape	shapes_l1i_read_access.log	0	124	6400	64	96	0	0	cycles	available	0	1096	5	11158634	6994418	6994418	11158634.000000
+shape	shapes_l1i_read_access.log	0	124	6400	64	96	0	0	l1i_read_access	available	0	1098	5	3767577	6994418	6994418	3767577.000000
+shape	shapes_l1i_read_access.log	0	124	6400	64	96	1	1	cycles	available	0	1095	5	10568008	6605666	6605666	10568008.000000
+shape	shapes_l1i_read_access.log	0	124	6400	64	96	1	1	l1i_read_access	available	0	1097	5	3696777	6605666	6605666	3696777.000000
+shape	shapes_l1i_read_access.log	0	124	6400	64	96	2	2	cycles	available	0	1101	5	9835446	6146002	6146002	9835446.000000
+shape	shapes_l1i_read_access.log	0	124	6400	64	96	2	2	l1i_read_access	available	0	1102	5	3746337	6146002	6146002	3746337.000000
+shape	shapes_l1i_read_access.log	0	124	6400	64	96	3	3	cycles	available	0	1099	5	10468534	6538501	6538501	10468534.000000
+shape	shapes_l1i_read_access.log	0	124	6400	64	96	3	3	l1i_read_access	available	0	1100	5	3828049	6538501	6538501	3828049.000000
+shape	shapes_l1i_read_access.log	0	133	6400	80	64	0	0	cycles	available	0	1096	5	10064804	6286250	6286250	10064804.000000
+shape	shapes_l1i_read_access.log	0	133	6400	80	64	0	0	l1i_read_access	available	0	1098	5	4408925	6286250	6286250	4408925.000000
+shape	shapes_l1i_read_access.log	0	133	6400	80	64	1	1	cycles	available	0	1095	5	10034533	6263209	6263209	10034533.000000
+shape	shapes_l1i_read_access.log	0	133	6400	80	64	1	1	l1i_read_access	available	0	1097	5	4488442	6263209	6263209	4488442.000000
+shape	shapes_l1i_read_access.log	0	133	6400	80	64	2	2	cycles	available	0	1101	5	10067211	6292752	6292752	10067211.000000
+shape	shapes_l1i_read_access.log	0	133	6400	80	64	2	2	l1i_read_access	available	0	1102	5	4450069	6292752	6292752	4450069.000000
+shape	shapes_l1i_read_access.log	0	133	6400	80	64	3	3	cycles	available	0	1099	5	10216625	6389708	6389708	10216625.000000
+shape	shapes_l1i_read_access.log	0	133	6400	80	64	3	3	l1i_read_access	available	0	1100	5	4466781	6389708	6389708	4466781.000000
+shape	shapes_l1i_read_access.log	0	144	6400	80	80	0	0	cycles	available	0	1096	5	11551832	7232376	7232376	11551832.000000
+shape	shapes_l1i_read_access.log	0	144	6400	80	80	0	0	l1i_read_access	available	0	1098	5	4565828	7232376	7232376	4565828.000000
+shape	shapes_l1i_read_access.log	0	144	6400	80	80	1	1	cycles	available	0	1095	5	11374673	7097917	7097917	11374673.000000
+shape	shapes_l1i_read_access.log	0	144	6400	80	80	1	1	l1i_read_access	available	0	1097	5	4593708	7097917	7097917	4593708.000000
+shape	shapes_l1i_read_access.log	0	144	6400	80	80	2	2	cycles	available	0	1101	5	11582318	7242792	7242792	11582318.000000
+shape	shapes_l1i_read_access.log	0	144	6400	80	80	2	2	l1i_read_access	available	0	1102	5	4536553	7242792	7242792	4536553.000000
+shape	shapes_l1i_read_access.log	0	144	6400	80	80	3	3	cycles	available	0	1099	5	11437422	7148625	7148625	11437422.000000
+shape	shapes_l1i_read_access.log	0	144	6400	80	80	3	3	l1i_read_access	available	0	1100	5	4549531	7148625	7148625	4549531.000000
+shape	shapes_l1i_read_access.log	0	206	400	80	256	0	0	cycles	available	0	1096	5	1257666	791334	791334	1257666.000000
+shape	shapes_l1i_read_access.log	0	206	400	80	256	0	0	l1i_read_access	available	0	1098	5	356262	791334	791334	356262.000000
+shape	shapes_l1i_read_access.log	0	206	400	80	256	1	1	cycles	available	0	1095	5	1379988	871960	871960	1379988.000000
+shape	shapes_l1i_read_access.log	0	206	400	80	256	1	1	l1i_read_access	available	0	1097	5	396639	871960	871960	396639.000000
+shape	shapes_l1i_read_access.log	0	206	400	80	256	2	2	cycles	available	0	1101	5	1279172	802416	802416	1279172.000000
+shape	shapes_l1i_read_access.log	0	206	400	80	256	2	2	l1i_read_access	available	0	1102	5	353338	802416	802416	353338.000000
+shape	shapes_l1i_read_access.log	0	206	400	80	256	3	3	cycles	available	0	1099	5	1384948	875999	875999	1384948.000000
+shape	shapes_l1i_read_access.log	0	206	400	80	256	3	3	l1i_read_access	available	0	1100	5	394829	875999	875999	394829.000000
+shape	shapes_l1i_read_access.log	0	161	1600	16	1152	0	0	cycles	available	0	1096	5	10285040	6433832	6433832	10285040.000000
+shape	shapes_l1i_read_access.log	0	161	1600	16	1152	0	0	l1i_read_access	available	0	1098	5	4072300	6433832	6433832	4072300.000000
+shape	shapes_l1i_read_access.log	0	161	1600	16	1152	1	1	cycles	available	0	1095	5	10585002	6625208	6625208	10585002.000000
+shape	shapes_l1i_read_access.log	0	161	1600	16	1152	1	1	l1i_read_access	available	0	1097	5	4098515	6625208	6625208	4098515.000000
+shape	shapes_l1i_read_access.log	0	161	1600	16	1152	2	2	cycles	available	0	1101	5	10270347	6425959	6425959	10270347.000000
+shape	shapes_l1i_read_access.log	0	161	1600	16	1152	2	2	l1i_read_access	available	0	1102	5	4154292	6425959	6425959	4154292.000000
+shape	shapes_l1i_read_access.log	0	161	1600	16	1152	3	3	cycles	available	0	1099	5	10462557	6554083	6554083	10462557.000000
+shape	shapes_l1i_read_access.log	0	161	1600	16	1152	3	3	l1i_read_access	available	0	1100	5	4057050	6554083	6554083	4057050.000000
+shape	shapes_l1i_read_access.log	0	201	400	16	2304	0	0	cycles	available	0	1096	5	4455651	2787501	2787501	4455651.000000
+shape	shapes_l1i_read_access.log	0	201	400	16	2304	0	0	l1i_read_access	available	0	1098	5	2154004	2787501	2787501	2154004.000000
+shape	shapes_l1i_read_access.log	0	201	400	16	2304	1	1	cycles	available	0	1095	5	5132871	3223457	3223457	5132871.000000
+shape	shapes_l1i_read_access.log	0	201	400	16	2304	1	1	l1i_read_access	available	0	1097	5	2247680	3223457	3223457	2247680.000000
+shape	shapes_l1i_read_access.log	0	201	400	16	2304	2	2	cycles	available	0	1101	5	4516539	2832500	2832500	4516539.000000
+shape	shapes_l1i_read_access.log	0	201	400	16	2304	2	2	l1i_read_access	available	0	1102	5	2096783	2832500	2832500	2096783.000000
+shape	shapes_l1i_read_access.log	0	201	400	16	2304	3	3	cycles	available	0	1099	5	4949620	3107998	3107998	4949620.000000
+shape	shapes_l1i_read_access.log	0	201	400	16	2304	3	3	l1i_read_access	available	0	1100	5	2281525	3107998	3107998	2281525.000000
+shape	shapes_l1i_read_miss.log	0	5	25600	32	32	0	0	cycles	available	0	1109	5	15237617	9520127	9520127	15237617.000000
+shape	shapes_l1i_read_miss.log	0	5	25600	32	32	0	0	l1i_read_miss	available	0	1110	5	414	9520127	9520127	414.000000
+shape	shapes_l1i_read_miss.log	0	5	25600	32	32	1	1	cycles	available	0	1104	5	15267912	9542876	9542876	15267912.000000
+shape	shapes_l1i_read_miss.log	0	5	25600	32	32	1	1	l1i_read_miss	available	0	1106	5	412	9542876	9542876	412.000000
+shape	shapes_l1i_read_miss.log	0	5	25600	32	32	2	2	cycles	available	0	1103	5	15298338	9559332	9559332	15298338.000000
+shape	shapes_l1i_read_miss.log	0	5	25600	32	32	2	2	l1i_read_miss	available	0	1105	5	411	9559332	9559332	411.000000
+shape	shapes_l1i_read_miss.log	0	5	25600	32	32	3	3	cycles	available	0	1107	5	15331137	9585667	9585667	15331137.000000
+shape	shapes_l1i_read_miss.log	0	5	25600	32	32	3	3	l1i_read_miss	available	0	1108	5	574	9585667	9585667	574.000000
+shape	shapes_l1i_read_miss.log	0	12	25600	64	48	0	0	cycles	available	0	1109	5	38505694	24065500	24065500	38505694.000000
+shape	shapes_l1i_read_miss.log	0	12	25600	64	48	0	0	l1i_read_miss	available	0	1110	5	455	24065500	24065500	455.000000
+shape	shapes_l1i_read_miss.log	0	12	25600	64	48	1	1	cycles	available	0	1104	5	38434887	24007583	24007583	38434887.000000
+shape	shapes_l1i_read_miss.log	0	12	25600	64	48	1	1	l1i_read_miss	available	0	1106	5	442	24007583	24007583	442.000000
+shape	shapes_l1i_read_miss.log	0	12	25600	64	48	2	2	cycles	available	0	1103	5	38672122	24182169	24182169	38672122.000000
+shape	shapes_l1i_read_miss.log	0	12	25600	64	48	2	2	l1i_read_miss	available	0	1105	5	439	24182169	24182169	439.000000
+shape	shapes_l1i_read_miss.log	0	12	25600	64	48	3	3	cycles	available	0	1107	5	38561944	24099293	24099293	38561944.000000
+shape	shapes_l1i_read_miss.log	0	12	25600	64	48	3	3	l1i_read_miss	available	0	1108	5	610	24099293	24099293	610.000000
+shape	shapes_l1i_read_miss.log	0	124	6400	64	96	0	0	cycles	available	0	1109	5	10843778	6788084	6788084	10843778.000000
+shape	shapes_l1i_read_miss.log	0	124	6400	64	96	0	0	l1i_read_miss	available	0	1110	5	364	6788084	6788084	364.000000
+shape	shapes_l1i_read_miss.log	0	124	6400	64	96	1	1	cycles	available	0	1104	5	10959207	6854125	6854125	10959207.000000
+shape	shapes_l1i_read_miss.log	0	124	6400	64	96	1	1	l1i_read_miss	available	0	1106	5	367	6854125	6854125	367.000000
+shape	shapes_l1i_read_miss.log	0	124	6400	64	96	2	2	cycles	available	0	1103	5	9903826	6183416	6183416	9903826.000000
+shape	shapes_l1i_read_miss.log	0	124	6400	64	96	2	2	l1i_read_miss	available	0	1105	5	370	6183416	6183416	370.000000
+shape	shapes_l1i_read_miss.log	0	124	6400	64	96	3	3	cycles	available	0	1107	5	10181995	6362625	6362625	10181995.000000
+shape	shapes_l1i_read_miss.log	0	124	6400	64	96	3	3	l1i_read_miss	available	0	1108	5	499	6362625	6362625	499.000000
+shape	shapes_l1i_read_miss.log	0	133	6400	80	64	0	0	cycles	available	0	1109	5	10067175	6302041	6302041	10067175.000000
+shape	shapes_l1i_read_miss.log	0	133	6400	80	64	0	0	l1i_read_miss	available	0	1110	5	397	6302041	6302041	397.000000
+shape	shapes_l1i_read_miss.log	0	133	6400	80	64	1	1	cycles	available	0	1104	5	9985395	6235625	6235625	9985395.000000
+shape	shapes_l1i_read_miss.log	0	133	6400	80	64	1	1	l1i_read_miss	available	0	1106	5	403	6235625	6235625	403.000000
+shape	shapes_l1i_read_miss.log	0	133	6400	80	64	2	2	cycles	available	0	1103	5	10011312	6249041	6249041	10011312.000000
+shape	shapes_l1i_read_miss.log	0	133	6400	80	64	2	2	l1i_read_miss	available	0	1105	5	411	6249041	6249041	411.000000
+shape	shapes_l1i_read_miss.log	0	133	6400	80	64	3	3	cycles	available	0	1107	5	10147760	6344915	6344915	10147760.000000
+shape	shapes_l1i_read_miss.log	0	133	6400	80	64	3	3	l1i_read_miss	available	0	1108	5	554	6344915	6344915	554.000000
+shape	shapes_l1i_read_miss.log	0	144	6400	80	80	0	0	cycles	available	0	1109	5	11764106	7349543	7349543	11764106.000000
+shape	shapes_l1i_read_miss.log	0	144	6400	80	80	0	0	l1i_read_miss	available	0	1110	5	450	7349543	7349543	450.000000
+shape	shapes_l1i_read_miss.log	0	144	6400	80	80	1	1	cycles	available	0	1104	5	11826715	7411584	7411584	11826715.000000
+shape	shapes_l1i_read_miss.log	0	144	6400	80	80	1	1	l1i_read_miss	available	0	1106	5	483	7411584	7411584	483.000000
+shape	shapes_l1i_read_miss.log	0	144	6400	80	80	2	2	cycles	available	0	1103	5	11625007	7264209	7264209	11625007.000000
+shape	shapes_l1i_read_miss.log	0	144	6400	80	80	2	2	l1i_read_miss	available	0	1105	5	454	7264209	7264209	454.000000
+shape	shapes_l1i_read_miss.log	0	144	6400	80	80	3	3	cycles	available	0	1107	5	11987824	7510876	7510876	11987824.000000
+shape	shapes_l1i_read_miss.log	0	144	6400	80	80	3	3	l1i_read_miss	available	0	1108	5	678	7510876	7510876	678.000000
+shape	shapes_l1i_read_miss.log	0	206	400	80	256	0	0	cycles	available	0	1109	5	1425687	889750	889750	1425687.000000
+shape	shapes_l1i_read_miss.log	0	206	400	80	256	0	0	l1i_read_miss	available	0	1110	5	397	889750	889750	397.000000
+shape	shapes_l1i_read_miss.log	0	206	400	80	256	1	1	cycles	available	0	1104	5	1452720	918125	918125	1452720.000000
+shape	shapes_l1i_read_miss.log	0	206	400	80	256	1	1	l1i_read_miss	available	0	1106	5	400	918125	918125	400.000000
+shape	shapes_l1i_read_miss.log	0	206	400	80	256	2	2	cycles	available	0	1103	5	1332499	834415	834415	1332499.000000
+shape	shapes_l1i_read_miss.log	0	206	400	80	256	2	2	l1i_read_miss	available	0	1105	5	390	834415	834415	390.000000
+shape	shapes_l1i_read_miss.log	0	206	400	80	256	3	3	cycles	available	0	1107	5	1410752	890125	890125	1410752.000000
+shape	shapes_l1i_read_miss.log	0	206	400	80	256	3	3	l1i_read_miss	available	0	1108	5	524	890125	890125	524.000000
+shape	shapes_l1i_read_miss.log	0	161	1600	16	1152	0	0	cycles	available	0	1109	5	10237674	6397541	6397541	10237674.000000
+shape	shapes_l1i_read_miss.log	0	161	1600	16	1152	0	0	l1i_read_miss	available	0	1110	5	460	6397541	6397541	460.000000
+shape	shapes_l1i_read_miss.log	0	161	1600	16	1152	1	1	cycles	available	0	1104	5	10597856	6633292	6633292	10597856.000000
+shape	shapes_l1i_read_miss.log	0	161	1600	16	1152	1	1	l1i_read_miss	available	0	1106	5	451	6633292	6633292	451.000000
+shape	shapes_l1i_read_miss.log	0	161	1600	16	1152	2	2	cycles	available	0	1103	5	10231477	6400250	6400250	10231477.000000
+shape	shapes_l1i_read_miss.log	0	161	1600	16	1152	2	2	l1i_read_miss	available	0	1105	5	438	6400250	6400250	438.000000
+shape	shapes_l1i_read_miss.log	0	161	1600	16	1152	3	3	cycles	available	0	1107	5	10408764	6517751	6517751	10408764.000000
+shape	shapes_l1i_read_miss.log	0	161	1600	16	1152	3	3	l1i_read_miss	available	0	1108	5	451	6517751	6517751	451.000000
+shape	shapes_l1i_read_miss.log	0	201	400	16	2304	0	0	cycles	available	0	1109	5	4443477	2783750	2783750	4443477.000000
+shape	shapes_l1i_read_miss.log	0	201	400	16	2304	0	0	l1i_read_miss	available	0	1110	5	466	2783750	2783750	466.000000
+shape	shapes_l1i_read_miss.log	0	201	400	16	2304	1	1	cycles	available	0	1104	5	5145822	3235001	3235001	5145822.000000
+shape	shapes_l1i_read_miss.log	0	201	400	16	2304	1	1	l1i_read_miss	available	0	1106	5	461	3235001	3235001	461.000000
+shape	shapes_l1i_read_miss.log	0	201	400	16	2304	2	2	cycles	available	0	1103	5	4566692	2860248	2860248	4566692.000000
+shape	shapes_l1i_read_miss.log	0	201	400	16	2304	2	2	l1i_read_miss	available	0	1105	5	468	2860248	2860248	468.000000
+shape	shapes_l1i_read_miss.log	0	201	400	16	2304	3	3	cycles	available	0	1107	5	4842616	3042249	3042249	4842616.000000
+shape	shapes_l1i_read_miss.log	0	201	400	16	2304	3	3	l1i_read_miss	available	0	1108	5	461	3042249	3042249	461.000000
+full_model	single_selected_backend_stalls.log	0	-1				0	0	cycles	available	0	149	216	222527128	139411866	139411866	222527128.000000	12799
+full_model	single_selected_backend_stalls.log	0	-1				0	0	backend_stalls	available	0	150	216	101968422	139411866	139411866	101968422.000000	12799
+full_model	single_selected_backend_stalls.log	0	-1				1	1	cycles	available	0	146	216	223437384	140025242	140025242	223437384.000000	12800
+full_model	single_selected_backend_stalls.log	0	-1				1	1	backend_stalls	available	0	148	216	102908958	140025242	140025242	102908958.000000	12800
+full_model	single_selected_backend_stalls.log	0	-1				2	2	cycles	available	0	145	216	221677914	138847411	138847411	221677914.000000	12801
+full_model	single_selected_backend_stalls.log	0	-1				2	2	backend_stalls	available	0	147	216	102433012	138847411	138847411	102433012.000000	12801
+full_model	single_selected_backend_stalls.log	0	-1				3	3	cycles	available	0	151	216	224676235	140843128	140843128	224676235.000000	12802
+full_model	single_selected_backend_stalls.log	0	-1				3	3	backend_stalls	available	0	152	216	105063499	140843128	140843128	105063499.000000	12802
+full_model	single_selected_backend_stalls.log	1	-1				0	0	cycles	available	0	149	216	222025574	139113550	139113550	222025574.000000	12799
+full_model	single_selected_backend_stalls.log	1	-1				0	0	backend_stalls	available	0	150	216	102159061	139113550	139113550	102159061.000000	12799
+full_model	single_selected_backend_stalls.log	1	-1				1	1	cycles	available	0	146	216	223278009	139896003	139896003	223278009.000000	12800
+full_model	single_selected_backend_stalls.log	1	-1				1	1	backend_stalls	available	0	148	216	102841277	139896003	139896003	102841277.000000	12800
+full_model	single_selected_backend_stalls.log	1	-1				2	2	cycles	available	0	145	216	221041751	138475103	138475103	221041751.000000	12801
+full_model	single_selected_backend_stalls.log	1	-1				2	2	backend_stalls	available	0	147	216	102435866	138475103	138475103	102435866.000000	12801
+full_model	single_selected_backend_stalls.log	1	-1				3	3	cycles	available	0	151	216	224242940	140575049	140575049	224242940.000000	12802
+full_model	single_selected_backend_stalls.log	1	-1				3	3	backend_stalls	available	0	152	216	104972514	140575049	140575049	104972514.000000	12802
+full_model	single_selected_backend_stalls.log	2	-1				0	0	cycles	available	0	149	216	222137169	139195888	139195888	222137169.000000	12799
+full_model	single_selected_backend_stalls.log	2	-1				0	0	backend_stalls	available	0	150	216	102574360	139195888	139195888	102574360.000000	12799
+full_model	single_selected_backend_stalls.log	2	-1				1	1	cycles	available	0	146	216	223993189	140403508	140403508	223993189.000000	12800
+full_model	single_selected_backend_stalls.log	2	-1				1	1	backend_stalls	available	0	148	216	103751639	140403508	140403508	103751639.000000	12800
+full_model	single_selected_backend_stalls.log	2	-1				2	2	cycles	available	0	145	216	220331886	138083743	138083743	220331886.000000	12801
+full_model	single_selected_backend_stalls.log	2	-1				2	2	backend_stalls	available	0	147	216	101862797	138083743	138083743	101862797.000000	12801
+full_model	single_selected_backend_stalls.log	2	-1				3	3	cycles	available	0	151	216	224436355	140696522	140696522	224436355.000000	12802
+full_model	single_selected_backend_stalls.log	2	-1				3	3	backend_stalls	available	0	152	216	105338854	140696522	140696522	105338854.000000	12802
+full_model	single_selected_branch_misses.log	0	-1				0	0	cycles	available	0	163	216	221979283	139052582	139052582	221979283.000000	12809
+full_model	single_selected_branch_misses.log	0	-1				0	0	branch_misses	available	0	164	216	117866	139052582	139052582	117866.000000	12809
+full_model	single_selected_branch_misses.log	0	-1				1	1	cycles	available	0	167	216	224184388	140499539	140499539	224184388.000000	12810
+full_model	single_selected_branch_misses.log	0	-1				1	1	branch_misses	available	0	168	216	113690	140499539	140499539	113690.000000	12810
+full_model	single_selected_branch_misses.log	0	-1				2	2	cycles	available	0	161	216	220237048	137965421	137965421	220237048.000000	12811
+full_model	single_selected_branch_misses.log	0	-1				2	2	branch_misses	available	0	162	216	109102	137965421	137965421	109102.000000	12811
+full_model	single_selected_branch_misses.log	0	-1				3	3	cycles	available	0	165	216	225170149	141196583	141196583	225170149.000000	12812
+full_model	single_selected_branch_misses.log	0	-1				3	3	branch_misses	available	0	166	216	117835	141196583	141196583	117835.000000	12812
+full_model	single_selected_branch_misses.log	1	-1				0	0	cycles	available	0	163	216	222862052	139604921	139604921	222862052.000000	12809
+full_model	single_selected_branch_misses.log	1	-1				0	0	branch_misses	available	0	164	216	120843	139604921	139604921	120843.000000	12809
+full_model	single_selected_branch_misses.log	1	-1				1	1	cycles	available	0	167	216	223059401	139812716	139812716	223059401.000000	12810
+full_model	single_selected_branch_misses.log	1	-1				1	1	branch_misses	available	0	168	216	112129	139812716	139812716	112129.000000	12810
+full_model	single_selected_branch_misses.log	1	-1				2	2	cycles	available	0	161	216	219714279	137637580	137637580	219714279.000000	12811
+full_model	single_selected_branch_misses.log	1	-1				2	2	branch_misses	available	0	162	216	109104	137637580	137637580	109104.000000	12811
+full_model	single_selected_branch_misses.log	1	-1				3	3	cycles	available	0	165	216	224608832	140835671	140835671	224608832.000000	12812
+full_model	single_selected_branch_misses.log	1	-1				3	3	branch_misses	available	0	166	216	113040	140835671	140835671	113040.000000	12812
+full_model	single_selected_branch_misses.log	2	-1				0	0	cycles	available	0	163	216	222248917	139234469	139234469	222248917.000000	12809
+full_model	single_selected_branch_misses.log	2	-1				0	0	branch_misses	available	0	164	216	120196	139234469	139234469	120196.000000	12809
+full_model	single_selected_branch_misses.log	2	-1				1	1	cycles	available	0	167	216	224539776	140708075	140708075	224539776.000000	12810
+full_model	single_selected_branch_misses.log	2	-1				1	1	branch_misses	available	0	168	216	113689	140708075	140708075	113689.000000	12810
+full_model	single_selected_branch_misses.log	2	-1				2	2	cycles	available	0	161	216	221051619	138504876	138504876	221051619.000000	12811
+full_model	single_selected_branch_misses.log	2	-1				2	2	branch_misses	available	0	162	216	113472	138504876	138504876	113472.000000	12811
+full_model	single_selected_branch_misses.log	2	-1				3	3	cycles	available	0	165	216	225052709	141109880	141109880	225052709.000000	12812
+full_model	single_selected_branch_misses.log	2	-1				3	3	branch_misses	available	0	166	216	115502	141109880	141109880	115502.000000	12812
+full_model	single_selected_branches.log	0	-1				0	0	cycles	available	0	155	216	227371727	142509745	142509745	227371727.000000	12804
+full_model	single_selected_branches.log	0	-1				0	0	branches	available	0	156	216	13062776	142509745	142509745	13062776.000000	12804
+full_model	single_selected_branches.log	0	-1				1	1	cycles	available	0	159	216	224546054	140772781	140772781	224546054.000000	12805
+full_model	single_selected_branches.log	0	-1				1	1	branches	available	0	160	216	13213595	140772781	140772781	13213595.000000	12805
+full_model	single_selected_branches.log	0	-1				2	2	cycles	available	0	157	216	221583843	138911242	138911242	221583843.000000	12806
+full_model	single_selected_branches.log	0	-1				2	2	branches	available	0	158	216	12899492	138911242	138911242	12899492.000000	12806
+full_model	single_selected_branches.log	0	-1				3	3	cycles	available	0	153	216	225591467	141501868	141501868	225591467.000000	12807
+full_model	single_selected_branches.log	0	-1				3	3	branches	available	0	154	216	13137047	141501868	141501868	13137047.000000	12807
+full_model	single_selected_branches.log	1	-1				0	0	cycles	available	0	155	216	222023400	139198427	139198427	222023400.000000	12804
+full_model	single_selected_branches.log	1	-1				0	0	branches	available	0	156	216	13062517	139198427	139198427	13062517.000000	12804
+full_model	single_selected_branches.log	1	-1				1	1	cycles	available	0	159	216	223330675	140017461	140017461	223330675.000000	12805
+full_model	single_selected_branches.log	1	-1				1	1	branches	available	0	160	216	13213443	140017461	140017461	13213443.000000	12805
+full_model	single_selected_branches.log	1	-1				2	2	cycles	available	0	157	216	219810515	137787543	137787543	219810515.000000	12806
+full_model	single_selected_branches.log	1	-1				2	2	branches	available	0	158	216	12899337	137787543	137787543	12899337.000000	12806
+full_model	single_selected_branches.log	1	-1				3	3	cycles	available	0	153	216	224113827	140581996	140581996	224113827.000000	12807
+full_model	single_selected_branches.log	1	-1				3	3	branches	available	0	154	216	13136892	140581996	140581996	13136892.000000	12807
+full_model	single_selected_branches.log	2	-1				0	0	cycles	available	0	155	216	221964197	139134842	139134842	221964197.000000	12804
+full_model	single_selected_branches.log	2	-1				0	0	branches	available	0	156	216	13062518	139134842	139134842	13062518.000000	12804
+full_model	single_selected_branches.log	2	-1				1	1	cycles	available	0	159	216	224203093	140613837	140613837	224203093.000000	12805
+full_model	single_selected_branches.log	2	-1				1	1	branches	available	0	160	216	13213444	140613837	140613837	13213444.000000	12805
+full_model	single_selected_branches.log	2	-1				2	2	cycles	available	0	157	216	220383256	138117099	138117099	220383256.000000	12806
+full_model	single_selected_branches.log	2	-1				2	2	branches	available	0	158	216	12899333	138117099	138117099	12899333.000000	12806
+full_model	single_selected_branches.log	2	-1				3	3	cycles	available	0	153	216	225583322	141484463	141484463	225583322.000000	12807
+full_model	single_selected_branches.log	2	-1				3	3	branches	available	0	154	216	13136891	141484463	141484463	13136891.000000	12807
+full_model	single_selected_dtlb_read_access.log	0	-1				0	0	cycles	available	0	217	216	1899590	139781920	1539669	172458065.605529	12845
+full_model	single_selected_dtlb_read_access.log	0	-1				0	0	dtlb_read_access	available	0	219	216	0	139781920	1539669	0.000000	12845
+full_model	single_selected_dtlb_read_access.log	0	-1				1	1	cycles	available	0	223	216	1854263	140995365	1532492	170599578.001709	12846
+full_model	single_selected_dtlb_read_access.log	0	-1				1	1	dtlb_read_access	available	0	224	216	0	140995365	1532492	0.000000	12846
+full_model	single_selected_dtlb_read_access.log	0	-1				2	2	cycles	available	0	218	216	1853235	138737034	1524871	168612510.307423	12847
+full_model	single_selected_dtlb_read_access.log	0	-1				2	2	dtlb_read_access	available	0	220	216	0	138737034	1524871	0.000000	12847
+full_model	single_selected_dtlb_read_access.log	0	-1				3	3	cycles	available	0	221	216	1891199	141704502	1508207	177688747.285948	12848
+full_model	single_selected_dtlb_read_access.log	0	-1				3	3	dtlb_read_access	available	0	222	216	0	141704502	1508207	0.000000	12848
+full_model	single_selected_dtlb_read_access.log	1	-1				0	0	cycles	available	0	217	216	1838288	139836173	1499250	171458501.778772	12845
+full_model	single_selected_dtlb_read_access.log	1	-1				0	0	dtlb_read_access	available	0	219	216	0	139836173	1499250	0.000000	12845
+full_model	single_selected_dtlb_read_access.log	1	-1				1	1	cycles	available	0	223	216	1842905	140525366	1568120	165149924.513577	12846
+full_model	single_selected_dtlb_read_access.log	1	-1				1	1	dtlb_read_access	available	0	224	216	0	140525366	1568120	0.000000	12846
+full_model	single_selected_dtlb_read_access.log	1	-1				2	2	cycles	available	0	218	216	1818586	138843738	1523415	165745563.825004	12847
+full_model	single_selected_dtlb_read_access.log	1	-1				2	2	dtlb_read_access	available	0	220	216	0	138843738	1523415	0.000000	12847
+full_model	single_selected_dtlb_read_access.log	1	-1				3	3	cycles	available	0	221	216	1843640	140720497	1464459	177156162.848588	12848
+full_model	single_selected_dtlb_read_access.log	1	-1				3	3	dtlb_read_access	available	0	222	216	0	140720497	1464459	0.000000	12848
+full_model	single_selected_dtlb_read_access.log	2	-1				0	0	cycles	available	0	217	216	1899798	140207629	1527082	174428205.662133	12845
+full_model	single_selected_dtlb_read_access.log	2	-1				0	0	dtlb_read_access	available	0	219	216	0	140207629	1527082	0.000000	12845
+full_model	single_selected_dtlb_read_access.log	2	-1				1	1	cycles	available	0	223	216	1856666	141205963	1539330	170315858.522447	12846
+full_model	single_selected_dtlb_read_access.log	2	-1				1	1	dtlb_read_access	available	0	224	216	0	141205963	1539330	0.000000	12846
+full_model	single_selected_dtlb_read_access.log	2	-1				2	2	cycles	available	0	218	216	1839413	138700214	1558672	163682273.585708	12847
+full_model	single_selected_dtlb_read_access.log	2	-1				2	2	dtlb_read_access	available	0	220	216	0	138700214	1558672	0.000000	12847
+full_model	single_selected_dtlb_read_access.log	2	-1				3	3	cycles	available	0	221	216	1865376	141749574	1499875	176292193.249320	12848
+full_model	single_selected_dtlb_read_access.log	2	-1				3	3	dtlb_read_access	available	0	222	216	0	141749574	1499875	0.000000	12848
+full_model	single_selected_dtlb_read_miss.log	0	-1				0	0	cycles	available	0	231	216	223228512	139809214	139809214	223228512.000000	12850
+full_model	single_selected_dtlb_read_miss.log	0	-1				0	0	dtlb_read_miss	available	0	232	216	265832	139809214	139809214	265832.000000	12850
+full_model	single_selected_dtlb_read_miss.log	0	-1				1	1	cycles	available	0	225	216	225145611	141082294	141082294	225145611.000000	12851
+full_model	single_selected_dtlb_read_miss.log	0	-1				1	1	dtlb_read_miss	available	0	226	216	277817	141082294	141082294	277817.000000	12851
+full_model	single_selected_dtlb_read_miss.log	0	-1				2	2	cycles	available	0	229	216	221458110	138736971	138736971	221458110.000000	12852
+full_model	single_selected_dtlb_read_miss.log	0	-1				2	2	dtlb_read_miss	available	0	230	216	260888	138736971	138736971	260888.000000	12852
+full_model	single_selected_dtlb_read_miss.log	0	-1				3	3	cycles	available	0	227	216	224691455	140856120	140856120	224691455.000000	12853
+full_model	single_selected_dtlb_read_miss.log	0	-1				3	3	dtlb_read_miss	available	0	228	216	294406	140856120	140856120	294406.000000	12853
+full_model	single_selected_dtlb_read_miss.log	1	-1				0	0	cycles	available	0	231	216	223913082	140291628	140291628	223913082.000000	12850
+full_model	single_selected_dtlb_read_miss.log	1	-1				0	0	dtlb_read_miss	available	0	232	216	265900	140291628	140291628	265900.000000	12850
+full_model	single_selected_dtlb_read_miss.log	1	-1				1	1	cycles	available	0	225	216	224433339	140651784	140651784	224433339.000000	12851
+full_model	single_selected_dtlb_read_miss.log	1	-1				1	1	dtlb_read_miss	available	0	226	216	275888	140651784	140651784	275888.000000	12851
+full_model	single_selected_dtlb_read_miss.log	1	-1				2	2	cycles	available	0	229	216	221125709	138465332	138465332	221125709.000000	12852
+full_model	single_selected_dtlb_read_miss.log	1	-1				2	2	dtlb_read_miss	available	0	230	216	266236	138465332	138465332	266236.000000	12852
+full_model	single_selected_dtlb_read_miss.log	1	-1				3	3	cycles	available	0	227	216	224942657	140997402	140997402	224942657.000000	12853
+full_model	single_selected_dtlb_read_miss.log	1	-1				3	3	dtlb_read_miss	available	0	228	216	279095	140997402	140997402	279095.000000	12853
+full_model	single_selected_dtlb_read_miss.log	2	-1				0	0	cycles	available	0	231	216	222615641	139461588	139461588	222615641.000000	12850
+full_model	single_selected_dtlb_read_miss.log	2	-1				0	0	dtlb_read_miss	available	0	232	216	268407	139461588	139461588	268407.000000	12850
+full_model	single_selected_dtlb_read_miss.log	2	-1				1	1	cycles	available	0	225	216	223600265	140164250	140164250	223600265.000000	12851
+full_model	single_selected_dtlb_read_miss.log	2	-1				1	1	dtlb_read_miss	available	0	226	216	273604	140164250	140164250	273604.000000	12851
+full_model	single_selected_dtlb_read_miss.log	2	-1				2	2	cycles	available	0	229	216	220465821	138140129	138140129	220465821.000000	12852
+full_model	single_selected_dtlb_read_miss.log	2	-1				2	2	dtlb_read_miss	available	0	230	216	267595	138140129	138140129	267595.000000	12852
+full_model	single_selected_dtlb_read_miss.log	2	-1				3	3	cycles	available	0	227	216	223953159	140356363	140356363	223953159.000000	12853
+full_model	single_selected_dtlb_read_miss.log	2	-1				3	3	dtlb_read_miss	available	0	228	216	280461	140356363	140356363	280461.000000	12853
+full_model	single_selected_dtlb_write_access.log	0	-1				0	0	cycles	available	0	237	216	1884417	139941458	1501381	175643665.705098	12855
+full_model	single_selected_dtlb_write_access.log	0	-1				0	0	dtlb_write_access	available	0	238	216	0	139941458	1501381	0.000000	12855
+full_model	single_selected_dtlb_write_access.log	0	-1				1	1	cycles	available	0	239	216	1948628	140776494	1596040	171876029.391639	12856
+full_model	single_selected_dtlb_write_access.log	0	-1				1	1	dtlb_write_access	available	0	240	216	0	140776494	1596040	0.000000	12856
+full_model	single_selected_dtlb_write_access.log	0	-1				2	2	cycles	available	0	235	216	1897694	138658004	1556291	169075360.740874	12857
+full_model	single_selected_dtlb_write_access.log	0	-1				2	2	dtlb_write_access	available	0	236	216	0	138658004	1556291	0.000000	12857
+full_model	single_selected_dtlb_write_access.log	0	-1				3	3	cycles	available	0	233	216	2010756	141088804	1563210	181482436.253494	12858
+full_model	single_selected_dtlb_write_access.log	0	-1				3	3	dtlb_write_access	available	0	234	216	0	141088804	1563210	0.000000	12858
+full_model	single_selected_dtlb_write_access.log	1	-1				0	0	cycles	available	0	237	216	1866000	139312620	1494543	173937684.576489	12855
+full_model	single_selected_dtlb_write_access.log	1	-1				0	0	dtlb_write_access	available	0	238	216	0	139312620	1494543	0.000000	12855
+full_model	single_selected_dtlb_write_access.log	1	-1				1	1	cycles	available	0	239	216	1893011	140770003	1577671	168906675.820899	12856
+full_model	single_selected_dtlb_write_access.log	1	-1				1	1	dtlb_write_access	available	0	240	216	0	140770003	1577671	0.000000	12856
+full_model	single_selected_dtlb_write_access.log	1	-1				2	2	cycles	available	0	235	216	1901597	138244086	1609128	163370806.551960	12857
+full_model	single_selected_dtlb_write_access.log	1	-1				2	2	dtlb_write_access	available	0	236	216	0	138244086	1609128	0.000000	12857
+full_model	single_selected_dtlb_write_access.log	1	-1				3	3	cycles	available	0	233	216	1895476	140796756	1523836	175134904.199570	12858
+full_model	single_selected_dtlb_write_access.log	1	-1				3	3	dtlb_write_access	available	0	234	216	0	140796756	1523836	0.000000	12858
+full_model	single_selected_dtlb_write_access.log	2	-1				0	0	cycles	available	0	237	216	1798855	139663868	1439913	174479324.286356	12855
+full_model	single_selected_dtlb_write_access.log	2	-1				0	0	dtlb_write_access	available	0	238	216	0	139663868	1439913	0.000000	12855
+full_model	single_selected_dtlb_write_access.log	2	-1				1	1	cycles	available	0	239	216	1846555	140729259	1519041	171071298.834426	12856
+full_model	single_selected_dtlb_write_access.log	2	-1				1	1	dtlb_write_access	available	0	240	216	0	140729259	1519041	0.000000	12856
+full_model	single_selected_dtlb_write_access.log	2	-1				2	2	cycles	available	0	235	216	1807023	138299172	1547295	161513987.109734	12857
+full_model	single_selected_dtlb_write_access.log	2	-1				2	2	dtlb_write_access	available	0	236	216	0	138299172	1547295	0.000000	12857
+full_model	single_selected_dtlb_write_access.log	2	-1				3	3	cycles	available	0	233	216	1896112	140946574	1496247	178613885.488351	12858
+full_model	single_selected_dtlb_write_access.log	2	-1				3	3	dtlb_write_access	available	0	234	216	0	140946574	1496247	0.000000	12858
+full_model	single_selected_dtlb_write_miss.log	0	-1				0	0	cycles	available	0	241	216	222712221	139505381	139505381	222712221.000000	12860
+full_model	single_selected_dtlb_write_miss.log	0	-1				0	0	dtlb_write_miss	available	0	242	216	44917	139505381	139505381	44917.000000	12860
+full_model	single_selected_dtlb_write_miss.log	0	-1				1	1	cycles	available	0	243	216	224280541	140539245	140539245	224280541.000000	12861
+full_model	single_selected_dtlb_write_miss.log	0	-1				1	1	dtlb_write_miss	available	0	244	216	46502	140539245	140539245	46502.000000	12861
+full_model	single_selected_dtlb_write_miss.log	0	-1				2	2	cycles	available	0	245	216	222345099	139295921	139295921	222345099.000000	12862
+full_model	single_selected_dtlb_write_miss.log	0	-1				2	2	dtlb_write_miss	available	0	246	216	47660	139295921	139295921	47660.000000	12862
+full_model	single_selected_dtlb_write_miss.log	0	-1				3	3	cycles	available	0	247	216	224630819	140824571	140824571	224630819.000000	12863
+full_model	single_selected_dtlb_write_miss.log	0	-1				3	3	dtlb_write_miss	available	0	248	216	57062	140824571	140824571	57062.000000	12863
+full_model	single_selected_dtlb_write_miss.log	1	-1				0	0	cycles	available	0	241	216	223157133	139833039	139833039	223157133.000000	12860
+full_model	single_selected_dtlb_write_miss.log	1	-1				0	0	dtlb_write_miss	available	0	242	216	46503	139833039	139833039	46503.000000	12860
+full_model	single_selected_dtlb_write_miss.log	1	-1				1	1	cycles	available	0	243	216	224767218	140923339	140923339	224767218.000000	12861
+full_model	single_selected_dtlb_write_miss.log	1	-1				1	1	dtlb_write_miss	available	0	244	216	49044	140923339	140923339	49044.000000	12861
+full_model	single_selected_dtlb_write_miss.log	1	-1				2	2	cycles	available	0	245	216	220290005	137956410	137956410	220290005.000000	12862
+full_model	single_selected_dtlb_write_miss.log	1	-1				2	2	dtlb_write_miss	available	0	246	216	48655	137956410	137956410	48655.000000	12862
+full_model	single_selected_dtlb_write_miss.log	1	-1				3	3	cycles	available	0	247	216	224074203	140445216	140445216	224074203.000000	12863
+full_model	single_selected_dtlb_write_miss.log	1	-1				3	3	dtlb_write_miss	available	0	248	216	57320	140445216	140445216	57320.000000	12863
+full_model	single_selected_dtlb_write_miss.log	2	-1				0	0	cycles	available	0	241	216	227121320	142308321	142308321	227121320.000000	12860
+full_model	single_selected_dtlb_write_miss.log	2	-1				0	0	dtlb_write_miss	available	0	242	216	45390	142308321	142308321	45390.000000	12860
+full_model	single_selected_dtlb_write_miss.log	2	-1				1	1	cycles	available	0	243	216	224180277	140493370	140493370	224180277.000000	12861
+full_model	single_selected_dtlb_write_miss.log	2	-1				1	1	dtlb_write_miss	available	0	244	216	46997	140493370	140493370	46997.000000	12861
+full_model	single_selected_dtlb_write_miss.log	2	-1				2	2	cycles	available	0	245	216	219996397	137806253	137806253	219996397.000000	12862
+full_model	single_selected_dtlb_write_miss.log	2	-1				2	2	dtlb_write_miss	available	0	246	216	49298	137806253	137806253	49298.000000	12862
+full_model	single_selected_dtlb_write_miss.log	2	-1				3	3	cycles	available	0	247	216	224718343	140852380	140852380	224718343.000000	12863
+full_model	single_selected_dtlb_write_miss.log	2	-1				3	3	dtlb_write_miss	available	0	248	216	57366	140852380	140852380	57366.000000	12863
+full_model	single_selected_frontend_stalls.log	0	-1				0	0	cycles	available	0	139	216	221592592	138795919	138795919	221592592.000000	12794
+full_model	single_selected_frontend_stalls.log	0	-1				0	0	frontend_stalls	available	0	140	216	5335676	138795919	138795919	5335676.000000	12794
+full_model	single_selected_frontend_stalls.log	0	-1				1	1	cycles	available	0	137	216	224114590	140409248	140409248	224114590.000000	12795
+full_model	single_selected_frontend_stalls.log	0	-1				1	1	frontend_stalls	available	0	138	216	4976637	140409248	140409248	4976637.000000	12795
+full_model	single_selected_frontend_stalls.log	0	-1				2	2	cycles	available	0	143	216	221153945	138609301	138609301	221153945.000000	12796
+full_model	single_selected_frontend_stalls.log	0	-1				2	2	frontend_stalls	available	0	144	216	5067531	138609301	138609301	5067531.000000	12796
+full_model	single_selected_frontend_stalls.log	0	-1				3	3	cycles	available	0	141	216	223930798	140395617	140395617	223930798.000000	12797
+full_model	single_selected_frontend_stalls.log	0	-1				3	3	frontend_stalls	available	0	142	216	5270823	140395617	140395617	5270823.000000	12797
+full_model	single_selected_frontend_stalls.log	1	-1				0	0	cycles	available	0	139	216	221770393	138960877	138960877	221770393.000000	12794
+full_model	single_selected_frontend_stalls.log	1	-1				0	0	frontend_stalls	available	0	140	216	5203004	138960877	138960877	5203004.000000	12794
+full_model	single_selected_frontend_stalls.log	1	-1				1	1	cycles	available	0	137	216	223350359	140004795	140004795	223350359.000000	12795
+full_model	single_selected_frontend_stalls.log	1	-1				1	1	frontend_stalls	available	0	138	216	5051051	140004795	140004795	5051051.000000	12795
+full_model	single_selected_frontend_stalls.log	1	-1				2	2	cycles	available	0	143	216	219817402	137791736	137791736	219817402.000000	12796
+full_model	single_selected_frontend_stalls.log	1	-1				2	2	frontend_stalls	available	0	144	216	5213657	137791736	137791736	5213657.000000	12796
+full_model	single_selected_frontend_stalls.log	1	-1				3	3	cycles	available	0	141	216	223809424	140278004	140278004	223809424.000000	12797
+full_model	single_selected_frontend_stalls.log	1	-1				3	3	frontend_stalls	available	0	142	216	5110175	140278004	140278004	5110175.000000	12797
+full_model	single_selected_frontend_stalls.log	2	-1				0	0	cycles	available	0	139	216	221570232	138797245	138797245	221570232.000000	12794
+full_model	single_selected_frontend_stalls.log	2	-1				0	0	frontend_stalls	available	0	140	216	5207465	138797245	138797245	5207465.000000	12794
+full_model	single_selected_frontend_stalls.log	2	-1				1	1	cycles	available	0	137	216	223620250	140164588	140164588	223620250.000000	12795
+full_model	single_selected_frontend_stalls.log	2	-1				1	1	frontend_stalls	available	0	138	216	5122691	140164588	140164588	5122691.000000	12795
+full_model	single_selected_frontend_stalls.log	2	-1				2	2	cycles	available	0	143	216	220200521	137994472	137994472	220200521.000000	12796
+full_model	single_selected_frontend_stalls.log	2	-1				2	2	frontend_stalls	available	0	144	216	5091029	137994472	137994472	5091029.000000	12796
+full_model	single_selected_frontend_stalls.log	2	-1				3	3	cycles	available	0	141	216	224538551	140752827	140752827	224538551.000000	12797
+full_model	single_selected_frontend_stalls.log	2	-1				3	3	frontend_stalls	available	0	142	216	5329811	140752827	140752827	5329811.000000	12797
+full_model	single_selected_instructions.log	0	-1				0	0	cycles	available	0	131	216	220888099	138369248	138369248	220888099.000000	12789
+full_model	single_selected_instructions.log	0	-1				0	0	instructions	available	0	134	216	154362330	138369248	138369248	154362330.000000	12789
+full_model	single_selected_instructions.log	0	-1				1	1	cycles	available	0	132	216	222826904	139729955	139729955	222826904.000000	12790
+full_model	single_selected_instructions.log	0	-1				1	1	instructions	available	0	136	216	156116887	139729955	139729955	156116887.000000	12790
+full_model	single_selected_instructions.log	0	-1				2	2	cycles	available	0	130	216	220171774	137926363	137926363	220171774.000000	12791
+full_model	single_selected_instructions.log	0	-1				2	2	instructions	available	0	133	216	153273863	137926363	137926363	153273863.000000	12791
+full_model	single_selected_instructions.log	0	-1				3	3	cycles	available	0	129	216	223727915	140207498	140207498	223727915.000000	12792
+full_model	single_selected_instructions.log	0	-1				3	3	instructions	available	0	135	216	154689058	140207498	140207498	154689058.000000	12792
+full_model	single_selected_instructions.log	1	-1				0	0	cycles	available	0	131	216	226271368	141731537	141731537	226271368.000000	12789
+full_model	single_selected_instructions.log	1	-1				0	0	instructions	available	0	134	216	155237267	141731537	141731537	155237267.000000	12789
+full_model	single_selected_instructions.log	1	-1				1	1	cycles	available	0	132	216	224053900	140374081	140374081	224053900.000000	12790
+full_model	single_selected_instructions.log	1	-1				1	1	instructions	available	0	136	216	156114369	140374081	140374081	156114369.000000	12790
+full_model	single_selected_instructions.log	1	-1				2	2	cycles	available	0	130	216	219016346	137244658	137244658	219016346.000000	12791
+full_model	single_selected_instructions.log	1	-1				2	2	instructions	available	0	133	216	153281613	137244658	137244658	153281613.000000	12791
+full_model	single_selected_instructions.log	1	-1				3	3	cycles	available	0	129	216	224235507	140580710	140580710	224235507.000000	12792
+full_model	single_selected_instructions.log	1	-1				3	3	instructions	available	0	135	216	154702667	140580710	140580710	154702667.000000	12792
+full_model	single_selected_instructions.log	2	-1				0	0	cycles	available	0	131	216	223330952	139950733	139950733	223330952.000000	12789
+full_model	single_selected_instructions.log	2	-1				0	0	instructions	available	0	134	216	154452535	139950733	139950733	154452535.000000	12789
+full_model	single_selected_instructions.log	2	-1				1	1	cycles	available	0	132	216	223404598	140069708	140069708	223404598.000000	12790
+full_model	single_selected_instructions.log	2	-1				1	1	instructions	available	0	136	216	156113846	140069708	140069708	156113846.000000	12790
+full_model	single_selected_instructions.log	2	-1				2	2	cycles	available	0	130	216	220332725	137998575	137998575	220332725.000000	12791
+full_model	single_selected_instructions.log	2	-1				2	2	instructions	available	0	133	216	153288482	137998575	137998575	153288482.000000	12791
+full_model	single_selected_instructions.log	2	-1				3	3	cycles	available	0	129	216	223648814	140205190	140205190	223648814.000000	12792
+full_model	single_selected_instructions.log	2	-1				3	3	instructions	available	0	135	216	154676828	140205190	140205190	154676828.000000	12792
+full_model	single_selected_itlb_read_miss.log	0	-1				0	0	cycles	available	0	251	216	222764181	139531504	139531504	222764181.000000	12865
+full_model	single_selected_itlb_read_miss.log	0	-1				0	0	itlb_read_miss	available	0	252	216	4035	139531504	139531504	4035.000000	12865
+full_model	single_selected_itlb_read_miss.log	0	-1				1	1	cycles	available	0	255	216	224496094	140693031	140693031	224496094.000000	12866
+full_model	single_selected_itlb_read_miss.log	0	-1				1	1	itlb_read_miss	available	0	256	216	4087	140693031	140693031	4087.000000	12866
+full_model	single_selected_itlb_read_miss.log	0	-1				2	2	cycles	available	0	249	216	220715635	138213909	138213909	220715635.000000	12867
+full_model	single_selected_itlb_read_miss.log	0	-1				2	2	itlb_read_miss	available	0	250	216	4090	138213909	138213909	4090.000000	12867
+full_model	single_selected_itlb_read_miss.log	0	-1				3	3	cycles	available	0	253	216	224365179	140677451	140677451	224365179.000000	12868
+full_model	single_selected_itlb_read_miss.log	0	-1				3	3	itlb_read_miss	available	0	254	216	4209	140677451	140677451	4209.000000	12868
+full_model	single_selected_itlb_read_miss.log	1	-1				0	0	cycles	available	0	251	216	222426699	139353214	139353214	222426699.000000	12865
+full_model	single_selected_itlb_read_miss.log	1	-1				0	0	itlb_read_miss	available	0	252	216	4022	139353214	139353214	4022.000000	12865
+full_model	single_selected_itlb_read_miss.log	1	-1				1	1	cycles	available	0	255	216	224616663	140759423	140759423	224616663.000000	12866
+full_model	single_selected_itlb_read_miss.log	1	-1				1	1	itlb_read_miss	available	0	256	216	4014	140759423	140759423	4014.000000	12866
+full_model	single_selected_itlb_read_miss.log	1	-1				2	2	cycles	available	0	249	216	221088494	138420209	138420209	221088494.000000	12867
+full_model	single_selected_itlb_read_miss.log	1	-1				2	2	itlb_read_miss	available	0	250	216	4102	138420209	138420209	4102.000000	12867
+full_model	single_selected_itlb_read_miss.log	1	-1				3	3	cycles	available	0	253	216	225211042	141139658	141139658	225211042.000000	12868
+full_model	single_selected_itlb_read_miss.log	1	-1				3	3	itlb_read_miss	available	0	254	216	4196	141139658	141139658	4196.000000	12868
+full_model	single_selected_itlb_read_miss.log	2	-1				0	0	cycles	available	0	251	216	222022412	139045732	139045732	222022412.000000	12865
+full_model	single_selected_itlb_read_miss.log	2	-1				0	0	itlb_read_miss	available	0	252	216	4025	139045732	139045732	4025.000000	12865
+full_model	single_selected_itlb_read_miss.log	2	-1				1	1	cycles	available	0	255	216	223235184	139904588	139904588	223235184.000000	12866
+full_model	single_selected_itlb_read_miss.log	2	-1				1	1	itlb_read_miss	available	0	256	216	4053	139904588	139904588	4053.000000	12866
+full_model	single_selected_itlb_read_miss.log	2	-1				2	2	cycles	available	0	249	216	220616196	138153332	138153332	220616196.000000	12867
+full_model	single_selected_itlb_read_miss.log	2	-1				2	2	itlb_read_miss	available	0	250	216	4032	138153332	138153332	4032.000000	12867
+full_model	single_selected_itlb_read_miss.log	2	-1				3	3	cycles	available	0	253	216	223573984	140138795	140138795	223573984.000000	12868
+full_model	single_selected_itlb_read_miss.log	2	-1				3	3	itlb_read_miss	available	0	254	216	4240	140138795	140138795	4240.000000	12868
+full_model	single_selected_l1d_read_access.log	0	-1				0	0	cycles	available	0	175	216	222493023	139450139	139450139	222493023.000000	12814
+full_model	single_selected_l1d_read_access.log	0	-1				0	0	l1d_read_access	available	0	176	216	47322319	139450139	139450139	47322319.000000	12814
+full_model	single_selected_l1d_read_access.log	0	-1				1	1	cycles	available	0	169	216	224495956	140680153	140680153	224495956.000000	12815
+full_model	single_selected_l1d_read_access.log	0	-1				1	1	l1d_read_access	available	0	171	216	47951002	140680153	140680153	47951002.000000	12815
+full_model	single_selected_l1d_read_access.log	0	-1				2	2	cycles	available	0	173	216	220801740	138285037	138285037	220801740.000000	12816
+full_model	single_selected_l1d_read_access.log	0	-1				2	2	l1d_read_access	available	0	174	216	47164534	138285037	138285037	47164534.000000	12816
+full_model	single_selected_l1d_read_access.log	0	-1				3	3	cycles	available	0	170	216	224808684	140922859	140922859	224808684.000000	12817
+full_model	single_selected_l1d_read_access.log	0	-1				3	3	l1d_read_access	available	0	172	216	47548154	140922859	140922859	47548154.000000	12817
+full_model	single_selected_l1d_read_access.log	1	-1				0	0	cycles	available	0	175	216	221857689	138992793	138992793	221857689.000000	12814
+full_model	single_selected_l1d_read_access.log	1	-1				0	0	l1d_read_access	available	0	176	216	47330229	138992793	138992793	47330229.000000	12814
+full_model	single_selected_l1d_read_access.log	1	-1				1	1	cycles	available	0	169	216	222918514	139715839	139715839	222918514.000000	12815
+full_model	single_selected_l1d_read_access.log	1	-1				1	1	l1d_read_access	available	0	171	216	47949535	139715839	139715839	47949535.000000	12815
+full_model	single_selected_l1d_read_access.log	1	-1				2	2	cycles	available	0	173	216	219388429	137390136	137390136	219388429.000000	12816
+full_model	single_selected_l1d_read_access.log	1	-1				2	2	l1d_read_access	available	0	174	216	47149176	137390136	137390136	47149176.000000	12816
+full_model	single_selected_l1d_read_access.log	1	-1				3	3	cycles	available	0	170	216	224503119	140779657	140779657	224503119.000000	12817
+full_model	single_selected_l1d_read_access.log	1	-1				3	3	l1d_read_access	available	0	172	216	47547716	140779657	140779657	47547716.000000	12817
+full_model	single_selected_l1d_read_access.log	2	-1				0	0	cycles	available	0	175	216	222202344	139280545	139280545	222202344.000000	12814
+full_model	single_selected_l1d_read_access.log	2	-1				0	0	l1d_read_access	available	0	176	216	47323103	139280545	139280545	47323103.000000	12814
+full_model	single_selected_l1d_read_access.log	2	-1				1	1	cycles	available	0	169	216	223183401	139879722	139879722	223183401.000000	12815
+full_model	single_selected_l1d_read_access.log	2	-1				1	1	l1d_read_access	available	0	171	216	47951945	139879722	139879722	47951945.000000	12815
+full_model	single_selected_l1d_read_access.log	2	-1				2	2	cycles	available	0	173	216	220750051	138298661	138298661	220750051.000000	12816
+full_model	single_selected_l1d_read_access.log	2	-1				2	2	l1d_read_access	available	0	174	216	47149744	138298661	138298661	47149744.000000	12816
+full_model	single_selected_l1d_read_access.log	2	-1				3	3	cycles	available	0	170	216	223881478	140343583	140343583	223881478.000000	12817
+full_model	single_selected_l1d_read_access.log	2	-1				3	3	l1d_read_access	available	0	172	216	47552358	140343583	140343583	47552358.000000	12817
+full_model	single_selected_l1d_read_miss.log	0	-1				0	0	cycles	available	0	179	216	222831264	139579041	139579041	222831264.000000	12820
+full_model	single_selected_l1d_read_miss.log	0	-1				0	0	l1d_read_miss	available	0	180	216	403472	139579041	139579041	403472.000000	12820
+full_model	single_selected_l1d_read_miss.log	0	-1				1	1	cycles	available	0	183	216	224269849	140552153	140552153	224269849.000000	12821
+full_model	single_selected_l1d_read_miss.log	0	-1				1	1	l1d_read_miss	available	0	184	216	408582	140552153	140552153	408582.000000	12821
+full_model	single_selected_l1d_read_miss.log	0	-1				2	2	cycles	available	0	177	216	220117126	137855373	137855373	220117126.000000	12822
+full_model	single_selected_l1d_read_miss.log	0	-1				2	2	l1d_read_miss	available	0	178	216	398881	137855373	137855373	398881.000000	12822
+full_model	single_selected_l1d_read_miss.log	0	-1				3	3	cycles	available	0	181	216	225625702	141536377	141536377	225625702.000000	12823
+full_model	single_selected_l1d_read_miss.log	0	-1				3	3	l1d_read_miss	available	0	182	216	412329	141536377	141536377	412329.000000	12823
+full_model	single_selected_l1d_read_miss.log	1	-1				0	0	cycles	available	0	179	216	222303225	139257967	139257967	222303225.000000	12820
+full_model	single_selected_l1d_read_miss.log	1	-1				0	0	l1d_read_miss	available	0	180	216	400916	139257967	139257967	400916.000000	12820
+full_model	single_selected_l1d_read_miss.log	1	-1				1	1	cycles	available	0	183	216	223976602	140372997	140372997	223976602.000000	12821
+full_model	single_selected_l1d_read_miss.log	1	-1				1	1	l1d_read_miss	available	0	184	216	408633	140372997	140372997	408633.000000	12821
+full_model	single_selected_l1d_read_miss.log	1	-1				2	2	cycles	available	0	177	216	220192601	137916571	137916571	220192601.000000	12822
+full_model	single_selected_l1d_read_miss.log	1	-1				2	2	l1d_read_miss	available	0	178	216	395588	137916571	137916571	395588.000000	12822
+full_model	single_selected_l1d_read_miss.log	1	-1				3	3	cycles	available	0	181	216	224479401	140749748	140749748	224479401.000000	12823
+full_model	single_selected_l1d_read_miss.log	1	-1				3	3	l1d_read_miss	available	0	182	216	408406	140749748	140749748	408406.000000	12823
+full_model	single_selected_l1d_read_miss.log	2	-1				0	0	cycles	available	0	179	216	222500503	139355236	139355236	222500503.000000	12820
+full_model	single_selected_l1d_read_miss.log	2	-1				0	0	l1d_read_miss	available	0	180	216	403434	139355236	139355236	403434.000000	12820
+full_model	single_selected_l1d_read_miss.log	2	-1				1	1	cycles	available	0	183	216	224041477	140433366	140433366	224041477.000000	12821
+full_model	single_selected_l1d_read_miss.log	2	-1				1	1	l1d_read_miss	available	0	184	216	407116	140433366	140433366	407116.000000	12821
+full_model	single_selected_l1d_read_miss.log	2	-1				2	2	cycles	available	0	177	216	219982514	137766585	137766585	219982514.000000	12822
+full_model	single_selected_l1d_read_miss.log	2	-1				2	2	l1d_read_miss	available	0	178	216	393228	137766585	137766585	393228.000000	12822
+full_model	single_selected_l1d_read_miss.log	2	-1				3	3	cycles	available	0	181	216	225270919	141230006	141230006	225270919.000000	12823
+full_model	single_selected_l1d_read_miss.log	2	-1				3	3	l1d_read_miss	available	0	182	216	414357	141230006	141230006	414357.000000	12823
+full_model	single_selected_l1d_write_access.log	0	-1				0	0	cycles	available	0	191	216	221968244	139053755	139053755	221968244.000000	12825
+full_model	single_selected_l1d_write_access.log	0	-1				0	0	l1d_write_access	available	0	192	216	11717434	139053755	139053755	11717434.000000	12825
+full_model	single_selected_l1d_write_access.log	0	-1				1	1	cycles	available	0	185	216	223948198	140323153	140323153	223948198.000000	12826
+full_model	single_selected_l1d_write_access.log	0	-1				1	1	l1d_write_access	available	0	187	216	11694634	140323153	140323153	11694634.000000	12826
+full_model	single_selected_l1d_write_access.log	0	-1				2	2	cycles	available	0	189	216	220169633	137979716	137979716	220169633.000000	12827
+full_model	single_selected_l1d_write_access.log	0	-1				2	2	l1d_write_access	available	0	190	216	11620213	137979716	137979716	11620213.000000	12827
+full_model	single_selected_l1d_write_access.log	0	-1				3	3	cycles	available	0	186	216	224901416	141041204	141041204	224901416.000000	12828
+full_model	single_selected_l1d_write_access.log	0	-1				3	3	l1d_write_access	available	0	188	216	11595096	141041204	141041204	11595096.000000	12828
+full_model	single_selected_l1d_write_access.log	1	-1				0	0	cycles	available	0	191	216	222273470	139227581	139227581	222273470.000000	12825
+full_model	single_selected_l1d_write_access.log	1	-1				0	0	l1d_write_access	available	0	192	216	11717257	139227581	139227581	11717257.000000	12825
+full_model	single_selected_l1d_write_access.log	1	-1				1	1	cycles	available	0	185	216	224351154	140576335	140576335	224351154.000000	12826
+full_model	single_selected_l1d_write_access.log	1	-1				1	1	l1d_write_access	available	0	187	216	11694754	140576335	140576335	11694754.000000	12826
+full_model	single_selected_l1d_write_access.log	1	-1				2	2	cycles	available	0	189	216	221472918	138748331	138748331	221472918.000000	12827
+full_model	single_selected_l1d_write_access.log	1	-1				2	2	l1d_write_access	available	0	190	216	11620592	138748331	138748331	11620592.000000	12827
+full_model	single_selected_l1d_write_access.log	1	-1				3	3	cycles	available	0	186	216	225167516	141135327	141135327	225167516.000000	12828
+full_model	single_selected_l1d_write_access.log	1	-1				3	3	l1d_write_access	available	0	188	216	11594977	141135327	141135327	11594977.000000	12828
+full_model	single_selected_l1d_write_access.log	2	-1				0	0	cycles	available	0	191	216	225618803	141270586	141270586	225618803.000000	12825
+full_model	single_selected_l1d_write_access.log	2	-1				0	0	l1d_write_access	available	0	192	216	11716442	141270586	141270586	11716442.000000	12825
+full_model	single_selected_l1d_write_access.log	2	-1				1	1	cycles	available	0	185	216	222943474	139716528	139716528	222943474.000000	12826
+full_model	single_selected_l1d_write_access.log	2	-1				1	1	l1d_write_access	available	0	187	216	11694944	139716528	139716528	11694944.000000	12826
+full_model	single_selected_l1d_write_access.log	2	-1				2	2	cycles	available	0	189	216	219952391	137830953	137830953	219952391.000000	12827
+full_model	single_selected_l1d_write_access.log	2	-1				2	2	l1d_write_access	available	0	190	216	11620242	137830953	137830953	11620242.000000	12827
+full_model	single_selected_l1d_write_access.log	2	-1				3	3	cycles	available	0	186	216	223474860	140147748	140147748	223474860.000000	12828
+full_model	single_selected_l1d_write_access.log	2	-1				3	3	l1d_write_access	available	0	188	216	11594550	140147748	140147748	11594550.000000	12828
+full_model	single_selected_l1d_write_miss.log	0	-1				0	0	cycles	available	0	195	216	221973104	139028652	139028652	221973104.000000	12830
+full_model	single_selected_l1d_write_miss.log	0	-1				0	0	l1d_write_miss	available	0	196	216	185347	139028652	139028652	185347.000000	12830
+full_model	single_selected_l1d_write_miss.log	0	-1				1	1	cycles	available	0	197	216	223939618	140388715	140388715	223939618.000000	12831
+full_model	single_selected_l1d_write_miss.log	0	-1				1	1	l1d_write_miss	available	0	198	216	187394	140388715	140388715	187394.000000	12831
+full_model	single_selected_l1d_write_miss.log	0	-1				2	2	cycles	available	0	199	216	220661564	138233009	138233009	220661564.000000	12832
+full_model	single_selected_l1d_write_miss.log	0	-1				2	2	l1d_write_miss	available	0	200	216	184018	138233009	138233009	184018.000000	12832
+full_model	single_selected_l1d_write_miss.log	0	-1				3	3	cycles	available	0	193	216	225036629	141094825	141094825	225036629.000000	12833
+full_model	single_selected_l1d_write_miss.log	0	-1				3	3	l1d_write_miss	available	0	194	216	195221	141094825	141094825	195221.000000	12833
+full_model	single_selected_l1d_write_miss.log	1	-1				0	0	cycles	available	0	195	216	222860789	139623256	139623256	222860789.000000	12830
+full_model	single_selected_l1d_write_miss.log	1	-1				0	0	l1d_write_miss	available	0	196	216	183776	139623256	139623256	183776.000000	12830
+full_model	single_selected_l1d_write_miss.log	1	-1				1	1	cycles	available	0	197	216	224275569	140572415	140572415	224275569.000000	12831
+full_model	single_selected_l1d_write_miss.log	1	-1				1	1	l1d_write_miss	available	0	198	216	188559	140572415	140572415	188559.000000	12831
+full_model	single_selected_l1d_write_miss.log	1	-1				2	2	cycles	available	0	199	216	220855460	138360380	138360380	220855460.000000	12832
+full_model	single_selected_l1d_write_miss.log	1	-1				2	2	l1d_write_miss	available	0	200	216	185005	138360380	138360380	185005.000000	12832
+full_model	single_selected_l1d_write_miss.log	1	-1				3	3	cycles	available	0	193	216	224464939	140685244	140685244	224464939.000000	12833
+full_model	single_selected_l1d_write_miss.log	1	-1				3	3	l1d_write_miss	available	0	194	216	196523	140685244	140685244	196523.000000	12833
+full_model	single_selected_l1d_write_miss.log	2	-1				0	0	cycles	available	0	195	216	221990570	139123741	139123741	221990570.000000	12830
+full_model	single_selected_l1d_write_miss.log	2	-1				0	0	l1d_write_miss	available	0	196	216	185305	139123741	139123741	185305.000000	12830
+full_model	single_selected_l1d_write_miss.log	2	-1				1	1	cycles	available	0	197	216	223910265	140310569	140310569	223910265.000000	12831
+full_model	single_selected_l1d_write_miss.log	2	-1				1	1	l1d_write_miss	available	0	198	216	187772	140310569	140310569	187772.000000	12831
+full_model	single_selected_l1d_write_miss.log	2	-1				2	2	cycles	available	0	199	216	220431094	138076709	138076709	220431094.000000	12832
+full_model	single_selected_l1d_write_miss.log	2	-1				2	2	l1d_write_miss	available	0	200	216	185082	138076709	138076709	185082.000000	12832
+full_model	single_selected_l1d_write_miss.log	2	-1				3	3	cycles	available	0	193	216	225031289	141055127	141055127	225031289.000000	12833
+full_model	single_selected_l1d_write_miss.log	2	-1				3	3	l1d_write_miss	available	0	194	216	197065	141055127	141055127	197065.000000	12833
+full_model	single_selected_l1i_read_access.log	0	-1				0	0	cycles	available	0	202	216	222204704	139186220	139186220	222204704.000000	12835
+full_model	single_selected_l1i_read_access.log	0	-1				0	0	l1i_read_access	available	0	204	216	98705021	139186220	139186220	98705021.000000	12835
+full_model	single_selected_l1i_read_access.log	0	-1				1	1	cycles	available	0	207	216	224366388	140634006	140634006	224366388.000000	12836
+full_model	single_selected_l1i_read_access.log	0	-1				1	1	l1i_read_access	available	0	208	216	98705805	140634006	140634006	98705805.000000	12836
+full_model	single_selected_l1i_read_access.log	0	-1				2	2	cycles	available	0	205	216	220849378	138338967	138338967	220849378.000000	12837
+full_model	single_selected_l1i_read_access.log	0	-1				2	2	l1i_read_access	available	0	206	216	97759050	138338967	138338967	97759050.000000	12837
+full_model	single_selected_l1i_read_access.log	0	-1				3	3	cycles	available	0	201	216	224589405	140819625	140819625	224589405.000000	12838
+full_model	single_selected_l1i_read_access.log	0	-1				3	3	l1i_read_access	available	0	203	216	98671310	140819625	140819625	98671310.000000	12838
+full_model	single_selected_l1i_read_access.log	1	-1				0	0	cycles	available	0	202	216	222618948	139423217	139423217	222618948.000000	12835
+full_model	single_selected_l1i_read_access.log	1	-1				0	0	l1i_read_access	available	0	204	216	98759662	139423217	139423217	98759662.000000	12835
+full_model	single_selected_l1i_read_access.log	1	-1				1	1	cycles	available	0	207	216	224435829	140675758	140675758	224435829.000000	12836
+full_model	single_selected_l1i_read_access.log	1	-1				1	1	l1i_read_access	available	0	208	216	99032963	140675758	140675758	99032963.000000	12836
+full_model	single_selected_l1i_read_access.log	1	-1				2	2	cycles	available	0	205	216	221413794	138745589	138745589	221413794.000000	12837
+full_model	single_selected_l1i_read_access.log	1	-1				2	2	l1i_read_access	available	0	206	216	97072850	138745589	138745589	97072850.000000	12837
+full_model	single_selected_l1i_read_access.log	1	-1				3	3	cycles	available	0	201	216	225128154	141121209	141121209	225128154.000000	12838
+full_model	single_selected_l1i_read_access.log	1	-1				3	3	l1i_read_access	available	0	203	216	98895764	141121209	141121209	98895764.000000	12838
+full_model	single_selected_l1i_read_access.log	2	-1				0	0	cycles	available	0	202	216	222926740	139700888	139700888	222926740.000000	12835
+full_model	single_selected_l1i_read_access.log	2	-1				0	0	l1i_read_access	available	0	204	216	98226298	139700888	139700888	98226298.000000	12835
+full_model	single_selected_l1i_read_access.log	2	-1				1	1	cycles	available	0	207	216	224585618	140742111	140742111	224585618.000000	12836
+full_model	single_selected_l1i_read_access.log	2	-1				1	1	l1i_read_access	available	0	208	216	98795880	140742111	140742111	98795880.000000	12836
+full_model	single_selected_l1i_read_access.log	2	-1				2	2	cycles	available	0	205	216	221487107	138834414	138834414	221487107.000000	12837
+full_model	single_selected_l1i_read_access.log	2	-1				2	2	l1i_read_access	available	0	206	216	97572402	138834414	138834414	97572402.000000	12837
+full_model	single_selected_l1i_read_access.log	2	-1				3	3	cycles	available	0	201	216	225018925	141105208	141105208	225018925.000000	12838
+full_model	single_selected_l1i_read_access.log	2	-1				3	3	l1i_read_access	available	0	203	216	98795563	141105208	141105208	98795563.000000	12838
+full_model	single_selected_l1i_read_miss.log	0	-1				0	0	cycles	available	0	210	216	227351105	142421537	142421537	227351105.000000	12840
+full_model	single_selected_l1i_read_miss.log	0	-1				0	0	l1i_read_miss	available	0	212	216	13870	142421537	142421537	13870.000000	12840
+full_model	single_selected_l1i_read_miss.log	0	-1				1	1	cycles	available	0	215	216	223700363	140166533	140166533	223700363.000000	12841
+full_model	single_selected_l1i_read_miss.log	0	-1				1	1	l1i_read_miss	available	0	216	216	13017	140166533	140166533	13017.000000	12841
+full_model	single_selected_l1i_read_miss.log	0	-1				2	2	cycles	available	0	213	216	220353388	138044089	138044089	220353388.000000	12842
+full_model	single_selected_l1i_read_miss.log	0	-1				2	2	l1i_read_miss	available	0	214	216	12924	138044089	138044089	12924.000000	12842
+full_model	single_selected_l1i_read_miss.log	0	-1				3	3	cycles	available	0	209	216	224180620	140563002	140563002	224180620.000000	12843
+full_model	single_selected_l1i_read_miss.log	0	-1				3	3	l1i_read_miss	available	0	211	216	14630	140563002	140563002	14630.000000	12843
+full_model	single_selected_l1i_read_miss.log	1	-1				0	0	cycles	available	0	210	216	222639608	139476589	139476589	222639608.000000	12840
+full_model	single_selected_l1i_read_miss.log	1	-1				0	0	l1i_read_miss	available	0	212	216	13302	139476589	139476589	13302.000000	12840
+full_model	single_selected_l1i_read_miss.log	1	-1				1	1	cycles	available	0	215	216	224182865	140492629	140492629	224182865.000000	12841
+full_model	single_selected_l1i_read_miss.log	1	-1				1	1	l1i_read_miss	available	0	216	216	13105	140492629	140492629	13105.000000	12841
+full_model	single_selected_l1i_read_miss.log	1	-1				2	2	cycles	available	0	213	216	221899691	139035215	139035215	221899691.000000	12842
+full_model	single_selected_l1i_read_miss.log	1	-1				2	2	l1i_read_miss	available	0	214	216	13225	139035215	139035215	13225.000000	12842
+full_model	single_selected_l1i_read_miss.log	1	-1				3	3	cycles	available	0	209	216	225412297	141283250	141283250	225412297.000000	12843
+full_model	single_selected_l1i_read_miss.log	1	-1				3	3	l1i_read_miss	available	0	211	216	14769	141283250	141283250	14769.000000	12843
+full_model	single_selected_l1i_read_miss.log	2	-1				0	0	cycles	available	0	210	216	223040517	139755915	139755915	223040517.000000	12840
+full_model	single_selected_l1i_read_miss.log	2	-1				0	0	l1i_read_miss	available	0	212	216	13058	139755915	139755915	13058.000000	12840
+full_model	single_selected_l1i_read_miss.log	2	-1				1	1	cycles	available	0	215	216	223814808	140275932	140275932	223814808.000000	12841
+full_model	single_selected_l1i_read_miss.log	2	-1				1	1	l1i_read_miss	available	0	216	216	12835	140275932	140275932	12835.000000	12841
+full_model	single_selected_l1i_read_miss.log	2	-1				2	2	cycles	available	0	213	216	220704092	138235829	138235829	220704092.000000	12842
+full_model	single_selected_l1i_read_miss.log	2	-1				2	2	l1i_read_miss	available	0	214	216	12917	138235829	138235829	12917.000000	12842
+full_model	single_selected_l1i_read_miss.log	2	-1				3	3	cycles	available	0	209	216	225705465	141508739	141508739	225705465.000000	12843
+full_model	single_selected_l1i_read_miss.log	2	-1				3	3	l1i_read_miss	available	0	211	216	14558	141508739	141508739	14558.000000	12843

@@ -1,0 +1,2 @@
+candidate	frozen_utc	control_mean_us	head_gain_us	attention_gain_us	runtime_o2_gain_us	predicted_full_mean_us	status	measured_full_mean_us	prediction_error_pct	hard_gate_pct
+selected_head_attention_plus_o2	2026-07-15T17:24:05Z	149358.450000	4917.700000	4974.654000	1182.244000	138283.852000	pass	142413.0	-2.8994178902206866	15.0

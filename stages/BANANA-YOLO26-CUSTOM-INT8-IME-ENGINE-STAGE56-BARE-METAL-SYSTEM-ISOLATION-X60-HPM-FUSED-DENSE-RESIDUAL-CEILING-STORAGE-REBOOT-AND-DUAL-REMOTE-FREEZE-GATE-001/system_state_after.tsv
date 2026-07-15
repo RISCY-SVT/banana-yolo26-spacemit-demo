@@ -1,0 +1,5 @@
+surface	value
+boot_profile	B0 unchanged
+workqueue_cpumask_after_validation	ff
+active_stage56_cgroup_after_validation	absent
+runtime_storage	NVMe /data

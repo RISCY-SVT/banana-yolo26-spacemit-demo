@@ -1,0 +1,68 @@
+record	irq_source
+0	command: bash -lc cat\ /proc/interrupts
+1	           CPU0       CPU1       CPU2       CPU3       CPU4       CPU5       CPU6       CPU7
+2	 11:   42190012   39263995   29711667  158505540   18457032    9027970   32650298   21292374  RISC-V INTC   5 Edge      riscv-timer
+3	 12:          0          0          0          0          0          0          0          0  SiFive PLIC  60 Edge      pinctrl
+4	 13:          0          0          0          0          0          0          0          0  SiFive PLIC  58 Edge      k1x-gpio
+5	 14:          1          0          0          0          0          0          0          0  SiFive PLIC  72 Edge      pdma
+6	 15:          0          0          0          0          0          0          0          0  SiFive PLIC  36 Edge      d4010800.i2c
+7	 16:       1119          0          0          0          0          0          0          0  SiFive PLIC  38 Edge      d4012000.i2c
+8	 17:     405441          0          0          0          0          0          0          0  SiFive PLIC  19 Edge      d401d800.i2c
+9	 18:          0          0          0          0          0          0          0          0  SiFive PLIC  64 Edge      spm8821
+10	 26:          0          0          0          0          0          0          0          0   spm8821   7 Edge      p1-adc
+11	 29:          0          0          0          0          0          0          0          0   spm8821  10 Edge      rtc@pmic
+12	 56:          0          0          0          0          0          0          0          0   spm8821  37 Edge      spacemit_pwrkey_rise
+13	 57:          0          0          0          0          0          0          0          0   spm8821  38 Edge      spacemit_pwrkey_fall
+14	 58:          0          0          0          0          0          0          0          0   spm8821  39 Edge      spacemit_pwrkey_skey
+15	 59:          0          0          0          0          0          0          0          0   spm8821  40 Edge      spacemit_pwrkey_lkey
+16	 62:          0          0          0          0          0          0          0          0  SiFive PLIC 146 Edge      k1x-pcie
+17	 65:          0          0          0          0          0          0          0          0   PCI-MSI 134217728 Edge      PCIe PME, aerdrv
+18	 66:          0          0          0          0          0          0          0          0  SiFive PLIC 147 Edge      k1x-pcie
+19	 69:          0          0          0          0          0          0          0          0   PCI-MSI 268435456 Edge      PCIe PME, aerdrv
+20	 70:          0          0          0          0          0          0          0          0  SiFive PLIC  87 Edge      JPU
+21	 71:          0          0          0          0          0          0          0          0   pinctrl 268 Edge      rtw_wifi_gpio_wakeup
+22	 72:          0          0          0          0          0          0          0          0  SiFive PLIC  86 Edge      v2d-irq
+23	 73:          0          0          0          0          0          0          0          0  SiFive PLIC  42 Edge      UART1
+24	 74:       2863          0          0          0          0          0          0          0  SiFive PLIC  44 Edge      UART3
+25	 75:     173027          0          0          0          0          0          0          0  SiFive PLIC  75 Edge      pvrsrvkm
+26	 76:       4910          0          0          0          0          0          0          0   PCI-MSI 134742016 Edge      nvme0q0
+27	 77:      31222          0          0          0          0          0          0          0   PCI-MSI 134742017 Edge      nvme0q1
+28	 78:      22263          0          0          0          0          0          0          0   PCI-MSI 134742018 Edge      nvme0q2
+29	 79:       8394          0          0          0          0          0          0          0   PCI-MSI 134742019 Edge      nvme0q3
+30	 80:      10449          0          0          0          0          0          0          0   PCI-MSI 134742020 Edge      nvme0q4
+31	 81:       7305          0          0          0          0          0          0          0   PCI-MSI 134742021 Edge      nvme0q5
+32	 82:      87930          0          0          0          0          0          0          0   PCI-MSI 134742022 Edge      nvme0q6
+33	 83:     133319          0          0          0          0          0          0          0   PCI-MSI 134742023 Edge      nvme0q7
+34	 84:     216973          0          0          0          0          0          0          0   PCI-MSI 134742024 Edge      nvme0q8
+35	 85:          2          0          0          0          0          0          0          0  SiFive PLIC 117 Edge      d420c000.spi
+36	 86:    2279502          0          0          0          0         21          0          0  SiFive PLIC 131 Edge      end0
+37	 87:          0          0          0          0          0          0          0          0  SiFive PLIC 133 Edge      end1
+38	 88:          0          0          0          0          0          0          0          0  SiFive PLIC 149 Edge      dwc3-usb-wakeup
+39	 89:      54522          0          0          0          0          0          0          0  SiFive PLIC 125 Edge      xhci-hcd:usb2
+40	 90:          0          0          0          0          0          0          0          0  SiFive PLIC 118 Edge      ehci_hcd:usb1
+41	 91:          0          0          0          0          0          0          0          0  SiFive PLIC 148 Edge      usb-wakeup
+42	 92:          0          0          0          0          0          0          0          0  SiFive PLIC 105 Edge      mv_udc
+43	 93:          0          0          0          0          0          0          0          0  SiFive PLIC  74 Edge      c0500000.linlon-v5
+44	 94:          0          0          0          0          0          0          0          0  SiFive PLIC  81 Edge      k1xccic
+45	 95:          0          0          0          0          0          0          0          0  SiFive PLIC  82 Edge      k1xccic
+46	 96:          0          0          0          0          0          0          0          0  SiFive PLIC  83 Edge      k1xccic
+47	 97:          6          0          0          0          0          0          0          0  SiFive PLIC  84 Edge      mars-cpp
+48	 98:          0          0          0          0          0          0          0          0  SiFive PLIC  79 Edge      feisp
+49	 99:      17667          0          0          0          0          3          0          0  SiFive PLIC  61 Edge      thermal_zone0, thermal_zone1, thermal_zone2, thermal_zone3
+50	100:          0          0          0          0          0          0          0          0  SiFive PLIC  99 Edge      mmc0
+51	101:          0          0          0          0          0          0          0          0  k1x-gpio-irqchip  80 Edge      d4280000.sdh cd
+52	102:  500972437          0          0          0          0       2095          0          0  SiFive PLIC 100 Edge      mmc1
+53	103:    2732483          0          0          0          0        441          0          0  SiFive PLIC 101 Edge      mmc2
+54	104:          0          0          0          0          0          0          0          0  SiFive PLIC 113 Edge      spacemit-crypto-engine-0
+55	105:         14          0          0          0          0          0          0          0  SiFive PLIC  52 Edge      d4013400.mailbox
+56	106:          0          0          0          0          0          0          0          0  RISC-V INTC  13 Edge      riscv-pmu
+57	107:          0          0          0          0          0          0          0          0  k1x-gpio-irqchip 126 Edge      es8326
+58	108:   87792544          0          0          0          0          0          0          0  SiFive PLIC 139 Edge      DPU_ONLINE
+59	109:          0          0          0          0          0          0          0          0  SiFive PLIC 138 Edge      DPU_OFFLINE
+60	110:          3          0          0          0          0          0          0          0  SiFive PLIC 136 Edge      c0400500.hdmi
+61	IPI0:     42038      55162      54521      46808      50118      55433      51131      53508  Rescheduling interrupts
+62	IPI1:  18631936  103299627   73574504  103655568   78148205   30174110   70383997   81519342  Function call interrupts
+63	IPI2:         0          0          0          0          0          0          0          0  CPU stop interrupts
+64	IPI3:         0          0          0          0          0          0          0          0  CPU stop (for crash dump) interrupts
+65	IPI4:      3423       3385       1340       6854       1614       1364       3473       3191  IRQ work interrupts
+66	IPI5:         0          0          0          0          0          0          0          0  Timer broadcast interrupts

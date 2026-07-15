@@ -1,0 +1,5 @@
+route	accumulator_groups	epilogue_registers	register_safe
+F0_M4N16	4	v0-v15	1
+F1_M8N16	8	destructive-v0-v15	1
+F2_M12N16	12	insufficient-with-C8-E2c4	0
+F3_split_groups	8	safe-but-extra-control	1

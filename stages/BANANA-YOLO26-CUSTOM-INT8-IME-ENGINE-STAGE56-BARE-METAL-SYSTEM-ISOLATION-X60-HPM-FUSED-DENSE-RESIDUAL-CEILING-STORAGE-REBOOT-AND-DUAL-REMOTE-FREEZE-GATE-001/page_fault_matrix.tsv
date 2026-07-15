@@ -1,0 +1,5 @@
+arm	major_faults	minor_faults	selection
+M0	0	recorded-in-time-log	M0
+M1	0	recorded-in-time-log	rejected
+M2	0	recorded-in-time-log	rejected
+M3	0	recorded-in-time-log	rejected
