@@ -17,6 +17,7 @@ benchmark_log=/dev/shm/stage56_trace_soak.log
 benchmark_json=/dev/shm/stage56_trace_soak.json
 thermal_log=/dev/shm/stage56_trace_soak_thermal.tsv
 trace_archive="$stage_root/osnoise/baseline_trace.dat.gz"
+trace_stream=/dev/shm/stage56_trace_soak.trace
 comm_name=$(basename "$binary")
 comm_name=${comm_name:0:15}
 marker_mode=0
@@ -24,6 +25,7 @@ tracefs_mode=0
 instances_mode=0
 instance_mode=0
 monitor_pid=
+trace_reader_pid=
 
 export Y26_STAGE54_E2C3=1
 export Y26_STAGE55_E2C4=1
@@ -42,6 +44,10 @@ export Y26_STAGE53_SPIN_POOL=1
 export Y26_STAGE55_FRAME_GATED_SPIN=1
 
 cleanup() {
+    if [[ -n $trace_reader_pid ]]; then
+        kill "$trace_reader_pid" 2>/dev/null || true
+        wait "$trace_reader_pid" 2>/dev/null || true
+    fi
     if [[ -n $monitor_pid ]]; then
         kill "$monitor_pid" 2>/dev/null || true
         wait "$monitor_pid" 2>/dev/null || true
@@ -61,7 +67,13 @@ cleanup() {
 }
 trap cleanup EXIT
 
-rm -f "$benchmark_log" "$benchmark_json" "$thermal_log"
+rm -f "$benchmark_log" "$benchmark_json" "$thermal_log" "$trace_stream"
+available_tmpfs=$(df --output=avail -B1 /dev/shm | tail -n 1)
+if (( available_tmpfs < 2147483648 )); then
+    printf 'insufficient tmpfs space for complete trace stream: %s bytes\n' \
+        "$available_tmpfs" >&2
+    exit 1
+fi
 mkdir -p "$stage_root/osnoise" "$stage_root/profiles"
 sudo -n mkdir -p "$trace_root"
 tracefs_mode=$(sudo -n stat -c %a /sys/kernel/tracing)
@@ -91,6 +103,11 @@ if [[ -e $trace_root/events/sched/sched_switch/filter ]]; then
 fi
 sudo -n chmod 222 "$trace_marker"
 
+# Stream trace text to tmpfs so the complete 10,000-run surface is retained;
+# the finite per-CPU ring alone preserves only the newest intervals.
+sudo -n taskset -c 7 cat "$trace_root/trace_pipe" >"$trace_stream" &
+trace_reader_pid=$!
+
 taskset -c 7 bash -c '
     while :; do
         printf "%s" "$(date -u +%FT%TZ)" >>/dev/shm/stage56_trace_soak_thermal.tsv
@@ -116,11 +133,16 @@ Y26_STAGE56_TRACE_MARKER="$trace_marker" timeout 2400 taskset -c 0-4 "$binary" \
 run_status=$?
 set -e
 printf '0\n' | sudo -n tee "$trace_root/tracing_on" >/dev/null
+sleep 1
+kill "$trace_reader_pid" 2>/dev/null || true
+wait "$trace_reader_pid" 2>/dev/null || true
+trace_reader_pid=
 kill "$monitor_pid" 2>/dev/null || true
 wait "$monitor_pid" 2>/dev/null || true
 monitor_pid=
 
-sudo -n cat "$trace_root/trace" | gzip -1 >"$trace_archive"
+gzip -1 -c "$trace_stream" >"$trace_archive"
+rm -f "$trace_stream"
 if sudo -n test -r "$trace_root/trace_stat"; then
     sudo -n cat "$trace_root/trace_stat" >"$stage_root/osnoise/baseline_trace_stat.txt"
 else

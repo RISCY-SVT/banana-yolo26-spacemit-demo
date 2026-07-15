@@ -41,9 +41,9 @@ pause, and adaptive-spin candidates remain rejected.
 
 The optional Stage56 dedicated-board profile keeps SCHED_OTHER and adds only
 reversible runtime placement: CPU0-4 isolated cgroup, movable IRQs and unbound
-workqueues on CPU5-7, and selected nonessential services parked during the
-run. The original kernel, boot entry, storage, and memory policy remain the
-compatibility and recovery baseline.
+workqueues plus normal system slices on CPU5-7, and selected nonessential
+services stopped during the run. The original kernel, boot entry, storage, and
+memory policy remain the compatibility and recovery baseline.
 
 The measured call path has no ORT session, Python callback, graph registry,
 string dispatch, allocation, file I/O, or float Q/DQ materialization. Input

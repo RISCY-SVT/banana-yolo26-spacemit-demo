@@ -21,9 +21,10 @@ COCO one-pass per-image executor
 Stage56 keeps the Stage55 package and exact arithmetic contract. It selects
 producer-adjacent head reduction, direct attention packing for the second
 MatMul, and the reversible O2 dedicated-board profile. O2 uses an isolated
-CPU0-4 cgroup with movable IRQs, unbound workqueues, and nonessential services
-placed on CPU5-7. The original boot entry, NVMe runtime, memory policy,
-compiler contract, and `SCHED_OTHER` policy remain unchanged.
+CPU0-4 cgroup with movable IRQs, unbound workqueues, and normal system slices
+placed on CPU5-7; selected nonessential services are stopped for the measured
+window. The original boot entry, NVMe runtime, memory policy, compiler
+contract, and `SCHED_OTHER` policy remain unchanged.
 
 ```text
 condition-variable compatibility, fixed input, 500 samples:
@@ -32,6 +33,14 @@ condition-variable compatibility, fixed input, 500 samples:
   p95:     160377 us
   p99:     166607 us
   max:     207766 us
+
+condition-variable compatibility, separate 10,000-run soak:
+  mean:    156423.387200 us
+  median:  155822.000000 us
+  p95:     160009.200000 us
+  p99:     166466.920000 us
+  p99.9:   171800.363000 us
+  max:     192626.000000 us
 
 O2 frame-gated low latency, fixed input, 500 samples:
   mean:    142413 us

@@ -70,10 +70,10 @@ Stage56 operator profile. `low-latency` enables frame-gated epoch-spin;
 profile for the benchmark duration and restores it through an exit trap.
 
 The O2 profile isolates CPU0-4 in cgroup v2 and moves movable IRQs, unbound
-workqueues, selected services, and normal system slices to CPU5-7. It does not
-change the boot command line, kernel, storage location, THP policy, or CPU
-frequency ceiling. Apply and restore it explicitly when running outside the
-benchmark wrapper:
+workqueues, and normal system slices to CPU5-7; it stops selected nonessential
+services for the measured window. It does not change the boot command line,
+kernel, storage location, THP policy, or CPU frequency ceiling. Apply and
+restore it explicitly when running outside the benchmark wrapper:
 
 ```bash
 root=/data/k1x-yolo26-int8-executor/stage56-optimized-research

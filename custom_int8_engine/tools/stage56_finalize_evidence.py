@@ -19,6 +19,7 @@ TASK_ID = (
     "DUAL-REMOTE-FREEZE-GATE-001"
 )
 START_HEAD = "c7dd62da3f62f46975240eb414b2f0ca149ceddf"
+IMPLEMENTATION_COMMIT = "56025cfc1164d3831073528b25cc933997a1f6fa"
 CONTRACT = "K1X_INT8_V1"
 PROFILE = "K1X_INT8_V1_YOLO26N_640_FULL_GRAPH_001"
 MODEL_SHA = "30a94e4738606673b5e0a73499cbc977167f046f8fa8637d6040ce744f429c0c"
@@ -400,18 +401,26 @@ def main() -> int:
         "The osnoise/timerlat tracers are unavailable. sched, IRQ, softirq, workqueue, block, and "
         "frequency tracepoints are available and were used with executor trace markers.",
     ])
-    copy_text(raw / "osnoise-evidence/osnoise_partial_summary.tsv", stage / "osnoise_baseline_summary.tsv")
-    copy_text(raw / "osnoise-evidence/osnoise_partial_slow.tsv", stage / "osnoise_slow_run_correlations.tsv")
+    osnoise_rows = read_tsv(raw / "osnoise-evidence/osnoise_full_summary.tsv")
+    osnoise = {row["metric"]: row for row in osnoise_rows}
+    copy_text(raw / "osnoise-evidence/osnoise_full_summary.tsv",
+              stage / "osnoise_baseline_summary.tsv")
+    copy_text(raw / "osnoise-evidence/osnoise_full_slow.tsv",
+              stage / "osnoise_slow_run_correlations.tsv")
     irq_lines = (raw / "board-system-inventory/irq-actions.stdout").read_text(
         encoding="utf-8", errors="replace").splitlines()
     write_tsv(stage / "irq_source_inventory.tsv", [
         {"record": index, "irq_source": line} for index, line in enumerate(irq_lines) if line.strip()
     ])
     write_md(stage / "slow_tail_root_cause_report.md", "Slow-tail root cause", [
-        "A partial 2,286-inference trace (bounded by trace watchdog capacity) found wall correlation "
-        "0.7303 with IRQ count, 0.6032 with IRQ duration, 0.5604 with sched switches, and 0.5518 "
-        "with involuntary context switches. Block I/O correlation was 0.0247. The rare tail is "
-        "primarily IRQ/scheduler interruption with residual unknown variance, not storage I/O.",
+        f"The tmpfs-streamed trace preserves {osnoise['trace_duration_us']['samples']} marked "
+        f"inferences with {osnoise['trace_duration_us']['lost_event_lines']} lost-event records. "
+        f"Wall correlation is {osnoise['irq_count']['correlation_with_wall']} with IRQ count, "
+        f"{osnoise['irq_duration_us']['correlation_with_wall']} with IRQ duration, "
+        f"{osnoise['sched_switch_count']['correlation_with_wall']} with sched switches, and "
+        f"{osnoise['involuntary_cs']['correlation_with_wall']} with involuntary context switches. "
+        f"Block-issue correlation is {osnoise['block_issue_count']['correlation_with_wall']}. "
+        "The classification remains evidence-based and retains residual unknown variance.",
     ])
 
     # Runtime, boot, memory, and storage matrices.
@@ -826,7 +835,8 @@ def main() -> int:
     write_md(stage / "selected_system_profile.md", "Selected Stage56 system profile", [
         "Compatibility: original system placement plus condition-variable SCHED_OTHER. Low-latency "
         "dedicated board: exact Stage56 operator profile, frame-gated epoch spin, isolated cgroup "
-        "CPU0-4, movable IRQs/workqueues/services on CPU5-7, SCHED_OTHER, performance governor, "
+        "CPU0-4, movable IRQs/workqueues and normal system slices on CPU5-7, selected nonessential "
+        "services stopped, SCHED_OTHER, performance governor, "
         "NVMe runtime. No boot, THP, eMMC, FIFO, or devfreq change is selected.",
     ])
     write_md(stage / "selected_system_profile_rollback.md", "Selected profile rollback", [
@@ -843,8 +853,12 @@ def main() -> int:
 
     write_tsv(stage / "commit_inventory.tsv", [
         {"sequence": 0, "commit": START_HEAD, "role": "accepted-stage55-start"},
-        {"sequence": 1, "commit": args.source_commit, "role": "stage56-source-and-validation"},
-        {"sequence": 2, "commit": "containing-commit", "role": "stage56-evidence-release-publication"},
+        {"sequence": 1, "commit": IMPLEMENTATION_COMMIT,
+         "role": "stage56-executor-and-system-profile-implementation"},
+        {"sequence": 2, "commit": args.source_commit,
+         "role": "stage56-timing-documentation-and-release-identity"},
+        {"sequence": 3, "commit": "containing-commit",
+         "role": "stage56-evidence-release-publication"},
     ])
     write_md(stage / "final_dual_remote_report.md", "Final dual-remote publication", [
         "Final publication uses only normal fast-forward pushes after both fetched remote heads "
@@ -861,7 +875,10 @@ def main() -> int:
     ])
     write_tsv(stage / "published_commit_inventory.tsv", [
         {"commit": START_HEAD, "scope": "accepted Stage55", "github": "prestage-parity", "gitlab": "prestage-parity"},
-        {"commit": args.source_commit, "scope": "Stage56 source/validation", "github": "pending-final-FF", "gitlab": "pending-final-FF"},
+        {"commit": IMPLEMENTATION_COMMIT, "scope": "Stage56 executor/system implementation",
+         "github": "pending-final-FF", "gitlab": "pending-final-FF"},
+        {"commit": args.source_commit, "scope": "Stage56 timing/docs/release identity",
+         "github": "pending-final-FF", "gitlab": "pending-final-FF"},
         {"commit": "containing-commit", "scope": "Stage56 evidence/release", "github": "post-push-ledger", "gitlab": "post-push-ledger"},
     ])
 
