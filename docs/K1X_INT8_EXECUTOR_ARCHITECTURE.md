@@ -23,12 +23,14 @@ The executor is a static AOT runtime for one frozen YOLO26n-640 profile.
   tap-channel products with tap-major weights.
 - Attention uses direct Q/K/V split/transpose addressing, packed static-shape
   integer MatMul, and package-defined exact fixed Softmax. Its selected Q48 exp
-  lookup uses a legal e16-offset/e64-data indexed RVV load.
+  lookup uses a legal e16-offset/e64-data indexed RVV load. Stage56 writes the
+  exact normalized result directly in the second MatMul's packed input order.
 - LUT, Add, Concat, MaxPool, Resize, Split/reshape/transpose, TopK, and Gather
   have static exact integer implementations.
 - The final head has deterministic score-descending, source-index, then class
   tie ordering, uses true N4/N8/N16 output kernels and block-major C8 class
-  traversal, and emits `1x300x6`.
+  traversal, and emits `1x300x6`. Stage56 updates the exact best-class Q24
+  reduction at the class producer, avoiding a later materialize-and-reread pass.
 
 The compatibility wake protocol uses condition variables. Setting
 `Y26_STAGE53_SPIN_POOL=1` and `Y26_STAGE55_FRAME_GATED_SPIN=1` before prepare
@@ -36,6 +38,12 @@ selects the measured SCHED_OTHER frame-gated epoch-spin research mode. It keeps
 the same CPU affinity and arithmetic, spins only during `run`, and parks workers
 between frames. Raw spin remains diagnostic. The Stage54 prepared-static,
 pause, and adaptive-spin candidates remain rejected.
+
+The optional Stage56 dedicated-board profile keeps SCHED_OTHER and adds only
+reversible runtime placement: CPU0-4 isolated cgroup, movable IRQs and unbound
+workqueues on CPU5-7, and selected nonessential services parked during the
+run. The original kernel, boot entry, storage, and memory policy remain the
+compatibility and recovery baseline.
 
 The measured call path has no ORT session, Python callback, graph registry,
 string dispatch, allocation, file I/O, or float Q/DQ materialization. Input

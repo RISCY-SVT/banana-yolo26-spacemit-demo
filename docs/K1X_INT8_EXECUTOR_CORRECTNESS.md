@@ -18,6 +18,11 @@ heads, Resize edges, Softmax normalization, TopK ties, arena lifetimes, and
 package corruption. Ambient FRM and vector fixed-point CSR state must be
 restored after every run. CPU4-7 IME count must remain zero.
 
+Stage56 reran F0-F7, bus, and Zidane through portable scalar, board scalar,
+and the selected optimized executor. All 215 package-defined integer
+boundaries and the final output were exact. Its selected system profile changes
+CPU placement only and does not change arithmetic, package bytes, or output.
+
 Legacy float-QDQ outputs are diagnostic only. A difference from backend float
 accumulation does not by itself violate the integer contract; task accuracy is
 validated independently on COCO val2017.

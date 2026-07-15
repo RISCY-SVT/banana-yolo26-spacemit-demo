@@ -275,7 +275,91 @@ bool perf_event_spec(std::string_view name, PerfEventSpec* event) noexcept {
     else if (name == "cache_misses") *event = {PERF_TYPE_HARDWARE, PERF_COUNT_HW_CACHE_MISSES};
     else if (name == "branches") *event = {PERF_TYPE_HARDWARE, PERF_COUNT_HW_BRANCH_INSTRUCTIONS};
     else if (name == "branch_misses") *event = {PERF_TYPE_HARDWARE, PERF_COUNT_HW_BRANCH_MISSES};
+    else if (name == "bus_cycles") *event = {PERF_TYPE_HARDWARE, PERF_COUNT_HW_BUS_CYCLES};
+    else if (name == "frontend_stalls") {
+        *event = {PERF_TYPE_HARDWARE, PERF_COUNT_HW_STALLED_CYCLES_FRONTEND};
+    }
+    else if (name == "backend_stalls") {
+        *event = {PERF_TYPE_HARDWARE, PERF_COUNT_HW_STALLED_CYCLES_BACKEND};
+    }
+    else if (name == "ref_cycles") *event = {PERF_TYPE_HARDWARE, PERF_COUNT_HW_REF_CPU_CYCLES};
+    else if (name == "l1d_read_access") {
+        *event = {PERF_TYPE_HW_CACHE,
+                  PERF_COUNT_HW_CACHE_L1D |
+                      (PERF_COUNT_HW_CACHE_OP_READ << 8U) |
+                      (PERF_COUNT_HW_CACHE_RESULT_ACCESS << 16U)};
+    }
+    else if (name == "l1d_read_miss") {
+        *event = {PERF_TYPE_HW_CACHE,
+                  PERF_COUNT_HW_CACHE_L1D |
+                      (PERF_COUNT_HW_CACHE_OP_READ << 8U) |
+                      (PERF_COUNT_HW_CACHE_RESULT_MISS << 16U)};
+    }
+    else if (name == "l1d_write_access") {
+        *event = {PERF_TYPE_HW_CACHE,
+                  PERF_COUNT_HW_CACHE_L1D |
+                      (PERF_COUNT_HW_CACHE_OP_WRITE << 8U) |
+                      (PERF_COUNT_HW_CACHE_RESULT_ACCESS << 16U)};
+    }
+    else if (name == "l1d_write_miss") {
+        *event = {PERF_TYPE_HW_CACHE,
+                  PERF_COUNT_HW_CACHE_L1D |
+                      (PERF_COUNT_HW_CACHE_OP_WRITE << 8U) |
+                      (PERF_COUNT_HW_CACHE_RESULT_MISS << 16U)};
+    }
+    else if (name == "l1i_read_access") {
+        *event = {PERF_TYPE_HW_CACHE,
+                  PERF_COUNT_HW_CACHE_L1I |
+                      (PERF_COUNT_HW_CACHE_OP_READ << 8U) |
+                      (PERF_COUNT_HW_CACHE_RESULT_ACCESS << 16U)};
+    }
+    else if (name == "l1i_read_miss") {
+        *event = {PERF_TYPE_HW_CACHE,
+                  PERF_COUNT_HW_CACHE_L1I |
+                      (PERF_COUNT_HW_CACHE_OP_READ << 8U) |
+                      (PERF_COUNT_HW_CACHE_RESULT_MISS << 16U)};
+    }
+    else if (name == "dtlb_read_access") {
+        *event = {PERF_TYPE_HW_CACHE,
+                  PERF_COUNT_HW_CACHE_DTLB |
+                      (PERF_COUNT_HW_CACHE_OP_READ << 8U) |
+                      (PERF_COUNT_HW_CACHE_RESULT_ACCESS << 16U)};
+    }
+    else if (name == "dtlb_read_miss") {
+        *event = {PERF_TYPE_HW_CACHE,
+                  PERF_COUNT_HW_CACHE_DTLB |
+                      (PERF_COUNT_HW_CACHE_OP_READ << 8U) |
+                      (PERF_COUNT_HW_CACHE_RESULT_MISS << 16U)};
+    }
+    else if (name == "dtlb_write_access") {
+        *event = {PERF_TYPE_HW_CACHE,
+                  PERF_COUNT_HW_CACHE_DTLB |
+                      (PERF_COUNT_HW_CACHE_OP_WRITE << 8U) |
+                      (PERF_COUNT_HW_CACHE_RESULT_ACCESS << 16U)};
+    }
+    else if (name == "dtlb_write_miss") {
+        *event = {PERF_TYPE_HW_CACHE,
+                  PERF_COUNT_HW_CACHE_DTLB |
+                      (PERF_COUNT_HW_CACHE_OP_WRITE << 8U) |
+                      (PERF_COUNT_HW_CACHE_RESULT_MISS << 16U)};
+    }
+    else if (name == "itlb_read_miss") {
+        *event = {PERF_TYPE_HW_CACHE,
+                  PERF_COUNT_HW_CACHE_ITLB |
+                      (PERF_COUNT_HW_CACHE_OP_READ << 8U) |
+                      (PERF_COUNT_HW_CACHE_RESULT_MISS << 16U)};
+    }
     else if (name == "context_switches") *event = {PERF_TYPE_SOFTWARE, PERF_COUNT_SW_CONTEXT_SWITCHES};
+    else if (name.starts_with("raw:")) {
+        std::string_view raw = name.substr(4);
+        if (raw.starts_with("0x") || raw.starts_with("0X")) raw.remove_prefix(2);
+        std::uint64_t config = 0;
+        const auto parsed = std::from_chars(raw.data(), raw.data() + raw.size(), config, 16);
+        if (raw.empty() || parsed.ec != std::errc {} || parsed.ptr != raw.data() + raw.size()) {
+            return false;
+        }
+        *event = {PERF_TYPE_RAW, config};
+    }
     else return false;
     return true;
 #else

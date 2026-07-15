@@ -35,6 +35,8 @@
 
 #if defined(__linux__)
 #include <sys/resource.h>
+#include <sys/mman.h>
+#include <unistd.h>
 #endif
 
 #if defined(Y26_K1X_ENABLE_IME_ASM) && defined(__riscv)
@@ -42,12 +44,18 @@ extern "C" void y26_stage48_kernel_m12n16(
     const std::int8_t*, const std::int8_t*, int, std::int32_t*);
 extern "C" void y26_stage48_kernel_m8n16(
     const std::int8_t*, const std::int8_t*, int, std::int32_t*);
+extern "C" void y26_stage48_kernel_m4n16(
+    const std::int8_t*, const std::int8_t*, int, std::int32_t*);
 extern "C" void y26_stage53_kernel_m12n4(
     const std::int8_t*, const std::int8_t*, int, std::int32_t*);
 extern "C" void y26_stage53_kernel_m12n8(
     const std::int8_t*, const std::int8_t*, int, std::int32_t*);
 extern "C" void y26_stage54_kernel_direct_1x1_m12n16(
     const std::int8_t*, std::ptrdiff_t, const std::int8_t*, int, std::int32_t*);
+extern "C" void y26_stage56_kernel_m8n16_e2c4_lut(
+    const std::int8_t*, const std::int8_t*, int, const std::int64_t*,
+    const std::int64_t*, std::int64_t, const std::int8_t*, std::int8_t*,
+    std::int8_t*, std::ptrdiff_t);
 extern "C" void y26_stage48_load_vlse64_4(const std::int8_t*, std::int8_t*);
 extern "C" void y26_stage49_load_vlseg2_pair_4(
     const std::int8_t*, std::int8_t*, std::int8_t*);
@@ -138,6 +146,32 @@ void run_m8n16(const std::int8_t* a, const std::int8_t* b,
                                 static_cast<std::int32_t>(at[(row_group * 4 + row) * 8 + lane]) *
                                 static_cast<std::int32_t>(bt[(output_group * 4 + output) * 8 + lane]);
                         }
+                    }
+                }
+            }
+        }
+    }
+#endif
+}
+
+void run_m4n16(const std::int8_t* a, const std::int8_t* b,
+               int k_tiles, std::int32_t* c) noexcept {
+#if defined(Y26_K1X_ENABLE_IME_ASM) && defined(__riscv)
+    y26_stage48_kernel_m4n16(a, b, k_tiles, c);
+#else
+    std::fill(c, c + 4 * kDenseN, 0);
+    for (int tile = 0; tile < k_tiles; ++tile) {
+        const auto* at = a + static_cast<std::size_t>(tile) * 4U * 8U;
+        const auto* bt = b + static_cast<std::size_t>(tile) * kDenseN * 8U;
+        for (int output_group = 0; output_group < 4; ++output_group) {
+            auto* result = c + output_group * 16;
+            for (int row = 0; row < 4; ++row) {
+                for (int output = 0; output < 4; ++output) {
+                    for (int lane = 0; lane < 8; ++lane) {
+                        result[row * 4 + output] +=
+                            static_cast<std::int32_t>(at[row * 8 + lane]) *
+                            static_cast<std::int32_t>(
+                                bt[(output_group * 4 + output) * 8 + lane]);
                     }
                 }
             }
@@ -537,6 +571,7 @@ struct Conv {
     std::vector<std::int8_t> depthwise_weights_c8;
     std::vector<std::int32_t> depthwise_corrected_bias_i32;
     std::vector<std::int8_t> stem_weights_tap_major;
+    std::vector<std::int8_t> stem_weights_k32;
     std::vector<std::int32_t> stem_corrected_bias_i32;
     int k_tiles = 0;
     int n_blocks = 0;
@@ -592,6 +627,15 @@ struct Operation {
     int fused_lut_output = -1;
     std::vector<std::int8_t> fused_lut;
     bool skip_when_fused = false;
+    bool lut2_factorable = false;
+    int lut2_factor_shift = 0;
+    std::int64_t lut2_left_multiplier = 0;
+    std::int64_t lut2_right_multiplier = 0;
+    std::array<std::int64_t, 256> lut2_left_terms {};
+    std::array<std::int64_t, 256> lut2_right_terms {};
+    bool softmax_direct_matmul_pack = false;
+    bool matmul_right_prepacked = false;
+    int head_scale_index = -1;
 };
 
 struct OperationProfileSample {
@@ -661,12 +705,12 @@ std::size_t physical_offset(const Tensor& tensor, std::size_t logical_flat) noex
         channel % 8U);
 }
 
-std::uint8_t semantic(const std::vector<std::int8_t>& arena, const Tensor& tensor,
+std::uint8_t semantic(const std::int8_t* arena, const Tensor& tensor,
                       std::size_t logical_flat) noexcept {
     return int8_v1::semantic_code(arena[physical_offset(tensor, logical_flat)]);
 }
 
-void store_semantic(std::vector<std::int8_t>& arena, const Tensor& tensor,
+void store_semantic(std::int8_t* arena, const Tensor& tensor,
                     std::size_t logical_flat, std::uint8_t code) noexcept {
     arena[physical_offset(tensor, logical_flat)] = int8_v1::signed_storage(code);
 }
@@ -681,6 +725,22 @@ std::uint64_t fnv1a64(const float* values, std::size_t count) noexcept {
     return hash;
 }
 
+#if defined(__linux__)
+void advise_region(void* address, std::size_t bytes, int advice,
+                   const char* description) {
+    if (address == nullptr || bytes == 0) return;
+    const long queried_page_size = sysconf(_SC_PAGESIZE);
+    if (queried_page_size <= 0) throw std::runtime_error("cannot query page size");
+    const auto page_size = static_cast<std::uintptr_t>(queried_page_size);
+    const auto begin = reinterpret_cast<std::uintptr_t>(address);
+    const auto aligned_begin = begin & ~(page_size - 1U);
+    const auto aligned_end = (begin + bytes + page_size - 1U) & ~(page_size - 1U);
+    if (madvise(reinterpret_cast<void*>(aligned_begin), aligned_end - aligned_begin, advice) != 0) {
+        throw std::runtime_error(std::string("madvise failed for ") + description);
+    }
+}
+#endif
+
 std::int64_t round_divide_even(UnsignedInt128 numerator, UnsignedInt128 denominator) noexcept {
     const UnsignedInt128 quotient = numerator / denominator;
     const UnsignedInt128 remainder = numerator % denominator;
@@ -688,6 +748,109 @@ std::int64_t round_divide_even(UnsignedInt128 numerator, UnsignedInt128 denomina
     return static_cast<std::int64_t>(quotient +
         (doubled > denominator || (doubled == denominator && (quotient & 1U)) ? 1U : 0U));
 }
+
+std::int64_t round_shift_right_even_i64(std::int64_t value, unsigned shift) noexcept {
+    const bool negative = value < 0;
+    const std::uint64_t bits = static_cast<std::uint64_t>(value);
+    const std::uint64_t magnitude = negative ? (~bits) + 1U : bits;
+    std::uint64_t quotient = magnitude >> shift;
+    const std::uint64_t remainder = magnitude & ((UINT64_C(1) << shift) - 1U);
+    const std::uint64_t half = UINT64_C(1) << (shift - 1U);
+    if (remainder > half || (remainder == half && (quotient & 1U) != 0)) ++quotient;
+    const auto rounded = static_cast<std::int64_t>(quotient);
+    return negative ? -rounded : rounded;
+}
+
+class ArenaStorage {
+public:
+    ArenaStorage()
+        : mmap_enabled_(std::getenv("Y26_STAGE56_MMAP_ARENA") != nullptr) {}
+
+    ~ArenaStorage() { release_mapping(); }
+
+    ArenaStorage(const ArenaStorage&) = delete;
+    ArenaStorage& operator=(const ArenaStorage&) = delete;
+
+    ArenaStorage(ArenaStorage&& other) noexcept { move_from(std::move(other)); }
+
+    ArenaStorage& operator=(ArenaStorage&& other) noexcept {
+        if (this != &other) {
+            release_mapping();
+            move_from(std::move(other));
+        }
+        return *this;
+    }
+
+    void resize(std::size_t bytes) {
+#if defined(__linux__)
+        if (mmap_enabled_) {
+            if (bytes > mapping_bytes_) {
+                const long queried_page_size = sysconf(_SC_PAGESIZE);
+                if (queried_page_size <= 0) {
+                    throw std::runtime_error("cannot query arena mapping page size");
+                }
+                const std::size_t page_size = static_cast<std::size_t>(queried_page_size);
+                const std::size_t mapped = (bytes + page_size - 1U) & ~(page_size - 1U);
+                void* replacement = mmap(nullptr, mapped, PROT_READ | PROT_WRITE,
+                                         MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+                if (replacement == MAP_FAILED) {
+                    throw std::runtime_error("anonymous activation arena mmap failed");
+                }
+                if (mapping_ != nullptr && size_ != 0) {
+                    std::memcpy(replacement, mapping_, size_);
+                }
+                release_mapping();
+                mapping_ = static_cast<std::int8_t*>(replacement);
+                mapping_bytes_ = mapped;
+            }
+            size_ = bytes;
+            return;
+        }
+#endif
+        vector_.resize(bytes);
+        size_ = vector_.size();
+    }
+
+    std::int8_t* data() noexcept {
+        return mmap_enabled_ ? mapping_ : vector_.data();
+    }
+
+    const std::int8_t* data() const noexcept {
+        return mmap_enabled_ ? mapping_ : vector_.data();
+    }
+
+    std::size_t size() const noexcept { return size_; }
+    bool empty() const noexcept { return size_ == 0; }
+    bool uses_mmap() const noexcept { return mmap_enabled_; }
+
+private:
+    void release_mapping() noexcept {
+#if defined(__linux__)
+        if (mapping_ != nullptr) munmap(mapping_, mapping_bytes_);
+#endif
+        mapping_ = nullptr;
+        mapping_bytes_ = 0;
+        if (mmap_enabled_) size_ = 0;
+    }
+
+    void move_from(ArenaStorage&& other) noexcept {
+        vector_ = std::move(other.vector_);
+        mmap_enabled_ = other.mmap_enabled_;
+        mapping_ = other.mapping_;
+        mapping_bytes_ = other.mapping_bytes_;
+        size_ = other.size_;
+        other.mapping_ = nullptr;
+        other.mapping_bytes_ = 0;
+        other.size_ = other.vector_.size();
+        other.mmap_enabled_ = false;
+    }
+
+    bool mmap_enabled_ = false;
+    std::int8_t* mapping_ = nullptr;
+    std::size_t mapping_bytes_ = 0;
+    std::size_t size_ = 0;
+    std::vector<std::int8_t> vector_;
+};
 
 OpKind parse_kind(std::string_view value) {
     if (value == "input_quant") return OpKind::input_quant;
@@ -745,7 +908,7 @@ struct FullExecutor::Impl {
     std::vector<Tensor> tensors;
     std::vector<Operation> operations;
     std::vector<OperationRunner> operation_runners;
-    std::vector<std::int8_t> arena;
+    ArenaStorage arena;
     std::vector<std::vector<std::int8_t>> captured;
     struct CoreBridge {
         int full_tensor = -1;
@@ -754,6 +917,8 @@ struct FullExecutor::Impl {
     };
     std::array<CoreBridge, 6> core_bridges;
     std::array<HeadScale, 3> head;
+    std::array<std::uint32_t, 8400> head_best_score_q24 {};
+    std::array<std::uint8_t, 8400> head_best_class {};
     std::array<float, 300 * 6> last_output {};
     std::unique_ptr<WorkerPool> pool;
     std::vector<DenseScratch> dense_scratch;
@@ -783,18 +948,23 @@ struct FullExecutor::Impl {
     bool dense_weight_stationary_enabled = false;
     bool stage55_dense_family_a_enabled = false;
     bool stage55_dense_family_b_enabled = false;
+    bool stage56_dense_fused_m8_enabled = false;
+    bool stage56_stem_k32_enabled = false;
     int dense_partition = 0;
     bool depthwise_v2_enabled = false;
     bool depthwise_x2_enabled = false;
     bool depthwise_border_v2_enabled = false;
     bool stage55_depthwise_e2c4_enabled = false;
     bool lut2_rvv_enabled = false;
+    bool stage56_lut2_factor_enabled = false;
     bool input_rvv_v2_enabled = false;
     bool input_compact_c3_enabled = false;
     bool input_stem_fused_enabled = false;
     bool attention_v2_enabled = false;
+    bool stage56_attention_direct_pack_enabled = false;
     bool attention_subphase_profile_enabled = false;
     bool head_v2_enabled = false;
+    bool stage56_head_producer_reduction_enabled = false;
     bool dense_pack_rvv_enabled = false;
     bool static_schedule_enabled = false;
     std::vector<int> static_batch_end;
@@ -886,11 +1056,11 @@ struct FullExecutor::Impl {
     }
 
     std::uint8_t code(int id, std::size_t flat) const noexcept {
-        return semantic(arena, tensors[static_cast<std::size_t>(id)], flat);
+        return semantic(arena.data(), tensors[static_cast<std::size_t>(id)], flat);
     }
 
     void set_code(int id, std::size_t flat, std::uint8_t value) noexcept {
-        store_semantic(arena, tensors[static_cast<std::size_t>(id)], flat, value);
+        store_semantic(arena.data(), tensors[static_cast<std::size_t>(id)], flat, value);
     }
 
     void prepare_dense_conv(Operation& operation) {
@@ -959,6 +1129,7 @@ struct FullExecutor::Impl {
         if (conv.input_c == 3 && conv.output_c == 16 && conv.kernel_h == 3 &&
             conv.kernel_w == 3 && conv.stride_h == 2 && conv.stride_w == 2) {
             conv.stem_weights_tap_major.resize(27U * 16U);
+            conv.stem_weights_k32.assign(4U * 16U * 8U, 0);
             conv.stem_corrected_bias_i32.resize(16U);
             for (int channel = 0; channel < 16; ++channel) {
                 const std::int64_t corrected = conv.corrected_bias[static_cast<std::size_t>(channel)];
@@ -978,6 +1149,9 @@ struct FullExecutor::Impl {
                             conv.stem_weights_tap_major[
                                 static_cast<std::size_t>(tap) * 16U + channel] =
                                 conv.weights[source_index];
+                            conv.stem_weights_k32[
+                                (static_cast<std::size_t>(tap / 8) * 16U + channel) * 8U +
+                                static_cast<std::size_t>(tap % 8)] = conv.weights[source_index];
                         }
                     }
                 }
@@ -1039,6 +1213,60 @@ struct FullExecutor::Impl {
             conv.multiplier_m63[static_cast<std::size_t>(channel)] = multiplier * 2;
         }
         conv.depthwise_rvv_eligible = true;
+    }
+
+    void prepare_lut2_factorization(Operation& operation) {
+        if (operation.kind != OpKind::lut2 || operation.inputs.size() != 2U ||
+            operation.lut.size() != 65536U) {
+            return;
+        }
+        struct Factor {
+            int operation_index;
+            int shift;
+            std::int64_t left_multiplier;
+            std::int64_t right_multiplier;
+        };
+        static constexpr std::array<Factor, 6> factors {{
+            {80, 19, 853283, 832593},
+            {82, 20, 760045, 800679},
+            {86, 20, 794783, 691034},
+            {191, 23, 7190465, 8447291},
+            {193, 22, 2344393, 2603186},
+            {197, 21, 2161932, 2500415},
+        }};
+        const auto found = std::find_if(factors.begin(), factors.end(),
+            [&](const Factor& factor) { return factor.operation_index == operation.index; });
+        if (found == factors.end()) return;
+        const Tensor& left = tensor(operation.inputs[0]);
+        const Tensor& right = tensor(operation.inputs[1]);
+        const Tensor& output = tensor(operation.output);
+        for (int code_value = 0; code_value < 256; ++code_value) {
+            operation.lut2_left_terms[static_cast<std::size_t>(code_value)] =
+                static_cast<std::int64_t>(code_value - left.zero_point) * found->left_multiplier;
+            operation.lut2_right_terms[static_cast<std::size_t>(code_value)] =
+                static_cast<std::int64_t>(code_value - right.zero_point) * found->right_multiplier;
+        }
+        for (int left_code = 0; left_code < 256; ++left_code) {
+            for (int right_code = 0; right_code < 256; ++right_code) {
+                const std::int64_t accumulator =
+                    operation.lut2_left_terms[static_cast<std::size_t>(left_code)] +
+                    operation.lut2_right_terms[static_cast<std::size_t>(right_code)];
+                const std::int64_t semantic_code = std::clamp<std::int64_t>(
+                    round_shift_right_even_i64(accumulator, static_cast<unsigned>(found->shift)) +
+                        output.zero_point,
+                    0, 255);
+                const std::int8_t expected = int8_v1::signed_storage(
+                    static_cast<std::uint8_t>(semantic_code));
+                if (operation.lut[static_cast<std::size_t>(left_code) * 256U +
+                                  static_cast<std::size_t>(right_code)] != expected) {
+                    throw std::runtime_error("LUT2 factorization exhaustive proof failed");
+                }
+            }
+        }
+        operation.lut2_factorable = true;
+        operation.lut2_factor_shift = found->shift;
+        operation.lut2_left_multiplier = found->left_multiplier;
+        operation.lut2_right_multiplier = found->right_multiplier;
     }
 
     void pack_dense_a(const Conv& conv, const Tensor& input, const std::int8_t* input_data,
@@ -1384,7 +1612,11 @@ struct FullExecutor::Impl {
         try {
             if (job.self->config.compute == ComputeMode::optimized &&
                 job.self->rgb_stem_enabled && job.op->conv.rgb_stem_rvv_eligible) {
-                job.self->run_rgb_stem_chunk(*job.op, worker, workers);
+                if (job.self->stage56_stem_k32_enabled) {
+                    job.self->run_rgb_stem_k32_chunk(*job.op, worker, workers);
+                } else {
+                    job.self->run_rgb_stem_chunk(*job.op, worker, workers);
+                }
             } else if (job.self->config.compute == ComputeMode::optimized &&
                        job.op->conv.dense_ime_eligible) {
                 job.self->run_dense_conv_chunk(*job.op, worker, workers);
@@ -1515,6 +1747,76 @@ struct FullExecutor::Impl {
         const auto result = stage51::end_q62_vector_rne(&vector_state);
         if (!result.restored || result.saturated) {
             throw std::runtime_error("RGB stem vector state restoration failed");
+        }
+    }
+
+    void run_rgb_stem_k32_chunk(const Operation& operation, int worker, int workers) {
+        const Conv& conv = operation.conv;
+        const Tensor& input = tensor(operation.inputs[0]);
+        const Tensor& output = tensor(operation.output);
+        if (conv.stem_weights_k32.size() != 4U * 16U * 8U || conv.output_c != 16) {
+            throw std::runtime_error("compact K32 stem assets are unavailable");
+        }
+        const bool fuse_lut = fused_lut_enabled && !config.capture_boundaries &&
+            operation.fused_lut_output >= 0;
+        const Tensor& store_output = fuse_lut ? tensor(operation.fused_lut_output) : output;
+        const auto* input_data = arena.data() + input.offset;
+        auto* output_data = arena.data() + store_output.offset;
+        const int output_h = output.dims[2];
+        const int output_w = output.dims[3];
+        const int output_m = output_h * output_w;
+        const int input_h = input.dims[2];
+        const int input_w = input.dims[3];
+        const std::size_t input_pixel_stride =
+            input_compact_c3_enabled && !config.capture_boundaries ? 3U : 8U;
+        const std::int8_t padding = int8_v1::signed_storage(
+            static_cast<std::uint8_t>(input.zero_point));
+        const int tile_count = (output_m + 3) / 4;
+        const int tile_begin = tile_count * worker / workers;
+        const int tile_end = tile_count * (worker + 1) / workers;
+        DenseScratch& scratch = dense_scratch[static_cast<std::size_t>(worker)];
+        stage51::VectorFixedPointState vector_state;
+        if (!stage51::begin_q62_vector_rne(&vector_state)) {
+            throw std::runtime_error("cannot establish compact K32 stem vector state");
+        }
+        for (int tile = tile_begin; tile < tile_end; ++tile) {
+            const int m_begin = tile * 4;
+            const int valid_rows = std::min(4, output_m - m_begin);
+            for (int k_tile = 0; k_tile < 4; ++k_tile) {
+                for (int row = 0; row < 4; ++row) {
+                    auto* destination = scratch.a.data() +
+                        (static_cast<std::size_t>(k_tile) * 4U + row) * 8U;
+                    for (int lane = 0; lane < 8; ++lane) {
+                        const int tap = k_tile * 8 + lane;
+                        if (row >= valid_rows || tap >= 27) {
+                            destination[lane] = tap >= 27 ? 0 : padding;
+                            continue;
+                        }
+                        const int spatial = m_begin + row;
+                        const int output_y = spatial / output_w;
+                        const int output_x = spatial % output_w;
+                        const int kernel_position = tap / 3;
+                        const int input_channel = tap % 3;
+                        const int input_y = output_y * 2 - conv.pad_top + kernel_position / 3;
+                        const int input_x = output_x * 2 - conv.pad_left + kernel_position % 3;
+                        if (input_y < 0 || input_y >= input_h ||
+                            input_x < 0 || input_x >= input_w) {
+                            destination[lane] = padding;
+                        } else {
+                            destination[lane] = input_data[
+                                (static_cast<std::size_t>(input_y) * input_w + input_x) *
+                                    input_pixel_stride + static_cast<std::size_t>(input_channel)];
+                        }
+                    }
+                }
+            }
+            run_m4n16(scratch.a.data(), conv.stem_weights_k32.data(), 4, scratch.c.data());
+            store_dense_block(operation, conv, output, output_data, scratch,
+                              4, m_begin, valid_rows, 0, fuse_lut);
+        }
+        const auto result = stage51::end_q62_vector_rne(&vector_state);
+        if (!result.restored || result.saturated) {
+            throw std::runtime_error("compact K32 stem vector state restoration failed");
         }
     }
 
@@ -1661,7 +1963,11 @@ struct FullExecutor::Impl {
         auto* output_data = arena.data() + store_output.offset;
         DenseScratch& scratch = dense_scratch[static_cast<std::size_t>(worker)];
         const int output_m = output.dims[2] * output.dims[3];
-        const bool use_m8 = (dense_m8_enabled || conv.stage55_family_b_m8) &&
+        const bool use_fused_m8 = stage56_dense_fused_m8_enabled &&
+            e2c4_enabled && e2c3_enabled && fuse_lut && conv.e2c_compatible &&
+            conv.kernel_h == 3 && conv.kernel_w == 3 &&
+            conv.output_c % kDenseN == 0;
+        const bool use_m8 = (dense_m8_enabled || conv.stage55_family_b_m8 || use_fused_m8) &&
             conv.output_c % kDenseN == 0;
         const int m_block = use_m8 ? 8 : kDenseM;
         const int tiles = (output_m + m_block - 1) / m_block;
@@ -1697,6 +2003,20 @@ struct FullExecutor::Impl {
                 static_cast<std::size_t>(n_block) * conv.k_tiles * kDenseN * 8U;
             const int live_channels = std::min(kDenseN, conv.output_c - n_block * kDenseN);
 #if defined(Y26_K1X_ENABLE_IME_ASM) && defined(__riscv)
+            if (use_fused_m8 && valid_rows == 8 && live_channels == kDenseN) {
+                const int channel_begin = n_block * kDenseN;
+                const std::size_t destination =
+                    ((static_cast<std::size_t>(channel_begin / 8) * output_m + m_begin) * 8U);
+                y26_stage56_kernel_m8n16_e2c4_lut(
+                    scratch.a.data(), packed, conv.k_tiles,
+                    conv.corrected_bias.data() + channel_begin,
+                    conv.multiplier_m63.data() + channel_begin,
+                    output.zero_point, operation.fused_lut.data(),
+                    output_data + destination,
+                    output_data + destination + static_cast<std::size_t>(output_m) * 8U,
+                    8);
+                return;
+            }
             if (direct_1x1_tile) {
                 const auto channel_block_stride = static_cast<std::ptrdiff_t>(
                     static_cast<std::size_t>(input.dims[2]) * input.dims[3] * 8U);
@@ -1997,6 +2317,64 @@ struct FullExecutor::Impl {
         ConvJob job {this, &operation};
         dispatch_workers(config.workers, conv_job, &job);
         if (job.status.load(std::memory_order_relaxed) != 0) throw std::runtime_error("Conv worker failed");
+        if (stage56_head_producer_reduction_enabled && operation.head_scale_index >= 0) {
+            run_head_best_reduction(operation.head_scale_index);
+        }
+    }
+
+    struct HeadBestJob {
+        Impl* self;
+        int scale_index;
+        std::atomic<int> status {0};
+    };
+
+    static void head_best_job(void* opaque, int worker, int workers) {
+        auto& job = *static_cast<HeadBestJob*>(opaque);
+        if (job.status.load(std::memory_order_relaxed) != 0) return;
+        try {
+            const HeadScale& scale = job.self->head[static_cast<std::size_t>(job.scale_index)];
+            const Tensor& cls_tensor = job.self->tensor(scale.cls_tensor);
+            const auto* cls_data = job.self->arena.data() + cls_tensor.offset;
+            const int pixels = scale.resolution * scale.resolution;
+            const int begin = pixels * worker / workers;
+            const int end = pixels * (worker + 1) / workers;
+            int global_begin = 0;
+            for (int index = 0; index < job.scale_index; ++index) {
+                const int resolution = job.self->head[static_cast<std::size_t>(index)].resolution;
+                global_begin += resolution * resolution;
+            }
+            for (int local = begin; local < end; ++local) {
+                std::uint32_t best_score = 0;
+                std::uint8_t best_class = 0;
+                for (int class_block = 0; class_block < 10; ++class_block) {
+                    const auto* codes = cls_data +
+                        (static_cast<std::size_t>(class_block) * pixels + local) * 8U;
+                    for (int lane = 0; lane < 8; ++lane) {
+                        const int class_index = class_block * 8 + lane;
+                        const std::uint32_t score = scale.cls_q24[
+                            int8_v1::semantic_code(codes[lane])];
+                        if (score > best_score) {
+                            best_score = score;
+                            best_class = static_cast<std::uint8_t>(class_index);
+                        }
+                    }
+                }
+                job.self->head_best_score_q24[static_cast<std::size_t>(global_begin + local)] =
+                    best_score;
+                job.self->head_best_class[static_cast<std::size_t>(global_begin + local)] =
+                    best_class;
+            }
+        } catch (...) {
+            job.status.store(1, std::memory_order_relaxed);
+        }
+    }
+
+    void run_head_best_reduction(int scale_index) {
+        HeadBestJob job {this, scale_index};
+        dispatch_workers(config.workers, head_best_job, &job);
+        if (job.status.load(std::memory_order_relaxed) != 0) {
+            throw std::runtime_error("head producer-adjacent reduction failed");
+        }
     }
 
     void run_lut_chunk(const Operation& operation, std::size_t begin, std::size_t end) {
@@ -2021,6 +2399,23 @@ struct FullExecutor::Impl {
                 const auto* left_data = arena.data() + input.offset;
                 const auto* right_data = arena.data() + right.offset;
                 auto* output_data = arena.data() + output.offset;
+                if (stage56_lut2_factor_enabled && operation.lut2_factorable) {
+                    for (std::size_t index = begin; index < end; ++index) {
+                        const std::uint8_t left_code = int8_v1::semantic_code(left_data[index]);
+                        const std::uint8_t right_code = int8_v1::semantic_code(right_data[index]);
+                        const std::int64_t accumulator =
+                            operation.lut2_left_terms[left_code] +
+                            operation.lut2_right_terms[right_code];
+                        const std::int64_t semantic_code = std::clamp<std::int64_t>(
+                            round_shift_right_even_i64(
+                                accumulator, static_cast<unsigned>(operation.lut2_factor_shift)) +
+                                output.zero_point,
+                            0, 255);
+                        output_data[index] = int8_v1::signed_storage(
+                            static_cast<std::uint8_t>(semantic_code));
+                    }
+                    return;
+                }
                 if (lut2_rvv_enabled) {
                     transform_lut2_rvv(left_data + begin, right_data + begin,
                                        output_data + begin, operation.lut.data(), end - begin);
@@ -2682,7 +3077,10 @@ struct FullExecutor::Impl {
 
     void run_matmul_ime(const Operation& operation) {
         const auto pack_begin = attention_subphase_profile_enabled ? Clock::now() : Clock::time_point {};
-        pack_matmul_right(operation);
+        if (!(stage56_attention_direct_pack_enabled && !config.capture_boundaries &&
+              operation.matmul_right_prepacked)) {
+            pack_matmul_right(operation);
+        }
         const auto compute_begin = attention_subphase_profile_enabled ? Clock::now() : Clock::time_point {};
         MatmulImeJob job {this, &operation};
         dispatch_workers(config.workers, matmul_ime_job, &job);
@@ -2759,6 +3157,7 @@ struct FullExecutor::Impl {
                 std::array<std::uint8_t, 256> valid {};
                 const std::size_t matrix = row / static_cast<std::size_t>(rows_per_matrix);
                 const std::size_t row_in_matrix = row % static_cast<std::size_t>(rows_per_matrix);
+                std::int64_t packed_right_sum = 0;
                 for (int column = 0; column < width; ++column) {
                     const std::uint8_t difference = static_cast<std::uint8_t>(
                         maximum - int8_v1::semantic_code(source_row[column]));
@@ -2776,8 +3175,31 @@ struct FullExecutor::Impl {
                     const std::size_t destination_flat =
                         (matrix * static_cast<std::size_t>(width) + static_cast<std::size_t>(column)) *
                         static_cast<std::size_t>(rows_per_matrix) + row_in_matrix;
-                    destination[destination_flat] =
+                    const std::int8_t storage =
                         int8_v1::signed_storage(quantized_by_difference[difference]);
+                    if (stage56_attention_direct_pack_enabled && !config.capture_boundaries &&
+                        operation.softmax_direct_matmul_pack && width % 8 == 0 &&
+                        rows_per_matrix % kDenseN == 0) {
+                        const int k_tile = column / 8;
+                        const int lane = column % 8;
+                        const int n_block = static_cast<int>(row_in_matrix) / kDenseN;
+                        const int output_channel = static_cast<int>(row_in_matrix) % kDenseN;
+                        const int k_tiles = width / 8;
+                        const int n_blocks = rows_per_matrix / kDenseN;
+                        const std::size_t packed_index =
+                            ((((matrix * static_cast<std::size_t>(n_blocks) + n_block) *
+                               static_cast<std::size_t>(k_tiles) + k_tile) * kDenseN +
+                              output_channel) * 8U + lane);
+                        matmul_packed_right[packed_index] = storage;
+                        packed_right_sum += storage;
+                    } else {
+                        destination[destination_flat] = storage;
+                    }
+                }
+                if (stage56_attention_direct_pack_enabled && !config.capture_boundaries &&
+                    operation.softmax_direct_matmul_pack) {
+                    matmul_right_sums[matrix * static_cast<std::size_t>(rows_per_matrix) +
+                                      row_in_matrix] = packed_right_sum;
                 }
                 if (attention_subphase_profile_enabled) {
                     normalize_transpose_ns += static_cast<std::uint64_t>(
@@ -3092,20 +3514,31 @@ struct FullExecutor::Impl {
                 };
             }
             for (int class_block = 0; class_block < 10; ++class_block) {
-                const auto* class_block_data = cls_data +
-                    static_cast<std::size_t>(class_block) * pixels * 8U;
-                for (int local = 0; local < pixels; ++local) {
-                    Point& point = points[static_cast<std::size_t>(global_begin + local)];
-                    const auto* codes = class_block_data + static_cast<std::size_t>(local) * 8U;
-                    for (int lane = 0; lane < 8; ++lane) {
-                        const int class_index = class_block * 8 + lane;
-                        const std::uint32_t score = scale.cls_q24[
-                            int8_v1::semantic_code(codes[lane])];
-                        if (score > point.best_score_q24) {
-                            point.best_score_q24 = score;
-                            point.best_class = class_index;
+                if (!stage56_head_producer_reduction_enabled) {
+                    const auto* class_block_data = cls_data +
+                        static_cast<std::size_t>(class_block) * pixels * 8U;
+                    for (int local = 0; local < pixels; ++local) {
+                        Point& point = points[static_cast<std::size_t>(global_begin + local)];
+                        const auto* codes = class_block_data + static_cast<std::size_t>(local) * 8U;
+                        for (int lane = 0; lane < 8; ++lane) {
+                            const int class_index = class_block * 8 + lane;
+                            const std::uint32_t score = scale.cls_q24[
+                                int8_v1::semantic_code(codes[lane])];
+                            if (score > point.best_score_q24) {
+                                point.best_score_q24 = score;
+                                point.best_class = class_index;
+                            }
                         }
                     }
+                }
+            }
+            if (stage56_head_producer_reduction_enabled) {
+                for (int local = 0; local < pixels; ++local) {
+                    Point& point = points[static_cast<std::size_t>(global_begin + local)];
+                    point.best_score_q24 = head_best_score_q24[
+                        static_cast<std::size_t>(global_begin + local)];
+                    point.best_class = head_best_class[
+                        static_cast<std::size_t>(global_begin + local)];
                 }
             }
         }
@@ -3227,6 +3660,10 @@ int FullExecutor::prepare(const std::filesystem::path& package_dir,
             std::getenv("Y26_STAGE55_DENSE_FAMILY_A") != nullptr;
         prepared.stage55_dense_family_b_enabled =
             std::getenv("Y26_STAGE55_DENSE_FAMILY_B") != nullptr;
+        prepared.stage56_dense_fused_m8_enabled =
+            std::getenv("Y26_STAGE56_DENSE_FUSED_M8") != nullptr;
+        prepared.stage56_stem_k32_enabled =
+            std::getenv("Y26_STAGE56_STEM_K32") != nullptr;
         const char* dense_partition_environment = std::getenv("Y26_STAGE54_DENSE_PARTITION");
         if (dense_partition_environment != nullptr) {
             const std::string_view partition(dense_partition_environment);
@@ -3254,6 +3691,8 @@ int FullExecutor::prepare(const std::filesystem::path& package_dir,
         const char* lut2_rvv_environment = std::getenv("Y26_STAGE54_LUT2_RVV");
         prepared.lut2_rvv_enabled = lut2_rvv_environment != nullptr &&
             std::string_view(lut2_rvv_environment) == "1";
+        prepared.stage56_lut2_factor_enabled =
+            std::getenv("Y26_STAGE56_LUT2_FACTOR") != nullptr;
         const char* input_rvv_v2_environment = std::getenv("Y26_STAGE54_INPUT_RVV_V2");
         prepared.input_rvv_v2_enabled = input_rvv_v2_environment != nullptr &&
             std::string_view(input_rvv_v2_environment) == "1";
@@ -3266,11 +3705,15 @@ int FullExecutor::prepare(const std::filesystem::path& package_dir,
         const char* attention_v2_environment = std::getenv("Y26_STAGE54_ATTENTION_V2");
         prepared.attention_v2_enabled = attention_v2_environment != nullptr &&
             std::string_view(attention_v2_environment) == "1";
+        prepared.stage56_attention_direct_pack_enabled =
+            std::getenv("Y26_STAGE56_ATTENTION_DIRECT_PACK") != nullptr;
         prepared.attention_subphase_profile_enabled =
             std::getenv("Y26_STAGE55_ATTENTION_PROFILE") != nullptr;
         const char* head_v2_environment = std::getenv("Y26_STAGE54_HEAD_V2");
         prepared.head_v2_enabled = head_v2_environment != nullptr &&
             std::string_view(head_v2_environment) == "1";
+        prepared.stage56_head_producer_reduction_enabled =
+            std::getenv("Y26_STAGE56_HEAD_PRODUCER_REDUCTION") != nullptr;
         std::size_t arena_bytes = 0;
         for (const Row& row : read_tsv(prepared.package / "tensors.tsv")) {
             Tensor tensor;
@@ -3414,6 +3857,8 @@ int FullExecutor::prepare(const std::filesystem::path& package_dir,
             } else if (operation.kind == OpKind::conv_grouped) {
                 prepared.prepare_depthwise_conv(operation);
                 prepared.total_weight_bytes += operation.conv.depthwise_weights_c8.size();
+            } else if (operation.kind == OpKind::lut2) {
+                prepared.prepare_lut2_factorization(operation);
             }
             prepared.operation_runners.push_back(Impl::runner_for(operation.kind));
             prepared.operations.push_back(std::move(operation));
@@ -3425,6 +3870,24 @@ int FullExecutor::prepare(const std::filesystem::path& package_dir,
                     ++tensor_input_uses[static_cast<std::size_t>(input_id)];
                 }
             }
+        }
+        for (std::size_t index = 0; index + 1U < prepared.operations.size(); ++index) {
+            Operation& softmax = prepared.operations[index];
+            Operation& matmul = prepared.operations[index + 1U];
+            if (softmax.kind != OpKind::softmax_transpose ||
+                matmul.kind != OpKind::matmul || matmul.inputs.size() != 2U ||
+                matmul.inputs[1] != softmax.output ||
+                tensor_input_uses[static_cast<std::size_t>(softmax.output)] != 1 ||
+                !matmul.matmul_ime_eligible) {
+                continue;
+            }
+            const Tensor& packed_tensor = prepared.tensor(softmax.output);
+            if (packed_tensor.rank != 4 || packed_tensor.layout != Layout::linear ||
+                packed_tensor.dims[2] % 8 != 0 || packed_tensor.dims[3] % kDenseN != 0) {
+                continue;
+            }
+            softmax.softmax_direct_matmul_pack = true;
+            matmul.matmul_right_prepacked = true;
         }
         for (std::size_t index = 0; index + 1 < prepared.operations.size(); ++index) {
             Operation& conv_operation = prepared.operations[index];
@@ -3498,6 +3961,15 @@ int FullExecutor::prepare(const std::filesystem::path& package_dir,
             scale.cls_tensor = integer(row, "cls_tensor");
             scale.reg_q16 = read_binary<std::int32_t>(prepared.package / value(row, "reg_lut_file"), 4U * 256U);
             scale.cls_q24 = read_binary<std::uint32_t>(prepared.package / value(row, "cls_lut_file"), 256);
+        }
+        for (Operation& operation : prepared.operations) {
+            for (std::size_t scale_index = 0; scale_index < prepared.head.size(); ++scale_index) {
+                if (operation.output == prepared.head[scale_index].cls_tensor ||
+                    operation.fused_lut_output == prepared.head[scale_index].cls_tensor) {
+                    operation.head_scale_index = static_cast<int>(scale_index);
+                    break;
+                }
+            }
         }
         const auto find_tensor = [&](std::string_view name) {
             const auto found = std::find_if(prepared.tensors.begin(), prepared.tensors.end(),
@@ -3597,6 +4069,45 @@ int FullExecutor::prepare(const std::filesystem::path& package_dir,
         if (!prepared.controller_affinity_ok || !prepared.worker_affinity_ok()) {
             throw std::runtime_error("executor CPU affinity or scheduler policy could not be established");
         }
+#if defined(__linux__)
+        const bool use_hugepage_advice = std::getenv("Y26_STAGE56_MADV_HUGEPAGE") != nullptr;
+        const bool use_collapse_advice = std::getenv("Y26_STAGE56_MADV_COLLAPSE") != nullptr;
+        if (use_hugepage_advice || use_collapse_advice) {
+            if (use_hugepage_advice) {
+                advise_region(prepared.arena.data(), prepared.arena.size(), MADV_HUGEPAGE,
+                              "activation arena");
+            }
+#if defined(MADV_COLLAPSE)
+            if (use_collapse_advice) {
+                advise_region(prepared.arena.data(), prepared.arena.size(), MADV_COLLAPSE,
+                              "activation arena collapse");
+            }
+#else
+            if (use_collapse_advice) {
+                throw std::runtime_error("MADV_COLLAPSE is unavailable in the build headers");
+            }
+#endif
+        }
+        if (std::getenv("Y26_STAGE56_PREFAULT") != nullptr) {
+            const long queried_page_size = sysconf(_SC_PAGESIZE);
+            if (queried_page_size <= 0) throw std::runtime_error("cannot query page size");
+            const std::size_t page_size = static_cast<std::size_t>(queried_page_size);
+            volatile std::int8_t* arena_pages = prepared.arena.data();
+            for (std::size_t offset = 0; offset < prepared.arena.size(); offset += page_size) {
+                const std::int8_t value = arena_pages[offset];
+                arena_pages[offset] = value;
+            }
+            if (!prepared.arena.empty()) {
+                const std::size_t offset = prepared.arena.size() - 1U;
+                const std::int8_t value = arena_pages[offset];
+                arena_pages[offset] = value;
+            }
+        }
+        if (std::getenv("Y26_STAGE56_MLOCK") != nullptr &&
+            mlockall(MCL_CURRENT | MCL_FUTURE) != 0) {
+            throw std::runtime_error("mlockall failed for Stage56 memory profile");
+        }
+#endif
         prepared.ready = true;
         *impl_ = std::move(prepared);
         return 0;
@@ -3970,6 +4481,10 @@ int FullExecutor::diagnostic_benchmark_conv_shape(
             clear_output();
             impl_->run_conv(operation);
         }
+        const char* perf_group = std::getenv("Y26_STAGE55_PERF_GROUP");
+        if (perf_group != nullptr && perf_group[0] != '\0' && impl_->optimized_core) {
+            impl_->optimized_core->begin_worker_counter_collection(perf_group);
+        }
         std::vector<double> samples;
         samples.reserve(static_cast<std::size_t>(runs));
         std::uint64_t expected_hash = 0;
@@ -4021,6 +4536,21 @@ int FullExecutor::diagnostic_benchmark_conv_shape(
         result->maximum_us = ordered.back();
         result->output_hash = expected_hash;
         result->deterministic = deterministic;
+        if (perf_group != nullptr && perf_group[0] != '\0' && impl_->optimized_core) {
+            for (const stage49::WorkerCounter& counter : impl_->optimized_core->worker_counters()) {
+                std::fprintf(stderr,
+                    "stage56_shape_counter\t%d\t%d\t%d\t%d\t%d\t%d\t%s\t%s\t%d\t%llu\t%llu\t%llu\t%llu\t%llu\n",
+                    operation.index, output_m, selected_channels,
+                    conv.input_c * conv.kernel_h * conv.kernel_w,
+                    counter.worker, counter.worker_cpu, counter.event.c_str(),
+                    counter.status.c_str(), counter.error_number,
+                    static_cast<unsigned long long>(counter.event_id),
+                    static_cast<unsigned long long>(counter.iterations),
+                    static_cast<unsigned long long>(counter.count),
+                    static_cast<unsigned long long>(counter.time_enabled),
+                    static_cast<unsigned long long>(counter.time_running));
+            }
+        }
         if (!deterministic) throw std::runtime_error("diagnostic Conv output is not deterministic");
         return 0;
     } catch (const std::exception& error) {

@@ -6,7 +6,10 @@ input=${2:-"$root/fixtures/bus_640_nchw_f32.bin"}
 output=${3:-"$root/outputs/benchmark.json"}
 profile=${4:-compatibility}
 
-operator_profile="$root/config/k1x-int8-executor-stage55.env"
+operator_profile="$root/config/k1x-int8-executor-stage56.env"
+if [[ ! -r "$operator_profile" ]]; then
+  operator_profile="$root/config/k1x-int8-executor-stage55.env"
+fi
 if [[ ! -r "$operator_profile" ]]; then
   operator_profile="$root/config/k1x-int8-executor-stage54.env"
 fi
@@ -24,8 +27,20 @@ case "$profile" in
     export Y26_STAGE53_SPIN_POOL=1
     export Y26_STAGE55_FRAME_GATED_SPIN=1
     ;;
+  low-latency-dedicated)
+    export Y26_STAGE53_SPIN_POOL=1
+    export Y26_STAGE55_FRAME_GATED_SPIN=1
+    state_dir="$root/state/stage56-o2"
+    cleanup_stage56_profile() {
+      "$root/scripts/stage56-system-profile.sh" restore "$state_dir"
+    }
+    trap cleanup_stage56_profile EXIT INT TERM
+    "$root/scripts/stage56-system-profile.sh" apply "$state_dir"
+    printf '%s\n' "$$" | sudo -n tee \
+      /sys/fs/cgroup/y26-stage56-inference/cgroup.procs >/dev/null
+    ;;
   *)
-    echo "unknown profile: $profile (expected compatibility or low-latency)" >&2
+    echo "unknown profile: $profile (expected compatibility, low-latency, or low-latency-dedicated)" >&2
     exit 2
     ;;
 esac

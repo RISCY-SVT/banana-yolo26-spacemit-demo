@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <filesystem>
 #include <iostream>
+#include <set>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -53,6 +54,23 @@ int integer_argument(const char* text, const char* name) {
     return static_cast<int>(value);
 }
 
+std::set<int> selected_operations() {
+    std::set<int> selected;
+    const char* text = std::getenv("Y26_STAGE56_SHAPE_OPERATIONS");
+    if (text == nullptr || text[0] == '\0') return selected;
+    std::string values(text);
+    std::size_t begin = 0;
+    while (begin < values.size()) {
+        const std::size_t comma = values.find(',', begin);
+        const std::size_t end = comma == std::string::npos ? values.size() : comma;
+        const std::string value = values.substr(begin, end - begin);
+        selected.insert(integer_argument(value.c_str(), "shape operation"));
+        if (comma == std::string::npos) break;
+        begin = comma + 1;
+    }
+    return selected;
+}
+
 void print_result(int resolution, const char* shape_class,
                   const y26::stage52::DiagnosticConvShapeResult& value) {
     std::cout << resolution << '\t' << shape_class << '\t' << value.operation_index << '\t'
@@ -91,13 +109,17 @@ int main(int argc, char** argv) {
         if (executor.prepare(package, manifest, config) != 0) {
             throw std::runtime_error("prepare failed: " + executor.last_error());
         }
+        const std::set<int> operations = selected_operations();
+        const bool native_only = std::getenv("Y26_STAGE56_NATIVE_SHAPES_ONLY") != nullptr;
 
         std::cout << "resolution\tshape_class\toperation_index\toperation_name\tkind\t"
                      "output_h\toutput_w\tm\tn\tk\tkernel\tstride\tinput_c\toutput_c\t"
                      "working_set_bytes\tpacked_weight_bytes\tmean_us\tmedian_us\tp95_us\t"
                      "max_us\toutput_hash\tcorrectness_status\n";
         for (const Seed& seed : kSeeds) {
+            if (!operations.empty() && !operations.contains(seed.operation)) continue;
             for (int resolution : kResolutions) {
+                if (native_only && resolution != 640) continue;
                 const int side = seed.native_h * resolution / 640;
                 y26::stage52::DiagnosticConvShapeResult result;
                 if (executor.diagnostic_benchmark_conv_shape(
@@ -111,6 +133,7 @@ int main(int argc, char** argv) {
         constexpr std::array<int, 12> kTailChannels {
             4, 8, 16, 24, 32, 48, 64, 80, 96, 128, 192, 256,
         };
+        if (!operations.empty() && !operations.contains(63)) return 0;
         for (int channels : kTailChannels) {
             y26::stage52::DiagnosticConvShapeResult result;
             if (executor.diagnostic_benchmark_conv_shape(

@@ -246,6 +246,116 @@ extern "C" __attribute__((noinline)) void y26_stage48_kernel_m8n16(const std::in
           "v22", "v23", "v24", "v25", "v26", "v27", "v28", "v29", "v30", "v31");
 }
 
+#define Y26_STAGE56_E2C4_LUT_ROW(low, high, offset, output) \
+    "vsetivli zero, 16, e32, m2, ta, ma\n\t" \
+    "vslidedown.vi v0, " #low ", " #offset "\n\t" \
+    "vslidedown.vi v2, " #high ", " #offset "\n\t" \
+    "vsetivli zero, 4, e32, mf2, ta, ma\n\t" \
+    "vwadd.vx v4, v0, zero\n\t" \
+    "vwadd.vx v5, v2, zero\n\t" \
+    "vsetivli zero, 4, e64, m1, ta, ma\n\t" \
+    "vle64.v v6, (t1)\n\t" \
+    "addi t6, t1, 32\n\t" \
+    "vle64.v v7, (t6)\n\t" \
+    "vadd.vv v4, v4, v6\n\t" \
+    "vadd.vv v5, v5, v7\n\t" \
+    "vsetivli zero, 8, e64, m2, ta, ma\n\t" \
+    "vle64.v v8, (t2)\n\t" \
+    "vsmul.vv v10, v4, v8\n\t" \
+    "vadd.vx v10, v10, %[ZERO_POINT]\n\t" \
+    "vmax.vx v10, v10, zero\n\t" \
+    "vmin.vx v10, v10, t0\n\t" \
+    "vsetivli zero, 8, e32, m1, ta, ma\n\t" \
+    "vnclipu.wi v12, v10, 0\n\t" \
+    "vsetivli zero, 8, e16, mf2, ta, ma\n\t" \
+    "vnclipu.wi v13, v12, 0\n\t" \
+    "vsetivli zero, 8, e8, mf4, ta, ma\n\t" \
+    "vnclipu.wi v14, v13, 0\n\t" \
+    "vluxei8.v v15, (t3), v14\n\t" \
+    "vse8.v v15, (" #output ")\n\t" \
+    "add " #output ", " #output ", %[OUTPUT_STRIDE]\n\t"
+
+// Stage56 bounded fused scout. M8 leaves v0-v15 free after the K loop, which
+// is enough for a destructive exact E2c4+LUT epilogue without a C-tile spill.
+extern "C" __attribute__((noinline)) void y26_stage56_kernel_m8n16_e2c4_lut(
+    const std::int8_t* a,
+    const std::int8_t* b,
+    int k_tiles,
+    const std::int64_t* corrected_bias,
+    const std::int64_t* multipliers_m63,
+    std::int64_t output_zero_point,
+    const std::int8_t* lut_s8,
+    std::int8_t* output_block0,
+    std::int8_t* output_block1,
+    std::ptrdiff_t output_row_stride) {
+    __asm__ volatile(
+        "vsetvli t0, zero, e32, m2\n\t"
+        Y26_STAGE48_INIT_ACC(v16) Y26_STAGE48_INIT_ACC(v18)
+        Y26_STAGE48_INIT_ACC(v20) Y26_STAGE48_INIT_ACC(v22)
+        Y26_STAGE48_INIT_ACC(v24) Y26_STAGE48_INIT_ACC(v26)
+        Y26_STAGE48_INIT_ACC(v28) Y26_STAGE48_INIT_ACC(v30)
+        "vsetvli t0, zero, e8, m1\n\t"
+        "mv t1, %[K]\n\t"
+        "mv t3, %[A]\n\t"
+        "mv t4, %[B]\n\t"
+        "1:\n\t"
+        "vle8.v v0, (t3)\n\t"
+        "addi t5, t3, 32\n\t"
+        "vle8.v v1, (t5)\n\t"
+        "vle8.v v2, (t4)\n\t"
+        "addi t5, t4, 32\n\t"
+        "vle8.v v3, (t5)\n\t"
+        "addi t5, t4, 64\n\t"
+        "vle8.v v4, (t5)\n\t"
+        "addi t5, t4, 96\n\t"
+        "vle8.v v5, (t5)\n\t"
+        Y26_STAGE48_DOT(v16, v0, v2) Y26_STAGE48_DOT(v18, v1, v2)
+        Y26_STAGE48_DOT(v20, v0, v3) Y26_STAGE48_DOT(v22, v1, v3)
+        Y26_STAGE48_DOT(v24, v0, v4) Y26_STAGE48_DOT(v26, v1, v4)
+        Y26_STAGE48_DOT(v28, v0, v5) Y26_STAGE48_DOT(v30, v1, v5)
+        "addi t3, t3, 64\n\t"
+        "addi t4, t4, 128\n\t"
+        "addi t1, t1, -1\n\t"
+        "bnez t1, 1b\n\t"
+        "li t0, 255\n\t"
+        "mv t1, %[BIAS]\n\t"
+        "mv t2, %[MULTIPLIERS]\n\t"
+        "mv t3, %[LUT]\n\t"
+        "mv t4, %[OUTPUT0]\n\t"
+        "mv t5, %[OUTPUT1]\n\t"
+        Y26_STAGE56_E2C4_LUT_ROW(v16, v20, 0, t4)
+        Y26_STAGE56_E2C4_LUT_ROW(v16, v20, 4, t4)
+        Y26_STAGE56_E2C4_LUT_ROW(v16, v20, 8, t4)
+        Y26_STAGE56_E2C4_LUT_ROW(v16, v20, 12, t4)
+        Y26_STAGE56_E2C4_LUT_ROW(v18, v22, 0, t4)
+        Y26_STAGE56_E2C4_LUT_ROW(v18, v22, 4, t4)
+        Y26_STAGE56_E2C4_LUT_ROW(v18, v22, 8, t4)
+        Y26_STAGE56_E2C4_LUT_ROW(v18, v22, 12, t4)
+        "addi t1, t1, 64\n\t"
+        "addi t2, t2, 64\n\t"
+        Y26_STAGE56_E2C4_LUT_ROW(v24, v28, 0, t5)
+        Y26_STAGE56_E2C4_LUT_ROW(v24, v28, 4, t5)
+        Y26_STAGE56_E2C4_LUT_ROW(v24, v28, 8, t5)
+        Y26_STAGE56_E2C4_LUT_ROW(v24, v28, 12, t5)
+        Y26_STAGE56_E2C4_LUT_ROW(v26, v30, 0, t5)
+        Y26_STAGE56_E2C4_LUT_ROW(v26, v30, 4, t5)
+        Y26_STAGE56_E2C4_LUT_ROW(v26, v30, 8, t5)
+        Y26_STAGE56_E2C4_LUT_ROW(v26, v30, 12, t5)
+        :
+        : [A] "r"(a), [B] "r"(b), [K] "r"(k_tiles),
+          [BIAS] "r"(corrected_bias), [MULTIPLIERS] "r"(multipliers_m63),
+          [ZERO_POINT] "r"(output_zero_point), [LUT] "r"(lut_s8),
+          [OUTPUT0] "r"(output_block0), [OUTPUT1] "r"(output_block1),
+          [OUTPUT_STRIDE] "r"(output_row_stride)
+        : "cc", "memory", "t0", "t1", "t2", "t3", "t4", "t5", "t6",
+          "v0", "v1", "v2", "v3", "v4", "v5", "v6", "v7", "v8", "v9",
+          "v10", "v11", "v12", "v13", "v14", "v15", "v16", "v17", "v18",
+          "v19", "v20", "v21", "v22", "v23", "v24", "v25", "v26", "v27",
+          "v28", "v29", "v30", "v31");
+}
+
+#undef Y26_STAGE56_E2C4_LUT_ROW
+
 extern "C" __attribute__((noinline)) void y26_stage48_kernel_m12n16(const std::int8_t* a,
                                                                      const std::int8_t* b,
                                                                      int k_tiles,

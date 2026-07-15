@@ -4,7 +4,10 @@ set -euo pipefail
 root=${1:-/data/k1x-yolo26-int8-executor}
 input=${2:-"$root/fixtures/bus_640_nchw_f32.bin"}
 output=${3:-"$root/outputs/smoke.json"}
-profile="$root/config/k1x-int8-executor-stage55.env"
+profile="$root/config/k1x-int8-executor-stage56.env"
+if [[ ! -r "$profile" ]]; then
+  profile="$root/config/k1x-int8-executor-stage55.env"
+fi
 if [[ ! -r "$profile" ]]; then
   profile="$root/config/k1x-int8-executor-stage54.env"
 fi

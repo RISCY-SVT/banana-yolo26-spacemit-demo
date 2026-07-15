@@ -35,4 +35,9 @@ Stage54 ran the final shape-specialized E2c3 route over all 5,000 images. It
 again produced 721,755 predictions and the same byte-for-byte SHA-256. The
 Stage54 task-level accuracy delta versus Stage53 is therefore exactly zero.
 
+Stage55 and Stage56 each reran the complete 5,000-image surface after their
+selected operator changes. Both produced 721,755 predictions and the same
+byte-for-byte SHA-256. Stage56's full pycocotools evaluation remains
+`0.3707408944391919` mAP50-95, so its accuracy delta versus Stage55 is zero.
+
 Intermediate exactness does not substitute for this task-level evaluation.

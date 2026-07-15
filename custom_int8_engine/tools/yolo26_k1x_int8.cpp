@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <chrono>
 #include <cmath>
+#include <cstdio>
 #include <cstdint>
 #include <cstring>
 #include <filesystem>
@@ -16,6 +17,11 @@
 #include <string>
 #include <thread>
 #include <vector>
+
+#if defined(__linux__)
+#include <fcntl.h>
+#include <unistd.h>
+#endif
 
 #if defined(Y26_K1X_HAVE_OPENCV)
 #include <opencv2/imgcodecs.hpp>
@@ -226,6 +232,26 @@ int main(int argc, char** argv) {
         std::vector<float> output(Y26_K1X_EXECUTOR_OUTPUT_ELEMENTS);
         std::vector<float> expected_output;
         y26_run_timing timing {};
+#if defined(__linux__)
+        int trace_marker_fd = -1;
+        if (const char* path = std::getenv("Y26_STAGE56_TRACE_MARKER");
+            path != nullptr && path[0] != '\0') {
+            trace_marker_fd = open(path, O_WRONLY | O_CLOEXEC);
+            if (trace_marker_fd < 0) throw std::runtime_error("cannot open trace marker");
+        }
+        const auto trace_marker = [&](const char* phase, int repeat, int run) {
+            if (trace_marker_fd < 0) return;
+            char marker[96];
+            const int bytes = std::snprintf(marker, sizeof(marker),
+                "y26_%s repeat=%d run=%d\n", phase, repeat, run);
+            if (bytes <= 0 || write(trace_marker_fd, marker,
+                                     static_cast<std::size_t>(bytes)) != bytes) {
+                throw std::runtime_error("trace marker write failed");
+            }
+        };
+#else
+        const auto trace_marker = [](const char*, int, int) {};
+#endif
         const auto run_once = [&](y26_run_timing* run_timing) {
             const y26_status status = options.input_mode == "preprocessed-f32"
                 ? y26_executor_run_preprocessed(executor.get(), input.data(), input.size(),
@@ -241,7 +267,9 @@ int main(int argc, char** argv) {
         samples.reserve(static_cast<std::size_t>(options.runs * options.repeats));
         for (int repeat = 0; repeat < options.repeats; ++repeat) {
             for (int run = 0; run < options.runs; ++run) {
+                trace_marker("begin", repeat, run);
                 run_once(&timing);
+                trace_marker("end", repeat, run);
                 if (options.verify) {
                     if (expected_output.empty()) expected_output = output;
                     else if (std::memcmp(expected_output.data(), output.data(),
@@ -299,6 +327,9 @@ int main(int argc, char** argv) {
                       << "min_us=" << *std::min_element(samples.begin(), samples.end()) << '\n'
                       << "max_us=" << *std::max_element(samples.begin(), samples.end()) << '\n';
         }
+#if defined(__linux__)
+        if (trace_marker_fd >= 0) close(trace_marker_fd);
+#endif
         return 0;
     } catch (const std::exception& error) {
         std::cerr << "error: " << error.what() << '\n';

@@ -10,7 +10,7 @@ The release bundle deploys to:
 ```
 
 A versioned optimized-research bundle may use a child such as
-`/data/k1x-yolo26-int8-executor/stage55-optimized-research`; this keeps both
+`/data/k1x-yolo26-int8-executor/stage56-optimized-research`; this keeps both
 handoffs on NVMe without replacing the Stage52 functional reference.
 
 `config/k1x-int8-executor-safe.conf` records the supported package root,
@@ -39,11 +39,11 @@ not execute IME instructions on CPU4-7. Use `--scheduler rr20` only on a
 dedicated lab board with sufficient privileges, a watchdog, and a cleanup
 path. It is not the default.
 
-The Stage55 exact operator profile is explicit and independent from wake policy:
+The Stage56 exact operator profile is explicit and independent from wake policy:
 
 ```bash
 set -a
-source /data/k1x-yolo26-int8-executor/stage55-optimized-research/config/k1x-int8-executor-stage55.env
+source /data/k1x-yolo26-int8-executor/stage56-optimized-research/config/k1x-int8-executor-stage56.env
 set +a
 ```
 
@@ -51,8 +51,8 @@ The dedicated-board frame-gated epoch-spin wake policy is opt-in and remains SCH
 
 ```bash
 Y26_STAGE53_SPIN_POOL=1 Y26_STAGE55_FRAME_GATED_SPIN=1 \
-  /data/k1x-yolo26-int8-executor/stage55-optimized-research/bin/yolo26_k1x_int8 \
-  --package /data/k1x-yolo26-int8-executor/stage55-optimized-research/package \
+  /data/k1x-yolo26-int8-executor/stage56-optimized-research/bin/yolo26_k1x_int8 \
+  --package /data/k1x-yolo26-int8-executor/stage56-optimized-research/package \
   --image /data/example/bus.jpg --input-mode image \
   --output-json /data/example/bus-stage53.json \
   --threads 4 --pin 0-3 --scheduler safe --verify
@@ -64,8 +64,27 @@ condition-variable compatibility mode. Enable it only on a dedicated measured
 workload.
 
 The bundled benchmark wrapper accepts an optional fourth argument:
-`compatibility` or `low-latency`. Both source the Stage55 operator profile;
-only `low-latency` enables frame-gated epoch-spin.
+`compatibility`, `low-latency`, or `low-latency-dedicated`. All source the
+Stage56 operator profile. `low-latency` enables frame-gated epoch-spin;
+`low-latency-dedicated` additionally applies the reversible Stage56 O2 system
+profile for the benchmark duration and restores it through an exit trap.
+
+The O2 profile isolates CPU0-4 in cgroup v2 and moves movable IRQs, unbound
+workqueues, selected services, and normal system slices to CPU5-7. It does not
+change the boot command line, kernel, storage location, THP policy, or CPU
+frequency ceiling. Apply and restore it explicitly when running outside the
+benchmark wrapper:
+
+```bash
+root=/data/k1x-yolo26-int8-executor/stage56-optimized-research
+state=$root/state/stage56-o2
+$root/scripts/stage56-system-profile.sh apply "$state"
+# Move only the intended executor process into /sys/fs/cgroup/y26-stage56-inference.
+$root/scripts/stage56-system-profile.sh restore "$state"
+```
+
+The original boot entry and NVMe runtime remain selected. tmpfs and the bounded
+eMMC copy did not clear the warm pure-model selection gate.
 
 `smoke-test.sh` validates package identity, loader resolution, CLI execution,
 and deterministic output before handoff. `uninstall.sh` removes only the

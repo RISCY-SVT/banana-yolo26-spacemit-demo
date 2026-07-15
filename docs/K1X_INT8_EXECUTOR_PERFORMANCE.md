@@ -16,6 +16,73 @@ preloaded-image pipeline
 COCO one-pass per-image executor
 ```
 
+## Stage56 Final System and Source Ceiling
+
+Stage56 keeps the Stage55 package and exact arithmetic contract. It selects
+producer-adjacent head reduction, direct attention packing for the second
+MatMul, and the reversible O2 dedicated-board profile. O2 uses an isolated
+CPU0-4 cgroup with movable IRQs, unbound workqueues, and nonessential services
+placed on CPU5-7. The original boot entry, NVMe runtime, memory policy,
+compiler contract, and `SCHED_OTHER` policy remain unchanged.
+
+```text
+condition-variable compatibility, fixed input, 500 samples:
+  mean:    156620 us
+  median:  155860 us
+  p95:     160377 us
+  p99:     166607 us
+  max:     207766 us
+
+O2 frame-gated low latency, fixed input, 500 samples:
+  mean:    142413 us
+  median:  142416 us
+  p95:     142893 us
+  p99:     143293 us
+  max:     144547 us
+  rate:    7.021831 inferences/s
+
+O2 frame-gated low latency, first 10,000 runs of thermal soak:
+  mean:    142444.857000 us
+  median:  142425.000000 us
+  p95:     142984.050000 us
+  p99:     143747.080000 us
+  p99.9:   144539.027000 us
+  max:     145774.000000 us
+
+O2 frame-gated low latency, complete 13,000-run thermal surface:
+  mean:    142441.445462 us
+  median:  142422.000000 us
+  p95:     142978.000000 us
+  p99:     143693.100000 us
+  p99.9:   144489.050000 us
+  max:     145774.000000 us
+
+100-image in-memory corpus executor mean:
+  141733.839830 us
+
+serial preloaded-image complete pipeline mean:
+  196447.607874 us
+
+double-buffer steady-state frame interval:
+  150356.344210 us
+  rate:      6.647346 frames/s
+
+complete COCO one-pass executor mean:
+  141834.806835 us
+
+matched B120 ORT, 500 per-inference samples:
+  mean:    459954.787608 us
+  p95:     463463.866350 us
+```
+
+The selected fixed-input mean is 4.806% below the official Stage55
+149603.240 us surface and approximately 69.04% below matched B120 ORT. The
+5,000-image COCO prediction is byte-identical to Stage55 and retains
+0.3707408944391919 mAP50-95. Compatibility, 500-sample headline, 10,000-run
+soak, 13,000-run thermal, real-corpus, pipeline, COCO, and ORT statistics are
+separate surfaces and are not mixed. This is approximately 7.02 pure-model
+inferences/s, not 20 FPS, and is not a production-readiness claim.
+
 ## Stage55 Residual Ceiling
 
 Stage55 keeps the Stage54 package, arithmetic, layout, compiler, and public

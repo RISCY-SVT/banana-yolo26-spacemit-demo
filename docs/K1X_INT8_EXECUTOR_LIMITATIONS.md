@@ -12,7 +12,7 @@
 - Package hashes detect accidental corruption and stale artifacts. They do not
   claim cryptographic authenticity.
 - `SCHED_RR` requires privileges and careful lab operation. `SCHED_OTHER` is
-  the supported policy. The opt-in Stage55 frame-gated epoch-spin mode consumes
+  the supported policy. The opt-in Stage56 frame-gated epoch-spin mode consumes
   more process CPU during inference than condition-variable compatibility, but
   parks workers between frames. It remains optimized research, not a
   general-purpose default.
@@ -24,8 +24,13 @@
 - Some low-impact Split/Reshape/Concat surfaces retain measured direct or
   reference implementations. Stage55 corrected the legal indexed register and
   vtype contracts and selected exact indexed RVV LUT2 and attention exp lookup.
-- Cost-model V3 predicts current-graph composition well, but held-out novel
-  shapes retain high worst-case error and require direct measurement.
+- The Stage56 O2 isolation profile is reversible and intended only for a
+  dedicated board. It changes runtime cgroup, IRQ, workqueue, and service
+  placement; it does not select a new boot profile, realtime scheduling, THP,
+  eMMC runtime, or alternate kernel.
+- Cost-model V4 predicts current-graph composition and measured candidate
+  composition within the Stage56 gates. Held-out novel shapes retain high
+  worst-case error and require direct measurement.
 - This release does not include a camera service, default demo-backend change,
   model training, QAT, a student model, or Q31 promotion.
 - Production readiness and 20 FPS are not claimed.

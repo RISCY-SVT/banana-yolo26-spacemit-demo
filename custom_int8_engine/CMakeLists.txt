@@ -549,6 +549,21 @@ if(Y26_K1X_BUILD_TOOLS)
                 BUILD_RPATH "$ORIGIN/../opencv/lib"
                 INSTALL_RPATH "$ORIGIN/../opencv/lib"
             )
+            add_executable(stage56_double_buffer_bench
+                tools/stage56_double_buffer_bench.cpp
+            )
+            target_link_libraries(stage56_double_buffer_bench
+                PRIVATE
+                    y26_k1x_custom_int8_engine
+                    Threads::Threads
+                    ${OpenCV_LIBS}
+            )
+            target_include_directories(stage56_double_buffer_bench PRIVATE ${OpenCV_INCLUDE_DIRS})
+            target_compile_options(stage56_double_buffer_bench PRIVATE -Wall -Wextra -Wpedantic)
+            set_target_properties(stage56_double_buffer_bench PROPERTIES
+                BUILD_RPATH "$ORIGIN/../opencv/lib"
+                INSTALL_RPATH "$ORIGIN/../opencv/lib"
+            )
         endif()
     endif()
 
