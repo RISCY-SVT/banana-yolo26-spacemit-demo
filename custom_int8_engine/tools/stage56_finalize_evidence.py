@@ -20,6 +20,7 @@ TASK_ID = (
 )
 START_HEAD = "c7dd62da3f62f46975240eb414b2f0ca149ceddf"
 IMPLEMENTATION_COMMIT = "56025cfc1164d3831073528b25cc933997a1f6fa"
+PROVENANCE_COMMIT = "2f4cf451e19ba16ddb353a77baf80514e6936bab"
 CONTRACT = "K1X_INT8_V1"
 PROFILE = "K1X_INT8_V1_YOLO26N_640_FULL_GRAPH_001"
 MODEL_SHA = "30a94e4738606673b5e0a73499cbc977167f046f8fa8637d6040ce744f429c0c"
@@ -855,9 +856,11 @@ def main() -> int:
         {"sequence": 0, "commit": START_HEAD, "role": "accepted-stage55-start"},
         {"sequence": 1, "commit": IMPLEMENTATION_COMMIT,
          "role": "stage56-executor-and-system-profile-implementation"},
-        {"sequence": 2, "commit": args.source_commit,
-         "role": "stage56-timing-documentation-and-release-identity"},
-        {"sequence": 3, "commit": "containing-commit",
+        {"sequence": 2, "commit": PROVENANCE_COMMIT,
+         "role": "stage56-timing-documentation-and-trace-provenance"},
+        {"sequence": 3, "commit": args.source_commit,
+         "role": "stage56-release-rollback-controller-fix"},
+        {"sequence": 4, "commit": "containing-commit",
          "role": "stage56-evidence-release-publication"},
     ])
     write_md(stage / "final_dual_remote_report.md", "Final dual-remote publication", [
@@ -877,7 +880,9 @@ def main() -> int:
         {"commit": START_HEAD, "scope": "accepted Stage55", "github": "prestage-parity", "gitlab": "prestage-parity"},
         {"commit": IMPLEMENTATION_COMMIT, "scope": "Stage56 executor/system implementation",
          "github": "pending-final-FF", "gitlab": "pending-final-FF"},
-        {"commit": args.source_commit, "scope": "Stage56 timing/docs/release identity",
+        {"commit": PROVENANCE_COMMIT, "scope": "Stage56 timing/docs/trace provenance",
+         "github": "pending-final-FF", "gitlab": "pending-final-FF"},
+        {"commit": args.source_commit, "scope": "Stage56 release rollback-controller fix",
          "github": "pending-final-FF", "gitlab": "pending-final-FF"},
         {"commit": "containing-commit", "scope": "Stage56 evidence/release", "github": "post-push-ledger", "gitlab": "post-push-ledger"},
     ])
