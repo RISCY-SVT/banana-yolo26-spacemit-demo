@@ -1,0 +1,7 @@
+Y26_K1X_ABI_1 {
+    global:
+        y26_executor_*;
+        y26_status_string;
+    local:
+        *;
+};

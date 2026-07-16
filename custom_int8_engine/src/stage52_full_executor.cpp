@@ -75,6 +75,8 @@ using Row = std::unordered_map<std::string, std::string>;
 __extension__ using UnsignedInt128 = unsigned __int128;
 constexpr int kDenseM = 12;
 constexpr int kDenseN = 16;
+constexpr const char* kFullGraphModelSha256 =
+    "30a94e4738606673b5e0a73499cbc977167f046f8fa8637d6040ce744f429c0c";
 
 #if !defined(Y26_K1X_ENABLE_IME_ASM) || !defined(__riscv)
 void scalar_m12n16(const std::int8_t* a, const std::int8_t* b,
@@ -902,6 +904,21 @@ struct FullExecutor::Impl {
         std::atomic<std::uint64_t> softmax_normalize_transpose_ns {0};
     };
 
+    struct Point {
+        std::array<std::int32_t, 4> box_q16 {};
+        std::uint32_t best_score_q24 = 0;
+        int best_class = 0;
+        int point_index = 0;
+        int scale_index = 0;
+        int local_index = 0;
+    };
+
+    struct Candidate {
+        std::uint32_t score_q24 = 0;
+        int point_slot = 0;
+        int class_index = 0;
+    };
+
     std::filesystem::path package;
     std::string manifest;
     RunConfig config;
@@ -919,6 +936,16 @@ struct FullExecutor::Impl {
     std::array<HeadScale, 3> head;
     std::array<std::uint32_t, 8400> head_best_score_q24 {};
     std::array<std::uint8_t, 8400> head_best_class {};
+    std::array<Point, 8400> head_points {};
+    std::array<Point, 300> head_top_points {};
+    std::array<int, 8400> head_point_order {};
+    std::array<int, 300 * 80> head_candidate_order {};
+    std::array<Candidate, 300> head_selected_candidates {};
+    std::vector<std::uint32_t> head_score_levels;
+    std::unordered_map<std::uint32_t, std::uint16_t> head_score_rank;
+    std::array<std::array<std::uint16_t, 256>, 3> head_score_rank_by_code {};
+    std::vector<std::uint32_t> head_bucket_counts;
+    std::vector<std::uint32_t> head_bucket_cursor;
     std::array<float, 300 * 6> last_output {};
     std::unique_ptr<WorkerPool> pool;
     std::vector<DenseScratch> dense_scratch;
@@ -965,6 +992,11 @@ struct FullExecutor::Impl {
     bool attention_subphase_profile_enabled = false;
     bool head_v2_enabled = false;
     bool stage56_head_producer_reduction_enabled = false;
+    bool e2c5_enabled = false;
+    bool attention_matmul_c8_enabled = false;
+    bool attention_softmax_cache_enabled = false;
+    bool head_bucket_enabled = false;
+    bool rgb_copy_rvv_enabled = false;
     bool dense_pack_rvv_enabled = false;
     bool static_schedule_enabled = false;
     std::vector<int> static_batch_end;
@@ -1842,7 +1874,22 @@ struct FullExecutor::Impl {
                     const std::size_t destination =
                         ((static_cast<std::size_t>(channel_begin / 8) * output_m +
                           m_begin + row) * 8U);
-                    if (e2c4_enabled) {
+                    if (e2c5_enabled) {
+                        if (fuse_lut) {
+                            stage51::q62_e2c5_i32x4x2_bias_lut_to_s8(
+                                raw_low, raw_high,
+                                conv.corrected_bias.data() + channel_begin,
+                                conv.multiplier_m63.data() + channel_begin,
+                                output.zero_point, operation.fused_lut.data(),
+                                output_data + destination);
+                        } else {
+                            stage51::q62_e2c5_i32x4x2_bias_to_s8(
+                                raw_low, raw_high,
+                                conv.corrected_bias.data() + channel_begin,
+                                conv.multiplier_m63.data() + channel_begin,
+                                output.zero_point, output_data + destination);
+                        }
+                    } else if (e2c4_enabled) {
                         if (fuse_lut) {
                             stage51::q62_e2c4_i32x4x2_bias_lut_to_s8(
                                 raw_low, raw_high,
@@ -3034,8 +3081,32 @@ struct FullExecutor::Impl {
                 const std::int8_t* packed = matmul_packed_right.data() +
                     (static_cast<std::size_t>(batch) * n_blocks + n_block) * k_tiles * kDenseN * 8U;
                 run_m12n16(scratch.a.data(), packed, k_tiles, scratch.c.data());
-                for (int output_group = 0; output_group < 4; ++output_group) {
+                for (int output_group = 0; output_group < 4;) {
                     const int column_begin = n_block * kDenseN + output_group * 4;
+                    if (attention_matmul_c8_enabled && output_group + 1 < 4) {
+                        for (int row = 0; row < valid_rows; ++row) {
+                            const int row_group = row / 4;
+                            const int row_inner = row % 4;
+                            const std::int32_t* raw_low = scratch.c.data() +
+                                (output_group * 3 + row_group) * 16 + row_inner * 4;
+                            const std::int32_t* raw_high = scratch.c.data() +
+                                ((output_group + 1) * 3 + row_group) * 16 + row_inner * 4;
+                            const std::int64_t common_correction =
+                                right_correction * scratch.row_sums[static_cast<std::size_t>(row)] +
+                                constant_correction;
+                            stage51::q62_attention_i32x4x2_to_s8(
+                                raw_low, raw_high,
+                                matmul_right_sums.data() +
+                                    static_cast<std::size_t>(batch) * n + column_begin,
+                                left_correction, common_correction,
+                                operation.multiplier_m63, operation.output_zero_point,
+                                output_data +
+                                    (static_cast<std::size_t>(batch) * m + m_begin + row) * n +
+                                    column_begin);
+                        }
+                        output_group += 2;
+                        continue;
+                    }
                     alignas(32) std::array<std::int64_t, 4> multipliers {
                         operation.multiplier_m63, operation.multiplier_m63,
                         operation.multiplier_m63, operation.multiplier_m63,
@@ -3066,6 +3137,7 @@ struct FullExecutor::Impl {
                                 int8_v1::signed_storage(quantized);
                         }
                     }
+                    ++output_group;
                 }
             }
         }
@@ -3125,6 +3197,10 @@ struct FullExecutor::Impl {
             auto* destination = arena.data() + output.offset;
             std::uint64_t max_sum_ns = 0;
             std::uint64_t normalize_transpose_ns = 0;
+            std::array<std::uint8_t, 256> quantized_by_difference {};
+            std::array<std::uint8_t, 256> valid {};
+            std::array<std::uint16_t, 256> generation_tag {};
+            std::uint16_t generation = 0;
             for (std::size_t row = begin; row < end; ++row) {
                 const auto max_sum_begin = attention_subphase_profile_enabled
                     ? Clock::now() : Clock::time_point {};
@@ -3153,15 +3229,25 @@ struct FullExecutor::Impl {
                 }
 
                 // Exact quotient work is shared by every equal score in a row.
-                std::array<std::uint8_t, 256> quantized_by_difference {};
-                std::array<std::uint8_t, 256> valid {};
+                if (attention_softmax_cache_enabled) {
+                    ++generation;
+                    if (generation == 0) {
+                        generation_tag.fill(0);
+                        generation = 1;
+                    }
+                } else {
+                    valid.fill(0);
+                }
                 const std::size_t matrix = row / static_cast<std::size_t>(rows_per_matrix);
                 const std::size_t row_in_matrix = row % static_cast<std::size_t>(rows_per_matrix);
                 std::int64_t packed_right_sum = 0;
                 for (int column = 0; column < width; ++column) {
                     const std::uint8_t difference = static_cast<std::uint8_t>(
                         maximum - int8_v1::semantic_code(source_row[column]));
-                    if (valid[difference] == 0) {
+                    const bool cached = attention_softmax_cache_enabled
+                        ? generation_tag[difference] == generation
+                        : valid[difference] != 0;
+                    if (!cached) {
                         const UnsignedInt128 numerator =
                             static_cast<UnsignedInt128>(operation.exp_q48[difference]) *
                             operation.softmax_reciprocal_q32;
@@ -3170,7 +3256,11 @@ struct FullExecutor::Impl {
                             round_divide_even(numerator, denominator) + operation.output_zero_point;
                         quantized_by_difference[difference] = static_cast<std::uint8_t>(
                             std::clamp<std::int64_t>(quantized, 0, 255));
-                        valid[difference] = 1;
+                        if (attention_softmax_cache_enabled) {
+                            generation_tag[difference] = generation;
+                        } else {
+                            valid[difference] = 1;
+                        }
                     }
                     const std::size_t destination_flat =
                         (matrix * static_cast<std::size_t>(width) + static_cast<std::size_t>(column)) *
@@ -3356,6 +3446,36 @@ struct FullExecutor::Impl {
             const bool compact_c3 = input_compact_c3_enabled && !config.capture_boundaries;
             const std::size_t pixel_stride = compact_c3 ? 3U : 8U;
             const std::size_t width = static_cast<std::size_t>(output.dims[3]);
+            if (rgb_copy_rvv_enabled && compact_c3 &&
+                stride == static_cast<int>(width * 3U)) {
+                const auto* source = rgb + begin * 3U;
+                auto* output_bytes = destination + begin * 3U;
+                std::size_t bytes = (end - begin) * 3U;
+#if defined(__riscv_vector)
+                asm volatile(
+                    "li t1, 128\n\t"
+                    "1:\n\t"
+                    "beqz %[bytes], 2f\n\t"
+                    "vsetvli t0, %[bytes], e8, m1, ta, ma\n\t"
+                    "vle8.v v0, (%[source])\n\t"
+                    "vxor.vx v0, v0, t1\n\t"
+                    "vse8.v v0, (%[destination])\n\t"
+                    "add %[source], %[source], t0\n\t"
+                    "add %[destination], %[destination], t0\n\t"
+                    "sub %[bytes], %[bytes], t0\n\t"
+                    "j 1b\n\t"
+                    "2:\n\t"
+                    : [source] "+r"(source), [destination] "+r"(output_bytes),
+                      [bytes] "+r"(bytes)
+                    :
+                    : "memory", "t0", "t1", "v0");
+#else
+                for (std::size_t index = 0; index < bytes; ++index) {
+                    output_bytes[index] = static_cast<std::int8_t>(source[index] ^ 128U);
+                }
+#endif
+                return;
+            }
             for (std::size_t spatial = begin; spatial < end; ++spatial) {
                 const std::size_t y = spatial / width;
                 const std::size_t x = spatial % width;
@@ -3456,23 +3576,9 @@ struct FullExecutor::Impl {
         throw std::runtime_error("operation runner is unavailable");
     }
 
-    struct Point {
-        std::array<std::int32_t, 4> box_q16 {};
-        std::uint32_t best_score_q24 = 0;
-        int best_class = 0;
-        int point_index = 0;
-        int scale_index = 0;
-        int local_index = 0;
-    };
-
-    struct Candidate {
-        std::uint32_t score_q24;
-        int point_slot;
-        int class_index;
-    };
-
     void decode_head(float* output) {
-        std::array<Point, 8400> points {};
+        std::array<Point, 8400> local_points {};
+        auto& points = head_bucket_enabled ? head_points : local_points;
         int global = 0;
         for (int scale_index = 0; scale_index < 3; ++scale_index) {
             const HeadScale& scale = head[static_cast<std::size_t>(scale_index)];
@@ -3497,6 +3603,8 @@ struct FullExecutor::Impl {
                 const int y = local / scale.resolution;
                 const int x = local % scale.resolution;
                 Point& point = points[static_cast<std::size_t>(global)];
+                point.best_score_q24 = 0;
+                point.best_class = 0;
                 point.point_index = global;
                 point.scale_index = scale_index;
                 point.local_index = local;
@@ -3547,7 +3655,34 @@ struct FullExecutor::Impl {
                 ? left.best_score_q24 > right.best_score_q24
                 : left.point_index < right.point_index;
         };
-        std::partial_sort(points.begin(), points.begin() + 300, points.end(), point_compare);
+        const Point* top_points = points.data();
+        if (head_bucket_enabled) {
+            std::fill(head_bucket_counts.begin(), head_bucket_counts.end(), 0U);
+            for (const Point& point : points) {
+                const auto found = head_score_rank.find(point.best_score_q24);
+                if (found == head_score_rank.end()) {
+                    throw std::runtime_error("head point score is absent from prepared buckets");
+                }
+                ++head_bucket_counts[found->second];
+            }
+            std::uint32_t offset = 0;
+            for (std::size_t rank = 0; rank < head_bucket_counts.size(); ++rank) {
+                head_bucket_cursor[rank] = offset;
+                offset += head_bucket_counts[rank];
+            }
+            for (int point_index = 0; point_index < static_cast<int>(points.size()); ++point_index) {
+                const std::size_t rank = head_score_rank.at(
+                    points[static_cast<std::size_t>(point_index)].best_score_q24);
+                head_point_order[head_bucket_cursor[rank]++] = point_index;
+            }
+            for (int slot = 0; slot < 300; ++slot) {
+                head_top_points[static_cast<std::size_t>(slot)] = points[
+                    static_cast<std::size_t>(head_point_order[static_cast<std::size_t>(slot)])];
+            }
+            top_points = head_top_points.data();
+        } else {
+            std::partial_sort(points.begin(), points.begin() + 300, points.end(), point_compare);
+        }
         auto candidate_compare = [](const Candidate& left, const Candidate& right) {
             if (left.score_q24 != right.score_q24) return left.score_q24 > right.score_q24;
             if (left.point_slot != right.point_slot) return left.point_slot < right.point_slot;
@@ -3558,8 +3693,11 @@ struct FullExecutor::Impl {
         std::size_t candidate_count = 0;
         std::array<Candidate, 300> candidate_heap;
         std::size_t heap_size = 0;
+        if (head_bucket_enabled) {
+            std::fill(head_bucket_counts.begin(), head_bucket_counts.end(), 0U);
+        }
         for (int slot = 0; slot < 300; ++slot) {
-            const Point& point = points[static_cast<std::size_t>(slot)];
+            const Point& point = top_points[static_cast<std::size_t>(slot)];
             const HeadScale& scale = head[static_cast<std::size_t>(point.scale_index)];
             const int pixels = scale.resolution * scale.resolution;
             const Tensor& cls_tensor = tensor(scale.cls_tensor);
@@ -3570,7 +3708,11 @@ struct FullExecutor::Impl {
                     static_cast<std::size_t>(class_index % 8);
                 const Candidate candidate {
                     scale.cls_q24[int8_v1::semantic_code(cls_data[physical])], slot, class_index};
-                if (!head_v2_enabled) {
+                if (head_bucket_enabled) {
+                    const std::uint8_t code = int8_v1::semantic_code(cls_data[physical]);
+                    ++head_bucket_counts[head_score_rank_by_code[
+                        static_cast<std::size_t>(point.scale_index)][code]];
+                } else if (!head_v2_enabled) {
                     candidate_storage[candidate_count++] = candidate;
                 } else if (heap_size < candidate_heap.size()) {
                     candidate_heap[heap_size++] = candidate;
@@ -3584,7 +3726,46 @@ struct FullExecutor::Impl {
                 }
             }
         }
-        if (head_v2_enabled) {
+        if (head_bucket_enabled) {
+            std::uint32_t offset = 0;
+            for (std::size_t rank = 0; rank < head_bucket_counts.size(); ++rank) {
+                head_bucket_cursor[rank] = offset;
+                offset += head_bucket_counts[rank];
+            }
+            for (int slot = 0; slot < 300; ++slot) {
+                const Point& point = top_points[static_cast<std::size_t>(slot)];
+                const HeadScale& scale = head[static_cast<std::size_t>(point.scale_index)];
+                const int pixels = scale.resolution * scale.resolution;
+                const Tensor& cls_tensor = tensor(scale.cls_tensor);
+                const auto* cls_data = arena.data() + cls_tensor.offset;
+                for (int class_index = 0; class_index < 80; ++class_index) {
+                    const std::size_t physical =
+                        (static_cast<std::size_t>(class_index / 8) * pixels + point.local_index) * 8U +
+                        static_cast<std::size_t>(class_index % 8);
+                    const std::uint8_t code = int8_v1::semantic_code(cls_data[physical]);
+                    const std::size_t rank = head_score_rank_by_code[
+                        static_cast<std::size_t>(point.scale_index)][code];
+                    head_candidate_order[head_bucket_cursor[rank]++] =
+                        (slot << 8) | class_index;
+                }
+            }
+            for (int detection = 0; detection < 300; ++detection) {
+                const int encoded = head_candidate_order[static_cast<std::size_t>(detection)];
+                const int slot = encoded >> 8;
+                const int class_index = encoded & 255;
+                const Point& point = top_points[static_cast<std::size_t>(slot)];
+                const HeadScale& scale = head[static_cast<std::size_t>(point.scale_index)];
+                const int pixels = scale.resolution * scale.resolution;
+                const auto* cls_data = arena.data() + tensor(scale.cls_tensor).offset;
+                const std::size_t physical =
+                    (static_cast<std::size_t>(class_index / 8) * pixels + point.local_index) * 8U +
+                    static_cast<std::size_t>(class_index % 8);
+                head_selected_candidates[static_cast<std::size_t>(detection)] = Candidate {
+                    scale.cls_q24[int8_v1::semantic_code(cls_data[physical])], slot, class_index};
+            }
+            candidates = head_selected_candidates.data();
+            candidate_count = head_selected_candidates.size();
+        } else if (head_v2_enabled) {
             std::sort_heap(candidate_heap.begin(), candidate_heap.end(), candidate_compare);
             candidates = candidate_heap.data();
             candidate_count = candidate_heap.size();
@@ -3595,7 +3776,7 @@ struct FullExecutor::Impl {
         }
         for (int detection = 0; detection < 300; ++detection) {
             const Candidate& candidate = candidates[static_cast<std::size_t>(detection)];
-            const Point& point = points[static_cast<std::size_t>(candidate.point_slot)];
+            const Point& point = top_points[static_cast<std::size_t>(candidate.point_slot)];
             float* row = output + static_cast<std::size_t>(detection) * 6U;
             for (int coordinate = 0; coordinate < 4; ++coordinate) {
                 row[coordinate] = static_cast<float>(point.box_q16[static_cast<std::size_t>(coordinate)]) / 65536.0F;
@@ -3620,13 +3801,34 @@ int FullExecutor::prepare(const std::filesystem::path& package_dir,
     try {
         const auto verified = int8_v1::verify_package(
             package_dir, trusted_manifest_sha256, int8_v1::kContractId,
-            kFullGraphProfileId, int8_v1::kNchwc8LayoutId, 2);
+            kFullGraphProfileId, int8_v1::kNchwc8LayoutId, 2,
+            kFullGraphModelSha256);
         if (!verified.ok) throw std::runtime_error("package verification failed: " + verified.error);
         Impl prepared;
         prepared.package = std::filesystem::canonical(package_dir);
         prepared.manifest = verified.manifest_sha256;
         prepared.config = config;
         prepared.controller_affinity_ok = pin_thread(config.controller_cpu);
+#if defined(Y26_K1X_FROZEN_RELEASE_PROFILE)
+        prepared.e2c2_enabled = true;
+        prepared.small_n_enabled = true;
+        prepared.rgb_stem_enabled = true;
+        prepared.fused_lut_enabled = true;
+        prepared.direct_1x1_enabled = true;
+        prepared.e2c3_enabled = true;
+        prepared.e2c4_enabled = true;
+        prepared.stage55_dense_family_a_enabled = true;
+        prepared.depthwise_v2_enabled = true;
+        prepared.depthwise_x2_enabled = true;
+        prepared.depthwise_border_v2_enabled = true;
+        prepared.lut2_rvv_enabled = true;
+        prepared.input_rvv_v2_enabled = true;
+        prepared.input_compact_c3_enabled = true;
+        prepared.attention_v2_enabled = true;
+        prepared.stage56_attention_direct_pack_enabled = true;
+        prepared.stage56_head_producer_reduction_enabled = true;
+        prepared.dense_pack_rvv_enabled = true;
+#else
         const char* e2c2_environment = std::getenv("Y26_STAGE52_E2C2");
         prepared.e2c2_enabled = e2c2_environment == nullptr ||
             std::string_view(e2c2_environment) != "0";
@@ -3714,6 +3916,24 @@ int FullExecutor::prepare(const std::filesystem::path& package_dir,
             std::string_view(head_v2_environment) == "1";
         prepared.stage56_head_producer_reduction_enabled =
             std::getenv("Y26_STAGE56_HEAD_PRODUCER_REDUCTION") != nullptr;
+#endif
+#if defined(Y26_K1X_FROZEN_RELEASE_PROFILE)
+        prepared.e2c5_enabled = true;
+        prepared.attention_matmul_c8_enabled = true;
+        prepared.attention_softmax_cache_enabled = false;
+        prepared.head_bucket_enabled = false;
+        prepared.rgb_copy_rvv_enabled = true;
+#else
+        prepared.e2c5_enabled = std::getenv("Y26_STAGE57_E2C5") != nullptr;
+        prepared.attention_matmul_c8_enabled =
+            std::getenv("Y26_STAGE57_ATTENTION_MATMUL_C8") != nullptr;
+        prepared.attention_softmax_cache_enabled =
+            std::getenv("Y26_STAGE57_ATTENTION_SOFTMAX_CACHE") != nullptr;
+        prepared.head_bucket_enabled =
+            std::getenv("Y26_STAGE57_HEAD_BUCKET") != nullptr;
+        prepared.rgb_copy_rvv_enabled =
+            std::getenv("Y26_STAGE57_RGB_COPY_RVV") != nullptr;
+#endif
         std::size_t arena_bytes = 0;
         for (const Row& row : read_tsv(prepared.package / "tensors.tsv")) {
             Tensor tensor;
@@ -3962,6 +4182,34 @@ int FullExecutor::prepare(const std::filesystem::path& package_dir,
             scale.reg_q16 = read_binary<std::int32_t>(prepared.package / value(row, "reg_lut_file"), 4U * 256U);
             scale.cls_q24 = read_binary<std::uint32_t>(prepared.package / value(row, "cls_lut_file"), 256);
         }
+        if (prepared.head_bucket_enabled) {
+            prepared.head_score_levels.reserve(3U * 256U);
+            for (const HeadScale& scale : prepared.head) {
+                prepared.head_score_levels.insert(prepared.head_score_levels.end(),
+                                                  scale.cls_q24.begin(), scale.cls_q24.end());
+            }
+            std::sort(prepared.head_score_levels.begin(), prepared.head_score_levels.end(),
+                      std::greater<>());
+            prepared.head_score_levels.erase(
+                std::unique(prepared.head_score_levels.begin(), prepared.head_score_levels.end()),
+                prepared.head_score_levels.end());
+            if (prepared.head_score_levels.size() >
+                static_cast<std::size_t>(std::numeric_limits<std::uint16_t>::max())) {
+                throw std::runtime_error("head score bucket count exceeds uint16 rank");
+            }
+            for (std::size_t rank = 0; rank < prepared.head_score_levels.size(); ++rank) {
+                prepared.head_score_rank.emplace(
+                    prepared.head_score_levels[rank], static_cast<std::uint16_t>(rank));
+            }
+            for (std::size_t scale_index = 0; scale_index < prepared.head.size(); ++scale_index) {
+                for (std::size_t code = 0; code < 256U; ++code) {
+                    prepared.head_score_rank_by_code[scale_index][code] =
+                        prepared.head_score_rank.at(prepared.head[scale_index].cls_q24[code]);
+                }
+            }
+            prepared.head_bucket_counts.resize(prepared.head_score_levels.size());
+            prepared.head_bucket_cursor.resize(prepared.head_score_levels.size());
+        }
         for (Operation& operation : prepared.operations) {
             for (std::size_t scale_index = 0; scale_index < prepared.head.size(); ++scale_index) {
                 if (operation.output == prepared.head[scale_index].cls_tensor ||
@@ -4004,7 +4252,10 @@ int FullExecutor::prepare(const std::filesystem::path& package_dir,
             const std::string core_manifest = int8_v1::sha256_file(core_package / "asset_hashes.tsv");
             if (prepared.optimized_core->prepare_with_contract(
                     core_package, core_manifest, config.workers,
-                    int8_v1::kContractId, int8_v1::kGeneralProfile, false) != 0 ||
+                    int8_v1::kContractId, int8_v1::kGeneralProfile, false,
+                    config.wake_policy == WakePolicy::frame_gated_spin
+                        ? stage49::WorkerWakePolicy::frame_gated_spin
+                        : stage49::WorkerWakePolicy::condition_variable) != 0 ||
                 prepared.core_start_operation < 0 || prepared.core_end_operation < prepared.core_start_operation) {
                 throw std::runtime_error("cannot prepare optimized resident core");
             }
@@ -4630,6 +4881,11 @@ const char* scheduler_mode_name(SchedulerMode value) noexcept {
 
 const char* compute_mode_name(ComputeMode value) noexcept {
     return value == ComputeMode::scalar ? "scalar" : "optimized";
+}
+
+const char* wake_policy_name(WakePolicy value) noexcept {
+    return value == WakePolicy::frame_gated_spin
+        ? "frame-gated-spin" : "condition-variable";
 }
 
 }  // namespace y26::stage52

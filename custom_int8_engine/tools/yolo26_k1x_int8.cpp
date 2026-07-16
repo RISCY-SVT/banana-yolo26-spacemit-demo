@@ -1,5 +1,4 @@
 #include "y26_k1x_executor.h"
-#include "y26_k1x_package.h"
 
 #include <algorithm>
 #include <chrono>
@@ -41,11 +40,17 @@ struct Options {
     int repeats = 1;
     int inter_frame_gap_us = 0;
     bool benchmark = false;
-    bool verify = false;
+    bool verify_determinism = false;
+    bool verify_known_fixture = false;
+    bool help = false;
     bool version = false;
     bool dump_live_boundary = false;
     std::string dump_boundary;
+    std::string expected_manifest_sha256 =
+        "fab4a72cf524ce0a205ceca0384144f2eee7bc79dff3f4db8b7208614e8407be";
+    std::uint64_t expected_output_hash = 0xd43f5e018b415631ULL;
     y26_scheduler scheduler = Y26_SCHEDULER_SAFE;
+    y26_wake_policy wake_policy = Y26_WAKE_CONDITION_VARIABLE;
 };
 
 Options parse(int argc, char** argv) {
@@ -56,7 +61,8 @@ Options parse(int argc, char** argv) {
             if (++index >= argc) throw std::runtime_error("missing value for " + argument);
             return argv[index];
         };
-        if (argument == "--package") options.package = next();
+        if (argument == "--help" || argument == "-h") options.help = true;
+        else if (argument == "--package") options.package = next();
         else if (argument == "--image") options.image = next();
         else if (argument == "--output-json") options.output_json = next();
         else if (argument == "--input-mode") options.input_mode = next();
@@ -65,7 +71,25 @@ Options parse(int argc, char** argv) {
         else if (argument == "--runs") options.runs = std::stoi(next());
         else if (argument == "--repeats") options.repeats = std::stoi(next());
         else if (argument == "--inter-frame-gap-us") options.inter_frame_gap_us = std::stoi(next());
-        else if (argument == "--scheduler") {
+        else if (argument == "--expected-manifest-sha256") {
+            options.expected_manifest_sha256 = next();
+        } else if (argument == "--expected-output-hash") {
+            options.expected_output_hash = std::stoull(next(), nullptr, 0);
+        } else if (argument == "--wake") {
+            const std::string value = next();
+            if (value == "condition-variable") options.wake_policy = Y26_WAKE_CONDITION_VARIABLE;
+            else if (value == "frame-gated-spin") options.wake_policy = Y26_WAKE_FRAME_GATED_SPIN;
+            else throw std::runtime_error("wake must be condition-variable or frame-gated-spin");
+        } else if (argument == "--profile") {
+            const std::string value = next();
+            if (value == "compatibility") options.wake_policy = Y26_WAKE_CONDITION_VARIABLE;
+            else if (value == "low-latency" || value == "low-latency-dedicated") {
+                options.wake_policy = Y26_WAKE_FRAME_GATED_SPIN;
+            } else {
+                throw std::runtime_error(
+                    "profile must be compatibility, low-latency, or low-latency-dedicated");
+            }
+        } else if (argument == "--scheduler") {
             const std::string value = next();
             if (value == "safe") options.scheduler = Y26_SCHEDULER_SAFE;
             else if (value == "rr20") options.scheduler = Y26_SCHEDULER_RR20;
@@ -73,7 +97,11 @@ Options parse(int argc, char** argv) {
         } else if (argument == "--pin") {
             if (next() != "0-3") throw std::runtime_error("only --pin 0-3 is supported");
         } else if (argument == "--benchmark") options.benchmark = true;
-        else if (argument == "--verify") options.verify = true;
+        else if (argument == "--verify" || argument == "--verify-determinism") {
+            options.verify_determinism = true;
+        } else if (argument == "--verify-known-fixture") {
+            options.verify_known_fixture = true;
+        }
         else if (argument == "--version") options.version = true;
         else if (argument == "--dump-boundary") {
             options.dump_boundary = next();
@@ -85,6 +113,27 @@ Options parse(int argc, char** argv) {
         }
     }
     return options;
+}
+
+void print_usage(const char* program) {
+    std::cout
+        << "usage: " << program << " --package DIR --image FILE [options]\n"
+        << "\n"
+        << "Input:\n"
+        << "  --input-mode preprocessed-f32|rgb640-u8|image\n"
+        << "  --output-json FILE\n"
+        << "\n"
+        << "Execution:\n"
+        << "  --profile compatibility|low-latency|low-latency-dedicated\n"
+        << "  --wake condition-variable|frame-gated-spin\n"
+        << "  --threads 1..4  --pin 0-3  --scheduler safe|rr20\n"
+        << "  --warmup N  --runs N  --repeats N  --benchmark\n"
+        << "\n"
+        << "Identity and verification:\n"
+        << "  --expected-manifest-sha256 HEX\n"
+        << "  --verify-determinism (legacy alias: --verify)\n"
+        << "  --verify-known-fixture --expected-output-hash HEX\n"
+        << "  --version  --help\n";
 }
 
 std::vector<float> read_f32(const std::filesystem::path& path) {
@@ -185,6 +234,10 @@ double percentile(std::vector<double> values, double quantile) {
 int main(int argc, char** argv) {
     try {
         const Options options = parse(argc, argv);
+        if (options.help) {
+            print_usage(argv[0]);
+            return 0;
+        }
         if (options.version) {
             std::cout << y26_executor_version() << '\n';
             return 0;
@@ -200,20 +253,18 @@ int main(int argc, char** argv) {
             options.runs < 1 || options.repeats < 1 || options.inter_frame_gap_us < 0) {
             throw std::runtime_error("invalid numeric option");
         }
-        const std::string manifest = y26::int8_v1::sha256_file(options.package / "asset_hashes.tsv");
         std::unique_ptr<y26_executor, decltype(&y26_executor_destroy)> executor(
             y26_executor_create(), y26_executor_destroy);
         if (!executor) throw std::runtime_error("executor allocation failed");
-        y26_executor_options executor_options {};
-        executor_options.struct_size = sizeof(executor_options);
-        executor_options.abi_version = Y26_K1X_EXECUTOR_ABI_VERSION;
+        y26_executor_options executor_options;
+        y26_executor_options_init(&executor_options);
         executor_options.workers = options.threads;
-        executor_options.worker_cpu_begin = 0;
-        executor_options.controller_cpu = 4;
         executor_options.scheduler = options.scheduler;
+        executor_options.wake_policy = options.wake_policy;
         executor_options.flags = options.dump_boundary.empty() || options.dump_live_boundary
             ? Y26_EXECUTOR_FLAG_NONE : Y26_EXECUTOR_FLAG_CAPTURE_BOUNDARIES;
-        if (y26_executor_prepare(executor.get(), options.package.c_str(), manifest.c_str(),
+        if (y26_executor_prepare(executor.get(), options.package.c_str(),
+                                 options.expected_manifest_sha256.c_str(),
                                  &executor_options) != Y26_STATUS_OK) {
             const std::string error = y26_executor_last_error(executor.get());
             throw std::runtime_error("prepare failed: " + error);
@@ -270,12 +321,16 @@ int main(int argc, char** argv) {
                 trace_marker("begin", repeat, run);
                 run_once(&timing);
                 trace_marker("end", repeat, run);
-                if (options.verify) {
+                if (options.verify_determinism) {
                     if (expected_output.empty()) expected_output = output;
                     else if (std::memcmp(expected_output.data(), output.data(),
                                          output.size() * sizeof(float)) != 0) {
                         throw std::runtime_error("deterministic output verification failed");
                     }
+                }
+                if (options.verify_known_fixture &&
+                    timing.output_hash != options.expected_output_hash) {
+                    throw std::runtime_error("known fixture output hash verification failed");
                 }
                 samples.push_back(timing.total_us);
                 if (options.benchmark) {
@@ -305,7 +360,7 @@ int main(int argc, char** argv) {
                 }
             }
         }
-        if (options.verify && samples.size() == 1) {
+        if (options.verify_determinism && samples.size() == 1) {
             run_once(nullptr);
             if (std::memcmp(expected_output.data(), output.data(), output.size() * sizeof(float)) != 0) {
                 throw std::runtime_error("deterministic output verification failed");

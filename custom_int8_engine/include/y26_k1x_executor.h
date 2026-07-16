@@ -4,6 +4,18 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#if defined(_WIN32)
+#if defined(Y26_K1X_BUILDING_LIBRARY)
+#define Y26_K1X_API __declspec(dllexport)
+#else
+#define Y26_K1X_API __declspec(dllimport)
+#endif
+#elif defined(__GNUC__)
+#define Y26_K1X_API __attribute__((visibility("default")))
+#else
+#define Y26_K1X_API
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -19,13 +31,20 @@ typedef enum y26_status {
     Y26_STATUS_INVALID_ARGUMENT = 1,
     Y26_STATUS_PACKAGE_ERROR = 2,
     Y26_STATUS_RUNTIME_ERROR = 3,
-    Y26_STATUS_UNSUPPORTED = 4
+    Y26_STATUS_UNSUPPORTED = 4,
+    Y26_STATUS_INVALID_STATE = 5,
+    Y26_STATUS_BUSY = 6
 } y26_status;
 
 typedef enum y26_scheduler {
     Y26_SCHEDULER_SAFE = 0,
     Y26_SCHEDULER_RR20 = 1
 } y26_scheduler;
+
+typedef enum y26_wake_policy {
+    Y26_WAKE_CONDITION_VARIABLE = 0,
+    Y26_WAKE_FRAME_GATED_SPIN = 1
+} y26_wake_policy;
 
 typedef enum y26_executor_flag {
     Y26_EXECUTOR_FLAG_NONE = 0,
@@ -40,6 +59,7 @@ typedef struct y26_executor_options {
     int32_t controller_cpu;
     int32_t scheduler;
     uint32_t flags;
+    int32_t wake_policy;
 } y26_executor_options;
 
 typedef struct y26_run_timing {
@@ -62,29 +82,33 @@ typedef struct y26_run_timing {
     int32_t cpu4_7_ime_count;
 } y26_run_timing;
 
-y26_executor* y26_executor_create(void);
-y26_status y26_executor_prepare(y26_executor* executor, const char* package_dir,
-                                const char* trusted_manifest_sha256,
-                                const y26_executor_options* options);
-y26_status y26_executor_run_preprocessed(y26_executor* executor,
-                                         const float* nchw_rgb_0_to_1,
-                                         size_t input_elements,
-                                         float* output_1x300x6,
-                                         size_t output_elements,
-                                         y26_run_timing* timing);
-y26_status y26_executor_run_rgb(y26_executor* executor, const uint8_t* rgb,
-                                int width, int height, int row_stride_bytes,
-                                float* output_1x300x6, size_t output_elements,
-                                y26_run_timing* timing);
-y26_status y26_executor_get_output(const y26_executor* executor,
-                                   float* output_1x300x6, size_t output_elements);
-int y26_executor_tensor_id(const y26_executor* executor, const char* tensor_name);
-size_t y26_executor_tensor_bytes(const y26_executor* executor, int tensor_id);
-y26_status y26_executor_copy_boundary(const y26_executor* executor, int tensor_id,
-                                      uint8_t* output, size_t output_bytes);
-void y26_executor_destroy(y26_executor* executor);
-const char* y26_executor_last_error(const y26_executor* executor);
-const char* y26_executor_version(void);
+Y26_K1X_API void y26_executor_options_init(y26_executor_options* options);
+Y26_K1X_API const char* y26_status_string(y26_status status);
+Y26_K1X_API y26_executor* y26_executor_create(void);
+Y26_K1X_API y26_status y26_executor_prepare(y26_executor* executor, const char* package_dir,
+                                            const char* trusted_manifest_sha256,
+                                            const y26_executor_options* options);
+Y26_K1X_API y26_status y26_executor_run_preprocessed(y26_executor* executor,
+                                                     const float* nchw_rgb_0_to_1,
+                                                     size_t input_elements,
+                                                     float* output_1x300x6,
+                                                     size_t output_elements,
+                                                     y26_run_timing* timing);
+Y26_K1X_API y26_status y26_executor_run_rgb(y26_executor* executor, const uint8_t* rgb,
+                                            int width, int height, int row_stride_bytes,
+                                            float* output_1x300x6, size_t output_elements,
+                                            y26_run_timing* timing);
+Y26_K1X_API y26_status y26_executor_get_output(const y26_executor* executor,
+                                               float* output_1x300x6,
+                                               size_t output_elements);
+Y26_K1X_API int y26_executor_tensor_id(const y26_executor* executor,
+                                       const char* tensor_name);
+Y26_K1X_API size_t y26_executor_tensor_bytes(const y26_executor* executor, int tensor_id);
+Y26_K1X_API y26_status y26_executor_copy_boundary(const y26_executor* executor, int tensor_id,
+                                                  uint8_t* output, size_t output_bytes);
+Y26_K1X_API void y26_executor_destroy(y26_executor* executor);
+Y26_K1X_API const char* y26_executor_last_error(const y26_executor* executor);
+Y26_K1X_API const char* y26_executor_version(void);
 
 #ifdef __cplusplus
 }

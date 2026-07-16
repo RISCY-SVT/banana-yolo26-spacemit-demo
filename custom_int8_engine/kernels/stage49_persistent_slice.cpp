@@ -489,22 +489,29 @@ class WorkerPool {
 public:
     using Job = void (*)(void*, int, WorkerScratch&);
 
-    WorkerPool(int requested, std::size_t panel_bytes, int cpu_base)
-        : count_(std::clamp(requested, 1, kMaximumWorkers)), cpu_base_(cpu_base),
-          spin_policy_([]() {
-              const char* policy = std::getenv("Y26_STAGE54_SPIN_POLICY");
-              if (policy != nullptr) {
-                  const std::string_view value(policy);
-                  if (value == "pause") return 2;
-                  if (value == "adaptive") return 3;
-                  if (value == "raw") return 1;
-              }
-              const char* value = std::getenv("Y26_STAGE53_SPIN_POOL");
-              return value != nullptr && std::string_view(value) == "1" ? 1 : 0;
-          }()), spin_mode_(spin_policy_ != 0), frame_gated_spin_([]() {
-              const char* value = std::getenv("Y26_STAGE55_FRAME_GATED_SPIN");
-              return value != nullptr && std::string_view(value) == "1";
-          }()) {
+    WorkerPool(int requested, std::size_t panel_bytes, int cpu_base,
+               WorkerWakePolicy wake_policy)
+        : count_(std::clamp(requested, 1, kMaximumWorkers)), cpu_base_(cpu_base) {
+        if (wake_policy == WorkerWakePolicy::frame_gated_spin) {
+            spin_policy_ = 1;
+            frame_gated_spin_ = true;
+        }
+#if !defined(Y26_K1X_FROZEN_RELEASE_PROFILE)
+        if (const char* policy = std::getenv("Y26_STAGE54_SPIN_POLICY"); policy != nullptr) {
+            const std::string_view value(policy);
+            if (value == "pause") spin_policy_ = 2;
+            else if (value == "adaptive") spin_policy_ = 3;
+            else if (value == "raw") spin_policy_ = 1;
+        } else if (const char* value = std::getenv("Y26_STAGE53_SPIN_POOL");
+                   value != nullptr && std::string_view(value) == "1") {
+            spin_policy_ = 1;
+        }
+        if (const char* value = std::getenv("Y26_STAGE55_FRAME_GATED_SPIN");
+            value != nullptr && std::string_view(value) == "1") {
+            frame_gated_spin_ = true;
+        }
+#endif
+        spin_mode_ = spin_policy_ != 0;
         scratch_.resize(static_cast<std::size_t>(count_));
         for (WorkerScratch& scratch : scratch_) scratch.a_panel.resize(panel_bytes);
         threads_.reserve(static_cast<std::size_t>(count_));
@@ -1861,7 +1868,8 @@ int PersistentSlice::prepare_with_contract(const std::filesystem::path& package_
                                            int worker_capacity,
                                            const std::string& expected_contract_id,
                                            const std::string& expected_profile_id,
-                                           bool enable_cluster1_pool) {
+                                           bool enable_cluster1_pool,
+                                           WorkerWakePolicy wake_policy) {
     if (worker_capacity < 1 || worker_capacity > kMaximumWorkers) return Y26_CONV_STATUS_INVALID_ARGUMENT;
     impl_->error.clear();
     try {
@@ -1998,9 +2006,11 @@ int PersistentSlice::prepare_with_contract(const std::filesystem::path& package_
             prepared.model5_output_id < 0 || prepared.slice_output_id < 0) {
             throw std::runtime_error("unexpected persistent integer-slice package surface");
         }
-        prepared.pool = std::make_unique<WorkerPool>(worker_capacity, maximum_panel, 0);
+        prepared.pool = std::make_unique<WorkerPool>(
+            worker_capacity, maximum_panel, 0, wake_policy);
         if (enable_cluster1_pool) {
-            prepared.cluster1_pool = std::make_unique<WorkerPool>(worker_capacity, 0, 4);
+            prepared.cluster1_pool = std::make_unique<WorkerPool>(
+                worker_capacity, 0, 4, WorkerWakePolicy::condition_variable);
         }
         prepared.ready = true;
         *impl_ = std::move(prepared);

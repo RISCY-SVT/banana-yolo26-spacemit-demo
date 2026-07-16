@@ -1,0 +1,11 @@
+prefix=${pcfiledir}/../..
+exec_prefix=${prefix}
+libdir=${prefix}/@CMAKE_INSTALL_LIBDIR@
+includedir=${prefix}/@CMAKE_INSTALL_INCLUDEDIR@
+
+Name: y26-k1x-int8-executor
+Description: Exact K1X_INT8_V1 YOLO26n-640 executor
+Version: @PROJECT_VERSION@
+Libs: -L${libdir} -ly26_k1x_int8_executor
+Libs.private: -lpthread -lstdc++ -lm
+Cflags: -I${includedir}

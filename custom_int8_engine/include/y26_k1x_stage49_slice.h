@@ -27,6 +27,7 @@ enum class NonConvStrategy {
     cluster1_explicit_rvv,
 };
 enum class SchedulerStrategy { all_workers_complete, active_workers_complete };
+enum class WorkerWakePolicy { condition_variable, frame_gated_spin };
 
 struct RunOptions {
     ComputeRoute route = ComputeRoute::ime;
@@ -107,7 +108,9 @@ public:
                               int worker_capacity,
                               const std::string& expected_contract_id,
                               const std::string& expected_profile_id,
-                              bool enable_cluster1_pool = true);
+                              bool enable_cluster1_pool = true,
+                              WorkerWakePolicy wake_policy =
+                                  WorkerWakePolicy::condition_variable);
 
     int bind_external_arena(std::int8_t* arena, std::size_t bytes);
     int bind_external_tensor(int tensor_id, std::int8_t* data, std::size_t bytes);

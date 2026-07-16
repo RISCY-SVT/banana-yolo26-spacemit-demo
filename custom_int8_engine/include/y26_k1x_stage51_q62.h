@@ -60,6 +60,34 @@ void q62_e2c4_i32x4x2_bias_lut_to_s8(const std::int32_t* values_low,
                                      const std::int8_t* lut_s8,
                                      std::int8_t* output_s8) noexcept;
 
+// Stage57 E2c5 sidecar: two independent C4 chains avoid the E2c4 C8
+// vslideup dependency while retaining the exact Q62/RNE contract.
+void q62_e2c5_i32x4x2_bias_to_s8(const std::int32_t* values_low,
+                                 const std::int32_t* values_high,
+                                 const std::int64_t* corrected_bias,
+                                 const std::int64_t* multipliers_m63,
+                                 std::int64_t output_zero_point,
+                                 std::int8_t* output_s8) noexcept;
+
+void q62_e2c5_i32x4x2_bias_lut_to_s8(const std::int32_t* values_low,
+                                     const std::int32_t* values_high,
+                                     const std::int64_t* corrected_bias,
+                                     const std::int64_t* multipliers_m63,
+                                     std::int64_t output_zero_point,
+                                     const std::int8_t* lut_s8,
+                                     std::int8_t* output_s8) noexcept;
+
+// Attention MatMul C8 epilogue. The row correction is common to all eight
+// columns; per-column right sums remain exact signed int64 inputs.
+void q62_attention_i32x4x2_to_s8(const std::int32_t* values_low,
+                                 const std::int32_t* values_high,
+                                 const std::int64_t* right_sums,
+                                 std::int64_t left_correction,
+                                 std::int64_t common_correction,
+                                 std::int64_t multiplier_m63,
+                                 std::int64_t output_zero_point,
+                                 std::int8_t* output_s8) noexcept;
+
 VectorFixedPointResult end_q62_vector_rne(VectorFixedPointState* state) noexcept;
 
 // Test/diagnostic wrapper that brackets one vector operation and restores vcsr.

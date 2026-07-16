@@ -12,6 +12,7 @@ inline constexpr const char* kFullGraphProfileId =
     "K1X_INT8_V1_YOLO26N_640_FULL_GRAPH_001";
 
 enum class SchedulerMode { safe, rr20 };
+enum class WakePolicy { condition_variable, frame_gated_spin };
 enum class ComputeMode { scalar, optimized };
 
 struct RunConfig {
@@ -19,6 +20,7 @@ struct RunConfig {
     int worker_cpu_begin = 0;
     int controller_cpu = 4;
     SchedulerMode scheduler = SchedulerMode::safe;
+    WakePolicy wake_policy = WakePolicy::condition_variable;
     ComputeMode compute = ComputeMode::optimized;
     bool capture_boundaries = false;
 };
@@ -121,6 +123,7 @@ private:
 };
 
 const char* scheduler_mode_name(SchedulerMode value) noexcept;
+const char* wake_policy_name(WakePolicy value) noexcept;
 const char* compute_mode_name(ComputeMode value) noexcept;
 
 }  // namespace y26::stage52

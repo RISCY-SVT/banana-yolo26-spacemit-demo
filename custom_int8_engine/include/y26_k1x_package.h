@@ -22,7 +22,8 @@ PackageVerification verify_package(const std::filesystem::path& package_dir,
                                    const std::string& expected_contract_id,
                                    const std::string& expected_profile_id,
                                    const std::string& expected_layout_id,
-                                   int expected_schema_version = kPackageSchemaVersion);
+                                   int expected_schema_version = kPackageSchemaVersion,
+                                   const std::string& expected_model_sha256 = {});
 
 bool ranges_overlap(const void* lhs, std::size_t lhs_bytes,
                     const void* rhs, std::size_t rhs_bytes) noexcept;

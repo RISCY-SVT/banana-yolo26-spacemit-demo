@@ -1,9 +1,10 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(y26_k1x_custom_int8_engine VERSION 0.0.0 LANGUAGES C CXX)
+project(y26_k1x_custom_int8_engine VERSION 0.9.0 LANGUAGES C CXX)
 
 find_package(Threads REQUIRED)
 include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -12,13 +13,146 @@ set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS OFF)
 
-option(Y26_K1X_ENABLE_TESTS "Build custom INT8 engine tests" ON)
+option(Y26_K1X_ENABLE_TESTS "Build custom INT8 engine tests" OFF)
 option(Y26_K1X_ENABLE_IME "Build the guarded Stage 1 smt.vmadot IME path" OFF)
-option(Y26_K1X_BUILD_TOOLS "Build custom INT8 engine helper tools" ON)
+option(Y26_K1X_BUILD_RELEASE "Build the frozen Stage57 ABI1 release" ON)
+option(Y26_K1X_BUILD_RELEASE_TOOLS "Build the release CLI and healthcheck" ON)
+option(Y26_K1X_BUILD_RESEARCH "Build historical and candidate research sources" OFF)
+option(Y26_K1X_BUILD_TOOLS "Build research helper tools" OFF)
+option(Y26_K1X_INSTALL_DEVELOPMENT_HEADERS "Install internal C++ development headers" OFF)
 set(Y26_K1X_ORT_INCLUDE_DIR "" CACHE PATH "Optional ONNX Runtime include directory for in-process scaffold tools")
 set(Y26_K1X_ORT_LIBRARY "" CACHE FILEPATH "Optional ONNX Runtime library for in-process scaffold tools")
 set(Y26_K1X_SPACEMIT_EP_LIBRARY "" CACHE FILEPATH "Optional SpacemiT EP library for Stage46 runtime probes")
 set(Y26_K1X_OPENCV_DIR "" CACHE PATH "Optional OpenCV package directory for the Stage52 COCO predictor")
+
+set(Y26_K1X_RELEASE_SOURCES
+    kernels/stage48_nchwc8_model5.cpp
+    kernels/stage49_persistent_slice.cpp
+    kernels/stage51_q62_epilogue.cpp
+    kernels/vmadot_4x4x8_ime.cpp
+    src/int8_v1.cpp
+    src/package_loader.cpp
+    src/stage52_c_api.cpp
+    src/stage52_full_executor.cpp
+)
+
+if(Y26_K1X_BUILD_RELEASE)
+    add_library(y26_k1x_release_objects OBJECT ${Y26_K1X_RELEASE_SOURCES})
+    target_include_directories(y26_k1x_release_objects
+        PUBLIC
+            "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+            "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
+    )
+    target_compile_options(y26_k1x_release_objects PRIVATE -Wall -Wextra -Wpedantic)
+    target_compile_definitions(y26_k1x_release_objects PRIVATE
+        Y26_K1X_BUILDING_LIBRARY=1
+        Y26_K1X_FROZEN_RELEASE_PROFILE=1
+    )
+    set_target_properties(y26_k1x_release_objects PROPERTIES
+        POSITION_INDEPENDENT_CODE ON
+        CXX_VISIBILITY_PRESET hidden
+        VISIBILITY_INLINES_HIDDEN YES
+    )
+    if(Y26_K1X_ENABLE_IME)
+        target_compile_definitions(y26_k1x_release_objects PRIVATE Y26_K1X_ENABLE_IME_ASM=1)
+    endif()
+
+    add_library(y26_k1x_executor_shared SHARED $<TARGET_OBJECTS:y26_k1x_release_objects>)
+    add_library(y26_k1x_executor_static STATIC $<TARGET_OBJECTS:y26_k1x_release_objects>)
+    add_library(y26::executor_shared ALIAS y26_k1x_executor_shared)
+    add_library(y26::executor_static ALIAS y26_k1x_executor_static)
+    foreach(target y26_k1x_executor_shared y26_k1x_executor_static)
+        target_include_directories(${target}
+            PUBLIC
+                "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+                "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
+        )
+        target_link_libraries(${target} PUBLIC Threads::Threads)
+        set_target_properties(${target} PROPERTIES OUTPUT_NAME y26_k1x_int8_executor)
+    endforeach()
+    # Static C consumers need the implementation's C++ runtime dependencies.
+    target_link_libraries(y26_k1x_executor_static PUBLIC stdc++ m)
+    set_target_properties(y26_k1x_executor_shared PROPERTIES
+        VERSION ${PROJECT_VERSION}
+        SOVERSION 1
+        CXX_VISIBILITY_PRESET hidden
+        VISIBILITY_INLINES_HIDDEN YES
+        EXPORT_NAME executor_shared
+    )
+    if(UNIX AND NOT APPLE)
+        target_link_options(y26_k1x_executor_shared PRIVATE
+            "LINKER:--version-script=${CMAKE_CURRENT_SOURCE_DIR}/cmake/y26-k1x-int8-executor.map")
+    endif()
+    set_target_properties(y26_k1x_executor_static PROPERTIES EXPORT_NAME executor_static)
+
+    install(TARGETS y26_k1x_executor_shared y26_k1x_executor_static
+        EXPORT y26K1xExecutorTargets
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    )
+    install(FILES include/y26_k1x_executor.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+    if(Y26_K1X_INSTALL_DEVELOPMENT_HEADERS)
+        install(FILES
+            include/y26_k1x_full_executor.h
+            include/y26_k1x_int8_v1.h
+            include/y26_k1x_package.h
+            include/y26_k1x_stage49_slice.h
+            include/y26_k1x_stage51_q62.h
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/y26/research
+        )
+    endif()
+
+    configure_package_config_file(
+        cmake/y26K1xExecutorConfig.cmake.in
+        "${CMAKE_CURRENT_BINARY_DIR}/y26K1xExecutorConfig.cmake"
+        INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/y26K1xExecutor"
+    )
+    write_basic_package_version_file(
+        "${CMAKE_CURRENT_BINARY_DIR}/y26K1xExecutorConfigVersion.cmake"
+        VERSION ${PROJECT_VERSION}
+        COMPATIBILITY SameMajorVersion
+    )
+    configure_file(cmake/y26-k1x-int8-executor.pc.in
+                   "${CMAKE_CURRENT_BINARY_DIR}/y26-k1x-int8-executor.pc" @ONLY)
+    install(EXPORT y26K1xExecutorTargets
+        FILE y26K1xExecutorTargets.cmake
+        NAMESPACE y26::
+        DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/y26K1xExecutor"
+    )
+    install(FILES
+        "${CMAKE_CURRENT_BINARY_DIR}/y26K1xExecutorConfig.cmake"
+        "${CMAKE_CURRENT_BINARY_DIR}/y26K1xExecutorConfigVersion.cmake"
+        DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/y26K1xExecutor"
+    )
+    install(FILES "${CMAKE_CURRENT_BINARY_DIR}/y26-k1x-int8-executor.pc"
+            DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
+    install(FILES examples/c_api_consumer.c examples/CMakeLists.txt
+            DESTINATION "${CMAKE_INSTALL_DATADIR}/y26-k1x-int8-executor/examples")
+
+    if(Y26_K1X_BUILD_RELEASE_TOOLS)
+        add_executable(yolo26_k1x_int8 tools/yolo26_k1x_int8.cpp)
+        target_link_libraries(yolo26_k1x_int8 PRIVATE y26_k1x_executor_shared Threads::Threads)
+        target_compile_options(yolo26_k1x_int8 PRIVATE -Wall -Wextra -Wpedantic)
+        set_target_properties(yolo26_k1x_int8 PROPERTIES INSTALL_RPATH "$ORIGIN/../${CMAKE_INSTALL_LIBDIR}")
+        add_executable(y26_k1x_healthcheck tools/stage52_c_api_smoke.c)
+        target_link_libraries(y26_k1x_healthcheck PRIVATE y26_k1x_executor_shared Threads::Threads)
+        target_compile_options(y26_k1x_healthcheck PRIVATE -Wall -Wextra -Wpedantic)
+        set_target_properties(y26_k1x_healthcheck PROPERTIES
+            LINKER_LANGUAGE CXX
+            INSTALL_RPATH "$ORIGIN/../${CMAKE_INSTALL_LIBDIR}"
+        )
+        add_executable(stage57_c_api_contract tools/stage57_c_api_contract.c)
+        target_link_libraries(stage57_c_api_contract PRIVATE y26_k1x_executor_shared Threads::Threads)
+        target_compile_options(stage57_c_api_contract PRIVATE -Wall -Wextra -Wpedantic)
+        set_target_properties(stage57_c_api_contract PROPERTIES LINKER_LANGUAGE CXX)
+        install(TARGETS yolo26_k1x_int8 y26_k1x_healthcheck
+                RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+    endif()
+endif()
+
+if(Y26_K1X_BUILD_RESEARCH)
 
 add_library(y26_k1x_custom_int8_engine
     kernels/activation_requant.cpp
@@ -80,20 +214,7 @@ target_link_libraries(y26_k1x_custom_int8_engine
 )
 
 set_target_properties(y26_k1x_custom_int8_engine PROPERTIES
-    OUTPUT_NAME y26_k1x_int8_executor
-)
-
-install(TARGETS y26_k1x_custom_int8_engine
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-)
-install(FILES
-    include/y26_k1x_executor.h
-    include/y26_k1x_full_executor.h
-    include/y26_k1x_int8_v1.h
-    include/y26_k1x_package.h
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    OUTPUT_NAME y26_k1x_int8_executor_research
 )
 
 if(Y26_K1X_ENABLE_IME)
@@ -103,7 +224,9 @@ if(Y26_K1X_ENABLE_IME)
     )
 endif()
 
-if(Y26_K1X_BUILD_TOOLS)
+endif()
+
+if(Y26_K1X_BUILD_RESEARCH AND Y26_K1X_BUILD_TOOLS)
     add_executable(bench_vmadot_microkernel
         tools/bench_vmadot_microkernel.cpp
     )
@@ -486,36 +609,40 @@ if(Y26_K1X_BUILD_TOOLS)
     target_link_libraries(stage55_shape_lattice PRIVATE y26_k1x_custom_int8_engine Threads::Threads)
     target_compile_options(stage55_shape_lattice PRIVATE -Wall -Wextra -Wpedantic)
 
-    add_executable(yolo26_k1x_int8
+    add_executable(yolo26_k1x_int8_research
         tools/yolo26_k1x_int8.cpp
     )
-    target_link_libraries(yolo26_k1x_int8 PRIVATE y26_k1x_custom_int8_engine Threads::Threads)
-    target_compile_options(yolo26_k1x_int8 PRIVATE -Wall -Wextra -Wpedantic)
-    install(TARGETS yolo26_k1x_int8 RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+    target_link_libraries(yolo26_k1x_int8_research PRIVATE y26_k1x_custom_int8_engine Threads::Threads)
+    target_compile_options(yolo26_k1x_int8_research PRIVATE -Wall -Wextra -Wpedantic)
     if(Y26_K1X_ENABLE_IME)
-        target_compile_definitions(yolo26_k1x_int8 PRIVATE Y26_K1X_ENABLE_IME_ASM=1)
+        target_compile_definitions(yolo26_k1x_int8_research PRIVATE Y26_K1X_ENABLE_IME_ASM=1)
     endif()
 
-    add_executable(y26_k1x_c_api_smoke
+    add_executable(stage57_abba_bench
+        tools/stage57_abba_bench.cpp
+    )
+    target_link_libraries(stage57_abba_bench PRIVATE y26_k1x_custom_int8_engine Threads::Threads)
+    target_compile_options(stage57_abba_bench PRIVATE -Wall -Wextra -Wpedantic)
+
+    add_executable(y26_k1x_c_api_smoke_research
         tools/stage52_c_api_smoke.c
     )
-    target_link_libraries(y26_k1x_c_api_smoke PRIVATE y26_k1x_custom_int8_engine Threads::Threads)
-    target_compile_options(y26_k1x_c_api_smoke PRIVATE -Wall -Wextra -Wpedantic)
-    set_target_properties(y26_k1x_c_api_smoke PROPERTIES
+    target_link_libraries(y26_k1x_c_api_smoke_research PRIVATE y26_k1x_custom_int8_engine Threads::Threads)
+    target_compile_options(y26_k1x_c_api_smoke_research PRIVATE -Wall -Wextra -Wpedantic)
+    set_target_properties(y26_k1x_c_api_smoke_research PROPERTIES
         LINKER_LANGUAGE CXX
         BUILD_RPATH "$ORIGIN/../lib"
         INSTALL_RPATH "$ORIGIN/../lib"
     )
-    install(TARGETS y26_k1x_c_api_smoke RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
     if(Y26_K1X_OPENCV_DIR)
         set(OpenCV_DIR "${Y26_K1X_OPENCV_DIR}")
         find_package(OpenCV QUIET COMPONENTS core imgproc imgcodecs)
         if(OpenCV_FOUND)
-            target_link_libraries(yolo26_k1x_int8 PRIVATE ${OpenCV_LIBS})
-            target_include_directories(yolo26_k1x_int8 PRIVATE ${OpenCV_INCLUDE_DIRS})
-            target_compile_definitions(yolo26_k1x_int8 PRIVATE Y26_K1X_HAVE_OPENCV=1)
-            set_target_properties(yolo26_k1x_int8 PROPERTIES
+            target_link_libraries(yolo26_k1x_int8_research PRIVATE ${OpenCV_LIBS})
+            target_include_directories(yolo26_k1x_int8_research PRIVATE ${OpenCV_INCLUDE_DIRS})
+            target_compile_definitions(yolo26_k1x_int8_research PRIVATE Y26_K1X_HAVE_OPENCV=1)
+            set_target_properties(yolo26_k1x_int8_research PROPERTIES
                 BUILD_RPATH "$ORIGIN/../lib;$ORIGIN/../opencv/lib"
                 INSTALL_RPATH "$ORIGIN/../lib;$ORIGIN/../opencv/lib"
             )

@@ -276,7 +276,8 @@ PackageVerification verify_package(const std::filesystem::path& package_dir,
                                    const std::string& expected_contract_id,
                                    const std::string& expected_profile_id,
                                    const std::string& expected_layout_id,
-                                   int expected_schema_version) {
+                                   int expected_schema_version,
+                                   const std::string& expected_model_sha256) {
     PackageVerification result;
     try {
         if (!valid_sha256(trusted_manifest_sha256)) throw std::runtime_error("invalid trusted manifest SHA-256");
@@ -347,9 +348,11 @@ PackageVerification verify_package(const std::filesystem::path& package_dir,
         if (schema != static_cast<std::uint64_t>(expected_schema_version)) {
             throw std::runtime_error("package schema version mismatch");
         }
-        if (!valid_sha256(required_json(package, "model_sha256")) ||
+        const std::string& model_sha256 = required_json(package, "model_sha256");
+        if (!valid_sha256(model_sha256) ||
+            (!expected_model_sha256.empty() && model_sha256 != expected_model_sha256) ||
             required_json(package, "source_lineage_id").empty()) {
-            throw std::runtime_error("missing package source lineage");
+            throw std::runtime_error("package model identity or source lineage mismatch");
         }
         result.ok = true;
     } catch (const std::exception& error) {
