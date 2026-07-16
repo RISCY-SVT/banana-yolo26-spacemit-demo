@@ -9,7 +9,10 @@
 #include <chrono>
 #include <cctype>
 #include <filesystem>
+#include <iomanip>
+#include <sstream>
 #include <system_error>
+#include <vector>
 
 #include <opencv2/imgcodecs.hpp>
 
@@ -58,6 +61,13 @@ bool MediaSource::Open(std::string& error)
         return OpenCamera(error);
     }
 
+    if (options_.source.rfind("video:", 0) == 0)
+    {
+        is_video_ = true;
+        video_path_ = options_.source.substr(6);
+        return OpenVideo(error);
+    }
+
     error = "unsupported source: " + options_.source;
     return false;
 }
@@ -72,12 +82,19 @@ bool MediaSource::IsCamera() const
     return is_camera_;
 }
 
+bool MediaSource::IsVideo() const
+{
+    return is_video_;
+}
+
 std::string MediaSource::Describe() const
 {
     if (is_image_)
         return "image:" + image_path_;
     if (is_camera_)
         return "camera:" + (camera_display_name_.empty() ? camera_path_ : camera_display_name_);
+    if (is_video_)
+        return "video:" + video_path_;
     return options_.source;
 }
 
@@ -86,9 +103,12 @@ bool MediaSource::Read(cv::Mat& frame)
     const auto start = std::chrono::steady_clock::now();
     if (is_image_)
     {
+        if (image_consumed_)
+            return false;
         frame = image_.clone();
+        image_consumed_ = true;
     }
-    else if (is_camera_)
+    else if (is_camera_ || is_video_)
     {
         if (!capture_.read(frame))
             return false;
@@ -102,6 +122,17 @@ bool MediaSource::Read(cv::Mat& frame)
     return !frame.empty();
 }
 
+bool MediaSource::Reopen(std::string& error)
+{
+    capture_.release();
+    if (is_camera_)
+        return OpenCamera(error);
+    if (is_video_)
+        return OpenVideo(error);
+    error = "source cannot be reopened";
+    return false;
+}
+
 double MediaSource::LastReadMs() const
 {
     return last_read_ms_;
@@ -111,7 +142,7 @@ int MediaSource::FrameWidth() const
 {
     if (is_image_)
         return image_.cols;
-    if (is_camera_)
+    if (is_camera_ || is_video_)
         return static_cast<int>(capture_.get(cv::CAP_PROP_FRAME_WIDTH));
     return 0;
 }
@@ -120,14 +151,14 @@ int MediaSource::FrameHeight() const
 {
     if (is_image_)
         return image_.rows;
-    if (is_camera_)
+    if (is_camera_ || is_video_)
         return static_cast<int>(capture_.get(cv::CAP_PROP_FRAME_HEIGHT));
     return 0;
 }
 
 double MediaSource::Fps() const
 {
-    if (is_camera_)
+    if (is_camera_ || is_video_)
         return capture_.get(cv::CAP_PROP_FPS);
     return 0.0;
 }
@@ -147,14 +178,47 @@ std::string MediaSource::BackendName() const
     return camera_backend_name_;
 }
 
+std::string MediaSource::ResolvedPath() const
+{
+    if (is_camera_)
+        return camera_resolved_path_;
+    if (is_video_)
+        return video_path_;
+    return image_path_;
+}
+
+std::string MediaSource::EffectiveFormat() const
+{
+    std::ostringstream out;
+    out.setf(std::ios::fixed);
+    out << FrameWidth() << 'x' << FrameHeight() << '@' << std::setprecision(3) << Fps();
+    if (is_camera_)
+        out << ' ' << camera_pixfmt_actual_;
+    return out.str();
+}
+
 bool MediaSource::OpenImage(std::string& error)
 {
+    image_consumed_ = false;
     image_ = cv::imread(image_path_, cv::IMREAD_COLOR);
     if (image_.empty())
     {
         error = "failed to read image: " + image_path_;
         return false;
     }
+    return true;
+}
+
+bool MediaSource::OpenVideo(std::string& error)
+{
+    capture_.release();
+    if (!capture_.open(video_path_))
+    {
+        error = "failed to open video: " + video_path_;
+        return false;
+    }
+    camera_open_method_ = "video-file-auto";
+    camera_backend_name_ = SafeBackendName(capture_);
     return true;
 }
 
@@ -218,20 +282,22 @@ void MediaSource::ApplyCameraProperties()
 {
     // Keep capture latency low by preferring the smallest backend queue the driver accepts.
     capture_.set(cv::CAP_PROP_BUFFERSIZE, 1);
-    capture_.set(cv::CAP_PROP_FRAME_WIDTH, options_.camera_width);
-    capture_.set(cv::CAP_PROP_FRAME_HEIGHT, options_.camera_height);
-    capture_.set(cv::CAP_PROP_FPS, options_.camera_fps);
-
     const int fourcc = ResolveFourcc();
     if (fourcc != 0)
         capture_.set(cv::CAP_PROP_FOURCC, fourcc);
+    capture_.set(cv::CAP_PROP_FRAME_WIDTH, options_.camera_width);
+    capture_.set(cv::CAP_PROP_FRAME_HEIGHT, options_.camera_height);
+    capture_.set(cv::CAP_PROP_FPS, options_.camera_fps);
 }
 
 int MediaSource::ResolveFourcc() const
 {
-    if (options_.camera_pixfmt == "mjpg")
+    std::string format = options_.camera_fourcc;
+    std::transform(format.begin(), format.end(), format.begin(),
+                   [](unsigned char value) { return static_cast<char>(std::toupper(value)); });
+    if (format == "MJPG")
         return cv::VideoWriter::fourcc('M', 'J', 'P', 'G');
-    if (options_.camera_pixfmt == "yuyv")
+    if (format == "YUYV")
         return cv::VideoWriter::fourcc('Y', 'U', 'Y', 'V');
     return 0;
 }
@@ -254,14 +320,16 @@ bool MediaSource::ResolveCameraTarget(std::string& error)
             std::error_code ec;
             if (!std::filesystem::exists(base, ec))
                 continue;
+            std::vector<std::filesystem::path> candidates;
             for (const auto& entry : std::filesystem::directory_iterator(base, ec))
             {
                 const std::string candidate = entry.path().filename().string();
                 if (candidate.find("video-index0") == std::string::npos)
                     continue;
-                target = entry.path().string();
-                break;
+                candidates.push_back(entry.path());
             }
+            std::sort(candidates.begin(), candidates.end());
+            if (!candidates.empty()) target = candidates.front().string();
             if (!target.empty() && target != "auto")
                 break;
         }

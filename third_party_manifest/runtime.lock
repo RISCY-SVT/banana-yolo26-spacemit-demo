@@ -1,8 +1,0 @@
-default_visual_runtime=rt201
-default_vendor320_visual_runtime=rt123
-default_vendor320_perf_runtime=rt201
-runtime=rt123|spacemit-ort.riscv64.1.2.3|https://archive.spacemit.com/spacemit-ai/onnxruntime/spacemit-ort.riscv64.1.2.3.tar.gz|031e61205e597840c297c492b5d3ceddf9f8e618a9b17ed4b6370358c1b9a21b
-runtime=rt201|spacemit-ort.riscv64.2.0.1|https://archive.spacemit.com/spacemit-ai/onnxruntime/spacemit-ort.riscv64.2.0.1.tar.gz|8a15035aca34d5fd95f24444d4c7843265c1a81f49d84ec6fe9c6d0fdf5b55cf
-runtime=rt202b1|spacemit-ort.riscv64.2.0.2+beta1|https://archive.spacemit.com/spacemit-ai/onnxruntime/spacemit-ort.riscv64.2.0.2%2Bbeta1.tar.gz|215e02fb188441f94b4498b076dbe034d34cc76eef990ebdb64732d250d83799
-runtime=rt202|spacemit-ort.riscv64.2.0.2|https://archive.spacemit.com/spacemit-ai/onnxruntime/spacemit-ort.riscv64.2.0.2.tar.gz|b9d038eab644c42712b93e14648427467a02d1b66115795033093efbeb53c868
-runtime=rt204|spacemit-ort.riscv64.2.0.4|https://github.com/spacemit-com/onnxruntime/releases/download/2.0.4/spacemit-ort.riscv64.2.0.4.tar.gz|bcf02bd12b8a1df969d6986658a9270c1121e5d58f5947d91ea5eba1bd6cd435

@@ -1,43 +1,17 @@
 #!/usr/bin/env bash
-## @file ensure_opencv.sh
-## @brief Check that the expected OpenCV runtime or cross-build install exists.
-## @details Board-local runs accept either system `opencv4` packages or the
-## staged repo-local runtime, while host-side checks look for the canonical K1X
-## cross install under `/data/opencv/install-k1x-gtk3`.
 set -euo pipefail
 
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-
-if [[ "$(uname -m)" == "riscv64" ]]; then
-  if pkg-config --exists opencv4; then
-    echo "Board OpenCV OK: $(pkg-config --modversion opencv4)"
-    exit 0
-  fi
-  if [[ -d "${ROOT_DIR}/opencv/lib" ]]; then
-    echo "Board-local OpenCV runtime OK: ${ROOT_DIR}/opencv/lib"
-    exit 0
-  fi
-  echo "Missing OpenCV on board. Install libopencv-dev or deploy ${ROOT_DIR}/opencv/lib." >&2
-  exit 1
-fi
-
-source /data/build_scripts/01-env.sh
-
-OPENCV_ROOT="/data/opencv/install-k1x-gtk3"
-OPENCV_CONFIG="${OPENCV_ROOT}/lib/cmake/opencv4/OpenCVConfig.cmake"
-
-if [[ -f "${OPENCV_CONFIG}" ]]; then
-  echo "Host OpenCV OK: ${OPENCV_ROOT}"
+if [[ ${1:-} == --help || ${1:-} == -h ]]; then
+  echo "usage: $0  # verify the canonical K1X OpenCV 4.13 prefix"
   exit 0
 fi
-
-cat >&2 <<EOF
-Missing host OpenCV cross install at:
-  ${OPENCV_CONFIG}
-
-Recommended fix:
-  ./scripts/import_local_k1x_scripts.sh
-  source ./scripts/reference/build_scripts/01-env.sh
-  ./scripts/reference/build_scripts/05-build-opencv-ncnn.sh
-EOF
-exit 1
+[[ $# == 0 ]] || { echo "usage: $0" >&2; exit 2; }
+prefix=${Y26_OPENCV_PREFIX:-/data/opencv/install-k1x-gtk3}
+test -f "$prefix/lib/cmake/opencv4/OpenCVConfig.cmake"
+for module in core imgproc imgcodecs highgui videoio; do
+  test -f "$prefix/lib/libopencv_${module}.so.4.13.0" || {
+    echo "missing K1X OpenCV module: $module" >&2
+    exit 1
+  }
+done
+echo "OpenCV K1X prefix verified: $prefix"

@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-readonly profile_name=y26-stage57-o2
-readonly cgroup=/sys/fs/cgroup/y26-stage57-inference
-readonly state_parent=${Y26_O2_STATE_PARENT:-/data/k1x-yolo26-int8-executor/state}
-readonly state_dir=${Y26_O2_STATE_DIR:-$state_parent/stage57-o2}
-readonly lock_file=${Y26_O2_LOCK_FILE:-$state_parent/.stage57-o2.lock}
+readonly profile_name=y26-o2
+readonly cgroup=/sys/fs/cgroup/y26-inference
+readonly state_parent=${Y26_O2_STATE_PARENT:-/data/y26-k1x-int8-executor/state}
+readonly state_dir=${Y26_O2_STATE_DIR:-$state_parent/o2}
+readonly lock_file=${Y26_O2_LOCK_FILE:-$state_parent/.o2.lock}
 readonly inference_cpus=0-4
 readonly housekeeping_cpus=5-7
 readonly workqueue_mask=e0
@@ -105,7 +105,7 @@ snapshot_state() {
   }
   mkdir -p "$state_parent"
   local temporary
-  temporary=$(mktemp -d "$state_parent/.stage57-o2-state.XXXXXX")
+  temporary=$(mktemp -d "$state_parent/.o2-state.XXXXXX")
   trap 'sudo -n rm -rf "$temporary" 2>/dev/null || true' RETURN
   cat /sys/devices/virtual/workqueue/cpumask >"$temporary/workqueue-cpumask"
   cat /sys/fs/cgroup/cgroup.subtree_control >"$temporary/subtree-control"

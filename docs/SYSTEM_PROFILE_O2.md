@@ -28,7 +28,7 @@ partition and restores state when the command exits, fails, times out, or receiv
   noninteractive sudo are validated before mutation.
 - `flock` prevents nested lifecycle operations.
 - A root-owned atomic snapshot is stored under
-  `/data/k1x-yolo26-int8-executor/state/stage57-o2`.
+  `/data/y26-k1x-int8-executor/state/o2`.
 - Only reviewed IRQ name classes are candidates for movement. Timers, PMU, IPI,
   power, RTC, mailbox, I2C, and pin-control IRQs are denied.
 - Managed NVMe IRQs that reject affinity writes are reported as unsupported.
@@ -52,7 +52,7 @@ cgroup    absent
 ```
 
 If the wrapper itself is unavailable, restore the workqueue mask to `ff`, move
-tasks out of `/sys/fs/cgroup/y26-stage57-inference`, mark the partition `member`,
+tasks out of `/sys/fs/cgroup/y26-inference`, mark the partition `member`,
 remove it, and restore values from the root-owned state snapshot. The release
 contains the exact wrapper used during validation; do not improvise broad IRQ
 round-robin placement.

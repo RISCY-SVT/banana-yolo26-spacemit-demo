@@ -1,4 +1,4 @@
-# YOLO26 K1X INT8 Executor 0.9.0
+# YOLO26 K1X INT8 Executor 0.9.1
 
 ## What This Is
 
@@ -51,7 +51,7 @@ CPU0-3: IME workers       CPU4: controller       CPU5-7: housekeeping only
 The release is installed under NVMe `/data`:
 
 ```bash
-RELEASE=/data/releases/banana-yolo26-k1x-int8-executor/0.9.0-stage57-final-handoff
+RELEASE=/data/releases/banana-yolo26-k1x-int8-executor/0.9.1-stage58-camera-handoff
 PACKAGE=$RELEASE/package
 
 $RELEASE/bin/y26_k1x_healthcheck \
@@ -130,7 +130,7 @@ using CMake or pkg-config.
 
 The release is byte-exact at all 215 integer boundaries, F0-F7, bus, and Zidane.
 COCO val2017 completed 5000/5000 at mAP50-95 `0.3707408944391919`.
-The canonical Stage57 timing rows are in `PERFORMANCE_AND_ACCURACY.md`; fixed
+The canonical executor and camera timing rows are in `PERFORMANCE_AND_ACCURACY.md`; fixed
 input, real corpus, RGB, serial pipeline, and double-buffer throughput are
 separate surfaces and must not be mixed.
 
@@ -175,6 +175,6 @@ The release does not install into `/usr` and removal does not touch other files.
 ## Limits
 
 This is not a 20 FPS claim, a camera service, a vendor runtime plugin, or a
-production certification. The current graph is frozen after Stage57. Q31,
+production certification. Stage58 is release maintenance on the frozen graph. Q31,
 different models/resolutions, training, students, and co-design require a new
 branch/project and separate authorization.

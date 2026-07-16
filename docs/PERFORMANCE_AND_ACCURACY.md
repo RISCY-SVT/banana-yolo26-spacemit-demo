@@ -62,8 +62,8 @@ Do not combine columns from different sample surfaces. In particular:
 | real 100-image corpus | 141733.800 | separately reported |
 | matched B120 ORT | 459954.787608 | separately reported |
 
-Stage57 final values supersede Stage56 only for the installed 0.9.0 release
-route. Neither stage demonstrates 20 FPS, camera-service readiness, or production
+Stage57 final executor values remain the arithmetic baseline for the installed 0.9.1
+maintenance route. Stage58 reports camera throughput separately. Neither stage demonstrates 20 FPS, an installed camera service, or production
 certification.
 
 ## HPM Language

@@ -11,6 +11,25 @@
 #include <string>
 #include <string_view>
 
+#ifndef Y26_K1X_RELEASE_VERSION
+#define Y26_K1X_RELEASE_VERSION "research"
+#endif
+#ifndef Y26_K1X_SOURCE_COMMIT
+#define Y26_K1X_SOURCE_COMMIT "unknown"
+#endif
+#ifndef Y26_K1X_BUILD_HAS_IME
+#define Y26_K1X_BUILD_HAS_IME 0
+#endif
+#ifndef Y26_K1X_BUILD_HAS_RVV
+#define Y26_K1X_BUILD_HAS_RVV 0
+#endif
+#ifndef Y26_K1X_BUILD_FROZEN_PROFILE
+#define Y26_K1X_BUILD_FROZEN_PROFILE 0
+#endif
+#ifndef Y26_K1X_VERSION_STRING
+#define Y26_K1X_VERSION_STRING "research/K1X_INT8_V1_YOLO26N_640_FULL_GRAPH_001/abi1"
+#endif
+
 struct y26_executor {
     y26::stage52::FullExecutor implementation;
     mutable std::mutex error_mutex;
@@ -22,6 +41,26 @@ struct y26_executor {
 namespace {
 
 constexpr std::size_t kAbi1LegacyOptionsSize = offsetof(y26_executor_options, wake_policy);
+constexpr const char* kReleaseVersion = Y26_K1X_RELEASE_VERSION;
+constexpr const char* kSourceCommit = Y26_K1X_SOURCE_COMMIT;
+constexpr const char* kIntegerContract = "K1X_INT8_V1";
+constexpr const char* kFullGraphProfile = "K1X_INT8_V1_YOLO26N_640_FULL_GRAPH_001";
+constexpr const char* kExpectedPackageManifest =
+    "fab4a72cf524ce0a205ceca0384144f2eee7bc79dff3f4db8b7208614e8407be";
+
+constexpr uint32_t build_capabilities() noexcept {
+    uint32_t flags = Y26_CAPABILITY_RGB_INPUT;
+#if Y26_K1X_BUILD_HAS_IME
+    flags |= Y26_CAPABILITY_IME;
+#endif
+#if Y26_K1X_BUILD_HAS_RVV
+    flags |= Y26_CAPABILITY_RVV;
+#endif
+#if Y26_K1X_BUILD_FROZEN_PROFILE
+    flags |= Y26_CAPABILITY_FROZEN_PROFILE;
+#endif
+    return flags;
+}
 
 y26_status map_run_status(int status) noexcept {
     if (status == 0) return Y26_STATUS_OK;
@@ -129,6 +168,32 @@ extern "C" void y26_executor_options_init(y26_executor_options* options) {
     options->scheduler = Y26_SCHEDULER_SAFE;
     options->flags = Y26_EXECUTOR_FLAG_NONE;
     options->wake_policy = Y26_WAKE_CONDITION_VARIABLE;
+}
+
+extern "C" void y26_build_info_init(y26_build_info* info) {
+    if (info == nullptr) return;
+    *info = y26_build_info {};
+    info->struct_size = sizeof(*info);
+    info->info_version = Y26_K1X_BUILD_INFO_VERSION;
+}
+
+extern "C" y26_status y26_executor_get_build_info(y26_build_info* info) {
+    if (info == nullptr || info->struct_size < sizeof(y26_build_info) ||
+        info->info_version != Y26_K1X_BUILD_INFO_VERSION) {
+        return Y26_STATUS_INVALID_ARGUMENT;
+    }
+    const uint32_t struct_size = info->struct_size;
+    *info = y26_build_info {};
+    info->struct_size = struct_size;
+    info->info_version = Y26_K1X_BUILD_INFO_VERSION;
+    info->abi_version = Y26_K1X_EXECUTOR_ABI_VERSION;
+    info->capability_flags = build_capabilities();
+    info->release_version = kReleaseVersion;
+    info->source_commit = kSourceCommit;
+    info->integer_contract_id = kIntegerContract;
+    info->full_graph_profile_id = kFullGraphProfile;
+    info->expected_package_manifest_sha256 = kExpectedPackageManifest;
+    return Y26_STATUS_OK;
 }
 
 extern "C" const char* y26_status_string(y26_status status) {
@@ -352,5 +417,5 @@ extern "C" const char* y26_executor_last_error(const y26_executor* executor) {
 }
 
 extern "C" const char* y26_executor_version(void) {
-    return "0.9.0/K1X_INT8_V1_YOLO26N_640_FULL_GRAPH_001/abi1";
+    return Y26_K1X_VERSION_STRING;
 }

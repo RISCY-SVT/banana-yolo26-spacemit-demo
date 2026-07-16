@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(y26_k1x_custom_int8_engine VERSION 0.9.0 LANGUAGES C CXX)
+project(y26_k1x_custom_int8_engine VERSION 0.9.1 LANGUAGES C CXX)
 
 find_package(Threads REQUIRED)
 include(GNUInstallDirs)
@@ -20,9 +20,7 @@ option(Y26_K1X_BUILD_RELEASE_TOOLS "Build the release CLI and healthcheck" ON)
 option(Y26_K1X_BUILD_RESEARCH "Build historical and candidate research sources" OFF)
 option(Y26_K1X_BUILD_TOOLS "Build research helper tools" OFF)
 option(Y26_K1X_INSTALL_DEVELOPMENT_HEADERS "Install internal C++ development headers" OFF)
-set(Y26_K1X_ORT_INCLUDE_DIR "" CACHE PATH "Optional ONNX Runtime include directory for in-process scaffold tools")
-set(Y26_K1X_ORT_LIBRARY "" CACHE FILEPATH "Optional ONNX Runtime library for in-process scaffold tools")
-set(Y26_K1X_SPACEMIT_EP_LIBRARY "" CACHE FILEPATH "Optional SpacemiT EP library for Stage46 runtime probes")
+set(Y26_K1X_SOURCE_COMMIT "unknown" CACHE STRING "Source commit embedded in ABI1 build metadata")
 set(Y26_K1X_OPENCV_DIR "" CACHE PATH "Optional OpenCV package directory for the Stage52 COCO predictor")
 
 set(Y26_K1X_RELEASE_SOURCES
@@ -47,6 +45,10 @@ if(Y26_K1X_BUILD_RELEASE)
     target_compile_definitions(y26_k1x_release_objects PRIVATE
         Y26_K1X_BUILDING_LIBRARY=1
         Y26_K1X_FROZEN_RELEASE_PROFILE=1
+        Y26_K1X_BUILD_FROZEN_PROFILE=1
+        Y26_K1X_RELEASE_VERSION="${PROJECT_VERSION}"
+        Y26_K1X_SOURCE_COMMIT="${Y26_K1X_SOURCE_COMMIT}"
+        Y26_K1X_VERSION_STRING="${PROJECT_VERSION}/K1X_INT8_V1_YOLO26N_640_FULL_GRAPH_001/abi1/ime$<BOOL:${Y26_K1X_ENABLE_IME}>/rvv$<BOOL:${Y26_K1X_ENABLE_IME}>/frozen1"
     )
     set_target_properties(y26_k1x_release_objects PROPERTIES
         POSITION_INDEPENDENT_CODE ON
@@ -54,7 +56,16 @@ if(Y26_K1X_BUILD_RELEASE)
         VISIBILITY_INLINES_HIDDEN YES
     )
     if(Y26_K1X_ENABLE_IME)
-        target_compile_definitions(y26_k1x_release_objects PRIVATE Y26_K1X_ENABLE_IME_ASM=1)
+        target_compile_definitions(y26_k1x_release_objects PRIVATE
+            Y26_K1X_ENABLE_IME_ASM=1
+            Y26_K1X_BUILD_HAS_IME=1
+            Y26_K1X_BUILD_HAS_RVV=1
+        )
+    else()
+        target_compile_definitions(y26_k1x_release_objects PRIVATE
+            Y26_K1X_BUILD_HAS_IME=0
+            Y26_K1X_BUILD_HAS_RVV=0
+        )
     endif()
 
     add_library(y26_k1x_executor_shared SHARED $<TARGET_OBJECTS:y26_k1x_release_objects>)
@@ -112,7 +123,7 @@ if(Y26_K1X_BUILD_RELEASE)
     write_basic_package_version_file(
         "${CMAKE_CURRENT_BINARY_DIR}/y26K1xExecutorConfigVersion.cmake"
         VERSION ${PROJECT_VERSION}
-        COMPATIBILITY SameMajorVersion
+        COMPATIBILITY SameMinorVersion
     )
     configure_file(cmake/y26-k1x-int8-executor.pc.in
                    "${CMAKE_CURRENT_BINARY_DIR}/y26-k1x-int8-executor.pc" @ONLY)
@@ -147,6 +158,10 @@ if(Y26_K1X_BUILD_RELEASE)
         target_link_libraries(stage57_c_api_contract PRIVATE y26_k1x_executor_shared Threads::Threads)
         target_compile_options(stage57_c_api_contract PRIVATE -Wall -Wextra -Wpedantic)
         set_target_properties(stage57_c_api_contract PROPERTIES LINKER_LANGUAGE CXX)
+        add_executable(stage58_capability_api tools/stage58_capability_api.c)
+        target_link_libraries(stage58_capability_api PRIVATE y26_k1x_executor_shared Threads::Threads)
+        target_compile_options(stage58_capability_api PRIVATE -Wall -Wextra -Wpedantic)
+        set_target_properties(stage58_capability_api PROPERTIES LINKER_LANGUAGE CXX)
         install(TARGETS yolo26_k1x_int8 y26_k1x_healthcheck
                 RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
     endif()
@@ -721,45 +736,6 @@ if(Y26_K1X_BUILD_RESEARCH AND Y26_K1X_BUILD_TOOLS)
         target_compile_definitions(bench_stage43_model5_island PRIVATE Y26_K1X_ENABLE_IME_ASM=1)
     endif()
 
-    if(Y26_K1X_ORT_INCLUDE_DIR AND Y26_K1X_ORT_LIBRARY)
-        add_executable(bench_stage42_inprocess_runner
-            tools/bench_stage41_inprocess_runner.cpp
-        )
-        target_link_libraries(bench_stage42_inprocess_runner
-            PRIVATE
-                y26_k1x_custom_int8_engine
-                Threads::Threads
-                "${Y26_K1X_ORT_LIBRARY}"
-        )
-        target_include_directories(bench_stage42_inprocess_runner
-            PRIVATE
-                "${Y26_K1X_ORT_INCLUDE_DIR}"
-        )
-        set_target_properties(bench_stage42_inprocess_runner PROPERTIES SKIP_BUILD_RPATH TRUE)
-        target_compile_options(bench_stage42_inprocess_runner PRIVATE -Wall -Wextra -Wpedantic)
-        if(Y26_K1X_ENABLE_IME)
-            target_compile_definitions(bench_stage42_inprocess_runner PRIVATE Y26_K1X_ENABLE_IME_ASM=1)
-        endif()
-
-        if(Y26_K1X_SPACEMIT_EP_LIBRARY)
-            add_executable(bench_stage46_ort_runtime
-                tools/bench_stage46_ort_runtime.cpp
-            )
-            target_link_libraries(bench_stage46_ort_runtime
-                PRIVATE
-                    Threads::Threads
-                    "${Y26_K1X_ORT_LIBRARY}"
-                    "${Y26_K1X_SPACEMIT_EP_LIBRARY}"
-                    ${CMAKE_DL_LIBS}
-            )
-            target_include_directories(bench_stage46_ort_runtime
-                PRIVATE
-                    "${Y26_K1X_ORT_INCLUDE_DIR}"
-            )
-            set_target_properties(bench_stage46_ort_runtime PROPERTIES SKIP_BUILD_RPATH TRUE)
-            target_compile_options(bench_stage46_ort_runtime PRIVATE -Wall -Wextra -Wpedantic)
-        endif()
-    endif()
 endif()
 
 if(Y26_K1X_ENABLE_TESTS)

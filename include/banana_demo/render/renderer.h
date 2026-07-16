@@ -10,7 +10,7 @@
 #include <string>
 #include <vector>
 
-#include "banana_demo/infer/detector.h"
+#include "banana_demo/infer/yolo26_executor_detector.h"
 
 namespace banana_demo {
 
@@ -32,7 +32,15 @@ public:
      * @return Annotated image.
      */
     cv::Mat Draw(const cv::Mat& image, const std::vector<Detection>& detections,
-                 const std::vector<std::string>& labels, const FrameMetrics& metrics) const;
+                 const std::vector<std::string>& labels, const FrameMetrics& metrics,
+                 const std::string& profile, const std::string& flow,
+                 const std::string& camera_format) const;
+
+    cv::Mat DrawDetections(const cv::Mat& image, const std::vector<Detection>& detections,
+                           const std::vector<std::string>& labels) const;
+
+    void DrawOverlay(cv::Mat& image, const FrameMetrics& metrics, const std::string& profile,
+                     const std::string& flow, const std::string& camera_format) const;
     /**
      * @brief Attempt to show a frame in an OpenCV HighGUI window.
      * @param window_name Stable window title.
@@ -41,6 +49,9 @@ public:
      * @return `true` on success.
      */
     bool TryShow(const std::string& window_name, const cv::Mat& image, std::string& error);
+
+private:
+    bool window_created_ = false;
 };
 
 }  // namespace banana_demo

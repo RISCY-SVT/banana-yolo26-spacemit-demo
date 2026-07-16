@@ -1,6 +1,6 @@
 # YOLO26 K1X INT8 Executor
 
-Version 0.9.0 is the frozen engineering-handoff release for one exact target:
+Version 0.9.1 is the camera-demo maintenance release for one frozen exact target:
 YOLO26n-640 on Banana-Pi BPI-F3 / SpacemiT K1X under `K1X_INT8_V1`.
 
 Start here:
@@ -21,4 +21,4 @@ healthcheck, CMake/pkg-config metadata, and C example. Historical tools and
 candidate kernels remain available only through the explicit research build.
 
 This is an optimized exact reference and engineering handoff. It is not a
-production certification, camera service, or 20 FPS claim.
+production certification, installed camera service, or 20 FPS claim.

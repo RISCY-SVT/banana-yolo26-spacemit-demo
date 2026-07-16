@@ -1,244 +1,137 @@
-/**
- * @file options.cpp
- * @brief CLI argument parsing and usage text for the demo executable.
- */
-
 #include "banana_demo/app/options.h"
 
+#include <cerrno>
+#include <cmath>
 #include <cstdlib>
 #include <sstream>
 
 namespace banana_demo {
-
 namespace {
 
-/** @brief Parse one integer CLI argument. */
-bool ParseInt(const char* text, int& out)
-{
-    if (!text)
-        return false;
+bool NeedValue(int index, int argc) { return index + 1 < argc; }
+
+bool ParseInt(const char* text, int& value) {
+    if (text == nullptr) return false;
+    errno = 0;
     char* end = nullptr;
-    const long value = std::strtol(text, &end, 10);
-    if (end == text || (end && *end != '\0'))
-        return false;
-    out = static_cast<int>(value);
+    const long parsed = std::strtol(text, &end, 10);
+    if (errno != 0 || end == text || *end != '\0') return false;
+    value = static_cast<int>(parsed);
     return true;
 }
 
-/** @brief Parse one floating-point CLI argument. */
-bool ParseFloat(const char* text, float& out)
-{
-    if (!text)
-        return false;
+bool ParseDouble(const char* text, double& value) {
+    if (text == nullptr) return false;
+    errno = 0;
     char* end = nullptr;
-    const float value = std::strtof(text, &end);
-    if (end == text || (end && *end != '\0'))
-        return false;
-    out = value;
+    const double parsed = std::strtod(text, &end);
+    if (errno != 0 || end == text || *end != '\0' || !std::isfinite(parsed)) return false;
+    value = parsed;
     return true;
 }
 
-/** @brief Return whether the next argv token exists. */
-bool NeedValue(int i, int argc)
-{
-    return i + 1 < argc;
+bool ParseFloat(const char* text, float& value) {
+    double parsed = 0.0;
+    if (!ParseDouble(text, parsed)) return false;
+    value = static_cast<float>(parsed);
+    return std::isfinite(value);
+}
+
+bool ParseBool(const char* text, bool& value) {
+    if (text == nullptr) return false;
+    const std::string token(text);
+    if (token == "1" || token == "true" || token == "yes") {
+        value = true;
+        return true;
+    }
+    if (token == "0" || token == "false" || token == "no") {
+        value = false;
+        return true;
+    }
+    return false;
 }
 
 }  // namespace
 
-bool ParseAppOptions(int argc, char** argv, AppOptions& options, std::string& error)
-{
-    for (int i = 1; i < argc; ++i)
-    {
-        const std::string arg = argv[i];
-        if (arg == "--help" || arg == "-h")
-        {
-            error.clear();
-            return false;
+ParseResult ParseAppOptions(int argc, char** argv, AppOptions& options, std::string& error) {
+    for (int i = 1; i < argc; ++i) {
+        const std::string arg(argv[i]);
+        if (arg == "--help" || arg == "-h") return ParseResult::kHelp;
+        if (arg == "--package" && NeedValue(i, argc)) options.package = argv[++i];
+        else if (arg == "--expected-manifest-sha256" && NeedValue(i, argc))
+            options.expected_manifest_sha256 = argv[++i];
+        else if (arg == "--labels" && NeedValue(i, argc)) options.labels = argv[++i];
+        else if (arg == "--source" && NeedValue(i, argc)) options.source = argv[++i];
+        else if (arg == "--profile" && NeedValue(i, argc)) options.profile = argv[++i];
+        else if (arg == "--flow" && NeedValue(i, argc)) options.flow = argv[++i];
+        else if (arg == "--conf" && NeedValue(i, argc) && ParseFloat(argv[++i], options.confidence_threshold)) {}
+        else if (arg == "--display" && NeedValue(i, argc) && ParseBool(argv[++i], options.display)) {}
+        else if (arg == "--headless") { options.headless = true; options.display = false; }
+        else if (arg == "--quiet") options.quiet = true;
+        else if (arg == "--camera-width" && NeedValue(i, argc) && ParseInt(argv[++i], options.camera_width)) {}
+        else if (arg == "--camera-height" && NeedValue(i, argc) && ParseInt(argv[++i], options.camera_height)) {}
+        else if (arg == "--camera-fps" && NeedValue(i, argc) && ParseDouble(argv[++i], options.camera_fps)) {}
+        else if (arg == "--camera-fourcc" && NeedValue(i, argc)) options.camera_fourcc = argv[++i];
+        else if (arg == "--max-frames" && NeedValue(i, argc) && ParseInt(argv[++i], options.max_frames)) {}
+        else if (arg == "--duration" && NeedValue(i, argc) && ParseDouble(argv[++i], options.duration_seconds)) {}
+        else if (arg == "--warmup-frames" && NeedValue(i, argc) && ParseInt(argv[++i], options.warmup_frames)) {}
+        else if (arg == "--opencv-threads" && NeedValue(i, argc) && ParseInt(argv[++i], options.opencv_threads)) {}
+        else if (arg == "--reconnect-attempts" && NeedValue(i, argc) && ParseInt(argv[++i], options.reconnect_attempts)) {}
+        else if (arg == "--save-frame" && NeedValue(i, argc)) options.save_frame = argv[++i];
+        else if (arg == "--screenshot-dir" && NeedValue(i, argc)) options.screenshot_dir = argv[++i];
+        else if (arg == "--record" && NeedValue(i, argc)) options.record_path = argv[++i];
+        else if (arg == "--metrics-tsv" && NeedValue(i, argc)) options.metrics_tsv = argv[++i];
+        else if (arg == "--detections-tsv" && NeedValue(i, argc)) options.detections_tsv = argv[++i];
+        else if (arg == "--log-file" && NeedValue(i, argc)) options.log_file = argv[++i];
+        else if (arg == "--build-info") options.print_build_info = true;
+        else {
+            error = "unknown or invalid argument: " + arg;
+            return ParseResult::kError;
         }
-        if (arg == "--model" && NeedValue(i, argc))
-        {
-            options.model = argv[++i];
-            continue;
-        }
-        if (arg == "--labels" && NeedValue(i, argc))
-        {
-            options.labels = argv[++i];
-            continue;
-        }
-        if (arg == "--input-size" && NeedValue(i, argc) && ParseInt(argv[++i], options.input_size))
-            continue;
-        if (arg == "--source" && NeedValue(i, argc))
-        {
-            options.source = argv[++i];
-            continue;
-        }
-        if (arg == "--provider" && NeedValue(i, argc))
-        {
-            options.provider = argv[++i];
-            continue;
-        }
-        if (arg == "--pin" && NeedValue(i, argc))
-        {
-            options.pin = argv[++i];
-            continue;
-        }
-        if (arg == "--threads" && NeedValue(i, argc) && ParseInt(argv[++i], options.threads))
-            continue;
-        if (arg == "--conf" && NeedValue(i, argc) && ParseFloat(argv[++i], options.conf_threshold))
-            continue;
-        if (arg == "--iou" && NeedValue(i, argc) && ParseFloat(argv[++i], options.iou_threshold))
-            continue;
-        if (arg == "--display" && NeedValue(i, argc) && ParseInt(argv[++i], options.display))
-            continue;
-        if (arg == "--save-output" && NeedValue(i, argc))
-        {
-            options.save_output = argv[++i];
-            continue;
-        }
-        if (arg == "--log-file" && NeedValue(i, argc))
-        {
-            options.log_file = argv[++i];
-            continue;
-        }
-        if (arg == "--quiet" && NeedValue(i, argc) && ParseInt(argv[++i], options.quiet))
-            continue;
-        if (arg == "--benchmark-only" && NeedValue(i, argc) && ParseInt(argv[++i], options.benchmark_only))
-            continue;
-        if (arg == "--headless" && NeedValue(i, argc) && ParseInt(argv[++i], options.headless))
-            continue;
-        if (arg == "--camera-width" && NeedValue(i, argc) && ParseInt(argv[++i], options.camera_width))
-            continue;
-        if (arg == "--camera-height" && NeedValue(i, argc) && ParseInt(argv[++i], options.camera_height))
-            continue;
-        if (arg == "--camera-fps" && NeedValue(i, argc) && ParseInt(argv[++i], options.camera_fps))
-            continue;
-        if (arg == "--camera-pixfmt" && NeedValue(i, argc))
-        {
-            options.camera_pixfmt = argv[++i];
-            continue;
-        }
-        if (arg == "--decode-mode" && NeedValue(i, argc))
-        {
-            options.decode_mode = argv[++i];
-            continue;
-        }
-        if (arg == "--preprocess-mode" && NeedValue(i, argc))
-        {
-            options.preprocess_mode = argv[++i];
-            continue;
-        }
-        if (arg == "--warmup" && NeedValue(i, argc) && ParseInt(argv[++i], options.warmup))
-            continue;
-        if (arg == "--runs" && NeedValue(i, argc) && ParseInt(argv[++i], options.runs))
-            continue;
-        if (arg == "--repeats" && NeedValue(i, argc) && ParseInt(argv[++i], options.repeats))
-            continue;
-        if (arg == "--strict-omp-env" && NeedValue(i, argc) && ParseInt(argv[++i], options.strict_omp_env))
-            continue;
-        if (arg == "--benchmark-mode" && NeedValue(i, argc))
-        {
-            options.benchmark_mode = argv[++i];
-            continue;
-        }
-        if (arg == "--dump-hash" && NeedValue(i, argc) && ParseInt(argv[++i], options.dump_hash))
-            continue;
-        if (arg == "--dump-out" && NeedValue(i, argc))
-        {
-            options.dump_out = argv[++i];
-            continue;
-        }
-        if (arg == "--max-frames" && NeedValue(i, argc) && ParseInt(argv[++i], options.max_frames))
-            continue;
-        if (arg == "--disable-cpu-fallback" && NeedValue(i, argc) && ParseInt(argv[++i], options.disable_cpu_fallback))
-            continue;
-
-        error = "unknown or invalid argument: " + arg;
-        return false;
     }
 
-    if (options.model.empty())
-    {
-        error = "--model is required";
-        return false;
-    }
-    if (options.provider != "spacemit" && options.provider != "cpu")
-    {
-        error = "--provider must be spacemit|cpu";
-        return false;
-    }
-    if (options.benchmark_mode != "forward" && options.benchmark_mode != "full")
-    {
-        error = "--benchmark-mode must be forward|full";
-        return false;
-    }
-    if (options.preprocess_mode != "auto" &&
-        options.preprocess_mode != "letterbox" &&
-        options.preprocess_mode != "resize")
-    {
-        error = "--preprocess-mode must be auto|letterbox|resize";
-        return false;
-    }
-    if (options.source.rfind("image:", 0) != 0 && options.source.rfind("camera:", 0) != 0)
-    {
-        error = "--source must start with image: or camera:";
-        return false;
-    }
+    if (options.print_build_info) return ParseResult::kRun;
+    if (options.package.empty()) error = "--package is required";
+    else if (options.source.rfind("camera:", 0) != 0 &&
+             options.source.rfind("image:", 0) != 0 &&
+             options.source.rfind("video:", 0) != 0)
+        error = "--source must be camera:, image:, or video:";
+    else if (options.profile != "compatibility" && options.profile != "low-latency" &&
+             options.profile != "low-latency-dedicated")
+        error = "--profile must be compatibility|low-latency|low-latency-dedicated";
+    else if (options.flow != "sequential" && options.flow != "latest-frame")
+        error = "--flow must be sequential|latest-frame";
+    else if (!(options.confidence_threshold >= 0.0f && options.confidence_threshold <= 1.0f))
+        error = "--conf must be in [0,1]";
+    else if (options.camera_width <= 0 || options.camera_height <= 0 || options.camera_fps <= 0.0)
+        error = "camera width, height, and FPS must be positive";
+    else if (options.max_frames < 0 || options.duration_seconds < 0.0 ||
+             options.warmup_frames < 0 || options.opencv_threads < 1 || options.reconnect_attempts < 0)
+        error = "frame, duration, thread, or reconnect count is invalid";
 
-    return true;
+    return error.empty() ? ParseResult::kRun : ParseResult::kError;
 }
 
-std::string BuildUsage()
-{
-    std::ostringstream oss;
-    oss
-        << "Usage: banana_yolo11_demo [options]\n"
-        << "  --model <path>\n"
-        << "  --labels <path>\n"
-        << "  --input-size 320|640\n"
-        << "  --source image:<path>|camera:auto|camera:/dev/videoN|camera:<index>\n"
-        << "  --provider spacemit|cpu\n"
-        << "  --pin cluster0|cluster1|none|list:<csv>\n"
-        << "  --threads <N>\n"
-        << "  --conf <float>\n"
-        << "  --iou <float>\n"
-        << "  --display 0|1\n"
-        << "  --save-output <path>\n"
-        << "  --log-file <path>\n"
-        << "  --quiet 0|1\n"
-        << "  --benchmark-only 0|1\n"
-        << "  --benchmark-mode forward|full\n"
-        << "  --headless 0|1\n"
-        << "  --camera-width <N>\n"
-        << "  --camera-height <N>\n"
-        << "  --camera-fps <N>\n"
-        << "  --camera-pixfmt auto|mjpg|yuyv\n"
-        << "  --decode-mode auto|vendor|ultralytics\n"
-        << "  --preprocess-mode auto|letterbox|resize\n"
-        << "  --warmup <N>\n"
-        << "  --runs <N>\n"
-        << "  --repeats <N>\n"
-        << "  --dump-hash 0|1\n"
-        << "  --dump-out <path>\n"
-        << "  --max-frames <N>\n"
-        << '\n'
-        << "Notes:\n"
-        << "  - Default visual demo scripts in this repository use the generated 640x640 dynamic INT8 model.\n"
-        << "  - The official vendor 320x320 INT8 model is validated as a visual path with runtime rt123 and letterbox preprocessing.\n"
-        << "  - The public tarball 2.0.1 stack remains the low-latency vendor320 benchmark path and the validated dynamic640 path.\n"
-        << "  - A slower public rt201 visual workaround exists for vendor320 by disabling the float16 epilogue and keeping the /model.23 tail Slice/Add/Sub ops on CPU.\n"
-        << "  - Custom Ultralytics/xquant models should normally use preprocess-mode=letterbox.\n"
-        << "  - Wrapper scripts auto-select the validated runtime by model and purpose; override with BANANA_DEMO_RUNTIME_TAG=rt123|rt201|rt202b1.\n"
-        << "  - camera:auto prefers stable /dev/v4l/by-id or /dev/v4l/by-path capture nodes.\n"
-        << '\n'
-        << "Examples:\n"
-        << "  banana_yolo11_demo --model models/generated/xquant_640/yolov11n_640x640.dynamic_int8.onnx "
-           "--source image:photo_2024-10-11_10-04-04.jpg --input-size 640 --provider spacemit "
-           "--preprocess-mode letterbox\n"
-        << "  banana_yolo11_demo --model models/generated/yolov11n_640x640.q.onnx "
-           "--source camera:auto --input-size 640 --camera-pixfmt mjpg --display 1 "
-           "--preprocess-mode letterbox\n";
-    return oss.str();
+std::string BuildUsage(const char* program) {
+    std::ostringstream out;
+    out << "Usage: " << program << " --package DIR --source TYPE:VALUE [options]\n\n"
+        << "Source:\n"
+        << "  --source camera:auto|camera:/dev/videoN|camera:N\n"
+        << "  --source image:FILE|video:FILE\n"
+        << "  --camera-width N --camera-height N --camera-fps N --camera-fourcc MJPG|YUYV\n"
+        << "  --flow sequential|latest-frame\n\n"
+        << "Executor:\n"
+        << "  --profile compatibility|low-latency|low-latency-dedicated\n"
+        << "  --expected-manifest-sha256 HEX --labels FILE --conf FLOAT\n"
+        << "  --build-info\n\n"
+        << "Output and measurement:\n"
+        << "  --display 0|1 --headless --record FILE --save-frame FILE\n"
+        << "  --screenshot-dir DIR --metrics-tsv FILE --detections-tsv FILE --log-file FILE\n"
+        << "  --warmup-frames N --max-frames N --duration SECONDS\n"
+        << "  --opencv-threads N --reconnect-attempts N --quiet\n\n"
+        << "GUI keys: q/Esc exit, s save PNG, r toggle recording, space pause.\n"
+        << "The model input is always exact 640x640 RGB8 letterbox; no second NMS is run.\n";
+    return out.str();
 }
 
 }  // namespace banana_demo

@@ -21,6 +21,7 @@ extern "C" {
 #endif
 
 #define Y26_K1X_EXECUTOR_ABI_VERSION 1u
+#define Y26_K1X_BUILD_INFO_VERSION 1u
 #define Y26_K1X_EXECUTOR_INPUT_ELEMENTS (3u * 640u * 640u)
 #define Y26_K1X_EXECUTOR_OUTPUT_ELEMENTS (300u * 6u)
 
@@ -50,6 +51,14 @@ typedef enum y26_executor_flag {
     Y26_EXECUTOR_FLAG_NONE = 0,
     Y26_EXECUTOR_FLAG_CAPTURE_BOUNDARIES = 1u << 0
 } y26_executor_flag;
+
+typedef enum y26_capability_flag {
+    Y26_CAPABILITY_NONE = 0,
+    Y26_CAPABILITY_IME = 1u << 0,
+    Y26_CAPABILITY_RVV = 1u << 1,
+    Y26_CAPABILITY_FROZEN_PROFILE = 1u << 2,
+    Y26_CAPABILITY_RGB_INPUT = 1u << 3
+} y26_capability_flag;
 
 typedef struct y26_executor_options {
     uint32_t struct_size;
@@ -82,7 +91,25 @@ typedef struct y26_run_timing {
     int32_t cpu4_7_ime_count;
 } y26_run_timing;
 
+/*
+ * Additive ABI1 build metadata. Call y26_build_info_init() before querying.
+ * Pointers returned in this structure refer to immutable library-owned strings.
+ */
+typedef struct y26_build_info {
+    uint32_t struct_size;
+    uint32_t info_version;
+    uint32_t abi_version;
+    uint32_t capability_flags;
+    const char* release_version;
+    const char* source_commit;
+    const char* integer_contract_id;
+    const char* full_graph_profile_id;
+    const char* expected_package_manifest_sha256;
+} y26_build_info;
+
 Y26_K1X_API void y26_executor_options_init(y26_executor_options* options);
+Y26_K1X_API void y26_build_info_init(y26_build_info* info);
+Y26_K1X_API y26_status y26_executor_get_build_info(y26_build_info* info);
 Y26_K1X_API const char* y26_status_string(y26_status status);
 Y26_K1X_API y26_executor* y26_executor_create(void);
 Y26_K1X_API y26_status y26_executor_prepare(y26_executor* executor, const char* package_dir,

@@ -1,4 +1,4 @@
-# Передача исполнителя YOLO26 K1X INT8 0.9.0
+# Передача исполнителя YOLO26 K1X INT8 0.9.1
 
 ## Назначение
 
@@ -49,7 +49,7 @@ CPU0-3: IME-воркеры   CPU4: контроллер   CPU5-7: только �
 ## Быстрый запуск
 
 ```bash
-RELEASE=/data/releases/banana-yolo26-k1x-int8-executor/0.9.0-stage57-final-handoff
+RELEASE=/data/releases/banana-yolo26-k1x-int8-executor/0.9.1-stage58-camera-handoff
 PACKAGE=$RELEASE/package
 
 $RELEASE/bin/y26_k1x_healthcheck \
@@ -152,6 +152,6 @@ rm -rf -- "$RELEASE"
 ## Что не заявляется
 
 Это не заявление о 20 FPS, не сервис камеры, не плагин поставщика и не
-производственная сертификация. После Stage57 текущий граф заморожен. Q31, другая
+производственная сертификация. Stage58 является обслуживанием замороженного графа. Q31, другая
 модель, обучение, student-модель и co-design требуют отдельной ветки, проекта и
 разрешения.

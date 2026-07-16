@@ -1,5 +1,0 @@
-vendor_demo_repo=https://gitee.com/bianbu/spacemit-demo.git
-vendor_yolo11_fp32_320_url=https://archive.spacemit.com/spacemit-ai/BRDK/Model_Zoo/CV/YOLOv11/yolov11n_320x320.onnx
-vendor_yolo11_int8_320_url=https://archive.spacemit.com/spacemit-ai/BRDK/Model_Zoo/CV/YOLOv11/yolov11n_320x320.q.onnx
-vendor_yolo11_xquant_config_url=https://archive.spacemit.com/spacemit-ai/BRDK/Model_Zoo/CV/YOLOv11/xquant_config.json
-

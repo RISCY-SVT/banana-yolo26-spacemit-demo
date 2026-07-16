@@ -40,6 +40,8 @@ public:
     bool IsImage() const;
     /** @brief Return whether the source is a live camera stream. */
     bool IsCamera() const;
+    /** @brief Return whether the source is a finite video file. */
+    bool IsVideo() const;
     /** @brief Return a short human-readable source description. */
     std::string Describe() const;
     /**
@@ -48,6 +50,8 @@ public:
      * @return `true` when a non-empty frame was produced.
      */
     bool Read(cv::Mat& frame);
+    /** @brief Reopen a failed camera or video source. */
+    bool Reopen(std::string& error);
     /** @brief Return the last frame read time in milliseconds. */
     double LastReadMs() const;
     /** @brief Return the resolved frame width. */
@@ -62,12 +66,18 @@ public:
     std::string OpenMethod() const;
     /** @brief Return the active OpenCV capture backend name if available. */
     std::string BackendName() const;
+    /** @brief Return the canonical camera node or source file. */
+    std::string ResolvedPath() const;
+    /** @brief Return effective width, height, FPS, and FOURCC. */
+    std::string EffectiveFormat() const;
 
 private:
     /** @brief Open a still image source. */
     bool OpenImage(std::string& error);
     /** @brief Open a camera source with deterministic fallback attempts. */
     bool OpenCamera(std::string& error);
+    /** @brief Open a video file. */
+    bool OpenVideo(std::string& error);
     /** @brief Return the preferred OpenCV API for camera capture. */
     int ResolveCameraApi() const;
     /** @brief Resolve `camera:auto` to a concrete device path or index. */
@@ -87,8 +97,14 @@ private:
     bool is_image_ = false;
     /** Whether the opened source is a live camera stream. */
     bool is_camera_ = false;
+    /** Whether the opened source is a video file. */
+    bool is_video_ = false;
+    /** Whether the single still image was already returned. */
+    bool image_consumed_ = false;
     /** Resolved image path for still-image mode. */
     std::string image_path_;
+    /** Resolved video file path. */
+    std::string video_path_;
     /** Original camera path or index argument. */
     std::string camera_path_;
     /** Canonical resolved camera path, usually `/dev/videoN`. */

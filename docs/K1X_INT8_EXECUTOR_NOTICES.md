@@ -5,9 +5,9 @@ integer model package, documentation, and safe smoke fixtures. It does not
 contain ONNX Runtime, COCO data, vendor runtime archives, private logs, or build
 trees.
 
-The CLI image path dynamically links against the three OpenCV runtime libraries
+The camera demo dynamically links against the five OpenCV runtime libraries
 included under `opencv/lib`. Their license is preserved under `licenses/`.
-The preprocessed-input API can be linked independently of the CLI image helper.
+The core executor libraries do not depend on OpenCV.
 
 The source repository does not currently declare a top-level redistribution
 license. Treat this bundle as an internal engineering handoff until the project

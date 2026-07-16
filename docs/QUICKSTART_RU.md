@@ -11,13 +11,13 @@ nproc                            # 8
 ## 2. Проверка релиза
 
 ```bash
-export RELEASE=/data/releases/banana-yolo26-k1x-int8-executor/0.9.0-stage57-final-handoff
+export RELEASE=/data/releases/banana-yolo26-k1x-int8-executor/0.9.1-stage58-camera-handoff
 cd "$RELEASE"
 sha256sum -c SHA256SUMS
 bin/yolo26_k1x_int8 --version
 ```
 
-Ожидаемая версия начинается с `0.9.0/K1X_INT8_V1_.../abi1`.
+Ожидаемая версия начинается с `0.9.1/K1X_INT8_V1_.../abi1`.
 
 ## 3. Healthcheck
 

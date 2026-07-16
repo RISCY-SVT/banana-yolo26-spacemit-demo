@@ -4,6 +4,7 @@
 #include <inttypes.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 static int fail(y26_executor* executor, const char* message) {
     fprintf(stderr, "%s: %s\n", message,
@@ -12,6 +13,29 @@ static int fail(y26_executor* executor, const char* message) {
 }
 
 int main(int argc, char** argv) {
+    y26_build_info build_info;
+    y26_build_info_init(&build_info);
+    if (y26_executor_get_build_info(&build_info) != Y26_STATUS_OK) {
+        fprintf(stderr, "build-info query failed\n");
+        return 1;
+    }
+    const uint32_t required_capabilities =
+        Y26_CAPABILITY_IME | Y26_CAPABILITY_RVV |
+        Y26_CAPABILITY_FROZEN_PROFILE | Y26_CAPABILITY_RGB_INPUT;
+    if ((build_info.capability_flags & required_capabilities) != required_capabilities) {
+        fprintf(stderr, "release capabilities missing: 0x%08" PRIx32 "\n",
+                build_info.capability_flags);
+        return 1;
+    }
+    if (argc == 2 && strcmp(argv[1], "--build-info") == 0) {
+        printf("release=%s abi=%" PRIu32 " source=%s contract=%s profile=%s "
+               "capabilities=0x%08" PRIx32 " manifest=%s\n",
+               build_info.release_version, build_info.abi_version,
+               build_info.source_commit, build_info.integer_contract_id,
+               build_info.full_graph_profile_id, build_info.capability_flags,
+               build_info.expected_package_manifest_sha256);
+        return 0;
+    }
     if (argc != 5) {
         fprintf(stderr, "usage: %s PACKAGE MANIFEST_SHA256 INPUT_F32 EXPECTED_HASH_HEX\n",
                 argv[0]);

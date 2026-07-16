@@ -1,43 +1,37 @@
 #!/usr/bin/env bash
-## @file build_cross.sh
-## @brief Cross-build the demo for all validated runtime variants.
 set -euo pipefail
 
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+repo=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+build_root=${Y26_BUILD_ROOT:-/data/build/banana-yolo26-k1x-demo-0.9.1}
+install_root=${Y26_INSTALL_ROOT:-/data/install/banana-yolo26-k1x-demo-0.9.1}
+
+usage() { echo "usage: $0 [--build-root DIR] [--install-root DIR]"; }
+while (($#)); do
+  case $1 in
+    --build-root) build_root=$2; shift 2 ;;
+    --install-root) install_root=$2; shift 2 ;;
+    --help|-h) usage; exit 0 ;;
+    *) usage >&2; exit 2 ;;
+  esac
+done
 
 source /data/build_scripts/01-env.sh
-source "${ROOT_DIR}/scripts/common.sh"
-"${ROOT_DIR}/scripts/ensure_opencv.sh"
-"${ROOT_DIR}/scripts/fetch_vendor_runtime.sh"
+"$repo/scripts/ensure_opencv.sh"
+source_commit=$(git -C "$repo" rev-parse HEAD)
+cmake -S "$repo" -B "$build_root" -GNinja \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_TOOLCHAIN_FILE="$repo/cmake/toolchains/k1x-spacemit-cross.cmake" \
+  -DCMAKE_INSTALL_PREFIX="$install_root" \
+  -DOpenCV_DIR=/data/opencv/install-k1x-gtk3/lib/cmake/opencv4 \
+  -DY26_K1X_ENABLE_IME=ON \
+  -DY26_K1X_SOURCE_COMMIT="$source_commit"
+cmake --build "$build_root" -j"${JOBS:-$(nproc)}"
+cmake --install "$build_root"
 
-if [[ ! -f /data/opencv/install-k1x-gtk3/lib/cmake/opencv4/OpenCVConfig.cmake ]]; then
-  echo "Missing /data/opencv/install-k1x-gtk3. Build OpenCV first or run prepare scripts." >&2
+so=$install_root/lib/liby26_k1x_int8_executor.so.0.9.1
+strings "$so" | grep -Fq '0.9.1/K1X_INT8_V1_YOLO26N_640_FULL_GRAPH_001/abi1/ime1/rvv1/frozen1' || {
+  echo "official release build lacks IME/RVV/frozen-profile capabilities" >&2
   exit 1
-fi
-
-## @brief Configure, build, and install one runtime-specific binary variant.
-build_variant() {
-  local runtime_tag="$1"
-  local runtime_root="$2"
-  local build_dir="${ROOT_DIR}/build/k1x-release-${runtime_tag}"
-  local install_dir="${ROOT_DIR}/install/k1x-release-${runtime_tag}"
-
-  cmake -S "${ROOT_DIR}" -B "${build_dir}" \
-    -G Ninja \
-    -DCMAKE_BUILD_TYPE=Release \
-    -DCMAKE_TOOLCHAIN_FILE="${ROOT_DIR}/cmake/toolchains/k1x-spacemit-cross.cmake" \
-    -DCMAKE_INSTALL_PREFIX="${install_dir}" \
-    -DVENDOR_SPACEMIT_ORT_ROOT="${runtime_root}" \
-    -DBANANA_DEMO_RUNTIME_SUBDIR="${runtime_tag}/lib" \
-    -DOpenCV_DIR="/data/opencv/install-k1x-gtk3/lib/cmake/opencv4"
-
-  cmake --build "${build_dir}" -j"$(nproc)"
-  cmake --install "${build_dir}"
-  file "${install_dir}/bin/banana_yolo11_demo"
 }
-
-VARIANTS="${BANANA_DEMO_BUILD_VARIANTS:-rt201,rt123}"
-IFS=',' read -r -a BUILD_VARIANTS <<<"${VARIANTS}"
-for runtime_tag in "${BUILD_VARIANTS[@]}"; do
-  build_variant "${runtime_tag}" "$(banana_demo_runtime_vendor_root "${ROOT_DIR}" "${runtime_tag}")"
-done
+file "$install_root/bin/y26_k1x_demo" "$so"
+find "$install_root" -type f -print0 | sort -z | xargs -0 sha256sum

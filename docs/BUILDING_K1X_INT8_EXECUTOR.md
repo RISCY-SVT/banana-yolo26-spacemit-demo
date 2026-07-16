@@ -20,24 +20,23 @@ new exactness, disassembly, and full-model timing gate.
 
 ## Cross Build
 
-Use the source-controlled release build wrapper. It passes the compiler
-contract explicitly to both static and shared CMake trees:
+Use the source-controlled Stage58 build wrapper. It configures the frozen
+executor, camera demo, static library, and shared library in one build:
 
 ```bash
-scripts/k1x-int8-executor/build.sh \
-  "$PWD" \
-  "$PWD/.deps/custom_int8_engine/release-build" \
-  "$PWD/.deps/custom_int8_engine/release-build/install"
+scripts/build_cross.sh \
+  --build-root /data/build/banana-yolo26-k1x-demo-0.9.1 \
+  --install-root /data/install/banana-yolo26-k1x-demo-0.9.1
 ```
 
-The wrapper builds both `BUILD_SHARED_LIBS=OFF` and `ON`. The target name is
-`y26_k1x_custom_int8_engine`; installed artifacts are
+The official configure sets `Y26_K1X_ENABLE_IME=ON` and verifies the embedded
+IME/RVV/frozen-profile capability marker. Installed artifacts are
 `liby26_k1x_int8_executor.a` and `liby26_k1x_int8_executor.so`.
 The install also contains `yolo26_k1x_int8` and the C11 ABI lifecycle probe
-`y26_k1x_healthcheck`.
+`y26_k1x_healthcheck`, plus `y26_k1x_demo`.
 
-The release wrapper uses origin-relative build RPATHs, strips path-bearing
-debug data, and enables deterministic archive rewriting. Independent builds
+The release uses origin-relative runtime paths and deterministic archive
+construction. Independent builds
 under differently named build roots must produce byte-identical installed
 libraries, executables, and headers. Compare complete install-tree SHA-256
 inventories before publishing a handoff bundle.
