@@ -47,9 +47,9 @@ int main() {
     float output[Y26_K1X_EXECUTOR_OUTPUT_ELEMENTS] {};
     CHECK(y26_executor_run_preprocessed(executor, nullptr, 0, output,
                                         Y26_K1X_EXECUTOR_OUTPUT_ELEMENTS, nullptr) ==
-          Y26_STATUS_INVALID_ARGUMENT);
+          Y26_STATUS_INVALID_STATE);
     CHECK(y26_executor_get_output(executor, output, Y26_K1X_EXECUTOR_OUTPUT_ELEMENTS) ==
-          Y26_STATUS_INVALID_ARGUMENT);
+          Y26_STATUS_INVALID_STATE);
     y26_executor_destroy(executor);
     y26_executor_destroy(nullptr);
     return 0;

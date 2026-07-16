@@ -1,0 +1,5 @@
+surface	predicted_mean_us	measured_mean_us	error_pct	gate_pct	status	p90_error_pct	worst_error_pct
+current_graph_profile_decomposition	144423.6024	145004.41926	-0.4005511438644906	3.0	pass
+profile_to_uninstrumented_headline	145004.41926	142413.0	1.8196507762633995	15.0	pass
+candidate_pre_measurement_composition	frozen-per-candidate	1 complete A/B surfaces	2.8994178902206866	15.0	pass
+held_out_exact_shape_lattice	not-additive-tail-prediction	21 held-out rows	5.660625875152902	10.0	median-pass; p90-direct-measurement-required	20.083997045022375	95.54710262087941

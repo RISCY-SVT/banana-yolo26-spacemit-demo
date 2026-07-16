@@ -1,0 +1,2 @@
+resolution	shape_class	operation_index	m	n	k	measured_us	predicted_us	absolute_percentage_error_pct	next_use_policy
+512	dense_1x1_k32	5	16384	32	32	1369.030	2677.098499	95.547103	direct-measure-required
