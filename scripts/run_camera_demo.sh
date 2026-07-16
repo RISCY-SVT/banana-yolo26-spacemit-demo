@@ -13,7 +13,7 @@ run_board() {
   local args=("$root/bin/y26_k1x_demo" --package "$root/package" --labels "$root/labels/coco80.txt"
     --expected-manifest-sha256 "$Y26_EXPECTED_MANIFEST_SHA256" --source camera:auto
     --camera-width "${Y26_CAMERA_WIDTH:-1280}" --camera-height "${Y26_CAMERA_HEIGHT:-720}"
-    --camera-fps "${Y26_CAMERA_FPS:-30}" --camera-fourcc "${Y26_CAMERA_FOURCC:-MJPG}"
+    --camera-fps "${Y26_CAMERA_FPS:-60}" --camera-fourcc "${Y26_CAMERA_FOURCC:-MJPG}"
     --profile "${Y26_CAMERA_PROFILE:-low-latency}" --flow "${Y26_CAMERA_FLOW:-latest-frame}" "$@")
   y26_print_command "${args[@]}"
   "${args[@]}"

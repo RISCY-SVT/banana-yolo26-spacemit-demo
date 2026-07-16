@@ -47,7 +47,10 @@ inventories before publishing a handoff bundle.
 cmake -S custom_int8_engine -B .deps/custom_int8_engine/build-host-release \
   -GNinja -DCMAKE_CXX_COMPILER=/usr/bin/g++ \
   -DCMAKE_BUILD_TYPE=Release \
-  -DY26_K1X_ENABLE_IME=OFF -DY26_K1X_ENABLE_TESTS=ON
+  -DBUILD_TESTING=ON \
+  -DY26_K1X_ENABLE_IME=OFF \
+  -DY26_K1X_ENABLE_TESTS=ON \
+  -DY26_K1X_BUILD_RESEARCH=ON
 cmake --build .deps/custom_int8_engine/build-host-release -j8
 ctest --test-dir .deps/custom_int8_engine/build-host-release --output-on-failure
 ```

@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import collections
 import csv
 import math
 import re
@@ -61,6 +62,8 @@ def main() -> int:
         "total_ms", "read_to_display_ms",
     ]
     summaries: list[dict[str, str]] = []
+    aggregate_rows: dict[str, list[dict[str, str]]] = collections.defaultdict(list)
+    aggregate_summaries: dict[str, list[dict[str, str]]] = collections.defaultdict(list)
     raw_path = args.output_dir / "camera_timing_raw.tsv"
     with raw_path.open("w", encoding="utf-8", newline="") as raw_stream:
         raw_writer = None
@@ -85,6 +88,9 @@ def main() -> int:
             for row in rows:
                 raw_writer.writerow({"run": name, **row})
 
+            arm = re.sub(r"-r[0-9]+$", "", name)
+            aggregate_rows[arm].extend(rows)
+
             result = {
                 "run": name,
                 "profile": summary["profile"],
@@ -97,6 +103,7 @@ def main() -> int:
                 "capture_fps": summary["capture_fps"],
                 "processed_fps": summary["processed_fps"],
                 "displayed_fps": summary["displayed_fps"],
+                "recorded_frames": summary["recorded_frames"],
                 "recording_fps": summary["recording_fps"],
                 "recording_mode": summary["recording_mode"],
             }
@@ -105,6 +112,48 @@ def main() -> int:
                 result[f"{phase}_mean"] = f"{statistics.fmean(values):.6f}"
                 result[f"{phase}_p95"] = f"{percentile(values, 0.95):.6f}"
             summaries.append(result)
+            aggregate_summaries[arm].append(result)
+
+    for arm in sorted(aggregate_rows):
+        runs = aggregate_summaries[arm]
+        if len(runs) < 2:
+            continue
+        rows = aggregate_rows[arm]
+        measured = sum(int(run["measured_frames"]) for run in runs)
+        captured = sum(int(run["captured_frames"]) for run in runs)
+        dropped = sum(int(run["dropped_frames"]) for run in runs)
+        elapsed = sum(int(run["measured_frames"]) / float(run["processed_fps"])
+                      for run in runs)
+        capture_elapsed = sum(int(run["captured_frames"]) / float(run["capture_fps"])
+                              for run in runs)
+        recorded = sum(int(run["recorded_frames"]) for run in runs)
+        recording_elapsed = sum(
+            int(run["recorded_frames"]) / float(run["recording_fps"])
+            for run in runs if float(run["recording_fps"]) > 0.0)
+        aggregate = {
+            "run": f"aggregate-{arm}",
+            "profile": runs[0]["profile"],
+            "flow": runs[0]["flow"],
+            "effective_format": runs[0]["effective_format"],
+            "measured_frames": str(measured),
+            "captured_frames": str(captured),
+            "dropped_frames": str(dropped),
+            "drop_pct": f"{100.0 * dropped / captured:.6f}" if captured else "0.000000",
+            "capture_fps": f"{captured / capture_elapsed:.6f}",
+            "processed_fps": f"{measured / elapsed:.6f}",
+            "displayed_fps": (f"{measured / elapsed:.6f}"
+                              if all(float(run["displayed_fps"]) > 0.0 for run in runs)
+                              else "0.000000"),
+            "recorded_frames": str(recorded),
+            "recording_fps": (f"{recorded / recording_elapsed:.6f}"
+                              if recording_elapsed > 0.0 else "0.000000"),
+            "recording_mode": runs[0]["recording_mode"],
+        }
+        for phase in phase_names:
+            values = [float(row[phase]) for row in rows]
+            aggregate[f"{phase}_mean"] = f"{statistics.fmean(values):.6f}"
+            aggregate[f"{phase}_p95"] = f"{percentile(values, 0.95):.6f}"
+        summaries.append(aggregate)
 
     summary_path = args.output_dir / "camera_timing_summary.tsv"
     with summary_path.open("w", encoding="utf-8", newline="") as stream:

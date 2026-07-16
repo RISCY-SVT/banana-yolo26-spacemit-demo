@@ -23,6 +23,13 @@ From the build host, `scripts/run_camera_demo.sh` runs the same command over
 SSH. `scripts/run_camera_demo_fast.sh` wraps it in the reversible O2 system
 profile. The fast script does not select a different model or resolution.
 
+On the Stage58 board/camera combination, the selected full-camera profile is
+the plain `low-latency` launcher without O2. Applying O2 to the whole demo
+process prevents the latest-frame capture thread from moving to CPU5-7 and was
+slower end to end. O2 remains the selected dedicated pure-executor profile; it
+is retained as an explicit diagnostic option, not presented as the
+camera-throughput winner.
+
 ## Controls
 
 | Key | Action |

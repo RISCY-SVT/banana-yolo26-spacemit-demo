@@ -20,7 +20,7 @@ readonly expected_output=$release_parent/0.9.1-stage58-camera-handoff
 readonly archive_basename=banana-yolo26-k1x-int8-executor-0.9.1-riscv64
 opencv_prefix=${Y26_OPENCV_PREFIX:-/data/opencv/install-k1x-gtk3}
 report_root=${Y26_STAGE58_REPORT_ROOT:-}
-media_root=${Y26_STAGE58_MEDIA_ROOT:-/data/Screenshots/yolo26-stage58}
+media_root=${Y26_STAGE58_MEDIA_ROOT:-/data/Screenshots/yolo26-stage58/release-curated}
 
 [[ $output == "$expected_output" ]] || {
   echo "refusing unexpected Stage58 release path: $output" >&2
@@ -105,10 +105,16 @@ if [[ -n $report_root && -d $report_root ]]; then
     [[ -f $report_root/$file ]] && install -m 0644 "$report_root/$file" "$output/outputs/performance/"
   done
 fi
-if [[ -d $media_root ]]; then
-  find "$media_root" -maxdepth 1 -type f -name '*.png' -print0 | sort -z | head -z -n 6 | xargs -0 -r -I{} install -m 0644 {} "$output/outputs/screenshots/"
-  find "$media_root" -maxdepth 1 -type f \( -name '*.avi' -o -name '*.mp4' \) -print0 | sort -z | head -z -n 2 | xargs -0 -r -I{} install -m 0644 {} "$output/outputs/demo-video/"
-fi
+required_screenshots=(
+  camera-annotated-1.png camera-annotated-2.png camera-annotated-3.png
+  camera-desktop.png camera-headless.png
+)
+for file in "${required_screenshots[@]}"; do
+  test -f "$media_root/$file"
+  install -m 0644 "$media_root/$file" "$output/outputs/screenshots/"
+done
+test -f "$media_root/camera-demo-30s.avi"
+install -m 0644 "$media_root/camera-demo-30s.avi" "$output/outputs/demo-video/"
 
 python3 "$repo/custom_int8_engine/tools/stage58_release_bundle.py" \
   --root "$output" --source-commit "$source_commit" \
