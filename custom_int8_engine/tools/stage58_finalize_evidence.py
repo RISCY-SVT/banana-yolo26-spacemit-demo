@@ -86,6 +86,47 @@ def parse_raw_benchmark(path: Path) -> list[dict[str, str]]:
     return rows
 
 
+def parse_legacy_audit(path: Path) -> tuple[list[dict[str, Any]], list[dict[str, str]]]:
+    hits: list[dict[str, str]] = []
+    for value in path.read_text(encoding="utf-8", errors="replace").splitlines():
+        if not value.startswith("./"):
+            continue
+        match = re.match(r"^\./([^:]+):(\d+):(.*)$", value)
+        if match is None:
+            continue
+        name, line, text = match.groups()
+        safe_text = re.sub(r"/home/svt/[^\s`\"']+", "<legacy-home-path>", text)
+        if name.startswith("custom_int8_engine/tools/stage"):
+            classification = "historical-reference"
+        elif name.startswith("custom_int8_engine/tools/"):
+            classification = "historical-research-tool"
+        elif name.startswith(("src/", "include/", "scripts/", "config/", "cmake/",
+                              "third_party_manifest/")) or name == "CMakeLists.txt":
+            classification = "active-build-runtime"
+        else:
+            classification = "active-user-facing"
+        hits.append({
+            "path": name,
+            "line": line,
+            "text": safe_text.strip(),
+            "classification": classification,
+        })
+
+    by_file: dict[tuple[str, str], int] = {}
+    for row in hits:
+        key = (row["path"], row["classification"])
+        by_file[key] = by_file.get(key, 0) + 1
+    inventory = [{
+        "path": name,
+        "classification": classification,
+        "matched_lines": count,
+        "disposition": ("retained outside active release surface"
+                        if classification.startswith("historical")
+                        else "removed or rewritten in Stage58"),
+    } for (name, classification), count in sorted(by_file.items())]
+    return inventory, hits
+
+
 def files_with_hashes(root: Path) -> list[dict[str, Any]]:
     return [{
         "path": path.relative_to(root).as_posix(),
@@ -163,8 +204,15 @@ def main() -> int:
                 if legacy_pattern.search(line):
                     legacy_rows.append({"path": path.relative_to(args.repo).as_posix(), "line": number,
                                         "text": line.strip(), "classification": "review-required"})
-    write_tsv(out / "legacy_yolo11_inventory.tsv", facts.get("legacy_inventory", []))
-    write_tsv(out / "active_surface_legacy_hits_before.tsv", facts.get("legacy_hits_before", []))
+    parsed_inventory, parsed_hits = parse_legacy_audit(
+        args.raw_log / "11_legacy_active_audit_before.log")
+    parsed_active_hits = [
+        row for row in parsed_hits if row["classification"].startswith("active")
+    ]
+    write_tsv(out / "legacy_yolo11_inventory.tsv",
+              facts.get("legacy_inventory", parsed_inventory))
+    write_tsv(out / "active_surface_legacy_hits_before.tsv",
+              facts.get("legacy_hits_before", parsed_active_hits))
     write_tsv(out / "active_surface_legacy_hits_after.tsv", legacy_rows,
               ["path", "line", "text", "classification"])
     write_md(out / "legacy_cleanup_plan.md", "Legacy Cleanup Plan", [

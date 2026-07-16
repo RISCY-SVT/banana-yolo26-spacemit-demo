@@ -33,6 +33,10 @@ not a universal minimum reliable object size.
 There is no universal minimum number of pixels for all objects. Reliability
 depends on class, contrast, motion blur, occlusion, lens, distance, confidence
 threshold, and the pixels occupied after 640x640 letterboxing. Stage58's fixed
-camera view provided a bounded person-class observation rather than five
-independently staged classes; that hardware limitation is preserved in
-`resolution_camera_observations.tsv` instead of inventing scenes.
+wall-poster view produced repeated `person`, `suitcase`, and `umbrella`
+detections. The smallest accepted shorter-side observation was 38.184 pixels,
+inside the 32-48 pixel bin. These are detector observations without independently
+staged ground truth, distance, or scene variation, so they do not establish a
+reliability threshold. The requested three-scene/five-class study could not be
+performed remotely; `resolution_camera_observations.tsv` preserves the bounded
+evidence instead of inventing scenes.

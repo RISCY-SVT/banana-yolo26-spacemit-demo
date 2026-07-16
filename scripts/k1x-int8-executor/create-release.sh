@@ -32,6 +32,13 @@ test -f "$package/asset_hashes.tsv"
 test -x "$install_root/bin/yolo26_k1x_int8"
 test -x "$install_root/bin/y26_k1x_healthcheck"
 test -x "$install_root/bin/y26_k1x_demo"
+install_so=$install_root/lib/liby26_k1x_int8_executor.so.0.9.1
+test -f "$install_so"
+grep -aFq '0.9.1/K1X_INT8_V1_YOLO26N_640_FULL_GRAPH_001/abi1/ime1/rvv1/frozen1' \
+  "$install_so" || {
+  echo "refusing non-IME/RVV/frozen-profile release library" >&2
+  exit 1
+}
 manifest_sha=$(sha256sum "$package/asset_hashes.tsv" | awk '{print $1}')
 [[ $manifest_sha == "$expected_manifest" ]] || {
   echo "unexpected package manifest: $manifest_sha" >&2
@@ -130,6 +137,7 @@ cp -a "$output" "$archive_root"
 find "$archive_root" -exec touch -h -d "@$source_date_epoch" {} +
 tar_path="$release_parent/$archive_basename.tar.gz"
 zip_path="$release_parent/$archive_basename.zip"
+rm -f "$tar_path" "$zip_path"
 tar --sort=name --mtime="@$source_date_epoch" --owner=0 --group=0 --numeric-owner \
   -C "$archive_tmp" -cf - "$archive_basename" | gzip -n >"$tar_path"
 (cd "$archive_tmp" && find "$archive_basename" -print | LC_ALL=C sort | zip -X -q "$zip_path" -@)

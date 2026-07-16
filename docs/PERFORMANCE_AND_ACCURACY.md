@@ -66,6 +66,19 @@ Stage57 final executor values remain the arithmetic baseline for the installed 0
 maintenance route. Stage58 reports camera throughput separately. Neither stage demonstrates 20 FPS, an installed camera service, or production
 certification.
 
+### Stage58 Camera Surface
+
+| Surface | Effective mode | Frames | Processed/displayed FPS | Capture FPS | App drop | Mean/p95 software latency |
+|---|---|---:|---:|---:|---:|---:|
+| selected GUI, no recording | 1280x720@60 MJPG | 3015 | 5.573729 | 9.877425 | 43.716045% | 229.061 / 271.674 ms |
+| GUI with MJPG AVI recording | 1280x720@60 MJPG | 146 | 4.814760 / 4.706807 recorded | 9.868152 | 52.032520% | 255.996 / 302.639 ms |
+
+The selected camera row pools three independent 180-second runs. It includes
+capture, exact 640x640 preprocessing, executor, output mapping, boxes, overlay,
+GUI display, and event handling. It is not pure-model throughput, and the
+software latency is not sensor-to-screen latency because sensor timestamps were
+not correlated. The driver did not expose an independent dropped-buffer count.
+
 ## HPM Language
 
 Stage56 HPM values are event counts per cycle. They prove a measured surface

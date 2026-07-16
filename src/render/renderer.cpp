@@ -62,6 +62,8 @@ cv::Mat Renderer::DrawDetections(const cv::Mat& image,
                                  const std::vector<std::string>& labels) const
 {
     cv::Mat out = image.clone();
+    std::vector<cv::Rect> occupied_labels;
+    occupied_labels.reserve(detections.size());
     for (const auto& det : detections)
     {
         const cv::Scalar color = ColorForClass(det.class_id);
@@ -69,8 +71,37 @@ cv::Mat Renderer::DrawDetections(const cv::Mat& image,
         const cv::Point p2(static_cast<int>(det.x2), static_cast<int>(det.y2));
         cv::rectangle(out, p1, p2, color, 2);
         const std::string text = LabelForDetection(det, labels);
-        cv::putText(out, text, cv::Point(p1.x, std::max(18, p1.y - 6)),
-                    cv::FONT_HERSHEY_SIMPLEX, 0.55, color, 2, cv::LINE_AA);
+        int baseline = 0;
+        const cv::Size text_size = cv::getTextSize(
+            text, cv::FONT_HERSHEY_SIMPLEX, 0.50, 1, &baseline);
+        const int label_width = std::min(out.cols, text_size.width + 8);
+        const int label_height = text_size.height + baseline + 7;
+        const int label_x = std::clamp(p1.x, 0, std::max(0, out.cols - label_width));
+        int label_y = std::clamp(p1.y - label_height, 0,
+                                 std::max(0, out.rows - label_height));
+        const auto overlaps = [&](int y) {
+            const cv::Rect candidate(label_x, y, label_width, label_height);
+            return std::any_of(occupied_labels.begin(), occupied_labels.end(),
+                               [&](const cv::Rect& used) {
+                                   return (candidate & used).area() > 0;
+                               });
+        };
+        while (overlaps(label_y) && label_y + label_height * 2 <= out.rows)
+            label_y += label_height;
+        if (overlaps(label_y)) {
+            int upward = std::clamp(p1.y - label_height, 0,
+                                    std::max(0, out.rows - label_height));
+            while (overlaps(upward) && upward >= label_height)
+                upward -= label_height;
+            if (!overlaps(upward)) label_y = upward;
+        }
+        const cv::Rect label_rect(label_x, label_y, label_width, label_height);
+        occupied_labels.push_back(label_rect);
+        cv::rectangle(out, label_rect, color, cv::FILLED);
+        cv::putText(out, text,
+                    cv::Point(label_x + 4, label_y + text_size.height + 2),
+                    cv::FONT_HERSHEY_SIMPLEX, 0.50, cv::Scalar(0, 0, 0), 1,
+                    cv::LINE_AA);
     }
 
     return out;

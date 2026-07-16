@@ -6,7 +6,7 @@ if [[ ${1:-} == --help || ${1:-} == -h ]]; then
   exit 0
 fi
 root=${1:-/data/y26-k1x-int8-executor/0.9.1}
-input=${2:-"$root/outputs/correctness/bus_640_nchw_f32.bin"}
+input=${2:-"$root/fixtures/bus_640_nchw_f32.bin"}
 output=${3:-"$root/outputs/benchmark.json"}
 profile=${4:-compatibility}
 readonly expected_manifest=fab4a72cf524ce0a205ceca0384144f2eee7bc79dff3f4db8b7208614e8407be

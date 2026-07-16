@@ -10,7 +10,7 @@ root=$Y26_BOARD_RELEASE_ROOT
 metrics=${Y26_CAMERA_METRICS:-/data/y26-camera-full-demo.tsv}
 args=("$root/bin/y26_k1x_demo" --package "$root/package" --labels "$root/labels/coco80.txt"
       --source camera:auto --camera-width "${Y26_CAMERA_WIDTH:-1280}"
-      --camera-height "${Y26_CAMERA_HEIGHT:-720}" --camera-fps "${Y26_CAMERA_FPS:-30}"
+      --camera-height "${Y26_CAMERA_HEIGHT:-720}" --camera-fps "${Y26_CAMERA_FPS:-60}"
       --camera-fourcc "${Y26_CAMERA_FOURCC:-MJPG}" --profile low-latency --flow latest-frame
       --headless --warmup-frames 30 --max-frames 1000 --metrics-tsv "$metrics" "$@")
 echo "surface=full_camera_capture_preprocess_executor_map_render_headless"

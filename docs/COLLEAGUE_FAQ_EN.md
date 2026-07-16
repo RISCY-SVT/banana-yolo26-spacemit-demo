@@ -2,20 +2,20 @@
 
 ## What is the full FPS directly from the camera?
 
-The selected Stage58 live surface is `STAGE58_CAMERA_MODE`, V4L2, latest-frame,
-`STAGE58_CAMERA_PROFILE`, GUI display, boxes, and timing overlay. Across three
-independent 180-second runs it processed and displayed
-`STAGE58_CAMERA_PROCESSED_FPS` FPS. Observed capture arrival was
-`STAGE58_CAMERA_CAPTURE_FPS` FPS and the application replaced
-`STAGE58_CAMERA_DROP_PCT`% of captured frames because capture was faster than
-the complete pipeline. Mean/p95 read-return-to-display software latency was
-`STAGE58_CAMERA_LATENCY_MEAN_MS` / `STAGE58_CAMERA_LATENCY_P95_MS` ms.
+The selected Stage58 live surface is 1280x720 at 60 FPS MJPG, V4L2,
+latest-frame, `low-latency` without O2, GUI display, boxes, and timing overlay.
+Across three independent 180-second runs it processed and displayed 5.573729
+FPS. Observed capture arrival was 9.877425 FPS and the application replaced
+43.716045% of captured frames because capture was faster than the complete
+pipeline. Mean/p95 read-return-to-display software latency was 229.061194 /
+271.674422 ms.
 
 The no-recording number includes capture, exact resize/letterbox, BGR-to-RGB,
 the executor, box mapping, boxes, overlay, `imshow`, and event handling. It is
-not pure-model FPS. Recording is a separate measured surface at
-`STAGE58_CAMERA_RECORDING_FPS` FPS. The 30-minute camera soak status is
-`STAGE58_CAMERA_SOAK_STATUS`. Capture-driver drop accounting was not exposed,
+not pure-model FPS. Recording is a separate measured surface at 4.706807 FPS.
+The 30-minute camera soak passed: 10,527 processed/displayed frames at 5.848 FPS,
+with 41.35% application-level latest-frame replacement and no demo failure.
+Capture-driver drop accounting was not exposed,
 so only application replacements are known. No sensor timestamps were
 correlated; the reported latency is not sensor-to-screen latency.
 
@@ -36,8 +36,11 @@ Yes. On the BPI-F3:
 /data/y26-k1x-int8-executor/0.9.1/scripts/run_camera_demo.sh
 ```
 
-Use `run_camera_demo_fast.sh` for the reversible dedicated O2 wrapper, or pass
-`--headless --save-frame /data/Screenshots/yolo26.png`. The release includes
+The selected full-camera launcher intentionally does not apply O2: on this
+board, O2 constrained the capture thread and reduced full-pipeline throughput.
+`run_camera_demo_fast.sh` remains an explicit O2 diagnostic for the dedicated
+pure-executor policy. Pass `--headless --save-frame /data/Screenshots/yolo26.png`
+for a non-GUI run. The release includes
 real board screenshots in `outputs/screenshots/` and an annotated recording in
 `outputs/demo-video/`. GUI keys are `q`/Esc, `s`, `r`, and Space.
 
