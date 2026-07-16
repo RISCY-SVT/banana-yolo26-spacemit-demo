@@ -19,7 +19,7 @@ TASK_ID = (
     "MAINTENANCE-PRODUCTIZATION-HANDOFF-AND-DUAL-REMOTE-FREEZE-GATE-001"
 )
 START_HEAD = "4f5a7f2327bff63d8159a71eeaa950e22897b823"
-SOURCE_COMMIT = "b19c0a758c7eec0df28de39a87a765a37e2982ee"
+SOURCE_COMMIT = "cf2654a2706187c28d23a5a02c505b00c5d27036"
 CONTRACT = "K1X_INT8_V1"
 PROFILE = "K1X_INT8_V1_YOLO26N_640_FULL_GRAPH_001"
 MODEL_SHA = "30a94e4738606673b5e0a73499cbc977167f046f8fa8637d6040ce744f429c0c"
@@ -599,8 +599,10 @@ def main() -> None:
         f"The final 5000/5000 prediction JSON is byte-identical to Stage56: `{PREDICTION_SHA}`.",
         f"mAP50-95 remains {MAP_50_95}; accuracy delta is exactly zero.",
     ])
-    real_rows = read_tsv(args.raw / "coco/final57/stage57_real100.tsv")
-    real_mean = statistics.fmean(float(row["executor_us"]) for row in real_rows)
+    real_summary_fields = parse_fields(
+        (args.raw / "coco/final57/stage57_real100.log").read_text(
+            encoding="utf-8", errors="replace").replace("\n", "\t"))
+    real_mean = float(real_summary_fields["executor_mean_us"])
     rgb_summary = summarize("rgb", parse_cli(args.raw / "profiles/final-rgb/final_rgb_500.log"))
     serial_mean = next(float(row["mean_us"]) for row in serial_pipeline
                        if row["phase"] == "preloaded_image_pipeline")
@@ -780,17 +782,20 @@ def main() -> None:
     write_tsv(out / "commit_inventory.tsv", [
         {"commit": "c123942", "purpose": "exact Stage57 source and ABI"},
         {"commit": "7539002", "purpose": "productization and handoff documentation"},
-        {"commit": SOURCE_COMMIT, "purpose": "release script mode repair"},
-        {"commit": args.final_head, "purpose": "final validation/evidence/freeze"},
+        {"commit": "b19c0a7", "purpose": "release script mode repair"},
+        {"commit": "104d2dc", "purpose": "test evidence and co-design seed"},
+        {"commit": "28490e7", "purpose": "measured handoff documentation and outputs"},
+        {"commit": SOURCE_COMMIT, "purpose": "frozen package identity in release helpers"},
+        {"commit": args.final_head, "purpose": "final validation/evidence/freeze; exact hash in post-push packet"},
     ])
     write_md(out / "final_dual_remote_report.md", "Final Dual-remote Publication", [
         "End-only normal fast-forward publication is verified after the containing commit. Exact "
         "local/GitHub/GitLab hashes are recorded in the result packet and console response.",
     ])
     write_tsv(out / "final_remote_parity.tsv", [
-        {"location": "local", "head": args.final_head, "status": "resolved-post-commit"},
-        {"location": "github", "head": args.final_head, "status": "resolved-post-push"},
-        {"location": "gitlab-rd", "head": args.final_head, "status": "resolved-post-push"},
+        {"location": "local", "head": args.final_head, "status": "canonical-exact-value-in-post-push-packet"},
+        {"location": "github", "head": args.final_head, "status": "canonical-exact-value-in-post-push-packet"},
+        {"location": "gitlab-rd", "head": args.final_head, "status": "canonical-exact-value-in-post-push-packet"},
     ])
     write_tsv(out / "published_commit_inventory.tsv", [{
         "range": f"{START_HEAD}..{args.final_head}", "publication": "end-only normal fast-forward",

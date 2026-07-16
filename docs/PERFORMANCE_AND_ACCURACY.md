@@ -30,8 +30,8 @@ then passed independent 500-sample and long-soak measurements.
 | compatibility soak | 10000 | 147746.663 | 147181.500 | 151137.950 | 157663.060 | 163959.195 | 181280.000 |
 | low-latency-dedicated O2 soak | 13500 | 135040.533 | 134995.000 | 135637.000 | 136675.070 | 138660.577 | 140242.000 |
 
-The 500-sample O2 mean is 6.395163% lower than the accepted Stage56 O2 mean and
-71.222984% lower than matched B120 ORT. It corresponds to 7.501594 pure-model
+The 500-sample O2 mean is 6.395000% lower than the accepted Stage56 O2 mean and
+71.222934% lower than matched B120 ORT. It corresponds to 7.501581 pure-model
 inferences per second. These figures do not constitute a 20 FPS claim.
 
 ### Other Surfaces
