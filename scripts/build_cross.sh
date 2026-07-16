@@ -29,7 +29,7 @@ cmake --build "$build_root" -j"${JOBS:-$(nproc)}"
 cmake --install "$build_root"
 
 so=$install_root/lib/liby26_k1x_int8_executor.so.0.9.1
-strings "$so" | grep -Fq '0.9.1/K1X_INT8_V1_YOLO26N_640_FULL_GRAPH_001/abi1/ime1/rvv1/frozen1' || {
+grep -aFq '0.9.1/K1X_INT8_V1_YOLO26N_640_FULL_GRAPH_001/abi1/ime1/rvv1/frozen1' "$so" || {
   echo "official release build lacks IME/RVV/frozen-profile capabilities" >&2
   exit 1
 }

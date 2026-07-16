@@ -4,7 +4,7 @@
   integer profile. Arbitrary ONNX models are unsupported.
 - Dynamic input shapes, batch sizes other than one, and resolutions other than
   640 are unsupported.
-- `run_rgb` expects an already-letterboxed 640x640 RGB buffer. The OpenCV CLI
+- `run_rgb` expects an already-letterboxed 640x640 RGB buffer. The OpenCV demo
   performs decode and letterbox outside the pure executor.
 - CPU0-3 are the only approved IME cores. CPU4-7 must not execute IME.
 - The executor is not thread-safe per handle; use one handle per serialized
@@ -31,6 +31,6 @@
 - Cost-model V4 predicts current-graph composition and measured candidate
   composition within the Stage56 gates. Held-out novel shapes retain high
   worst-case error and require direct measurement.
-- This release does not include a camera service, default demo-backend change,
-  model training, QAT, a student model, or Q31 promotion.
+- This release includes a user-launched camera demo but no installed camera
+  service. It does not include model training, QAT, a student model, or Q31.
 - Production readiness and 20 FPS are not claimed.

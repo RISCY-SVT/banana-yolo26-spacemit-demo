@@ -9,6 +9,7 @@
 #include <opencv2/highgui.hpp>
 
 #include <algorithm>
+#include <cmath>
 #include <sstream>
 #include <vector>
 
@@ -144,6 +145,12 @@ bool Renderer::TryShow(const std::string& window_name, const cv::Mat& image, std
     {
         if (!window_created_) {
             cv::namedWindow(window_name, cv::WINDOW_NORMAL);
+            const double fit = std::min(
+                {1.0, 1280.0 / static_cast<double>(image.cols),
+                 720.0 / static_cast<double>(image.rows)});
+            cv::resizeWindow(window_name,
+                             static_cast<int>(std::nearbyint(image.cols * fit)),
+                             static_cast<int>(std::nearbyint(image.rows * fit)));
             cv::moveWindow(window_name, 0, 0);
             window_created_ = true;
         }
