@@ -35,6 +35,21 @@ std::string SafeBackendName(const cv::VideoCapture& capture)
     }
 }
 
+std::string QuoteGstreamerProperty(const std::string& value)
+{
+    std::string quoted;
+    quoted.reserve(value.size() + 2);
+    quoted.push_back('"');
+    for (const char character : value)
+    {
+        if (character == '\\' || character == '"')
+            quoted.push_back('\\');
+        quoted.push_back(character);
+    }
+    quoted.push_back('"');
+    return quoted;
+}
+
 }  // namespace
 
 MediaSource::MediaSource(const AppOptions& options) : options_(options) {}
@@ -212,12 +227,37 @@ bool MediaSource::OpenImage(std::string& error)
 bool MediaSource::OpenVideo(std::string& error)
 {
     capture_.release();
-    if (!capture_.open(video_path_))
+    if (capture_.open(video_path_, cv::CAP_FFMPEG))
+    {
+        camera_open_method_ = "video-file-ffmpeg";
+    }
+    else
+    {
+        capture_.release();
+        std::string extension = std::filesystem::path(video_path_).extension().string();
+        std::transform(extension.begin(), extension.end(), extension.begin(),
+                       [](const unsigned char value) { return static_cast<char>(std::tolower(value)); });
+        if (extension == ".avi")
+        {
+            const std::string pipeline =
+                "filesrc location=" + QuoteGstreamerProperty(video_path_) +
+                " ! avidemux ! jpegdec ! videoconvert ! video/x-raw,format=BGR"
+                " ! appsink max-buffers=2 drop=false sync=false";
+            if (capture_.open(pipeline, cv::CAP_GSTREAMER))
+                camera_open_method_ = "video-file-gstreamer-mjpeg-software";
+        }
+        if (!capture_.isOpened())
+        {
+            capture_.release();
+            if (capture_.open(video_path_))
+                camera_open_method_ = "video-file-auto";
+        }
+    }
+    if (!capture_.isOpened())
     {
         error = "failed to open video: " + video_path_;
         return false;
     }
-    camera_open_method_ = "video-file-auto";
     camera_backend_name_ = SafeBackendName(capture_);
     return true;
 }

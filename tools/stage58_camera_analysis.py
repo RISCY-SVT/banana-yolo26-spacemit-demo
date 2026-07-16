@@ -25,14 +25,14 @@ def percentile(values: list[float], quantile: float) -> float:
     return ordered[lower] + (position - lower) * (ordered[upper] - ordered[lower])
 
 
-def parse_summary(log: Path) -> dict[str, str]:
+def parse_summary(log: Path) -> dict[str, str] | None:
     found = ""
     for line in log.read_text(encoding="utf-8", errors="replace").splitlines():
         match = SUMMARY_RE.match(line)
         if match:
             found = match.group(1)
     if not found:
-        raise ValueError(f"no SUMMARY row in {log}")
+        return None
     result: dict[str, str] = {}
     for match in re.finditer(r'(\w+)=("[^"]*"|\S+)', found):
         result[match.group(1)] = match.group(2).strip('"')
@@ -79,6 +79,8 @@ def main() -> int:
             if not log_path.is_file():
                 continue
             summary = parse_summary(log_path)
+            if summary is None:
+                continue
             rows: list[dict[str, str]] = []
             with metric_path.open(encoding="utf-8", newline="") as stream:
                 for row in csv.DictReader(stream, delimiter="\t"):
