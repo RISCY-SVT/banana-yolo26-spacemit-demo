@@ -1,0 +1,2 @@
+affinity_ok	cpu4_7_ime_count	involuntary_cs_total	max_us	mean_us	median_us	output_hash	p90_us	p95_us	p999_us	p99_us	process_cpu_mean_us	samples	status	surface	voluntary_cs_total
+1	0	7293	145307.000000	140877.186800	140848.000000	0xd43f5e018b415631	141303.100000	141485.050000	144386.185000	142478.040000	696341.818600	10000	pass	release-low-latency-dedicated-10000	1378

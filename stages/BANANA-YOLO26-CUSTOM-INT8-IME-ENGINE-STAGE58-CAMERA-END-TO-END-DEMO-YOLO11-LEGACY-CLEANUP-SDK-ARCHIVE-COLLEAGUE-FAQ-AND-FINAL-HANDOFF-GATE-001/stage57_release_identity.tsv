@@ -1,0 +1,5 @@
+identity	value	status
+source_start	3e5579de4184513ba2b2badde26b62dd64645b54	exact
+package_manifest_sha256	fab4a72cf524ce0a205ceca0384144f2eee7bc79dff3f4db8b7208614e8407be	exact
+known_output_hash	0xd43f5e018b415631	exact
+public_symbols_before	13	exact

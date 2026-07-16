@@ -1,0 +1,7 @@
+status	surface
+pass	image
+pass	video
+pass	camera-sequential
+pass	camera-latest-frame
+pass	gui-controls
+pass	camera-disconnect-reconnect

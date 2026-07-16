@@ -1,0 +1,4 @@
+status	surface
+pass	all-public-script-help
+pass	cross-build-wrapper
+pass	deploy-dry-run

@@ -1,0 +1,1207 @@
+path	line	text	classification
+third_party_manifest/runtime.lock	1	default_visual_runtime=rt201	active-build-runtime
+third_party_manifest/runtime.lock	2	default_vendor320_visual_runtime=rt123	active-build-runtime
+third_party_manifest/runtime.lock	3	default_vendor320_perf_runtime=rt201	active-build-runtime
+third_party_manifest/runtime.lock	4	runtime=rt123|spacemit-ort.riscv64.1.2.3|https://archive.spacemit.com/spacemit-ai/onnxruntime/spacemit-ort.riscv64.1.2.3.tar.gz|031e61205e597840c297c492b5d3ceddf9f8e618a9b17ed4b6370358c1b9a21b	active-build-runtime
+third_party_manifest/runtime.lock	5	runtime=rt201|spacemit-ort.riscv64.2.0.1|https://archive.spacemit.com/spacemit-ai/onnxruntime/spacemit-ort.riscv64.2.0.1.tar.gz|8a15035aca34d5fd95f24444d4c7843265c1a81f49d84ec6fe9c6d0fdf5b55cf	active-build-runtime
+third_party_manifest/runtime.lock	6	runtime=rt202b1|spacemit-ort.riscv64.2.0.2+beta1|https://archive.spacemit.com/spacemit-ai/onnxruntime/spacemit-ort.riscv64.2.0.2%2Bbeta1.tar.gz|215e02fb188441f94b4498b076dbe034d34cc76eef990ebdb64732d250d83799	active-build-runtime
+third_party_manifest/runtime.lock	7	runtime=rt202|spacemit-ort.riscv64.2.0.2|https://archive.spacemit.com/spacemit-ai/onnxruntime/spacemit-ort.riscv64.2.0.2.tar.gz|b9d038eab644c42712b93e14648427467a02d1b66115795033093efbeb53c868	active-build-runtime
+third_party_manifest/runtime.lock	8	runtime=rt204|spacemit-ort.riscv64.2.0.4|https://github.com/spacemit-com/onnxruntime/releases/download/2.0.4/spacemit-ort.riscv64.2.0.4.tar.gz|bcf02bd12b8a1df969d6986658a9270c1121e5d58f5947d91ea5eba1bd6cd435	active-build-runtime
+third_party_manifest/models.lock	2	vendor_yolo11_fp32_320_url=https://archive.spacemit.com/spacemit-ai/BRDK/Model_Zoo/CV/YOLOv11/yolov11n_320x320.onnx	active-build-runtime
+third_party_manifest/models.lock	3	vendor_yolo11_int8_320_url=https://archive.spacemit.com/spacemit-ai/BRDK/Model_Zoo/CV/YOLOv11/yolov11n_320x320.q.onnx	active-build-runtime
+third_party_manifest/models.lock	4	vendor_yolo11_xquant_config_url=https://archive.spacemit.com/spacemit-ai/BRDK/Model_Zoo/CV/YOLOv11/xquant_config.json	active-build-runtime
+DAILY_STATUS.md	5	Create a vendor-grade rt204 Q/DQ Conv repro, gate QOperator, and decide whether	active-user-facing
+DAILY_STATUS.md	7	modifying the frozen YOLO11 production repo.	active-user-facing
+DAILY_STATUS.md	11	- Verified the YOLO11 production repo remained at	active-user-facing
+DAILY_STATUS.md	15	- Built and tested a minimal repro family on CPU and rt204 EP.	active-user-facing
+DAILY_STATUS.md	26	`SPACEMIT_EP_DISABLE_OP_TYPE_FILTER=MatMul;Add`.	active-user-facing
+DAILY_STATUS.md	44	- YOLO26 full accelerated Q/DQ INT8 remains blocked by rt204 EP handling of	active-user-facing
+DAILY_STATUS.md	57	- Keep YOLO11 rt204 reevaluation separate from production policy.	active-user-facing
+ISSUES_OPEN.md	13	- YOLO26 INT8 board EP: full CPU-good manual Q/DQ candidates fail rt204	active-user-facing
+ISSUES_OPEN.md	21	- Stripped-kernel Q/DQ with `SPACEMIT_EP_DISABLE_OP_TYPE_FILTER=MatMul;Add`:	active-user-facing
+ISSUES_OPEN.md	24	- YOLO11 rt204 adoption: direct tensor-probe smoke is positive, but full	active-user-facing
+P0_P1_ISSUE_LIST.md	3	Run: `BANANA-YOLO26-INT8-RT204-OPERATOR-SUPPORT-FORENSICS-001`	active-user-facing
+P0_P1_ISSUE_LIST.md	15	The frozen YOLO11 production repo was verified read-only at	active-user-facing
+P0_P1_ISSUE_LIST.md	24	- YOLO26 INT8 board EP is blocked: rt204 SpaceMIT EP fails to compile CPU-good	active-user-facing
+P0_P1_ISSUE_LIST.md	28	- YOLO11 rt204 direct tensor-probe results are promising, but require a	active-user-facing
+NEXT_ACTIONS.md	12	`SPACEMIT_EP_DISABLE_OP_TYPE_FILTER=MatMul;Add`. That gate must prove useful	active-user-facing
+NEXT_ACTIONS.md	17	## YOLO11 RT204 Follow-Up	active-user-facing
+NEXT_ACTIONS.md	19	- Keep YOLO11 production frozen on the `production-2026-07-02` policy.	active-user-facing
+NEXT_ACTIONS.md	20	- If rt204 adoption becomes desirable, open a separate YOLO11 gate that reruns	active-user-facing
+NEXT_ACTIONS.md	21	the full app, loader, camera, and performance matrix against rt204. The direct	active-user-facing
+NEXT_ACTIONS.md	26	- Do not modify `/data/banana-yolo11-spacemit-demo` from this R&D repo.	active-user-facing
+P0_P1_P2_ISSUE_LIST.md	13	- YOLO26 full accelerated Q/DQ INT8 on rt204 is blocked by SpaceMIT EP	active-user-facing
+P0_P1_P2_ISSUE_LIST.md	22	- Stripped-kernel Q/DQ plus `SPACEMIT_EP_DISABLE_OP_TYPE_FILTER=MatMul;Add` is	active-user-facing
+P0_P1_P2_ISSUE_LIST.md	25	- YOLO11 rt204 adoption remains a separate future gate. The frozen production	active-user-facing
+P0_P1_P2_ISSUE_LIST.md	26	YOLO11 repository and `production-2026-07-02` policy are unchanged.	active-user-facing
+RD_STATUS.md	5	`BANANA-YOLO26-RT204-QDQ-CONV-VENDOR-REPRO-AND-QOPERATOR-GATE-001`	active-user-facing
+RD_STATUS.md	7	This is an INT8 calibration/export and rt204 operator-support forensic stage.	active-user-facing
+RD_STATUS.md	9	YOLO11 production repo.	active-user-facing
+RD_STATUS.md	13	- Do not modify `/data/banana-yolo11-spacemit-demo`.	active-user-facing
+RD_STATUS.md	28	- Does rt204 SpaceMIT EP compile and execute CPU-good Q/DQ INT8 models?	active-user-facing
+RD_STATUS.md	29	- Does rt204 deserve a future YOLO11 production adoption gate?	active-user-facing
+RD_STATUS.md	45	- RT204 SpaceMIT EP runs latest YOLO26 FP32 640 end-to-end and traditional	active-user-facing
+RD_STATUS.md	53	- RT204 SpaceMIT EP does not yet accept full CPU-good Q/DQ INT8 candidates:	active-user-facing
+RD_STATUS.md	68	MatMul issue. `SPACEMIT_EP_DISABLE_OP_TYPE_FILTER=MatMul;Add` restores smoke	active-user-facing
+RD_STATUS.md	70	- Frozen YOLO11 production models were probed read-only with rt204. The direct	active-user-facing
+RD_STATUS.md	71	tensor probe did not abort for dynamic640 INT8, vendor320 q.onnx, or FP16	active-user-facing
+TEMPLATE_SOURCE.md	4	YOLO11 production release.	active-user-facing
+TEMPLATE_SOURCE.md	8	- GitHub: `git@github.com:RISCY-SVT/banana-yolo11-spacemit-demo.git`	active-user-facing
+TEMPLATE_SOURCE.md	9	- GitLab: `git@gitlab.itglobal.com:riscy/sw/banana-yolo11-spacemit-demo.git`	active-user-facing
+TEMPLATE_SOURCE.md	15	- The production YOLO11 repository must remain read-only for YOLO26 R&D work.	active-user-facing
+TEMPLATE_SOURCE.md	17	`template-yolo11-gitlab`.	active-user-facing
+src/main.cpp	3	* @brief CLI entry point for the Banana YOLO11 demo application.	active-build-runtime
+models/README.md	7	- `./scripts/fetch_or_build_fp16_models.sh` for reproducible YOLO11n FP16 conversions	active-user-facing
+README.md	17	`banana-yolo11-spacemit-demo` release tag and is intentionally separated from	active-user-facing
+README.md	18	the frozen YOLO11 production repository. Use this tree only for YOLO26,	active-user-facing
+README.md	29	`template-yolo11-gitlab`.	active-user-facing
+README.md	38	- Current RT204 result: SpacemiT ORT `2.0.4` runs the latest YOLO26 640	active-user-facing
+README.md	45	candidates, but rt204 SpaceMIT EP fails to compile the Q/DQ Conv path with	active-user-facing
+README.md	49	`kernel_shape=[3,3]`, reproduces the rt204 compiler failure. The supplemental	active-user-facing
+README.md	53	`SPACEMIT_EP_DISABLE_OP_TYPE_FILTER=QuantizeLinear;DequantizeLinear;Conv`.	active-user-facing
+README.md	60	CPU-exact and avoids the first Conv blocker, but exposes a second rt204	active-user-facing
+README.md	61	attention-path issue. `SPACEMIT_EP_DISABLE_OP_TYPE_FILTER=MatMul;Add`	active-user-facing
+README.md	64	- YOLO11-on-rt204 status: a direct R&D tensor probe against frozen YOLO11	active-user-facing
+README.md	65	dynamic640 INT8, vendor320 q.onnx, and FP16 keep_io 640 did not abort and	active-user-facing
+README.md	67	signal; the production YOLO11 policy remains frozen.	active-user-facing
+README.md	69	reproducible public sanity suite and rt204 baseline table. See	active-user-facing
+README.md	71	- Current FP32 frozen baseline: rt204, cluster0, 4 threads, with	active-user-facing
+README.md	74	- Current FP16 baseline: native body-FP16/head-FP32 keep-IO, rt204, cluster0,	active-user-facing
+README.md	75	4 threads. It passes CPU and rt204 semantic sanity and reaches	active-user-facing
+README.md	79	correctness and rt204 execution, but it is not faster than keep-IO FP16. The	active-user-facing
+README.md	81	- INT8 closure: YOLO26 INT8 ONNX board acceleration is blocked pending rt204	active-user-facing
+README.md	83	`docs/RT204_QDQ_CONV_VENDOR_BUG_REPORT.md`.	active-user-facing
+README.md	89	CPU-good/rt204-runnable diagnostic only, not static activation INT8. See	active-user-facing
+README.md	93	R&D-copy YOLO11 XSlim variants fail on rt204 `YoloDecode` dispatch. See	active-user-facing
+README.md	96	a near-term fix for the rt204 Q/DQ Conv blocker. See	active-user-facing
+README.md	98	- Frozen production baseline: the YOLO11 project remains	active-user-facing
+README.md	99	`banana-yolo11-spacemit-demo` at tag `production-2026-07-02`.	active-user-facing
+README.md	107	- `docs/YOLO26_INT8_RT204_FORENSICS.md`	active-user-facing
+README.md	108	- `docs/YOLO26_QDQ_RT204_BLOCKER_MINIMIZATION.md`	active-user-facing
+README.md	109	- `docs/RT204_QDQ_CONV_VENDOR_REPRO_AND_QOPERATOR_GATE.md`	active-user-facing
+README.md	110	- `docs/RT204_OPERATOR_SUPPORT.md`	active-user-facing
+README.md	117	- `docs/RT204_QDQ_CONV_VENDOR_BUG_REPORT.md`	active-user-facing
+README.md	118	- `docs/YOLO26_VS_YOLO11_BASELINE.md`	active-user-facing
+README.md	124	## Frozen YOLO11 production policy, for comparison only	active-user-facing
+README.md	126	- Primary image visual: generated `dynamic640` INT8 on `rt201`.	active-user-facing
+README.md	127	- Normal camera: generated `dynamic640` INT8 on `rt201`.	active-user-facing
+README.md	128	- Fast-live camera: vendor320 INT8 on `rt123`, `320x320` letterbox.	active-user-facing
+README.md	129	- Vendor320 trusted visual: `rt123`.	active-user-facing
+README.md	130	- Vendor320 low-latency perf: raw `rt201`, perf-only.	active-user-facing
+README.md	131	- Vendor320 `rt201` visual workaround: available, SHA256-guarded, non-default.	active-user-facing
+README.md	132	- FP16: experimental only, `keep_io` 640 on `rt201`/`rt202b1`.	active-user-facing
+README.md	134	- Stable `rt202`: staged/tested, not adopted in the production repo.	active-user-facing
+README.md	138	The remainder of this README still contains template-era YOLO11 operational	active-user-facing
+README.md	144	## Inherited YOLO11 Template Reference	active-user-facing
+README.md	149	- `spacemit-ort.riscv64.1.2.3` for trustworthy vendor320 visual inference	active-user-facing
+README.md	150	- `spacemit-ort.riscv64.2.0.1` for vendor320 low-latency benchmarking and dynamic640	active-user-facing
+README.md	154	- `libspacemit_ep.so.1.2.3`	active-user-facing
+README.md	155	- `libspacemit_ep.so.2.0.1`	active-user-facing
+README.md	156	- `libspacemit_ep.so.2.0.2` for explicit non-default stable-runtime regression	active-user-facing
+README.md	157	- model family: Ultralytics YOLO11n	active-user-facing
+README.md	164	- Primary production visual branch: generated `dynamic640` INT8 on `rt201`.	active-user-facing
+README.md	165	- Default image visual path: generated `dynamic640` INT8 on `rt201`.	active-user-facing
+README.md	166	- Default normal camera path: generated `dynamic640` INT8 on `rt201`.	active-user-facing
+README.md	167	- Fast-live camera path: official vendor320 INT8 on `rt123`, `320x320` letterbox, with the camera requested at `640x480`.	active-user-facing
+README.md	168	- Vendor320 trusted visual path: official vendor320 INT8 on `rt123`.	active-user-facing
+README.md	169	- Vendor320 low-latency benchmark path: raw `rt201`; this is perf-only, not the default visual path.	active-user-facing
+README.md	170	- Vendor320 `rt201` visual workaround: available and SHA256-guarded, but slower than the `rt123` visual path.	active-user-facing
+README.md	171	- FP16: experimental coverage only; the usable board-side path is `keep_io` FP16 `640x640` on `rt201`/`rt202b1`.	active-user-facing
+README.md	172	Stable `rt202` was evaluated on Day 2 and is not a replacement for `rt202b1`.	active-user-facing
+README.md	185	- vendor320 visual path: `rt123` = `spacemit-ort.riscv64.1.2.3`	active-user-facing
+README.md	186	- vendor320 perf path: `rt201` = `spacemit-ort.riscv64.2.0.1`	active-user-facing
+README.md	187	- primary production dynamic640 path: `rt201` = `spacemit-ort.riscv64.2.0.1`	active-user-facing
+README.md	188	- fast-live camera path: trusted vendor320 visual stack on `rt123`	active-user-facing
+README.md	189	- stable-runtime evaluation path: `rt202` = `spacemit-ort.riscv64.2.0.2`	active-user-facing
+README.md	192	- official vendor YOLO11n INT8 320x320 ONNX	active-user-facing
+README.md	196	- generated model: `models/generated/xquant_640/yolov11n_640x640.dynamic_int8.onnx`	active-user-facing
+README.md	275	- `rt123` -> `spacemit-ort.riscv64.1.2.3`	active-user-facing
+README.md	276	- `rt201` -> `spacemit-ort.riscv64.2.0.1`	active-user-facing
+README.md	277	- `rt202b1` -> `spacemit-ort.riscv64.2.0.2+beta1`	active-user-facing
+README.md	278	- `rt202` -> `spacemit-ort.riscv64.2.0.2`	active-user-facing
+README.md	280	Day 2 evaluated final stable `rt202` as a bounded release-candidate check. It	active-user-facing
+README.md	283	vendor320 test cases even after a board reboot with an idle `/dev/tcm`.	active-user-facing
+README.md	291	Fetch vendor-provided YOLO11n 320x320 models:	active-user-facing
+README.md	297	Outputs land under `models/vendor/yolo11/`.	active-user-facing
+README.md	301	- The official vendor INT8 320x320 model is restored as a trustworthy visual path in this repository, but only on the validated `rt123` stack (`spacemit-ort.riscv64.1.2.3`) with letterbox preprocessing.	active-user-facing
+README.md	302	- The same vendor320 model remains the low-latency benchmark path on `rt201` (`spacemit-ort.riscv64.2.0.1`).	active-user-facing
+README.md	303	- A focused EP/runtime pass on 2026-03-15 found a public `rt201` visual workaround for vendor320:	active-user-facing
+README.md	304	- `SPACEMIT_EP_DISABLE_FLOAT16_EPILOGUE=1`	active-user-facing
+README.md	305	- `SPACEMIT_EP_DISABLE_OP_NAME_FILTER=/model.23/Slice;/model.23/Slice_1;/model.23/Add_1;/model.23/Add_2;/model.23/Sub;/model.23/Sub_1`	active-user-facing
+README.md	306	- this restores semantically good vendor320 detections on the canonical photo and on blank-white sanity input	active-user-facing
+README.md	307	- it is much slower than `rt123`, so it is not the default visual policy	active-user-facing
+README.md	310	- the public vendor YOLO11 C++ example is semantically good on `1.2.2` and `1.2.3`	active-user-facing
+README.md	314	- `rt201` (`2.0.1`) remains semantically bad for vendor320 even when `/dev/tcm` is clean and no `alloc failed(...)` appears	active-user-facing
+README.md	315	- `rt202b1` (`2.0.2+beta1`) behaves like `rt201` for vendor320 and does not restore correct detections	active-user-facing
+README.md	316	- public `1.2.4` package line is semantically good for vendor320, but still breaks the dynamic640 path	active-user-facing
+README.md	318	- exact same `yolov11n_320x320.q.onnx` bundle	active-user-facing
+README.md	323	- no public `2.0.x` combination restored a good vendor320 image result	active-user-facing
+README.md	324	- `rt201`, tarball `rt202b1`, and package `pkg202fix` all remained bad on the same public `q.onnx` bundle	active-user-facing
+README.md	325	- the public float `yolov11n_320x320.onnx` bundle also failed on `2.0.x` with EP-side reshape/compile errors instead of becoming a viable fallback	active-user-facing
+README.md	327	- vendor320 visual -> `rt123`	active-user-facing
+README.md	328	- vendor320 perf -> `rt201`	active-user-facing
+README.md	329	- dynamic640 -> `rt201`	active-user-facing
+README.md	331	- `rt201` can be made visually correct only with the explicit public workaround above	active-user-facing
+README.md	332	- the workaround is far slower than `rt123`, so `rt123` remains the default vendor320 visual runtime	active-user-facing
+README.md	333	- `rt202b1` still remains bad even with the same workaround	active-user-facing
+README.md	339	The repository also carries a reproducible FP16 investigation path for YOLO11n `320x320` and `640x640`.	active-user-facing
+README.md	349	- `models/generated/fp16/yolov11n_<size>x<size>.fp16.onnx`	active-user-facing
+README.md	353	- `models/generated/fp16/yolov11n_<size>x<size>.fp16_iop32.onnx`	active-user-facing
+README.md	371	- public official/vendor YOLO11n FP16 ONNX artifacts were not found for `320` or `640`	active-user-facing
+README.md	373	- `keep_io` FP16 `640x640` works on `rt201` and `rt202b1`	active-user-facing
+README.md	374	- stable `rt202` was evaluated and did not replace `rt202b1`; it aborted on	active-user-facing
+README.md	375	the same FP16 640 path that `rt202b1` runs successfully	active-user-facing
+README.md	377	- `keep_io` FP16 also fails on `rt123` for `640x640`	active-user-facing
+README.md	384	Export YOLO11n from Ultralytics:	active-user-facing
+README.md	387	./scripts/export_ultralytics_onnx.sh 640 yolo11n.pt	active-user-facing
+README.md	393	CALIB_COUNT=10 ./scripts/quantize_xquant.sh 640 /path/to/yolo11n_640x640.onnx yolov11n_640x640.q	active-user-facing
+README.md	399	XQUANT_MODE=dynamic ./scripts/quantize_xquant.sh 640 /path/to/yolo11n_640x640.onnx yolov11n_640x640.dynamic_int8	active-user-facing
+README.md	407	./scripts/quantize_xquant.sh 640 /path/to/yolo11n_640x640.onnx yolov11n_640x640.q	active-user-facing
+README.md	435	- model: `models/generated/xquant_640/yolov11n_640x640.dynamic_int8.onnx`	active-user-facing
+README.md	438	- runtime tag: `rt201`	active-user-facing
+README.md	440	If you explicitly override the model to `models/vendor/yolo11/yolov11n_320x320.q.onnx`, the script auto-selects runtime `rt123` and restores the validated vendor320 visual path. If you explicitly force `BANANA_DEMO_RUNTIME_TAG=rt201`, the script now auto-enables the validated public workaround for visual correctness. Disable that workaround only when you intentionally want the raw low-latency perf path:	active-user-facing
+README.md	443	BANANA_DEMO_RUNTIME_TAG=rt201 BANANA_DEMO_VENDOR320_RT201_VISUAL_FIX=0 ./scripts/run_image_demo.sh /path/to/image.jpg models/vendor/yolo11/yolov11n_320x320.q.onnx 320	active-user-facing
+README.md	461	cd <legacy-home-path>	active-user-facing
+README.md	498	- model: official vendor320 INT8 ONNX	active-user-facing
+README.md	499	- runtime: `rt123`	active-user-facing
+README.md	513	- fast-live vendor320 path, steady post-warmup:	active-user-facing
+README.md	540	BANANA_DEMO_RUNTIME_TAG=rt123 ./scripts/run_camera_demo.sh auto <legacy-home-path> 320	active-user-facing
+README.md	546	SAVE_OUTPUT_REMOTE=<legacy-home-path> ./scripts/run_camera_demo.sh /dev/video20	active-user-facing
+README.md	552	DISPLAY_FLAG=0 HEADLESS_FLAG=1 MAX_FRAMES=1 SAVE_OUTPUT=<legacy-home-path> ./scripts/run_camera_demo_fast.sh	active-user-facing
+README.md	574	cd <legacy-home-path>	active-user-facing
+README.md	593	If you explicitly override the model to the vendor 320x320 INT8 ONNX, the script auto-selects `rt123`. If you explicitly force `BANANA_DEMO_RUNTIME_TAG=rt201`, the visual helpers now auto-enable the validated public workaround. Disable it with `BANANA_DEMO_VENDOR320_RT201_VISUAL_FIX=0` only when you intentionally want the raw low-latency perf stack.	active-user-facing
+README.md	613	- `bench_forward_only.sh` defaults to the low-latency `rt201` stack for vendor320 benchmarking	active-user-facing
+README.md	614	- `bench_full_demo.sh` defaults to the validated visual stack (`rt123` for vendor320, `rt201` otherwise)	active-user-facing
+README.md	615	- override either script with `BANANA_DEMO_RUNTIME_TAG=rt123|rt201` when you need a specific matrix entry	active-user-facing
+README.md	616	- only the visual helpers auto-enable the slower vendor320 `rt201` workaround; forward-only benchmarking keeps the raw perf stack unless you export the workaround variables yourself	active-user-facing
+README.md	652	- `models/generated/xquant_640/yolov11n_640x640.dynamic_int8.onnx`	active-user-facing
+README.md	654	- `models/vendor/yolo11/yolov11n_320x320.q.onnx`	active-user-facing
+README.md	658	- `models/vendor/yolo11/yolov11n_320x320.q.onnx`	active-user-facing
+README.md	659	- Vendor320 trustworthy visual runtime:	active-user-facing
+README.md	660	- `rt123` = `spacemit-ort.riscv64.1.2.3`	active-user-facing
+README.md	661	- Vendor320 low-latency benchmark runtime:	active-user-facing
+README.md	662	- `rt201` = `spacemit-ort.riscv64.2.0.1`	active-user-facing
+README.md	663	- Vendor320 `rt201` visual workaround:	active-user-facing
+README.md	664	- auto-enabled only for visual helpers when you explicitly force `BANANA_DEMO_RUNTIME_TAG=rt201`	active-user-facing
+README.md	665	- guarded by the validated official vendor320 model SHA256 allowlist	active-user-facing
+README.md	666	- disable with `BANANA_DEMO_VENDOR320_RT201_VISUAL_FIX=0`	active-user-facing
+README.md	670	- vendor320 visual path on `rt123`	active-user-facing
+README.md	676	- `<legacy-home-path>`	active-user-facing
+README.md	678	- `<legacy-home-path>`	active-user-facing
+README.md	693	- use `rt123` for trustworthy vendor320 image/camera inference:	active-user-facing
+README.md	694	- `BANANA_DEMO_RUNTIME_TAG=rt123`	active-user-facing
+README.md	695	- if you explicitly force `rt201` in the visual helpers, the scripts now auto-enable the validated public workaround	active-user-facing
+README.md	697	- `BANANA_DEMO_RUNTIME_TAG=rt201 BANANA_DEMO_VENDOR320_RT201_VISUAL_FIX=0`	active-user-facing
+README.md	698	- a clean-room recheck on 2026-03-14 showed that raw `rt201` remains wrong even without any `/dev/tcm` contention	active-user-facing
+README.md	699	- `rt202b1` still does not fix vendor320 even with the same public workaround	active-user-facing
+README.md	700	- public `1.2.4` is good for vendor320, but it still breaks dynamic640, so it is not the repo default	active-user-facing
+README.md	706	- `./scripts/vendor320_runtime_matrix.sh` saves a compact `rt123` / `rt201 raw` / `rt201 fixed` comparison table plus annotated outputs	active-user-facing
+custom_int8_engine/CMakeLists.txt	25	"set(Y26_K1X_SPACEMIT_EP_LIBRARY """" CACHE FILEPATH ""Optional SpacemiT EP library for Stage46 runtime probes"")"	active-user-facing
+custom_int8_engine/CMakeLists.txt	744	if(Y26_K1X_SPACEMIT_EP_LIBRARY)	active-user-facing
+custom_int8_engine/CMakeLists.txt	752	"""${Y26_K1X_SPACEMIT_EP_LIBRARY}"""	active-user-facing
+Doxyfile	2	"PROJECT_NAME           = ""banana-yolo11-spacemit-demo"""	active-user-facing
+scripts/fetch_vendor_runtime.sh	36	"elif [[ -f ""${ROOT_DIR}/.deps/runtimes/rt204/downloads/${name}.tar.gz"" ]]; then"	active-build-runtime
+scripts/fetch_vendor_runtime.sh	37	"cp -f ""${ROOT_DIR}/.deps/runtimes/rt204/downloads/${name}.tar.gz"" ""${archive}"""	active-build-runtime
+CMakeLists.txt	3	@brief Top-level CMake entry point for the Banana YOLO11 SpaceMIT demo.	active-build-runtime
+CMakeLists.txt	10	project(banana_yolo11_spacemit_demo VERSION 0.1.0 LANGUAGES CXX)	active-build-runtime
+CMakeLists.txt	25	find_package(VendorSpacemitOrt REQUIRED)	active-build-runtime
+CMakeLists.txt	30	src/infer/yolo11_detector.cpp	active-build-runtime
+CMakeLists.txt	47	Vendor::spacemit_ep	active-build-runtime
+CMakeLists.txt	76	add_executable(banana_yolo11_demo src/main.cpp)	active-build-runtime
+CMakeLists.txt	77	target_link_libraries(banana_yolo11_demo PRIVATE banana_demo_core)	active-build-runtime
+CMakeLists.txt	81	set_target_properties(banana_yolo11_demo PROPERTIES	active-build-runtime
+CMakeLists.txt	90	install(TARGETS banana_yolo11_demo yolo26_coco_predict	active-build-runtime
+scripts/fetch_rt204_runtime.sh	2	# @file fetch_rt204_runtime.sh	active-build-runtime
+scripts/fetch_rt204_runtime.sh	6	# YOLO11 runtime policy.	active-build-runtime
+scripts/fetch_rt204_runtime.sh	11	"DEST_DIR=""${DEST_DIR:-${ROOT_DIR}/.deps/runtimes/rt204/downloads}"""	active-build-runtime
+scripts/fetch_rt204_runtime.sh	12	"UNPACK_DIR=""${UNPACK_DIR:-${ROOT_DIR}/.deps/runtimes/rt204/unpacked}"""	active-build-runtime
+scripts/fetch_rt204_runtime.sh	13	"URL=""${RT204_URL:-https://github.com/spacemit-com/onnxruntime/releases/download/2.0.4/spacemit-ort.riscv64.2.0.4.tar.gz}"""	active-build-runtime
+scripts/fetch_rt204_runtime.sh	14	"SHA256_EXPECTED=""${RT204_SHA256:-bcf02bd12b8a1df969d6986658a9270c1121e5d58f5947d91ea5eba1bd6cd435}"""	active-build-runtime
+scripts/fetch_rt204_runtime.sh	22	"printf 'rt204_archive=%s\n' ""${ARCHIVE}"""	active-build-runtime
+scripts/fetch_rt204_runtime.sh	23	"printf 'rt204_unpack_dir=%s\n' ""${UNPACK_DIR}/spacemit-ort.riscv64.2.0.4"""	active-build-runtime
+src/infer/yolo11_detector.cpp	2	* @file yolo11_detector.cpp	active-build-runtime
+src/infer/yolo11_detector.cpp	3	* @brief ONNX Runtime backed YOLO11 preprocessing, execution, and decode logic.	active-build-runtime
+src/infer/yolo11_detector.cpp	35	"""SPACEMIT_EP_DISABLE_OP_TYPE_FILTER"","	active-build-runtime
+src/infer/yolo11_detector.cpp	36	"""SPACEMIT_EP_DISABLE_OP_NAME_FILTER"","	active-build-runtime
+src/infer/yolo11_detector.cpp	37	"""SPACEMIT_EP_DISABLE_FLOAT16_EPILOGUE"","	active-build-runtime
+src/infer/yolo11_detector.cpp	38	"""SPACEMIT_EP_DUMP_SUBGRAPHS"","	active-build-runtime
+src/infer/yolo11_detector.cpp	39	"""SPACEMIT_EP_DEBUG_PROFILE"","	active-build-runtime
+src/infer/yolo11_detector.cpp	40	"""SPACEMIT_EP_DUMP_TENSORS"","	active-build-runtime
+src/infer/yolo11_detector.cpp	109	"return name == ""yolov11n_320x320.fp16_iop32.onnx"" || name == ""yolov11n_640x640.fp16_iop32.onnx"";"	active-build-runtime
+src/infer/yolo11_detector.cpp	116	"return name == ""yolov11n_320x320.fp16.onnx"" || name == ""yolov11n_640x640.fp16.onnx"";"	active-build-runtime
+src/infer/yolo11_detector.cpp	235	Yolo11Detector::Yolo11Detector(const AppOptions& options)	active-build-runtime
+src/infer/yolo11_detector.cpp	236	": options_(options), env_(ORT_LOGGING_LEVEL_WARNING, ""banana_yolo11_demo"")"	active-build-runtime
+src/infer/yolo11_detector.cpp	243	void Yolo11Detector::LoadLabels()	active-build-runtime
+src/infer/yolo11_detector.cpp	255	void Yolo11Detector::ResolveInputShape()	active-build-runtime
+src/infer/yolo11_detector.cpp	416	void Yolo11Detector::BuildSession()	active-build-runtime
+src/infer/yolo11_detector.cpp	450	Yolo11Detector::PreprocessMode Yolo11Detector::ResolvePreprocessMode() const	active-build-runtime
+src/infer/yolo11_detector.cpp	459	bool Yolo11Detector::PreprocessToNchw(const cv::Mat& bgr, std::vector<float>& nchw, PreprocessInfo& info) const	active-build-runtime
+src/infer/yolo11_detector.cpp	484	// Letterbox is the repository's default truth source for vendor320 visual and dynamic640.	active-build-runtime
+src/infer/yolo11_detector.cpp	553	Yolo11Detector::OutputTensor Yolo11Detector::RunSingle(const std::vector<float>& nchw) const	active-build-runtime
+src/infer/yolo11_detector.cpp	621	std::vector<Detection> Yolo11Detector::Decode(const OutputTensor& output, const PreprocessInfo& info) const	active-build-runtime
+src/infer/yolo11_detector.cpp	771	InferenceResult Yolo11Detector::ProcessImage(const cv::Mat& bgr, bool render_output)	active-build-runtime
+src/infer/yolo11_detector.cpp	803	BenchmarkSummary Yolo11Detector::BenchmarkImage(const cv::Mat& bgr)	active-build-runtime
+src/infer/yolo11_detector.cpp	892	const std::vector<std::string>& Yolo11Detector::Labels() const	active-build-runtime
+src/infer/yolo11_detector.cpp	897	int Yolo11Detector::InputWidth() const	active-build-runtime
+src/infer/yolo11_detector.cpp	902	int Yolo11Detector::InputHeight() const	active-build-runtime
+src/infer/yolo11_detector.cpp	907	const std::string& Yolo11Detector::InputName() const	active-build-runtime
+src/infer/yolo11_detector.cpp	912	std::string Yolo11Detector::ProviderSummary() const	active-build-runtime
+scripts/fetch_or_build_fp16_models.sh	3	## @brief Prepare reproducible YOLO11n FP16 ONNX models for 320 and 640 tests.	active-build-runtime
+scripts/fetch_or_build_fp16_models.sh	13	"SOURCE_320=""${FP16_SOURCE_320:-${ROOT_DIR}/models/vendor/yolo11/yolov11n_320x320.onnx}"""	active-build-runtime
+scripts/fetch_or_build_fp16_models.sh	14	"SOURCE_640=""${FP16_SOURCE_640:-${ROOT_DIR}/models/generated/yolo11n.onnx}"""	active-build-runtime
+scripts/fetch_or_build_fp16_models.sh	28	models/generated/fp16/yolov11n_320x320.fp16*.onnx	active-build-runtime
+scripts/fetch_or_build_fp16_models.sh	29	models/generated/fp16/yolov11n_640x640.fp16*.onnx	active-build-runtime
+scripts/fetch_or_build_fp16_models.sh	46	"(cd ""${ROOT_DIR}"" && ./scripts/export_ultralytics_onnx.sh 640 yolo11n.pt)"	active-build-runtime
+scripts/fetch_or_build_fp16_models.sh	155	"convert_one_model ""${SOURCE_320}"" ""${OUT_DIR}/yolov11n_320x320${suffix}"" ""${keep_io_flag}"""	active-build-runtime
+scripts/fetch_or_build_fp16_models.sh	157	"convert_one_model ""${SOURCE_640}"" ""${OUT_DIR}/yolov11n_640x640${suffix}"" ""${keep_io_flag}"""	active-build-runtime
+scripts/fetch_models.sh	3	## @brief Fetch pinned public vendor YOLO11 model artifacts.	active-build-runtime
+scripts/fetch_models.sh	10	"OUT_DIR=""${ROOT_DIR}/models/vendor/yolo11"""	active-build-runtime
+scripts/fetch_models.sh	34	"fetch_file ""vendor_yolo11_fp32_320_url"" ""yolov11n_320x320.onnx"""	active-build-runtime
+scripts/fetch_models.sh	35	"fetch_file ""vendor_yolo11_int8_320_url"" ""yolov11n_320x320.q.onnx"""	active-build-runtime
+scripts/fetch_models.sh	36	"fetch_file ""vendor_yolo11_xquant_config_url"" ""xquant_config_vendor_320.json"""	active-build-runtime
+scripts/fetch_models.sh	39	"echo ""Note: no official vendor 640x640 INT8 YOLO11n model URL is currently pinned in third_party_manifest/models.lock."""	active-build-runtime
+src/app/options.cpp	195	"<< ""Usage: banana_yolo11_demo [options]\n"""	active-build-runtime
+src/app/options.cpp	227	"<< ""  - The official vendor 320x320 INT8 model is validated as a visual path with runtime rt123 and letterbox preprocessing.\n"""	active-build-runtime
+src/app/options.cpp	228	"<< ""  - The public tarball 2.0.1 stack remains the low-latency vendor320 benchmark path and the validated dynamic640 path.\n"""	active-build-runtime
+src/app/options.cpp	229	"<< ""  - A slower public rt201 visual workaround exists for vendor320 by disabling the float16 epilogue and keeping the /model.23 tail Slice/Add/Sub ops on CPU.\n"""	active-build-runtime
+src/app/options.cpp	231	"<< ""  - Wrapper scripts auto-select the validated runtime by model and purpose; override with BANANA_DEMO_RUNTIME_TAG=rt123|rt201|rt202b1.\n"""	active-build-runtime
+src/app/options.cpp	235	"<< ""  banana_yolo11_demo --model models/generated/xquant_640/yolov11n_640x640.dynamic_int8.onnx """	active-build-runtime
+src/app/options.cpp	238	"<< ""  banana_yolo11_demo --model models/generated/yolov11n_640x640.q.onnx """	active-build-runtime
+scripts/vendor320_runtime_matrix.sh	2	## @file vendor320_runtime_matrix.sh	active-build-runtime
+scripts/vendor320_runtime_matrix.sh	3	## @brief Generate a compact vendor320 runtime comparison bundle.	active-build-runtime
+scripts/vendor320_runtime_matrix.sh	9	## @brief Print CLI usage for the vendor320 runtime matrix helper.	active-build-runtime
+scripts/vendor320_runtime_matrix.sh	13	vendor320_runtime_matrix.sh [image_path] [output_dir]	active-build-runtime
+scripts/vendor320_runtime_matrix.sh	16	Run a compact vendor320 visual/runtime matrix and save annotated outputs plus a CSV/Markdown summary.	active-build-runtime
+scripts/vendor320_runtime_matrix.sh	19	- rt123 visual reference	active-build-runtime
+scripts/vendor320_runtime_matrix.sh	20	- rt201 raw	active-build-runtime
+scripts/vendor320_runtime_matrix.sh	21	- rt201 fixed	active-build-runtime
+scripts/vendor320_runtime_matrix.sh	22	- rt202b1 raw (if staged locally)	active-build-runtime
+scripts/vendor320_runtime_matrix.sh	31	## @brief Run the validated vendor320 runtime matrix locally on Banana.	active-build-runtime
+scripts/vendor320_runtime_matrix.sh	38	"model_sha256=""$(banana_demo_vendor320_model_hash ""${model_path}"" 2>/dev/null || banana_demo_sha256_file ""${model_path}"" 2>/dev/null || echo unknown)"""	active-build-runtime
+scripts/vendor320_runtime_matrix.sh	45	"local runtimes=(""rt123:auto"" ""rt201:0"" ""rt201:1"")"	active-build-runtime
+scripts/vendor320_runtime_matrix.sh	46	"if [[ -d ""${repo_dir}/runtime/rt202b1"" ]]; then"	active-build-runtime
+scripts/vendor320_runtime_matrix.sh	47	"runtimes+=(""rt202b1:0"")"	active-build-runtime
+scripts/vendor320_runtime_matrix.sh	56	"[[ ""${fix_mode}"" == ""0"" && ""${runtime_tag}"" == ""rt201"" ]] && name=""${name}_raw"""	active-build-runtime
+scripts/vendor320_runtime_matrix.sh	62	"BANANA_DEMO_VENDOR320_RT201_VISUAL_FIX=""${fix_mode}"" \"	active-build-runtime
+scripts/vendor320_runtime_matrix.sh	71	"applied=""$(grep -E '^vendor320_rt201_visual_fix_applied=' ""${log_out}.stdout"" | tail -n1 | cut -d= -f2- || true)"""	active-build-runtime
+scripts/vendor320_runtime_matrix.sh	96	"OUT_DIR=""${2:-${OUT_DIR:-${REPO_DIR}/outputs/vendor320_runtime_matrix_$(date +%Y%m%d_%H%M%S)}}"""	active-build-runtime
+scripts/vendor320_runtime_matrix.sh	106	"IMAGE_PATH=""${1:-<legacy-home-path>"""	active-build-runtime
+scripts/vendor320_runtime_matrix.sh	107	"OUT_DIR=""${2:-${BOARD_DIR}/outputs/vendor320_runtime_matrix_$(date +%Y%m%d_%H%M%S)}"""	active-build-runtime
+scripts/vendor320_runtime_matrix.sh	109	"ssh ""${TARGET}"" ""cd '${BOARD_DIR}' && BANANA_DEMO_EXEC_MODE=board ./scripts/vendor320_runtime_matrix.sh '${REMOTE_IMAGE_PATH}' '${OUT_DIR}'"""	active-build-runtime
+scripts/export_ultralytics_onnx.sh	3	## @brief Export a fixed-size Ultralytics YOLO11 model to ONNX.	active-build-runtime
+scripts/export_ultralytics_onnx.sh	10	"MODEL_NAME=""${2:-yolo11n.pt}"""	active-build-runtime
+src/app/application.cpp	121	"return renderer.TryShow(""banana_yolo11_demo_camera"", preview, error);"	active-build-runtime
+src/app/application.cpp	183	Yolo11Detector detector(options_);	active-build-runtime
+src/app/application.cpp	243	"if (!renderer.TryShow(""banana_yolo11_demo"", result.annotated, error))"	active-build-runtime
+src/app/application.cpp	311	Yolo11Detector detector(options_);	active-build-runtime
+src/app/application.cpp	410	"if (!renderer.TryShow(""banana_yolo11_demo_camera"", result.annotated, error))"	active-build-runtime
+tools/yolo26_coco_predict.cpp	3	* @brief Batch COCO prediction harness for YOLO26 vendor-ORT rt204 R&D gates.	active-user-facing
+tools/yolo26_coco_predict.cpp	168	banana_demo::Yolo11Detector detector(options);	active-user-facing
+tools/xslim_yolo26_gate.py	5	without touching the frozen YOLO11 production repository. It supports YOLO26	active-user-facing
+tools/xslim_yolo26_gate.py	399	"""""""Decode board output bins produced by `rt204_tensor_probe`."""""""	active-user-facing
+tools/xslim_yolo26_gate.py	408	"output_bin = board / f""{cand.name}_{entry['image_id']}_rt204_ep.bin"""	active-user-facing
+tools/xslim_yolo26_gate.py	419	"out_img = out / ""xslim_rt204"" / f""{cand.name}_{entry['image_id']}.jpg"""	active-user-facing
+tools/xslim_yolo26_gate.py	433	"write_table(out / ""xslim_rt204_decode_matrix.tsv"", rows, fields)"	active-user-facing
+tools/xslim_yolo26_gate.py	434	"write_table(out / ""xslim_rt204_decode_matrix.md"", rows, fields)"	active-user-facing
+scripts/run_image_demo.sh	23	- visual runs auto-select the validated rt123 stack	active-build-runtime
+scripts/run_image_demo.sh	24	- if you explicitly force rt201 in visual mode, the script auto-enables the validated public workaround	active-build-runtime
+scripts/run_image_demo.sh	25	- low-latency benchmark runs can still force raw rt201 behavior via BANANA_DEMO_RUNTIME_TAG=rt201 and BANANA_DEMO_VENDOR320_RT201_VISUAL_FIX=0	active-build-runtime
+scripts/run_image_demo.sh	28	BANANA_DEMO_RUNTIME_TAG=auto|rt123|rt201|rt202b1|rt202	active-build-runtime
+scripts/run_image_demo.sh	29	BANANA_DEMO_VENDOR320_RT201_VISUAL_FIX=auto|0|1	active-build-runtime
+scripts/run_image_demo.sh	60	"banana_demo_apply_vendor320_rt201_visual_fix ""${MODEL_PATH}"" ""${RUNTIME_TAG}"" ""visual"""	active-build-runtime
+scripts/run_image_demo.sh	69	"echo ""vendor320_rt201_visual_fix_applied=${BANANA_DEMO_VENDOR320_RT201_VISUAL_FIX_APPLIED:-0}"" >&2"	active-build-runtime
+scripts/run_image_demo.sh	70	"if banana_demo_is_vendor320_model ""${MODEL_PATH}""; then"	active-build-runtime
+scripts/run_image_demo.sh	71	"echo ""vendor320_model_sha256=$(banana_demo_vendor320_model_hash ""${MODEL_PATH}"" 2>/dev/null || echo unknown)"" >&2"	active-build-runtime
+scripts/run_image_demo.sh	73	"if banana_demo_is_vendor320_model ""${MODEL_PATH}"" && [[ ""${RUNTIME_TAG}"" == ""rt201"" ]] && [[ ""${BANANA_DEMO_VENDOR320_RT201_VISUAL_FIX_APPLIED:-0}"" != ""1"" ]] && [[ ""${BANANA_DEMO_SUPPRESS_VENDOR320_WARN:-0}"" != ""1"" ]]; then"	active-build-runtime
+scripts/run_image_demo.sh	74	"echo ""WARN: vendor320 on rt201 is using the raw perf-oriented path; set BANANA_DEMO_VENDOR320_RT201_VISUAL_FIX=1 or prefer the default rt123 visual path."" >&2"	active-build-runtime
+scripts/run_image_demo.sh	98	"IMAGE_PATH=""${1:-<legacy-home-path>"""	active-build-runtime
+scripts/run_image_demo.sh	127	BANANA_DEMO_VENDOR320_RT201_VISUAL_FIX='${BANANA_DEMO_VENDOR320_RT201_VISUAL_FIX:-auto}' \	active-build-runtime
+tools/yolo26_fp32_baseline.py	8	oracles, and decodes board-side rt204 tensor dumps.	active-user-facing
+tools/yolo26_fp32_baseline.py	311	"output_bin = board_dir / f""{entry.image_id}_rt204_ep.bin"""	active-user-facing
+tools/yolo26_fp32_baseline.py	319	"out_img = out / ""fp32_oracle"" / f""{entry.image_id}_rt204_ep.jpg"""	active-user-facing
+tools/yolo26_fp32_baseline.py	321	"rows.append(asdict(summarize(entry.image_id, ""rt204_spacemit_ep"", model_onnx, output, dets, names, out_img, ""pass"")))"	active-user-facing
+tools/yolo26_fp32_baseline.py	322	"write_tsv(out / ""yolo26_rt204_ep_decode_matrix.tsv"", rows, SUMMARY_FIELDS)"	active-user-facing
+tools/yolo26_fp32_baseline.py	323	"write_md_table(out / ""yolo26_rt204_ep_decode_matrix.md"", rows, SUMMARY_FIELDS)"	active-user-facing
+scripts/run_camera_demo_fast.sh	5	## a measured lower-latency live profile based on the trusted vendor320 visual	active-build-runtime
+scripts/run_camera_demo_fast.sh	6	## stack (`rt123` + official vendor320 model + 320 letterbox inference).	active-build-runtime
+scripts/run_camera_demo_fast.sh	20	- model: official vendor320 INT8	active-build-runtime
+scripts/run_camera_demo_fast.sh	21	- runtime: rt123 visual path	active-build-runtime
+scripts/run_camera_demo_fast.sh	29	the trusted vendor320 visual stack and does not silently switch to a raw perf	active-build-runtime
+scripts/run_camera_demo_fast.sh	33	BANANA_DEMO_RUNTIME_TAG=auto|rt123|rt201|rt202b1|rt202	active-build-runtime
+scripts/run_camera_demo_fast.sh	34	BANANA_DEMO_VENDOR320_RT201_VISUAL_FIX=auto|0|1	active-build-runtime
+scripts/run_camera_demo_fast.sh	71	"export BANANA_DEMO_VENDOR320_RT201_VISUAL_FIX=""${BANANA_DEMO_VENDOR320_RT201_VISUAL_FIX:-auto}"""	active-build-runtime
+scripts/run_camera_demo.sh	34	- model: official vendor320 INT8	active-build-runtime
+scripts/run_camera_demo.sh	35	- runtime: rt123 visual path	active-build-runtime
+scripts/run_camera_demo.sh	40	- visual runs auto-select the validated rt123 stack	active-build-runtime
+scripts/run_camera_demo.sh	41	- if you explicitly force rt201 in visual mode, the script auto-enables the validated public workaround	active-build-runtime
+scripts/run_camera_demo.sh	42	- low-latency benchmarking can still force raw rt201 behavior via BANANA_DEMO_RUNTIME_TAG=rt201 and BANANA_DEMO_VENDOR320_RT201_VISUAL_FIX=0	active-build-runtime
+scripts/run_camera_demo.sh	45	BANANA_DEMO_RUNTIME_TAG=auto|rt123|rt201|rt202b1|rt202	active-build-runtime
+scripts/run_camera_demo.sh	46	BANANA_DEMO_VENDOR320_RT201_VISUAL_FIX=auto|0|1	active-build-runtime
+scripts/run_camera_demo.sh	100	"banana_demo_apply_vendor320_rt201_visual_fix ""${MODEL_PATH}"" ""${RUNTIME_TAG}"" ""visual"""	active-build-runtime
+scripts/run_camera_demo.sh	102	"if banana_demo_is_vendor320_model ""${MODEL_PATH}"" && [[ ""${RUNTIME_TAG}"" == ""rt201"" ]] && [[ ""${BANANA_DEMO_VENDOR320_RT201_VISUAL_FIX_APPLIED:-0}"" != ""1"" ]] && [[ ""${BANANA_DEMO_SUPPRESS_VENDOR320_WARN:-0}"" != ""1"" ]]; then"	active-build-runtime
+scripts/run_camera_demo.sh	103	"echo ""WARN: vendor320 on rt201 is using the raw perf-oriented path; set BANANA_DEMO_VENDOR320_RT201_VISUAL_FIX=1 or prefer the default rt123 visual path."" >&2"	active-build-runtime
+scripts/run_camera_demo.sh	119	"echo ""vendor320_rt201_visual_fix_applied=${BANANA_DEMO_VENDOR320_RT201_VISUAL_FIX_APPLIED:-0}"" >&2"	active-build-runtime
+scripts/run_camera_demo.sh	120	"if banana_demo_is_vendor320_model ""${MODEL_PATH}""; then"	active-build-runtime
+scripts/run_camera_demo.sh	121	"echo ""vendor320_model_sha256=$(banana_demo_vendor320_model_hash ""${MODEL_PATH}"" 2>/dev/null || echo unknown)"" >&2"	active-build-runtime
+scripts/run_camera_demo.sh	123	"if [[ ""${BANANA_DEMO_VENDOR320_RT201_VISUAL_FIX_APPLIED:-0}"" == ""1"" ]]; then"	active-build-runtime
+scripts/run_camera_demo.sh	124	"echo ""SPACEMIT_EP_DISABLE_FLOAT16_EPILOGUE=${SPACEMIT_EP_DISABLE_FLOAT16_EPILOGUE:-}"" >&2"	active-build-runtime
+scripts/run_camera_demo.sh	125	"echo ""SPACEMIT_EP_DISABLE_OP_NAME_FILTER=${SPACEMIT_EP_DISABLE_OP_NAME_FILTER:-}"" >&2"	active-build-runtime
+scripts/run_camera_demo.sh	184	"remote_cmd=""cd '${BOARD_DIR}' && BANANA_DEMO_EXEC_MODE=board QUIET=0 DISPLAY_FLAG='${DISPLAY_FLAG}' HEADLESS_FLAG='${HEADLESS_FLAG}' CONFIDENCE='${CONFIDENCE}' LOG_FILE='${LOG_FILE_REMOTE}' BANANA_DEMO_RUNTIME_TAG='${BANANA_DEMO_RUNTIME_TAG:-auto}' BANANA_DEMO_VENDOR320_RT201_VISUAL_FIX='${BANANA_DEMO_VENDOR320_RT201_VISUAL_FIX:-auto}'"""	active-build-runtime
+include/banana_demo/infer/detector.h	3	* @brief YOLO11 inference and post-processing interfaces.	active-build-runtime
+include/banana_demo/infer/detector.h	97	* @brief Thin ONNX Runtime based YOLO11 detector wrapper.	active-build-runtime
+include/banana_demo/infer/detector.h	102	class Yolo11Detector	active-build-runtime
+include/banana_demo/infer/detector.h	109	explicit Yolo11Detector(const AppOptions& options);	active-build-runtime
+include/banana_demo/infer/detector.h	140	* @details Vendor320 and the dynamic640 path both use letterbox as the	active-build-runtime
+scripts/deploy_to_banana.sh	8	"BOARD_DIR=""${BOARD_DIR:-<legacy-home-path>"""	active-build-runtime
+scripts/deploy_to_banana.sh	16	"VARIANTS=""${BANANA_DEMO_DEPLOY_VARIANTS:-${BANANA_DEMO_BUILD_VARIANTS:-rt123,rt201}}"""	active-build-runtime
+scripts/deploy_to_banana.sh	24	"rsync -avc ""${ROOT_DIR}/install/k1x-release-${runtime_tag}/bin/banana_yolo11_demo"" ""${TARGET}:${BOARD_DIR}/bin/banana_yolo11_demo_${runtime_tag}"""	active-build-runtime
+scripts/deploy_to_banana.sh	30	"if [[ -x ""${ROOT_DIR}/install/k1x-release-rt201/bin/banana_yolo11_demo"" ]]; then"	active-build-runtime
+scripts/deploy_to_banana.sh	31	"rsync -avc ""${ROOT_DIR}/install/k1x-release-rt201/bin/banana_yolo11_demo"" ""${TARGET}:${BOARD_DIR}/app/bin/banana_yolo11_demo"""	active-build-runtime
+scripts/bench_fp16_matrix.sh	3	## @brief Run a reproducible YOLO11n FP16 benchmark matrix across staged runtimes.	active-build-runtime
+scripts/bench_fp16_matrix.sh	20	- runtimes: rt123,rt201,rt202b1	active-build-runtime
+scripts/bench_fp16_matrix.sh	26	FP16_RUNTIME_TAGS=rt123,rt201,rt202b1,rt202	active-build-runtime
+scripts/bench_fp16_matrix.sh	49	"printf '%s\n' ""${repo_root}/models/generated/fp16/yolov11n_${size}x${size}.fp16_iop32.onnx"""	active-build-runtime
+scripts/bench_fp16_matrix.sh	52	"printf '%s\n' ""${repo_root}/models/generated/fp16/yolov11n_${size}x${size}.fp16.onnx"""	active-build-runtime
+scripts/bench_fp16_matrix.sh	168	"local runtimes_csv=""${FP16_RUNTIME_TAGS:-rt123,rt201,rt202b1}"""	active-build-runtime
+scripts/bench_fp16_matrix.sh	310	"BANANA_DEMO_BUILD_VARIANTS=""${FP16_RUNTIME_TAGS:-rt123,rt201,rt202b1}"" \"	active-build-runtime
+scripts/bench_fp16_matrix.sh	311	"BANANA_DEMO_DEPLOY_VARIANTS=""${FP16_RUNTIME_TAGS:-rt123,rt201,rt202b1}"" \"	active-build-runtime
+scripts/bench_fp16_matrix.sh	315	"ssh ""${TARGET}"" ""cd '${BOARD_DIR}' && BANANA_DEMO_EXEC_MODE=board FP16_RUNTIME_TAGS='${FP16_RUNTIME_TAGS:-rt123,rt201,rt202b1}' FP16_MODEL_VARIANT='${FP16_MODEL_VARIANT:-keep_io}' FP16_WARMUP='${FP16_WARMUP:-10}' FP16_RUNS='${FP16_RUNS:-100}' FP16_REPEATS='${FP16_REPEATS:-5}' FP16_PERF_REPEATS='${FP16_PERF_REPEATS:-100}' ./scripts/bench_fp16_matrix.sh '${REMOTE_OUT_DIR}' '${REMOTE_IMAGE_PATH}'"""	active-build-runtime
+scripts/bench_forward_only.sh	22	BANANA_DEMO_RUNTIME_TAG=auto|rt123|rt201|rt202b1|rt202	active-build-runtime
+scripts/bench_forward_only.sh	23	- auto/perf defaults to rt201 for vendor320 low-latency benchmarking	active-build-runtime
+scripts/bench_forward_only.sh	86	"IMAGE_PATH=""${3:-<legacy-home-path>"""	active-build-runtime
+scripts/common.sh	4	## @details This file centralizes runtime selection, validated vendor320	active-build-runtime
+scripts/common.sh	40	"printf '%s\n' ""${BOARD_DIR:-<legacy-home-path>"""	active-build-runtime
+scripts/common.sh	46	"printf '%s\n' ""${repo_root}/models/generated/xquant_640/yolov11n_640x640.dynamic_int8.onnx"""	active-build-runtime
+scripts/common.sh	53	## @brief Return the official vendor320 benchmark model path.	active-build-runtime
+scripts/common.sh	56	"printf '%s\n' ""${repo_root}/models/vendor/yolo11/yolov11n_320x320.q.onnx"""	active-build-runtime
+scripts/common.sh	62	"printf '%s\n' ""${repo_root}/models/vendor/yolo11/yolov11n_320x320.q.onnx"""	active-build-runtime
+scripts/common.sh	85	## @brief Return whether a model path refers to the public vendor320 bundle.	active-build-runtime
+scripts/common.sh	86	banana_demo_is_vendor320_model() {	active-build-runtime
+scripts/common.sh	88	"[[ ""$(basename ""${model_path}"")"" == ""yolov11n_320x320.q.onnx"" ]]"	active-build-runtime
+scripts/common.sh	106	## @brief Check whether a hash matches the validated public vendor320 bundle.	active-build-runtime
+scripts/common.sh	107	banana_demo_is_validated_vendor320_model_hash() {	active-build-runtime
+scripts/common.sh	117	## @brief Compute the official vendor320 model hash if the path matches the bundle name.	active-build-runtime
+scripts/common.sh	118	banana_demo_vendor320_model_hash() {	active-build-runtime
+scripts/common.sh	120	"banana_demo_is_vendor320_model ""${model_path}"" || return 1"	active-build-runtime
+scripts/common.sh	124	## @brief Return whether the model path matches the validated official vendor320 bundle.	active-build-runtime
+scripts/common.sh	125	banana_demo_is_validated_vendor320_model() {	active-build-runtime
+scripts/common.sh	128	"model_hash=""$(banana_demo_vendor320_model_hash ""${model_path}"" 2>/dev/null || true)"""	active-build-runtime
+scripts/common.sh	130	"banana_demo_is_validated_vendor320_model_hash ""${model_hash}"""	active-build-runtime
+scripts/common.sh	143	rt123)	active-build-runtime
+scripts/common.sh	146	rt201)	active-build-runtime
+scripts/common.sh	149	rt202b1)	active-build-runtime
+scripts/common.sh	152	rt202)	active-build-runtime
+scripts/common.sh	155	rt204)	active-build-runtime
+scripts/common.sh	159	"echo ""ERROR: unsupported runtime tag=${runtime_tag}; use rt123|rt201|rt202b1|rt202|rt204"" >&2"	active-build-runtime
+scripts/common.sh	177	"local candidate=""${repo_root}/bin/banana_yolo11_demo_${runtime_tag}"""	active-build-runtime
+scripts/common.sh	182	"printf '%s\n' ""${repo_root}/bin/banana_yolo11_demo"""	active-build-runtime
+scripts/common.sh	197	rt123|1.2.3)	active-build-runtime
+scripts/common.sh	198	printf 'rt123\n'	active-build-runtime
+scripts/common.sh	201	rt201|2.0.1)	active-build-runtime
+scripts/common.sh	202	printf 'rt201\n'	active-build-runtime
+scripts/common.sh	205	rt202b1|2.0.2+beta1)	active-build-runtime
+scripts/common.sh	206	printf 'rt202b1\n'	active-build-runtime
+scripts/common.sh	209	rt202|2.0.2)	active-build-runtime
+scripts/common.sh	210	printf 'rt202\n'	active-build-runtime
+scripts/common.sh	213	rt204|2.0.4)	active-build-runtime
+scripts/common.sh	214	printf 'rt204\n'	active-build-runtime
+scripts/common.sh	218	"echo ""ERROR: unsupported BANANA_DEMO_RUNTIME_TAG=${override}; use auto|rt123|rt201|rt202b1|rt202|rt204"" >&2"	active-build-runtime
+scripts/common.sh	235	printf 'rt201\n'	active-build-runtime
+scripts/common.sh	239	"if banana_demo_is_validated_vendor320_model ""${model_path}""; then"	active-build-runtime
+scripts/common.sh	240	printf 'rt123\n'	active-build-runtime
+scripts/common.sh	244	printf 'rt201\n'	active-build-runtime
+scripts/common.sh	273	## @brief Apply the validated public rt201 visual workaround for vendor320.	active-build-runtime
+scripts/common.sh	275	## the exact official vendor320 bundle that was validated during the forensic	active-build-runtime
+scripts/common.sh	277	banana_demo_apply_vendor320_rt201_visual_fix() {	active-build-runtime
+scripts/common.sh	281	"local mode=""${BANANA_DEMO_VENDOR320_RT201_VISUAL_FIX:-auto}"""	active-build-runtime
+scripts/common.sh	283	export BANANA_DEMO_VENDOR320_RT201_VISUAL_FIX_APPLIED=0	active-build-runtime
+scripts/common.sh	285	"banana_demo_is_vendor320_model ""${model_path}"" || return 0"	active-build-runtime
+scripts/common.sh	286	"[[ ""${runtime_tag}"" == ""rt201"" ]] || return 0"	active-build-runtime
+scripts/common.sh	287	"model_hash=""$(banana_demo_vendor320_model_hash ""${model_path}"" 2>/dev/null || true)"""	active-build-runtime
+scripts/common.sh	299	"echo ""ERROR: unsupported BANANA_DEMO_VENDOR320_RT201_VISUAL_FIX=${mode}; use auto|0|1"" >&2"	active-build-runtime
+scripts/common.sh	304	"if ! banana_demo_is_validated_vendor320_model_hash ""${model_hash}""; then"	active-build-runtime
+scripts/common.sh	306	"echo ""WARN: skipping vendor320 rt201 visual workaround because model identity is not the validated official bundle (sha256=${model_hash:-unknown})."" >&2"	active-build-runtime
+scripts/common.sh	309	"echo ""ERROR: refusing to apply vendor320 rt201 visual workaround to an unvalidated model (sha256=${model_hash:-unknown})."" >&2"	active-build-runtime
+scripts/common.sh	313	export SPACEMIT_EP_DISABLE_FLOAT16_EPILOGUE=1	active-build-runtime
+scripts/common.sh	314	"export SPACEMIT_EP_DISABLE_OP_NAME_FILTER=""/model.23/Slice;/model.23/Slice_1;/model.23/Add_1;/model.23/Add_2;/model.23/Sub;/model.23/Sub_1"""	active-build-runtime
+scripts/common.sh	315	export BANANA_DEMO_VENDOR320_RT201_VISUAL_FIX_APPLIED=1	active-build-runtime
+scripts/common.sh	316	"echo ""INFO: enabling vendor320 rt201 visual workaround for validated official model (sha256=${model_hash}) (disable float16 epilogue; keep /model.23 tail Slice/Add/Sub ops on CPU)."" >&2"	active-build-runtime
+scripts/common.sh	536	"""<legacy-home-path>"""	active-build-runtime
+scripts/common.sh	537	"""${HOME}/ncnn-k1x-int8-smoke/models/photo_2024-10-11_10-04-04.jpg"""	active-build-runtime
+scripts/reference/build_scripts/05-build-opencv-ncnn.sh	168	timeout 8s ../build-riscv/examples/yolo11 ../build-riscv/examples/photo_2024-10-11_10-04-04.jpg || true	active-build-runtime
+release/RUNTIME_MANIFEST.md	13	| `rt123` | `spacemit-ort.riscv64.1.2.3` | vendor320 visual and fast-live |	active-user-facing
+release/RUNTIME_MANIFEST.md	14	| `rt201` | `spacemit-ort.riscv64.2.0.1` | dynamic640 production and vendor320 perf |	active-user-facing
+release/RUNTIME_MANIFEST.md	15	| `rt202b1` | `spacemit-ort.riscv64.2.0.2+beta1` | FP16 640 experimental fallback |	active-user-facing
+release/RUNTIME_MANIFEST.md	16	| `rt202` | `spacemit-ort.riscv64.2.0.2` | reproducible regression only; not adopted |	active-user-facing
+release/RUNTIME_MANIFEST.md	22	| `rt123` | `libonnxruntime.so.1.18.1` | `6a716a747ab456750b7154633eb956b36854808e3c8c36f270669cf1bf0ada4e` |	active-user-facing
+release/RUNTIME_MANIFEST.md	23	| `rt123` | `libspacemit_ep.so.1.2.3` | `90af14e058ffd71bd4b2e56c1aba8e6cde61c5f5fde75b865f60d832a5bbd38b` |	active-user-facing
+release/RUNTIME_MANIFEST.md	24	| `rt201` | `libonnxruntime.so.1.20.2+spacemit` | `5a28c8128a7b1ed9cb29357f42eb7a2a45eb1b23d8791c2fee1eaf0151546238` |	active-user-facing
+release/RUNTIME_MANIFEST.md	25	| `rt201` | `libspacemit_ep.so.2.0.1` | `60ad2a0f0e25c3e557250600bc51a3288007d810b1625ec2af394e84bc72a572` |	active-user-facing
+release/RUNTIME_MANIFEST.md	26	| `rt202b1` | `libonnxruntime.so.1.24.0+spacemit.a3` | `e100b2a480afd9809ea708eb1e13a68c6a8032a08aec8b712dbb803f5e9a8b6d` |	active-user-facing
+release/RUNTIME_MANIFEST.md	27	| `rt202b1` | `libspacemit_ep.so.2.0.2+beta1` | `788bbf8d49ee107f69b22c72cb5ef0ca6c270e2f77345cb705022e18d3aae3e3` |	active-user-facing
+release/RUNTIME_MANIFEST.md	28	| `rt202` | `libonnxruntime.so.1.24.2+spacemit.a1` | `e4abc60c53b1bcf0e3cde31b284d67c242ba3db8a2dbac3b10f0d817828fc289` |	active-user-facing
+release/RUNTIME_MANIFEST.md	29	| `rt202` | `libspacemit_ep.so.2.0.2` | `c7bab0898d458151ffd255f69c0df6029ff17d569133a4106239159d9e077d67` |	active-user-facing
+release/PRODUCTION_READINESS_REPORT.md	6	`banana-yolo11-spacemit-demo` repository for the 2026-07-02 handoff.	active-user-facing
+release/PRODUCTION_READINESS_REPORT.md	21	| Primary image visual | `rt201` | generated dynamic640 INT8 | supported |	active-user-facing
+release/PRODUCTION_READINESS_REPORT.md	22	| Primary normal camera | `rt201` | generated dynamic640 INT8 | supported |	active-user-facing
+release/PRODUCTION_READINESS_REPORT.md	23	| Fast-live camera | `rt123` | vendor320 INT8, 320 letterbox | supported |	active-user-facing
+release/PRODUCTION_READINESS_REPORT.md	24	| Vendor320 trusted visual | `rt123` | official vendor320 INT8 | supported |	active-user-facing
+release/PRODUCTION_READINESS_REPORT.md	25	| Vendor320 low-latency perf | raw `rt201` | official vendor320 INT8 | perf-only |	active-user-facing
+release/PRODUCTION_READINESS_REPORT.md	26	| Vendor320 rt201 visual workaround | `rt201` | official vendor320 INT8 | SHA256-guarded, non-default |	active-user-facing
+release/PRODUCTION_READINESS_REPORT.md	27	| FP16 | `rt201`/`rt202b1` | keep_io 640 | experimental |	active-user-facing
+release/PRODUCTION_READINESS_REPORT.md	28	| Stable `rt202` | `2.0.2` | current paths | evaluated, not adopted |	active-user-facing
+scripts/capture_camera_affinity.sh	115	"ps -Leo pid,tid,psr,pcpu,comm,args | grep -E '[b]anana_yolo11_demo|[c]am-main|[i]nfer-main|[g]main|[g]dbus|pool-' > ""${out_dir}/ps_start.txt"" || true"	active-build-runtime
+scripts/capture_camera_affinity.sh	140	"ps -Leo pid,tid,psr,pcpu,comm,args | grep -E '[b]anana_yolo11_demo|[c]am-main|[i]nfer-main|[g]main|[g]dbus|pool-' > ""${out_dir}/ps_end.txt"" || true"	active-build-runtime
+scripts/build_cross.sh	36	"file ""${install_dir}/bin/banana_yolo11_demo"""	active-build-runtime
+scripts/build_cross.sh	39	"VARIANTS=""${BANANA_DEMO_BUILD_VARIANTS:-rt201,rt123}"""	active-build-runtime
+release/MODEL_MANIFEST.md	15	| Dynamic640 INT8 | `models/generated/xquant_640/yolov11n_640x640.dynamic_int8.onnx` | `d028fca47600213be18f876d23aef92ef39c3bb1b4bc6b76963e0be679f5467f` | primary visual |	active-user-facing
+release/MODEL_MANIFEST.md	16	| Vendor320 INT8 | `models/vendor/yolo11/yolov11n_320x320.q.onnx` | `558011431ba1cd26269af3694abc2ee2fc2d467d7fe043e10df78ed7449d9edc` | trusted visual on `rt123`, perf on `rt201` |	active-user-facing
+release/MODEL_MANIFEST.md	22	| FP16 640 keep_io | `models/generated/fp16/yolov11n_640x640.fp16_iop32.onnx` | `4742625978c4b5cc25282bf02890837fcea7762d5536fe55e583311ce9b14593` | usable on `rt201`/`rt202b1`, experimental |	active-user-facing
+release/MODEL_MANIFEST.md	23	| FP16 320 keep_io | `models/generated/fp16/yolov11n_320x320.fp16_iop32.onnx` | `3291474d7a8e40bc0fabf6feb054942675f562dab0c04666bddd47662eb27b69` | known fail on current public stack |	active-user-facing
+scripts/bench_full_demo.sh	22	BANANA_DEMO_RUNTIME_TAG=auto|rt123|rt201|rt202b1|rt202	active-build-runtime
+scripts/bench_full_demo.sh	23	- auto/visual uses rt123 for vendor320 correctness and rt201 otherwise	active-build-runtime
+scripts/bench_full_demo.sh	24	BANANA_DEMO_VENDOR320_RT201_VISUAL_FIX=auto|0|1	active-build-runtime
+scripts/bench_full_demo.sh	49	"banana_demo_apply_vendor320_rt201_visual_fix ""${MODEL_PATH}"" ""${RUNTIME_TAG}"" ""visual"""	active-build-runtime
+scripts/bench_full_demo.sh	81	"IMAGE_PATH=""${3:-<legacy-home-path>"""	active-build-runtime
+scripts/bench_full_demo.sh	84	"ssh ""${TARGET}"" ""cd '${BOARD_DIR}' && BANANA_DEMO_EXEC_MODE=board BANANA_DEMO_RUNTIME_TAG='${BANANA_DEMO_RUNTIME_TAG:-auto}' BANANA_DEMO_VENDOR320_RT201_VISUAL_FIX='${BANANA_DEMO_VENDOR320_RT201_VISUAL_FIX:-auto}' BENCH_WARMUP='${BENCH_WARMUP:-10}' BENCH_RUNS='${BENCH_RUNS:-100}' BENCH_REPEATS='${BENCH_REPEATS:-5}' LOG_FILE='${BOARD_DIR}/logs/bench_full_${INPUT_SIZE}.log' ./scripts/bench_full_demo.sh '${REMOTE_MODEL_PATH}' '${INPUT_SIZE}' '${REMOTE_IMAGE_PATH}'"""	active-build-runtime
+scripts/quantize_xquant.sh	3	## @brief Quantize a YOLO11 ONNX model with the public SpaceMIT xquant tool.	active-build-runtime
+scripts/quantize_xquant.sh	10	"MODEL_PATH=""${2:-${ROOT_DIR}/models/generated/yolo11n.onnx}"""	active-build-runtime
+scripts/quantize_xquant.sh	11	"OUTPUT_PREFIX=""${3:-yolov11n_${SIZE}x${SIZE}.q}"""	active-build-runtime
+scripts/quantize_xquant.sh	16	"CONFIG_TEMPLATE=""${ROOT_DIR}/configs/xquant/yolov11_${SIZE}.json.in"""	active-build-runtime
+release/KNOWN_LIMITATIONS.md	8	## Stable rt202	active-user-facing
+release/KNOWN_LIMITATIONS.md	10	Stable `spacemit-ort.riscv64.2.0.2` is staged and selectable as `rt202`, but it	active-user-facing
+release/KNOWN_LIMITATIONS.md	12	vendor320 paths.	active-user-facing
+release/KNOWN_LIMITATIONS.md	14	## Vendor320 on Public 2.0.x	active-user-facing
+release/KNOWN_LIMITATIONS.md	16	Vendor320 is visually trusted on `rt123`. Raw `rt201` remains the low-latency	active-user-facing
+release/KNOWN_LIMITATIONS.md	17	perf branch only. The `rt201` visual workaround is SHA256-guarded and non-default.	active-user-facing
+release/KNOWN_LIMITATIONS.md	21	FP16 is experimental. Only keep_io FP16 640 on `rt201`/`rt202b1` is usable	active-user-facing
+release/HANDOFF_NOTES.md	5	Use dynamic640 INT8 on `rt201` for production visual quality. Use fast-live	active-user-facing
+release/HANDOFF_NOTES.md	6	vendor320 on `rt123` when responsiveness matters more than 640 visual quality.	active-user-facing
+release/HANDOFF_NOTES.md	21	bf3-ncnn/data/banana-yolo11-spacemit-demo	active-user-facing
+release/FPS_SUMMARY.md	19	| Primary visual dynamic640 INT8 | `rt201` | `app forward-only` | 190.567794 | 5.247476 | production |	active-user-facing
+release/FPS_SUMMARY.md	20	| Primary visual dynamic640 INT8 | `rt201` | `app full image` | 233.480423 | 4.283014 | production |	active-user-facing
+release/FPS_SUMMARY.md	21	| Normal camera dynamic640 INT8 | `rt201` | `camera effective` | N/A | 2.069 | production, Day 4 bounded smoke |	active-user-facing
+release/FPS_SUMMARY.md	22	| Normal camera dynamic640 INT8 | `rt201` | `camera instantaneous` | 238.716 | 4.189 | production, Day 4 frame-10 timing |	active-user-facing
+release/FPS_SUMMARY.md	23	| Fast-live vendor320 INT8 | `rt123` | `camera effective` | N/A | 9.382 | production, Day 4 bounded smoke |	active-user-facing
+release/FPS_SUMMARY.md	24	| Fast-live vendor320 INT8 | `rt123` | `camera instantaneous` | 67.121 | 14.898 | production, Day 4 frame-20 timing |	active-user-facing
+release/FPS_SUMMARY.md	25	| Vendor320 trusted visual | `rt123` | `app full image` | 57.540777 | 17.378980 | production visual branch for vendor320 |	active-user-facing
+release/FPS_SUMMARY.md	26	| Vendor320 low-latency perf | `rt201` | `app forward-only` | 24.210065 | 41.305136 | production perf-only branch |	active-user-facing
+release/FPS_SUMMARY.md	27	| Vendor320 rt201 workaround | `rt201` | `app full image` | 178.049 | 5.616 | non-default, SHA256-guarded |	active-user-facing
+release/FPS_SUMMARY.md	28	| FP16 keep_io 640 | `rt201` | `app forward-only` | 273.265611 | 3.659443 | experimental |	active-user-facing
+release/FPS_SUMMARY.md	29	| FP16 keep_io 640 | `rt202b1` | `app forward-only` | 294.988206 | 3.389966 | experimental |	active-user-facing
+release/FPS_SUMMARY.md	35	| Supported production | Primary visual forward ceiling | `rt201` | generated dynamic640 INT8 | `perf_test forward` | 640x640 | 190.024 | 5.2623 | visual status from full/image rows: reasonable | primary production visual branch | Pure ORT ceiling only; no app pre/post. |	active-user-facing
+release/FPS_SUMMARY.md	36	| Supported production | Primary visual app forward | `rt201` | generated dynamic640 INT8 | `app forward-only` | 640x640 | 190.567794 | 5.247476 | reasonable in image regression | primary production visual branch | Forward-only, not full image/camera. |	active-user-facing
+release/FPS_SUMMARY.md	37	| Supported production | Primary visual full image | `rt201` | generated dynamic640 INT8 | `app full image` | 640x640 | 233.480423 | 4.283014 | 14 objects, reasonable | primary production visual branch | Use for still-image app pipeline; Day 4 final smoke also passed at 854.707 ms one-shot acceptance run. |	active-user-facing
+release/FPS_SUMMARY.md	38	| Supported production | Normal camera effective | `rt201` | generated dynamic640 INT8 | `camera effective` | model 640x640; camera 1280x720 MJPG | N/A | 2.069 | pass; stable by-id camera | primary normal camera | Day 4 bounded final smoke over 10 frames; includes warmup/live loop overhead. |	active-user-facing
+release/FPS_SUMMARY.md	39	| Supported production | Normal camera instantaneous | `rt201` | generated dynamic640 INT8 | `camera instantaneous` | model 640x640; camera 1280x720 MJPG | 238.716 | 4.189 | pass at frame 10 | primary normal camera | Single frame timing from Day 4 camera smoke, not wall-clock loop FPS. |	active-user-facing
+release/FPS_SUMMARY.md	40	| Supported production | Fast-live camera effective | `rt123` | vendor320 INT8 letterbox | `camera effective` | model 320x320; camera 640x480 | N/A | 9.382 | pass; stable by-id camera | fast-live production branch | Day 4 bounded final smoke over 20 frames; includes warmup/live loop overhead. |	active-user-facing
+release/FPS_SUMMARY.md	41	| Supported production | Fast-live camera instantaneous | `rt123` | vendor320 INT8 letterbox | `camera instantaneous` | model 320x320; camera 640x480 | 67.121 | 14.898 | pass at frame 20 | fast-live production branch | Single frame timing; best responsiveness path, not highest-detail visual path. |	active-user-facing
+release/FPS_SUMMARY.md	42	| Supported production | Vendor320 trusted visual perf_test | `rt123` | official vendor320 INT8 | `perf_test forward` | 320x320 | 48.3266 | 20.6767 | visual branch reasonable | trusted vendor320 visual | Pure ORT ceiling only. |	active-user-facing
+release/FPS_SUMMARY.md	43	| Supported production | Vendor320 trusted visual app forward | `rt123` | official vendor320 INT8 | `app forward-only` | 320x320 | 49.095494 | 20.368468 | visual branch reasonable | trusted vendor320 visual | Forward-only. |	active-user-facing
+release/FPS_SUMMARY.md	44	| Supported production | Vendor320 trusted visual full image | `rt123` | official vendor320 INT8 | `app full image` | 320x320 | 57.540777 | 17.378980 | 8 objects, reasonable | trusted vendor320 visual | Full image benchmark; Day 4 final smoke also passed with 8 objects. |	active-user-facing
+release/FPS_SUMMARY.md	45	| Supported production | Vendor320 low-latency perf perf_test | `rt201` | official vendor320 INT8 raw | `perf_test forward` | 320x320 | 24.4143 | 40.9483 | perf only | low-latency benchmark branch | Raw rt201 path is not a production visual default. |	active-user-facing
+release/FPS_SUMMARY.md	46	| Supported production | Vendor320 low-latency perf app forward | `rt201` | official vendor320 INT8 raw | `app forward-only` | 320x320 | 24.210065 | 41.305136 | perf only | low-latency benchmark branch | Raw rt201 path is benchmark/perf only; visual semantics are not trusted without workaround. |	active-user-facing
+release/FPS_SUMMARY.md	47	| Supported non-default | Vendor320 rt201 visual workaround | `rt201` | official vendor320 INT8 + SHA256-guarded EP workaround | `app full image` | 320x320 | 178.049 | 5.616 | 9 objects, reasonable | non-default available workaround | Much slower than trusted rt123 benchmark path; only enabled deliberately/guarded. |	active-user-facing
+release/FPS_SUMMARY.md	48	| Experimental FP16 | FP16 keep_io 640 perf_test | `rt201` | `yolov11n_640x640.fp16_iop32.onnx` | `perf_test forward` | 640x640 | 270.867 | 3.69176 | experimental pass | experimental usable | Not production default; FP32 I/O with internal FP16 weights. |	active-user-facing
+release/FPS_SUMMARY.md	49	| Experimental FP16 | FP16 keep_io 640 app forward | `rt201` | `yolov11n_640x640.fp16_iop32.onnx` | `app forward-only` | 640x640 | 273.265611 | 3.659443 | experimental pass | experimental usable | Not production default. |	active-user-facing
+release/FPS_SUMMARY.md	50	| Experimental FP16 | FP16 keep_io 640 full image | `rt201` | `yolov11n_640x640.fp16_iop32.onnx` | `app full image` | 640x640 | 485.721 | 2.059 | 13 objects, reasonable | experimental usable | Canonical-photo visual sanity only; not production path. |	active-user-facing
+release/FPS_SUMMARY.md	51	| Experimental FP16 | FP16 keep_io 640 perf_test | `rt202b1` | `yolov11n_640x640.fp16_iop32.onnx` | `perf_test forward` | 640x640 | 293.060863 | 3.41212 | experimental pass | experimental usable fallback | Stable rt202 does not replace rt202b1. |	active-user-facing
+release/FPS_SUMMARY.md	52	| Experimental FP16 | FP16 keep_io 640 app forward | `rt202b1` | `yolov11n_640x640.fp16_iop32.onnx` | `app forward-only` | 640x640 | 294.988206 | 3.389966 | experimental pass | experimental usable fallback | Not production default. |	active-user-facing
+release/FPS_SUMMARY.md	53	| Experimental FP16 | FP16 keep_io 640 full image | `rt202b1` | `yolov11n_640x640.fp16_iop32.onnx` | `app full image` | 640x640 | 503.659 | 1.985 | 13 objects, reasonable | experimental usable fallback | Canonical-photo visual sanity only; not production path. |	active-user-facing
+release/FPS_SUMMARY.md	54	| Experimental FP16 | FP16 keep_io 320 | `rt201` / `rt202b1` | `yolov11n_320x320.fp16_iop32.onnx` | `fail / rejected` | 320x320 | N/A | N/A | expected fail | unsupported | EP reshape/compile failure; documented unsupported. |	active-user-facing
+release/FPS_SUMMARY.md	55	| Experimental FP16 | True FP16 I/O models | `rt123` / `rt201` / `rt202b1` | `yolov11n_320x320.fp16.onnx`; `yolov11n_640x640.fp16.onnx` | `fail / rejected` | 320x320 and 640x640 | N/A | N/A | dtype-correct but not runnable | unsupported board path | Retained as dtype evidence, not usable board runtime chain. |	active-user-facing
+release/FPS_SUMMARY.md	56	| Rejected / P2 | Stable rt202 dynamic640 candidate | `rt202` | generated dynamic640 INT8 | `fail / rejected` | 640x640 | N/A | N/A | abort | rejected; not adopted | Aborts even after clean board reboot; does not replace rt201. |	active-user-facing
+release/FPS_SUMMARY.md	57	| Rejected / P2 | Stable rt202 FP16 640 candidate | `rt202` | FP16 keep_io 640 | `fail / rejected` | 640x640 | N/A | N/A | abort | rejected; not adopted | Aborts; does not replace rt202b1. |	active-user-facing
+release/FPS_SUMMARY.md	58	| Rejected / P2 | Stable rt202 vendor320 candidate | `rt202` | official vendor320 INT8 | `fail / rejected` | 320x320 | N/A | N/A | abort | rejected; not adopted | No stable rt202 vendor320 fix. |	active-user-facing
+release/FPS_SUMMARY.md	59	| Rejected / P2 | YOLO26n float 640 | `rt201` | YOLO26n float ONNX | `app full image feasibility` | 640x640 | 600.287 | 1.666 | giant false refrigerator box | P2 only; rejected for production | Timing exists only from failed feasibility smoke; semantic failure blocks adoption. |	active-user-facing
+release/FPS_SUMMARY.md	60	| Rejected / P2 | YOLO26n dynamic INT8 640 | `rt201` | YOLO26n dynamic INT8 ONNX | `app full image feasibility` | 640x640 | 1147.946 | 0.871 | giant false refrigerator box | P2 only; rejected for production | Slower than current dynamic640 and semantically bad. |	active-user-facing
+release/FPS_SUMMARY.md	61	| Rejected / P2 | rt202b1 production replacement | `rt202b1` | 2.0.2+beta1 runtime line | `visual sanity` | various | N/A | N/A | not adopted as production runtime | P2/historical-experimental | Still kept for FP16 keep_io 640 experimental because stable rt202 failed replacement. |	active-user-facing
+release/FPS_SUMMARY.md	62	| Rejected / P2 | Official public 640 INT8 artifact | N/A | official vendor YOLO11n 640 INT8 | `fail / rejected` | 640x640 | N/A | N/A | not found | P2 search only | No pinned official public artifact found; production uses generated dynamic640 INT8. |	active-user-facing
+release/FPS_SUMMARY.md	69	- Raw vendor320 on `rt201` is the low-latency benchmark branch only. It is not	active-user-facing
+release/FPS_SUMMARY.md	72	vendor320 INT8 on `rt123`, 320 letterbox.	active-user-facing
+release/FPS_SUMMARY.md	73	- FP16 remains experimental. Only keep_io 640 on `rt201`/`rt202b1` is usable	active-user-facing
+release/FPS_SUMMARY.md	75	- Stable `rt202`, YOLO26n, FP16 320, official public 640 INT8 artifact search,	active-user-facing
+docs/XSlim_INT8_STATUS.md	17	YOLO26n static INT8 path for rt204.	active-user-facing
+docs/XSlim_INT8_STATUS.md	27	| Dynamic quantization `--dynq` | e2e/traditional | CPU-good and rt204-runnable diagnostic only; not static activation INT8. |	active-user-facing
+docs/XSlim_INT8_STATUS.md	64	The minmax model was also run as a diagnostic on rt204. It executed without the	active-user-facing
+docs/XSlim_INT8_STATUS.md	66	unusable because CPU and rt204 both produced zero class scores.	active-user-facing
+docs/XSlim_INT8_STATUS.md	70	There is no CPU-good and rt204-EP-good XSlim static INT8 candidate.	active-user-facing
+release/DEMO_COMMANDS.md	14	Uses generated dynamic640 INT8 on `rt201`.	active-user-facing
+release/DEMO_COMMANDS.md	22	Uses generated dynamic640 INT8 on `rt201`. Display mode is auto-detected; if no	active-user-facing
+release/DEMO_COMMANDS.md	31	Uses trusted vendor320 INT8 on `rt123` with 320 letterbox preprocessing and a	active-user-facing
+release/DEMO_COMMANDS.md	40	## Vendor320 Trusted Visual	active-user-facing
+release/DEMO_COMMANDS.md	43	BANANA_DEMO_RUNTIME_TAG=rt123 \	active-user-facing
+release/DEMO_COMMANDS.md	45	models/vendor/yolo11/yolov11n_320x320.q.onnx 320 0.25	active-user-facing
+release/DEMO_COMMANDS.md	48	## Vendor320 Perf-Only	active-user-facing
+release/DEMO_COMMANDS.md	51	BANANA_DEMO_RUNTIME_TAG=rt201 \	active-user-facing
+release/DEMO_COMMANDS.md	53	models/vendor/yolo11/yolov11n_320x320.q.onnx 320	active-user-facing
+release/DEMO_COMMANDS.md	59	FP16_RUNTIME_TAGS=rt201,rt202b1 FP16_MODEL_VARIANT=keep_io \	active-user-facing
+docs/XSlim_INT8_EVALUATION.md	12	YOLO26n INT8 on SpacemiT ORT `2.0.4` (`rt204`). It did not change the frozen	active-user-facing
+docs/XSlim_INT8_EVALUATION.md	13	YOLO11 production repository or production runtime/model policy.	active-user-facing
+docs/XSlim_INT8_EVALUATION.md	47	| Model | Contract | SHA256 | Graph summary | CPU oracle | rt204 EP |	active-user-facing
+docs/XSlim_INT8_EVALUATION.md	52	This is useful evidence that XSlim can emit a rt204-runnable compressed graph,	active-user-facing
+docs/XSlim_INT8_EVALUATION.md	59	The bounded board smoke used `rt204_tensor_probe` on BPI-F3/K1X. Both XSlim	active-user-facing
+docs/XSlim_INT8_EVALUATION.md	97	acceleration remains blocked by rt204 Q/DQ Conv compiler support. XSlim dynamic	active-user-facing
+docs/XSlim_INT8_EVALUATION.md	101	## YOLO11 Retrospective	active-user-facing
+docs/XSlim_INT8_EVALUATION.md	103	This pass found no production-impacting miss in the frozen YOLO11 release:	active-user-facing
+docs/XSlim_INT8_EVALUATION.md	105	- YOLO11 already has validated production INT8 paths on `rt201`/`rt123`.	active-user-facing
+docs/XSlim_INT8_EVALUATION.md	108	not proven to improve YOLO11 production app/camera behavior.	active-user-facing
+docs/XSlim_INT8_EVALUATION.md	110	YOLO11 + XSlim remains a possible post-release R&D lane, not a retroactive	active-user-facing
+docs/XSlim_INT8_EVALUATION.md	130	- a diagnostic rt204 run of the CPU-bad `minmax` model executes, but that is not	active-user-facing
+docs/YOLO26_VS_YOLO11_BASELINE.md	1	# YOLO26 FP32 vs Frozen YOLO11 Production Baseline	active-user-facing
+docs/YOLO26_VS_YOLO11_BASELINE.md	3	YOLO11 production source of truth:	active-user-facing
+docs/YOLO26_VS_YOLO11_BASELINE.md	6	/data/banana-yolo11-spacemit-demo/docs/FPS_SUMMARY.md	active-user-facing
+docs/YOLO26_VS_YOLO11_BASELINE.md	26	| YOLO11 dynamic640 INT8 primary | rt201 | `perf_test forward` | 190.024 | 5.2623 | production-supported |	active-user-facing
+docs/YOLO26_VS_YOLO11_BASELINE.md	27	| YOLO11 dynamic640 INT8 primary | rt201 | `app forward-only` | 190.567794 | 5.247476 | production-supported |	active-user-facing
+docs/YOLO26_VS_YOLO11_BASELINE.md	28	| YOLO11 dynamic640 INT8 primary | rt201 | `app full image` | 233.480423 | 4.283014 | production-supported |	active-user-facing
+docs/YOLO26_VS_YOLO11_BASELINE.md	29	| YOLO11 fast-live vendor320 | rt123 | `app full image` | 57.540777 | 17.378980 | production-supported fast-live branch |	active-user-facing
+docs/YOLO26_VS_YOLO11_BASELINE.md	30	| YOLO26n FP32 e2e | rt204 | `perf_test forward` | 572.153613 | 1.74774 | R&D frozen FP32 baseline |	active-user-facing
+docs/YOLO26_VS_YOLO11_BASELINE.md	31	| YOLO26n FP32 e2e | rt204 | `app forward-only` | 578.041776 | 1.729979 | R&D frozen FP32 baseline |	active-user-facing
+docs/YOLO26_VS_YOLO11_BASELINE.md	32	| YOLO26n FP32 e2e | rt204 | `app full image benchmark` | 522.079210 | 1.915418 | R&D frozen FP32 baseline |	active-user-facing
+docs/YOLO26_VS_YOLO11_BASELINE.md	33	| YOLO26n FP16 body/head keep-IO | rt204 | `perf_test forward` | 398.610405 | 2.50864 | R&D FP16 baseline |	active-user-facing
+docs/YOLO26_VS_YOLO11_BASELINE.md	34	| YOLO26n FP16 body/head keep-IO | rt204 | `app forward-only` | 383.332266 | 2.608703 | R&D FP16 baseline |	active-user-facing
+docs/YOLO26_VS_YOLO11_BASELINE.md	35	| YOLO26n FP16 body/head keep-IO | rt204 | `app full image benchmark` | 399.035502 | 2.506043 | R&D FP16 baseline |	active-user-facing
+docs/YOLO26_VS_YOLO11_BASELINE.md	36	| YOLO26n FP16 full-I/O body/head | rt204 | `perf_test forward` | 380.472087 | 2.628314 | accepted, but not faster than keep-IO |	active-user-facing
+docs/YOLO26_VS_YOLO11_BASELINE.md	37	| YOLO26n FP16 full-I/O body/head | rt204 | `app forward-only` | 388.609808 | 2.573275 | accepted, but not faster than keep-IO |	active-user-facing
+docs/YOLO26_VS_YOLO11_BASELINE.md	38	| YOLO26n FP16 full-I/O body/head | rt204 | `app full image benchmark` | 399.345008 | 2.504100 | accepted, but not faster than keep-IO |	active-user-facing
+docs/YOLO26_VS_YOLO11_BASELINE.md	40	## R&D-Only YOLO11 rt204 Retrospective	active-user-facing
+docs/YOLO26_VS_YOLO11_BASELINE.md	42	The 2026-06-30 effect-matrix pass also copied selected YOLO11 artifacts into	active-user-facing
+docs/YOLO26_VS_YOLO11_BASELINE.md	43	the YOLO26 R&D workspace and tested rt204. This did not modify the frozen	active-user-facing
+docs/YOLO26_VS_YOLO11_BASELINE.md	44	production YOLO11 repository.	active-user-facing
+docs/YOLO26_VS_YOLO11_BASELINE.md	48	| YOLO11 dynamic640 INT8 copy | rt204 | `app forward-only` | 201.454112 | 4.963910 | pass, but slower than production rt201 |	active-user-facing
+docs/YOLO26_VS_YOLO11_BASELINE.md	49	| YOLO11 FP32 vanilla copy | rt204 | `app forward-only` | 539.131433 | 1.854835 | pass, diagnostic only |	active-user-facing
+docs/YOLO26_VS_YOLO11_BASELINE.md	50	| YOLO11 FP32 XSlim simplify copy | rt204 | app forward | N/A | N/A | fails/hangs after `YoloDecode` dispatch error |	active-user-facing
+docs/YOLO26_VS_YOLO11_BASELINE.md	51	| YOLO11 FP16 keep-IO copy | rt204 | `app forward-only` | 341.651391 | 2.926960 | pass, R&D signal only |	active-user-facing
+docs/YOLO26_VS_YOLO11_BASELINE.md	52	| YOLO11 FP16 XSlim copy | rt204 | app forward/full | N/A | N/A | fails/timeouts after `YoloDecode` dispatch error |	active-user-facing
+docs/YOLO26_VS_YOLO11_BASELINE.md	64	YOLO26 FP32 is not currently competitive with YOLO11 production INT8 on K1X.	active-user-facing
+docs/YOLO26_VS_YOLO11_BASELINE.md	66	correct on rt204, but keep-IO FP16 remains the better local YOLO26 path and	active-user-facing
+docs/YOLO26_VS_YOLO11_BASELINE.md	67	both FP16 variants are still slower than the frozen YOLO11 production INT8	active-user-facing
+docs/YOLO26_VS_YOLO11_BASELINE.md	68	branch. Frozen YOLO11 remains the production deliverable.	active-user-facing
+docs/CUSTOM_IME_INTEGRATION_FEASIBILITY.md	17	The current blocker is inside closed rt204 SpaceMIT EP compilation of a Q/DQ	active-user-facing
+docs/CUSTOM_IME_INTEGRATION_FEASIBILITY.md	24	Replacing that Conv inside `libspacemit_ep.so` is not straightforward without	active-user-facing
+docs/CUSTOM_IME_INTEGRATION_FEASIBILITY.md	36	- Performance comparison against rt204 FP32 and frozen YOLO11 production INT8.	active-user-facing
+docs/CUSTOM_IME_INTEGRATION_FEASIBILITY.md	41	fix for the YOLO26 INT8 rt204 Q/DQ Conv compiler blocker.	active-user-facing
+docs/RT204_QDQ_CONV_VENDOR_BUG_REPORT.md	1	# RT204 Q/DQ Conv Vendor Bug Report	active-user-facing
+docs/RT204_QDQ_CONV_VENDOR_BUG_REPORT.md	6	/data/ncnn-logs/ort-logs/2026-06-30_06-12-26/artifacts/vendor_bug_report_rt204_qdq_conv_clip_minmax/	active-user-facing
+docs/RT204_QDQ_CONV_VENDOR_BUG_REPORT.md	35	actual_rt204_error.txt	active-user-facing
+docs/RT204_QDQ_CONV_VENDOR_BUG_REPORT.md	41	run_rt204.sh	active-user-facing
+docs/RT204_QDQ_CONV_VENDOR_BUG_REPORT.md	54	attribute. CPU ORT executes it correctly. rt204 SpaceMIT EP fails the compile	active-user-facing
+docs/RT204_QDQ_CONV_VENDOR_BUG_REPORT.md	72	models, but the rt204 EP selects the Q/DQ Conv subgraph and fails during	active-user-facing
+docs/RT204_QDQ_CONV_VENDOR_BUG_REPORT.md	79	SPACEMIT_EP_DISABLE_OP_TYPE_FILTER=QuantizeLinear;DequantizeLinear;Conv	active-user-facing
+docs/RT204_QDQ_CONV_VENDOR_BUG_REPORT.md	91	rt204 without the `clip minmax` compile error, but the model is CPU-bad: class	active-user-facing
+docs/RT204_QDQ_CONV_VENDOR_BUG_REPORT.md	92	score channels are all zero before rt204 is involved. This is useful as a	active-user-facing
+docs/RT204_QDQ_CONV_VENDOR_BUG_REPORT.md	94	vendor-ready rt204 repros for CPU-good manual ONNX Runtime Q/DQ models.	active-user-facing
+docs/RT204_QDQ_CONV_VENDOR_BUG_REPORT.md	96	The original rt204 vendor repro bundle remains the evidence to send for the	active-user-facing
+docs/RT204_QDQ_CONV_VENDOR_BUG_REPORT.md	104	- `rt201`, `rt202b1`, and `rt204` reproduce the `clip minmax` Q/DQ Conv failure.	active-user-facing
+docs/RT204_QDQ_CONV_VENDOR_BUG_REPORT.md	105	- Stable `rt202` fails the gate with `tcm buffer alloc failed for core id 0`.	active-user-facing
+docs/RT204_QDQ_CONV_VENDOR_BUG_REPORT.md	106	- `rt123` can run the tested Q/DQ models without the visible `clip minmax`	active-user-facing
+docs/YOLO26_INT8_STATUS.md	20	YOLO26 INT8 ONNX board acceleration is blocked pending rt204/vendor EP compiler support.	active-user-facing
+docs/YOLO26_INT8_STATUS.md	27	- YOLO26 FP32 rt204 SpaceMIT EP executes on BPI-F3/K1X without SIGILL and	active-user-facing
+docs/YOLO26_INT8_STATUS.md	36	- CPU-good manual Q/DQ INT8 models fail under rt204 SpaceMIT EP with:	active-user-facing
+docs/YOLO26_INT8_STATUS.md	50	| `15_conv_qdq_attr_kernel_shape.onnx` | Tiny synthetic Q/DQ Conv repro | CPU ORT passes; rt204 EP fails with `clip minmax`. |	active-user-facing
+docs/YOLO26_INT8_STATUS.md	51	| `07_yolo26_first_conv_qdq_output_block.onnx` | Smallest real YOLO26-derived repro | CPU ORT passes; rt204 EP fails at `/model.0/conv/Conv_token_1`. |	active-user-facing
+docs/YOLO26_INT8_STATUS.md	59	| `SPACEMIT_EP_DISABLE_OP_TYPE_FILTER=QuantizeLinear;DequantizeLinear;Conv` | Correctness-only fallback; CPU-heavy; not accelerated INT8. |	active-user-facing
+docs/YOLO26_INT8_STATUS.md	60	| Strip optional Conv `kernel_shape` + `SPACEMIT_EP_DISABLE_OP_TYPE_FILTER=MatMul;Add` | Partial diagnostic candidate; avoids first Conv blocker but still unproven for useful placement/perf. |	active-user-facing
+docs/YOLO26_INT8_STATUS.md	66	INT8 path until rt204/vendor EP compiler support changes or the partial	active-user-facing
+docs/YOLO26_INT8_STATUS.md	77	- XSlim `--dynq` produced CPU-good and rt204-runnable e2e/traditional models.	active-user-facing
+docs/YOLO26_INT8_STATUS.md	81	- Because no CPU-good static XSlim INT8 model reached rt204 EP, XSlim does not	active-user-facing
+docs/YOLO26_INT8_STATUS.md	107	- A diagnostic rt204 run of the CPU-bad minmax model executes, proving that this	active-user-facing
+docs/YOLO26_INT8_STATUS.md	111	No CPU-good and rt204-EP-good XSlim static YOLO26 INT8 candidate exists.	active-user-facing
+docs/YOLO26_INT8_STATUS.md	119	- The vendor Q/DQ Conv `clip minmax` repro remains the actionable rt204 issue.	active-user-facing
+docs/YOLO26_INT8_STATUS.md	127	The legacy-runtime Q/DQ gate tested `rt123`, `rt201`, `rt202b1`, stable	active-user-facing
+docs/YOLO26_INT8_STATUS.md	128	`rt202`, and `rt204` against the known CPU-good YOLO26 manual Q/DQ candidates	active-user-facing
+docs/YOLO26_INT8_STATUS.md	139	- `rt201`, `rt202b1`, and `rt204` reproduce the Q/DQ Conv	active-user-facing
+docs/YOLO26_INT8_STATUS.md	141	- Stable `rt202` fails this gate with `tcm buffer alloc failed for core id 0`	active-user-facing
+docs/YOLO26_INT8_STATUS.md	143	- `rt123` avoids the visible `clip minmax` error on the tested full models, but	active-user-facing
+docs/YOLO26_INT8_STATUS.md	158	- Manual ORT Q/DQ remains CPU-good but blocked by rt204/legacy runtime	active-user-facing
+docs/YOLO26_FP32_BASELINE.md	13	`banana-yolo11-spacemit-demo` production repository and it does not make	active-user-facing
+docs/YOLO26_FP32_BASELINE.md	23	| Runtime | `spacemit-ort.riscv64.2.0.4` (`rt204`) |	active-user-facing
+docs/YOLO26_FP32_BASELINE.md	49	PyTorch, ONNX Runtime CPU, and rt204 SpaceMIT EP agree semantically on the	active-user-facing
+docs/YOLO26_FP32_BASELINE.md	54	| Image class | PyTorch | ONNX CPU | rt204 EP | Verdict |	active-user-facing
+docs/YOLO26_FP32_BASELINE.md	66	tables/yolo26_rt204_ep_decode_matrix.md	active-user-facing
+docs/YOLO26_FP32_BASELINE.md	76	The current frozen FP32 configuration is `cluster0`, 4 threads, rt204	active-user-facing
+docs/YOLO26_FP32_BASELINE.md	78	this board/runtime path because rt204 reports four available AI cores.	active-user-facing
+docs/YOLO26_FP32_BASELINE.md	82	| `perf_test forward` | rt204 SpaceMIT EP | YOLO26n FP32 e2e 640 | 572.153613 | 1.74774 | 100 runs, `taskset` cluster0. |	active-user-facing
+docs/YOLO26_FP32_BASELINE.md	83	| `app forward-only` | rt204 SpaceMIT EP | YOLO26n FP32 e2e 640 | 578.041776 | 1.729979 | 50x5 runs, cluster0, 4 threads. |	active-user-facing
+docs/YOLO26_FP32_BASELINE.md	84	| `app full image benchmark` | rt204 SpaceMIT EP | YOLO26n FP32 e2e 640 | 522.079210 | 1.915418 | Bus image, 20x3 runs. |	active-user-facing
+docs/YOLO26_FP32_BASELINE.md	85	| `app full image single` | rt204 SpaceMIT EP | YOLO26n FP32 e2e 640 | 692-716 | 1.397-1.444 | Blank, COCO-like, bus, and private canonical single-image smoke. |	active-user-facing
+docs/YOLO26_FP32_BASELINE.md	100	| `perf_test forward` | rt204 SpaceMIT EP | YOLO26n FP32 e2e 640 | 568.943339 | 1.75761 | Pure ORT forward ceiling, 100 runs. |	active-user-facing
+docs/YOLO26_FP32_BASELINE.md	101	| `app forward-only` | rt204 SpaceMIT EP | YOLO26n FP32 e2e 640 | 564.531070 | 1.771382 | App session path, 30x3 runs. |	active-user-facing
+docs/YOLO26_FP32_BASELINE.md	102	| `app full image benchmark` | rt204 SpaceMIT EP | YOLO26n FP32 e2e 640 | 521.868004 | 1.916193 | Bus image, 20x3 runs. |	active-user-facing
+docs/YOLO26_FP32_BASELINE.md	103	| `app full image single` | rt204 SpaceMIT EP | YOLO26n FP32 e2e 640 | 696-715 | 1.40-1.44 | Single-image smoke on bus, COCO-like, and private canonical. |	active-user-facing
+docs/YOLO26_FP32_BASELINE.md	122	board-side rt204 tensor dumps.	active-user-facing
+docs/YOLO26_FP32_BASELINE.md	137	YOLO26 FP32 is a working R&D baseline on K1X with rt204. It is not currently	active-user-facing
+docs/YOLO26_FP32_BASELINE.md	138	competitive with the frozen YOLO11 production INT8 branch on latency, but it is	active-user-facing
+docs/RT204_QDQ_CONV_VENDOR_REPRO_AND_QOPERATOR_GATE.md	1	# RT204 Q/DQ Conv Vendor Repro and QOperator Gate	active-user-facing
+docs/RT204_QDQ_CONV_VENDOR_REPRO_AND_QOPERATOR_GATE.md	11	This stage turned the YOLO26 rt204 Q/DQ failure into a vendor-grade repro and	active-user-facing
+docs/RT204_QDQ_CONV_VENDOR_REPRO_AND_QOPERATOR_GATE.md	17	It did not modify the frozen YOLO11 production repository and it does not make	active-user-facing
+docs/RT204_QDQ_CONV_VENDOR_REPRO_AND_QOPERATOR_GATE.md	29	`kernel_shape=[3,3]` attribute. CPU ORT executes it correctly, but rt204	active-user-facing
+docs/RT204_QDQ_CONV_VENDOR_REPRO_AND_QOPERATOR_GATE.md	64	- rt204 EP runs them, but raw CPU/EP outputs do not match;	active-user-facing
+docs/RT204_QDQ_CONV_VENDOR_REPRO_AND_QOPERATOR_GATE.md	81	SPACEMIT_EP_DISABLE_OP_TYPE_FILTER=QuantizeLinear;DequantizeLinear;Conv	active-user-facing
+docs/RT204_QDQ_CONV_VENDOR_REPRO_AND_QOPERATOR_GATE.md	86	`clip minmax` failure, but exposes a second rt204 issue in the attention	active-user-facing
+docs/RT204_QDQ_CONV_VENDOR_REPRO_AND_QOPERATOR_GATE.md	97	SPACEMIT_EP_DISABLE_OP_TYPE_FILTER=MatMul;Add	active-user-facing
+docs/YOLO26_QDQ_RT204_BLOCKER_MINIMIZATION.md	1	# YOLO26 Q/DQ RT204 Blocker Minimization	active-user-facing
+docs/YOLO26_QDQ_RT204_BLOCKER_MINIMIZATION.md	12	This R&D pass minimized the rt204 SpaceMIT EP failure seen with CPU-good	active-user-facing
+docs/YOLO26_QDQ_RT204_BLOCKER_MINIMIZATION.md	13	YOLO26 INT8 Q/DQ models. It did not modify the frozen YOLO11 production repo,	active-user-facing
+docs/YOLO26_QDQ_RT204_BLOCKER_MINIMIZATION.md	22	- rt204 FP32 SpaceMIT EP matches CPU-level semantics for YOLO26 640/320;	active-user-facing
+docs/YOLO26_QDQ_RT204_BLOCKER_MINIMIZATION.md	26	- rt204 SpaceMIT EP fails to compile those CPU-good Q/DQ models with	active-user-facing
+docs/YOLO26_QDQ_RT204_BLOCKER_MINIMIZATION.md	40	All of those passed under rt204 SpaceMIT EP. The minimal repro had to be	active-user-facing
+docs/YOLO26_QDQ_RT204_BLOCKER_MINIMIZATION.md	48	Q/DQ nodes. It fails under rt204 SpaceMIT EP at:	active-user-facing
+docs/YOLO26_QDQ_RT204_BLOCKER_MINIMIZATION.md	57	not a single bad node name; it is the rt204 compiler path for the real YOLO26	active-user-facing
+docs/YOLO26_QDQ_RT204_BLOCKER_MINIMIZATION.md	68	`kernel_shape=[3,3]` attribute. CPU ORT runs it, while rt204 SpaceMIT EP fails	active-user-facing
+docs/YOLO26_QDQ_RT204_BLOCKER_MINIMIZATION.md	96	- default rt204: Q/DQ Conv models fail with `output_type not implemented for	active-user-facing
+docs/YOLO26_QDQ_RT204_BLOCKER_MINIMIZATION.md	98	- `SPACEMIT_EP_DISABLE_OP_TYPE_FILTER=Conv`: not enough for Conv+MatMul Q/DQ;	active-user-facing
+docs/YOLO26_QDQ_RT204_BLOCKER_MINIMIZATION.md	99	- `SPACEMIT_EP_DISABLE_OP_TYPE_FILTER=QuantizeLinear;DequantizeLinear`:	active-user-facing
+docs/YOLO26_QDQ_RT204_BLOCKER_MINIMIZATION.md	101	- `SPACEMIT_EP_DISABLE_OP_TYPE_FILTER=QuantizeLinear;DequantizeLinear;Conv`:	active-user-facing
+docs/YOLO26_QDQ_RT204_BLOCKER_MINIMIZATION.md	107	SPACEMIT_EP_DISABLE_OP_TYPE_FILTER=QuantizeLinear;DequantizeLinear;Conv	active-user-facing
+docs/YOLO26_QDQ_RT204_BLOCKER_MINIMIZATION.md	115	An end-to-end QOperator candidate over Conv+MatMul runs under rt204 and gives	active-user-facing
+docs/YOLO26_QDQ_RT204_BLOCKER_MINIMIZATION.md	132	Conv `clip minmax` compiler failure, but exposes a second rt204 issue:	active-user-facing
+docs/YOLO26_QDQ_RT204_BLOCKER_MINIMIZATION.md	142	SPACEMIT_EP_DISABLE_OP_TYPE_FILTER=MatMul;Add	active-user-facing
+docs/YOLO26_QDQ_RT204_BLOCKER_MINIMIZATION.md	155	Manual INT8 CPU oracle is good, but rt204 Q/DQ full-offload is blocked. YOLO26	active-user-facing
+docs/YOLO26_QDQ_RT204_BLOCKER_MINIMIZATION.md	162	BANANA-YOLO26-RT204-PARTIAL-FALLBACK-PERF-PLACEMENT-GATE-001	active-user-facing
+docs/RT204_OPERATOR_SUPPORT.md	1	# RT204 Operator Support Notes	active-user-facing
+docs/RT204_OPERATOR_SUPPORT.md	14	RT204 SpaceMIT EP compiles and executes the latest YOLO26 640 FP32 exports:	active-user-facing
+docs/RT204_OPERATOR_SUPPORT.md	40	correctness. It is rt204 EP support for the quantized Conv/Q/DQ pattern emitted	active-user-facing
+docs/RT204_OPERATOR_SUPPORT.md	45	- toy Conv/Q/DQ/Clip/QLinearConv models pass on rt204;	active-user-facing
+docs/RT204_OPERATOR_SUPPORT.md	68	SPACEMIT_EP_DISABLE_OP_TYPE_FILTER=QuantizeLinear;DequantizeLinear;Conv	active-user-facing
+docs/RT204_OPERATOR_SUPPORT.md	75	An end-to-end QOperator Conv+MatMul candidate runs under rt204, but the gate	active-user-facing
+docs/RT204_OPERATOR_SUPPORT.md	88	`SPACEMIT_EP_DISABLE_OP_TYPE_FILTER=MatMul;Add` restores smoke semantics for	active-user-facing
+docs/RT204_OPERATOR_SUPPORT.md	94	ONNX on rt204 is blocked pending vendor/runtime Q/DQ Conv compiler support.	active-user-facing
+docs/RT204_OPERATOR_SUPPORT.md	97	did not produce an accepted YOLO26 INT8 model for rt204. XSlim dynamic	active-user-facing
+docs/RT204_OPERATOR_SUPPORT.md	98	quantization does run on rt204 EP and avoids the Q/DQ Conv `clip minmax`	active-user-facing
+docs/RT204_OPERATOR_SUPPORT.md	105	emit a Q/DQ graph that runs on rt204 without the `clip minmax` compile failure.	active-user-facing
+docs/RT204_OPERATOR_SUPPORT.md	107	channels are zero on public sanity images. Therefore rt204 acceptance remains	active-user-facing
+docs/RT204_OPERATOR_SUPPORT.md	113	The current rt204 FP32 end-to-end 640 baseline is working and reproducible:	active-user-facing
+docs/RT204_OPERATOR_SUPPORT.md	119	- rt204 EP semantic pass on public Ultralytics assets, COCO-derived images,	active-user-facing
+docs/RT204_OPERATOR_SUPPORT.md	122	## YOLO11 RT204 Signal	active-user-facing
+docs/RT204_OPERATOR_SUPPORT.md	124	Frozen YOLO11 production models were probed read-only in this R&D workspace:	active-user-facing
+docs/RT204_OPERATOR_SUPPORT.md	127	- vendor320 q.onnx;	active-user-facing
+docs/RT204_OPERATOR_SUPPORT.md	130	The direct rt204 tensor probe produced sane CPU and SpaceMIT EP semantics for	active-user-facing
+docs/RT204_OPERATOR_SUPPORT.md	132	a future YOLO11 rt204 adoption gate must rerun the full production app, loader,	active-user-facing
+docs/YOLO26_INT8_RT204_FORENSICS.md	1	# YOLO26 INT8 and RT204 Forensics	active-user-facing
+docs/YOLO26_INT8_RT204_FORENSICS.md	14	`2.0.4` operator support. It did not modify the frozen YOLO11 production repo	active-user-facing
+docs/YOLO26_INT8_RT204_FORENSICS.md	56	## RT204 Board EP Result	active-user-facing
+docs/YOLO26_INT8_RT204_FORENSICS.md	58	Float YOLO26 640 end-to-end and traditional ONNX models run on rt204 SpaceMIT	active-user-facing
+docs/YOLO26_INT8_RT204_FORENSICS.md	61	CPU-good manual Q/DQ INT8 candidates fail under rt204 SpaceMIT EP with:	active-user-facing
+docs/YOLO26_INT8_RT204_FORENSICS.md	83	YOLO26 INT8 board EP is blocked by rt204 EP compilation of CPU-good Q/DQ INT8	active-user-facing
+docs/YOLO26_INT8_RT204_FORENSICS.md	98	The initial synthetic toy Conv/Q/DQ/Clip/QLinearConv set passed on rt204, so	active-user-facing
+docs/YOLO26_INT8_RT204_FORENSICS.md	101	`kernel_shape=[3,3]` is sufficient to reproduce the same rt204 internal min/max	active-user-facing
+docs/YOLO26_INT8_RT204_FORENSICS.md	108	SPACEMIT_EP_DISABLE_OP_TYPE_FILTER=QuantizeLinear;DequantizeLinear;Conv	active-user-facing
+docs/YOLO26_INT8_RT204_FORENSICS.md	114	See `docs/YOLO26_QDQ_RT204_BLOCKER_MINIMIZATION.md` for the detailed decision.	active-user-facing
+docs/YOLO26_INT8_RT204_FORENSICS.md	138	CPU-exact and avoids the first Conv blocker, but a second rt204 issue appears	active-user-facing
+docs/YOLO26_INT8_RT204_FORENSICS.md	140	`SPACEMIT_EP_DISABLE_OP_TYPE_FILTER=MatMul;Add` restores smoke semantics for	active-user-facing
+docs/RUNTIME_204_NOTES.md	11	RT204 was already bootstrapped from the official GitHub release asset:	active-user-facing
+docs/RUNTIME_204_NOTES.md	20	- `SPACEMIT_EP_DISABLE_PASSES_FILTER`;	active-user-facing
+docs/RUNTIME_204_NOTES.md	28	RT204 runs on BPI-F3/K1X/X60 in default mode without SIGILL for the tested	active-user-facing
+docs/RUNTIME_204_NOTES.md	30	`SPACEMIT_EP_PERFER_CORE_ARCH` option exists, but useful public K1/K3/X60	active-user-facing
+docs/RUNTIME_204_NOTES.md	46	RT204 INT8 is still not claimed.	active-user-facing
+docs/RUNTIME_204_NOTES.md	55	- RT204 SpaceMIT EP fails to compile those CPU-good Q/DQ candidates on board	active-user-facing
+docs/RUNTIME_204_NOTES.md	70	## YOLO11 Reevaluation Signal	active-user-facing
+docs/RUNTIME_204_NOTES.md	72	Frozen YOLO11 production models were copied read-only into the YOLO26 R&D board	active-user-facing
+docs/RUNTIME_204_NOTES.md	73	stage and run through a direct rt204 tensor probe. Dynamic640 INT8, vendor320	active-user-facing
+docs/RUNTIME_204_NOTES.md	76	This does not change YOLO11 production policy. It is a future rt204 adoption	active-user-facing
+docs/YOLO26_ORACLE_RESULTS.md	50	blocked at the model/decode layer. The current blocker is rt204 SpaceMIT EP	active-user-facing
+docs/RD_STATUS.md	4	YOLO11 production tag. It has no production claims and no active production	active-user-facing
+docs/RD_STATUS.md	9	- Frozen YOLO11 production repo remains read-only and unchanged.	active-user-facing
+docs/RD_STATUS.md	14	- RT204 FP32 SpaceMIT EP smoke passes on BPI-F3/K1X for latest 640 end-to-end	active-user-facing
+docs/RD_STATUS.md	22	- RT204 SpaceMIT EP currently blocks full accelerated board Q/DQ INT8:	active-user-facing
+docs/RD_STATUS.md	31	`SPACEMIT_EP_DISABLE_OP_TYPE_FILTER=QuantizeLinear;DequantizeLinear;Conv`,	active-user-facing
+docs/RD_STATUS.md	39	issue. `SPACEMIT_EP_DISABLE_OP_TYPE_FILTER=MatMul;Add` restores smoke	active-user-facing
+docs/RD_STATUS.md	41	- RT204 YOLO11 direct tensor-probe results are promising for a future separate	active-user-facing
+docs/RD_STATUS.md	42	adoption gate, but this R&D repository does not change the frozen YOLO11	active-user-facing
+docs/RD_STATUS.md	45	The current frozen rt204 FP32 end-to-end 640 baseline uses cluster0 with	active-user-facing
+docs/RD_STATUS.md	51	and runs on rt204 at `383.332266 ms / 2.608703 FPS` app forward-only.	active-user-facing
+docs/RD_STATUS.md	52	- YOLO26 INT8 ONNX board acceleration is formally closed as blocked by rt204	active-user-facing
+docs/RD_STATUS.md	60	`--dynq` remains CPU-good and rt204-runnable diagnostic only; it is not	active-user-facing
+docs/RD_STATUS.md	65	- R&D-copy YOLO11 rt204 checks did not reveal a missed production opportunity:	active-user-facing
+docs/RD_STATUS.md	66	dynamic640 INT8 runs on rt204 but is slower than frozen rt201 production, and	active-user-facing
+docs/RD_STATUS.md	67	YOLO11 XSlim FP32/FP16 fail or time out after rt204 `YoloDecode` dispatch	active-user-facing
+docs/RD_STATUS.md	70	acceleration path. `rt201`, `rt202b1`, and `rt204` reproduce the Q/DQ Conv	active-user-facing
+docs/RD_STATUS.md	71	`clip minmax` blocker; stable `rt202` fails with TCM allocation; and `rt123`	active-user-facing
+docs/RD_STATUS.md	93	body-FP16/head-FP32 full-I/O model for correctness and rt204 execution, but it	active-user-facing
+docs/RD_STATUS.md	101	upstream blockers changes. Keep YOLO11 rt204 reevaluation as a separate future	active-user-facing
+docs/RD_BOOTSTRAP_RESULTS.md	13	- The frozen YOLO11 production repository was verified read-only at commit	active-user-facing
+docs/RD_BOOTSTRAP_RESULTS.md	16	- This repository was created from the YOLO11 production tag on branch	active-user-facing
+docs/RD_BOOTSTRAP_RESULTS.md	18	`template-yolo11-gitlab`.	active-user-facing
+docs/RD_BOOTSTRAP_RESULTS.md	20	- RT204 adds `SPACEMIT_EP_DISABLE_PASSES_FILTER` and new strings/symbols for	active-user-facing
+docs/RD_BOOTSTRAP_RESULTS.md	22	- RT204 runs on BPI-F3/K1X/X60 with default architecture selection; tested text	active-user-facing
+docs/RD_BOOTSTRAP_RESULTS.md	23	and numeric `SPACEMIT_EP_PERFER_CORE_ARCH` overrides were rejected.	active-user-facing
+docs/RD_BOOTSTRAP_RESULTS.md	31	- RT204 SpaceMIT EP runs the exported YOLO26 640/320 graphs without crashing and	active-user-facing
+docs/TROUBLESHOOTING.md	31	- Day 2 also pins stable `spacemit-ort.riscv64.2.0.2` as `rt202` for	active-user-facing
+docs/TROUBLESHOOTING.md	33	it aborted on dynamic640, FP16 640, and vendor320 checks.	active-user-facing
+docs/TROUBLESHOOTING.md	82	- model: official vendor320 INT8	active-user-facing
+docs/TROUBLESHOOTING.md	83	- runtime: `rt123`	active-user-facing
+docs/TROUBLESHOOTING.md	98	DISPLAY_FLAG=0 HEADLESS_FLAG=1 MAX_FRAMES=1 SAVE_OUTPUT=<legacy-home-path> ./scripts/run_camera_demo_fast.sh	active-user-facing
+docs/TROUBLESHOOTING.md	103	- Use runtime `rt123` for trustworthy vendor320 image/camera inference:	active-user-facing
+docs/TROUBLESHOOTING.md	106	BANANA_DEMO_RUNTIME_TAG=rt123 ./scripts/run_image_demo.sh /path/to/image.jpg models/vendor/yolo11/yolov11n_320x320.q.onnx 320 0.25	active-user-facing
+docs/TROUBLESHOOTING.md	109	- Use runtime `rt201` only when you explicitly want the low-latency benchmark path:	active-user-facing
+docs/TROUBLESHOOTING.md	112	BANANA_DEMO_RUNTIME_TAG=rt201 ./scripts/bench_forward_only.sh models/vendor/yolo11/yolov11n_320x320.q.onnx 320	active-user-facing
+docs/TROUBLESHOOTING.md	115	- Do not assume that raising or lowering the threshold alone will fix vendor320 on the wrong runtime.	active-user-facing
+docs/TROUBLESHOOTING.md	117	- `run_camera_demo_fast.sh` keeps the trusted `rt123` visual stack; it does not silently switch to the raw `rt201` perf path	active-user-facing
+docs/TROUBLESHOOTING.md	118	- `1.2.2` / `1.2.3`: semantically good vendor320 references	active-user-facing
+docs/TROUBLESHOOTING.md	119	- `1.2.4`: semantically good vendor320 package line, but still bad for dynamic640	active-user-facing
+docs/TROUBLESHOOTING.md	120	- `2.0.1`: fast vendor320 benchmark path, but not the trusted visual choice	active-user-facing
+docs/TROUBLESHOOTING.md	121	- `2.0.2+beta1`: same bad vendor320 output family as `2.0.1`	active-user-facing
+docs/TROUBLESHOOTING.md	122	- stable `2.0.2`: Day 2 testing aborted before a usable vendor320 semantic	active-user-facing
+docs/TROUBLESHOOTING.md	125	- A later EP/runtime pass found one public `rt201` visual workaround:	active-user-facing
+docs/TROUBLESHOOTING.md	126	- `SPACEMIT_EP_DISABLE_FLOAT16_EPILOGUE=1`	active-user-facing
+docs/TROUBLESHOOTING.md	127	- `SPACEMIT_EP_DISABLE_OP_NAME_FILTER=/model.23/Slice;/model.23/Slice_1;/model.23/Add_1;/model.23/Add_2;/model.23/Sub;/model.23/Sub_1`	active-user-facing
+docs/TROUBLESHOOTING.md	128	- the visual helper scripts auto-apply that workaround when you explicitly force `BANANA_DEMO_RUNTIME_TAG=rt201`	active-user-facing
+docs/TROUBLESHOOTING.md	129	- the helper now refuses to auto-apply it to an unvalidated 320 model bundle; it is guarded by the official vendor320 model SHA256	active-user-facing
+docs/TROUBLESHOOTING.md	133	BANANA_DEMO_RUNTIME_TAG=rt201 BANANA_DEMO_VENDOR320_RT201_VISUAL_FIX=0 ./scripts/run_image_demo.sh /path/to/image.jpg models/vendor/yolo11/yolov11n_320x320.q.onnx 320 0.25	active-user-facing
+docs/TROUBLESHOOTING.md	136	- this workaround is much slower than `rt123`, so `rt123` remains the default visual runtime	active-user-facing
+docs/TROUBLESHOOTING.md	137	- If a run shows `alloc failed(...)`, do not use it as evidence for vendor320 correctness.	active-user-facing
+docs/TROUBLESHOOTING.md	139	- `rt201` bad for vendor320	active-user-facing
+docs/TROUBLESHOOTING.md	140	- `rt202b1` bad for vendor320	active-user-facing
+docs/TROUBLESHOOTING.md	143	- graph optimization levels `0`, `1`, `2`, and `99` were tested on `rt201`, tarball `rt202b1`, and package `pkg202fix`	active-user-facing
+docs/TROUBLESHOOTING.md	144	- none of those combinations restored a semantically good vendor320 result	active-user-facing
+docs/TROUBLESHOOTING.md	145	- the public float `yolov11n_320x320.onnx` bundle failed EP reshape/compile on modern 2.0.x instead of becoming a valid fallback	active-user-facing
+docs/TROUBLESHOOTING.md	147	- `rt201` optimized models from `o0/o1/o2/o99` all stayed semantically good when replayed on stable `rt123` CPU	active-user-facing
+docs/TROUBLESHOOTING.md	148	- so the public 2.0.x host graph rewrite is not the vendor320 corruption point	active-user-facing
+docs/TROUBLESHOOTING.md	149	- the remaining corruption is in EP execution, specifically the `/model.23` tail on public `rt201`	active-user-facing
+docs/TROUBLESHOOTING.md	150	- `rt202b1` still remained bad even with the same public workaround that repaired `rt201`	active-user-facing
+docs/TROUBLESHOOTING.md	161	BANANA_DEMO_RUNTIME_TAG=rt201 ./scripts/bench_forward_only.sh models/vendor/yolo11/yolov11n_320x320.q.onnx 320	active-user-facing
+docs/TROUBLESHOOTING.md	167	BANANA_DEMO_RUNTIME_TAG=rt123 ./scripts/run_image_demo.sh /path/to/photo.jpg models/vendor/yolo11/yolov11n_320x320.q.onnx 320 0.25	active-user-facing
+docs/TROUBLESHOOTING.md	175	./scripts/vendor320_runtime_matrix.sh	active-user-facing
+docs/TROUBLESHOOTING.md	179	- `rt123`	active-user-facing
+docs/TROUBLESHOOTING.md	180	- `rt201 raw`	active-user-facing
+docs/TROUBLESHOOTING.md	181	- `rt201 fixed`	active-user-facing
+docs/TROUBLESHOOTING.md	251	- `rt123` + `320 keep_io` -> heap corruption	active-user-facing
+docs/TROUBLESHOOTING.md	252	- `rt123` + `640 keep_io` -> heap corruption	active-user-facing
+docs/TROUBLESHOOTING.md	253	- `rt201` + `320 keep_io` -> reshape/runtime failure	active-user-facing
+docs/TROUBLESHOOTING.md	254	- `rt202b1` + `320 keep_io` -> compile/reshape failure	active-user-facing
+docs/TROUBLESHOOTING.md	255	- `rt201` + `640 keep_io` -> works	active-user-facing
+docs/TROUBLESHOOTING.md	256	- `rt202b1` + `640 keep_io` -> works	active-user-facing
+docs/RESULTS.md	14	rt204 path, but kept the existing keep-IO FP16 artifact as the best local YOLO26	active-user-facing
+docs/RESULTS.md	19	| YOLO26 FP32 e2e 640 | rt204 | `perf_test forward` | 562.934799 | 1.776405 | baseline |	active-user-facing
+docs/RESULTS.md	20	| YOLO26 FP32 e2e 640 | rt204 | `app forward-only` | 573.281930 | 1.744342 | baseline |	active-user-facing
+docs/RESULTS.md	21	| YOLO26 FP32 e2e 640 | rt204 | `app full image benchmark` | 523.119274 | 1.911610 | baseline |	active-user-facing
+docs/RESULTS.md	22	| YOLO26 FP16 keep-IO 640 | rt204 | `perf_test forward` | 379.777774 | 2.633119 | best local FP16 path |	active-user-facing
+docs/RESULTS.md	23	| YOLO26 FP16 keep-IO 640 | rt204 | `app forward-only` | 383.229967 | 2.609399 | best local FP16 path |	active-user-facing
+docs/RESULTS.md	24	| YOLO26 FP16 keep-IO 640 | rt204 | `app full image benchmark` | 398.091562 | 2.511985 | best local FP16 path |	active-user-facing
+docs/RESULTS.md	25	| YOLO26 FP16 full-I/O 640 | rt204 | `perf_test forward` | 380.472087 | 2.628314 | accepted, not faster |	active-user-facing
+docs/RESULTS.md	26	| YOLO26 FP16 full-I/O 640 | rt204 | `app forward-only` | 388.609808 | 2.573275 | accepted, not faster |	active-user-facing
+docs/RESULTS.md	27	| YOLO26 FP16 full-I/O 640 | rt204 | `app full image benchmark` | 399.345008 | 2.504100 | accepted, not faster |	active-user-facing
+docs/RESULTS.md	28	| YOLO26 XSlim FP16 | rt204 | load/app smoke | N/A | N/A | rejected: `/model.23/Concat_6` mixed dtypes |	active-user-facing
+docs/RESULTS.md	52	CPU-good YOLO26 manual Q/DQ INT8 candidates better than `rt204`.	active-user-facing
+docs/RESULTS.md	56	| `rt123` | Minimal/full rows run, but full outputs do not match same-runtime CPU hash and no full-row subgraph dump was produced. | Same non-parity. | Not accepted. |	active-user-facing
+docs/RESULTS.md	57	| `rt201` | Fails Q/DQ Conv with `output_type not implemented for clip minmax`. | `QuantizeLinear;DequantizeLinear;Conv` filter runs, but disables key INT8 ops and misses CPU hash parity. | Not accepted. |	active-user-facing
+docs/RESULTS.md	58	| `rt202b1` | Fails Q/DQ Conv with `clip minmax`. | Filter rows are diagnostic fallback only and miss CPU hash parity. | Not accepted. |	active-user-facing
+docs/RESULTS.md	59	| `rt202` | Fails with `tcm buffer alloc failed for core id 0`. | Still fails in this gate. | Not accepted. |	active-user-facing
+docs/RESULTS.md	60	| `rt204` | Control runtime reproduces `clip minmax`. | Same diagnostic fallback-only behavior as previous gates. | Not accepted. |	active-user-facing
+docs/RESULTS.md	79	This pass froze the current YOLO26 FP32 rt204 baseline and added a YOLO26 FP16	active-user-facing
+docs/RESULTS.md	81	blocked pending rt204/vendor and XSlim/upstream fixes.	active-user-facing
+docs/RESULTS.md	85	| YOLO26 FP32 e2e 640 | rt204 | `perf_test forward` | 572.153613 | 1.74774 | frozen R&D FP32 baseline |	active-user-facing
+docs/RESULTS.md	86	| YOLO26 FP32 e2e 640 | rt204 | `app forward-only` | 578.041776 | 1.729979 | frozen R&D FP32 baseline |	active-user-facing
+docs/RESULTS.md	87	| YOLO26 FP32 e2e 640 | rt204 | `app full image benchmark` | 522.079210 | 1.915418 | frozen R&D FP32 baseline |	active-user-facing
+docs/RESULTS.md	88	| YOLO26 FP16 body/head keep-IO 640 | rt204 | `perf_test forward` | 398.610405 | 2.50864 | accepted R&D FP16 baseline |	active-user-facing
+docs/RESULTS.md	89	| YOLO26 FP16 body/head keep-IO 640 | rt204 | `app forward-only` | 383.332266 | 2.608703 | accepted R&D FP16 baseline |	active-user-facing
+docs/RESULTS.md	90	| YOLO26 FP16 body/head keep-IO 640 | rt204 | `app full image benchmark` | 399.035502 | 2.506043 | accepted R&D FP16 baseline |	active-user-facing
+docs/RESULTS.md	91	| YOLO26 FP32 XSlim simplify-only | rt204 | `app forward-only` | 582.029471 | 1.718126 | no app-level improvement |	active-user-facing
+docs/RESULTS.md	92	| YOLO26 XSlim FP16 | rt204 | load/app smoke | N/A | N/A | rejected: `/model.23/Concat_6` mixed dtypes |	active-user-facing
+docs/RESULTS.md	98	R&D-only YOLO11 rt204 retrospective:	active-user-facing
+docs/RESULTS.md	102	| YOLO11 dynamic640 INT8 copy | rt204 | `app forward-only` | 201.454112 | 4.963910 | pass but slower than frozen rt201 production |	active-user-facing
+docs/RESULTS.md	103	| YOLO11 FP32 vanilla copy | rt204 | `app forward-only` | 539.131433 | 1.854835 | pass, diagnostic only |	active-user-facing
+docs/RESULTS.md	104	| YOLO11 FP32 XSlim copy | rt204 | app forward | N/A | N/A | fails/hangs after `YoloDecode` dispatch error |	active-user-facing
+docs/RESULTS.md	105	| YOLO11 FP16 keep-IO copy | rt204 | `app forward-only` | 341.651391 | 2.926960 | pass, R&D signal only |	active-user-facing
+docs/RESULTS.md	106	| YOLO11 FP16 XSlim copy | rt204 | app forward/full | N/A | N/A | fails/timeouts after `YoloDecode` dispatch error |	active-user-facing
+docs/RESULTS.md	113	- `docs/YOLO26_VS_YOLO11_BASELINE.md`	active-user-facing
+docs/RESULTS.md	126	| Candidate | Contract | XSlim result | CPU oracle | rt204 diagnostic | Decision |	active-user-facing
+docs/RESULTS.md	141	## XSlim INT8 rt204 gate, 2026-06-30	active-user-facing
+docs/RESULTS.md	150	INT8 on rt204.	active-user-facing
+docs/RESULTS.md	152	| Candidate | Contract | CPU oracle | rt204 EP | Decision |	active-user-facing
+docs/RESULTS.md	159	XSlim dynamic quantization did not reproduce the rt204 Q/DQ Conv	active-user-facing
+docs/RESULTS.md	189	YOLO26 FP32 end-to-end 640 is now the working R&D baseline on rt204. PyTorch,	active-user-facing
+docs/RESULTS.md	190	ONNX Runtime CPU, and rt204 SpaceMIT EP agree semantically on the public	active-user-facing
+docs/RESULTS.md	197	| `perf_test forward` | rt204 SpaceMIT EP | YOLO26n FP32 e2e 640 | 568.943339 | 1.75761 | pass |	active-user-facing
+docs/RESULTS.md	198	| `app forward-only` | rt204 SpaceMIT EP | YOLO26n FP32 e2e 640 | 564.531070 | 1.771382 | pass |	active-user-facing
+docs/RESULTS.md	199	| `app full image benchmark` | rt204 SpaceMIT EP | YOLO26n FP32 e2e 640 | 521.868004 | 1.916193 | pass on Ultralytics bus |	active-user-facing
+docs/RESULTS.md	200	| `app full image single` | rt204 SpaceMIT EP | YOLO26n FP32 e2e 640 | 696-715 | 1.40-1.44 | pass on bus, COCO-like, and private canonical images |	active-user-facing
+docs/RESULTS.md	202	YOLO26 INT8 ONNX board acceleration is closed as blocked for the current rt204	active-user-facing
+docs/RESULTS.md	203	path: CPU-good manual Q/DQ INT8 exists, but rt204 SpaceMIT EP fails Q/DQ Conv	active-user-facing
+docs/RESULTS.md	205	minimal repro is documented in `docs/RT204_QDQ_CONV_VENDOR_BUG_REPORT.md`.	active-user-facing
+docs/RESULTS.md	211	- `docs/YOLO26_VS_YOLO11_BASELINE.md`	active-user-facing
+docs/RESULTS.md	229	- Primary production visual branch: generated `dynamic640` INT8 on `rt201`.	active-user-facing
+docs/RESULTS.md	230	- Default normal camera branch: generated `dynamic640` INT8 on `rt201`.	active-user-facing
+docs/RESULTS.md	231	- Fast-live branch: official vendor320 INT8 on `rt123`, `320x320` letterbox.	active-user-facing
+docs/RESULTS.md	232	- Vendor320 raw `rt201` remains benchmark/perf-only.	active-user-facing
+docs/RESULTS.md	234	`rt201`/`rt202b1`.	active-user-facing
+docs/RESULTS.md	235	- Stable `rt202` remains evaluated but not adopted.	active-user-facing
+docs/RESULTS.md	248	| Fresh clone runtime fetch | fixed | Raw `+beta1` URL for `rt202b1` produced 404; lock file now uses `%2Bbeta1`. |	active-user-facing
+docs/RESULTS.md	254	| Default image visual | `rt201` | pass | 14 objects, total `843.955 ms`, `1.185 FPS` full image run. |	active-user-facing
+docs/RESULTS.md	255	| Normal camera | `rt201` | pass | Stable `/dev/v4l/by-id/... -> /dev/video20`, MJPG `1280x720`, frame 30 total `242.878 ms`, effective `2.365 FPS`. |	active-user-facing
+docs/RESULTS.md	256	| Fast-live camera | `rt123` | pass | Stable camera path, YUYV `640x480`, frame 60 total `64.167 ms`, effective `10.571 FPS`. |	active-user-facing
+docs/RESULTS.md	257	| Forced headless normal | `rt201` | pass | Explicit headless fallback and progress logs, frame 30 total `249.434 ms`. |	active-user-facing
+docs/RESULTS.md	258	| Forward benchmark smoke | `rt201` vendor320 perf | pass | app forward `23.934424 ms`, `41.780826 FPS`. |	active-user-facing
+docs/RESULTS.md	259	| Full benchmark smoke | `rt123` vendor320 visual | pass | app full `56.165549 ms`, `17.804509 FPS`. |	active-user-facing
+docs/RESULTS.md	264	## Day 2 RC soak and stable rt202 evaluation, 2026-06-28	active-user-facing
+docs/RESULTS.md	274	- Primary production visual branch: generated `dynamic640` INT8 on `rt201`.	active-user-facing
+docs/RESULTS.md	275	- Default image visual path: generated `dynamic640` INT8 on `rt201`.	active-user-facing
+docs/RESULTS.md	276	- Default normal camera path: generated `dynamic640` INT8 on `rt201`.	active-user-facing
+docs/RESULTS.md	277	- Fast-live camera path: official vendor320 INT8 on `rt123`, `320x320` letterbox.	active-user-facing
+docs/RESULTS.md	278	- Vendor320 trusted visual path: official vendor320 INT8 on `rt123`.	active-user-facing
+docs/RESULTS.md	279	- Vendor320 low-latency benchmark path: raw `rt201`, perf-only.	active-user-facing
+docs/RESULTS.md	280	- FP16: experimental; `keep_io` FP16 `640x640` remains usable on `rt201` and `rt202b1`.	active-user-facing
+docs/RESULTS.md	281	- Stable `rt202` = `spacemit-ort.riscv64.2.0.2` is fetchable/selectable for	active-user-facing
+docs/RESULTS.md	285	### Day 2 stable rt202 decision	active-user-facing
+docs/RESULTS.md	289	| Can stable `rt202` replace `rt202b1` in active helper/docs? | No | `rt202b1` passes FP16 keep_io 640; stable `rt202` aborts on the same model. |	active-user-facing
+docs/RESULTS.md	290	| Can stable `rt202` replace `rt201` for dynamic640 production? | No | Dynamic640 image and forward/full runs abort on stable `rt202`; `rt201` passes. |	active-user-facing
+docs/RESULTS.md	291	| Can stable `rt202` improve FP16 640 experimental path? | No | Stable `rt202` aborts; `rt201` and `rt202b1` pass. |	active-user-facing
+docs/RESULTS.md	292	| Can stable `rt202` fix vendor320 2.0.x issues? | No | Vendor320 stable `rt202` aborts before a usable semantic verdict. |	active-user-facing
+docs/RESULTS.md	293	| Should beta/RC `rt202b1` be removed from active repo paths? | No | It remains the only validated 2.0.2-line experimental FP16 640 path. |	active-user-facing
+docs/RESULTS.md	295	Stable `rt202` was retested after a board reboot. Post-reboot `/dev/tcm` had no	active-user-facing
+docs/RESULTS.md	296	`fuser`/`lsof` users, but stable `rt202` still aborted on dynamic640, FP16 640,	active-user-facing
+docs/RESULTS.md	297	and vendor320 checks.	active-user-facing
+docs/RESULTS.md	303	| Default production visual | `rt201` | generated `dynamic640` INT8 | pass | 14 | 28.051 | 791.126 | 17.337 | 858.361 | 1.165 | reasonable |	active-user-facing
+docs/RESULTS.md	304	| Vendor320 trusted visual | `rt123` | official vendor320 INT8 | pass | 8 | 11.615 | 151.690 | 10.349 | 193.223 | 5.175 | reasonable; first run includes startup overhead |	active-user-facing
+docs/RESULTS.md	305	| Vendor320 raw perf sanity | `rt201` | official vendor320 INT8, workaround off | pass as raw/perf | 0 | 10.336 | 141.224 | 4.296 | 166.567 | 6.004 | not a visual default |	active-user-facing
+docs/RESULTS.md	306	| Vendor320 `rt201` workaround | `rt201` | SHA256-guarded visual workaround | pass | 9 | 10.948 | 142.432 | 4.492 | 178.049 | 5.616 | reasonable, non-default |	active-user-facing
+docs/RESULTS.md	307	| Fast-live still path | `rt123` | official vendor320 INT8 | pass | 8 | 10.534 | 63.845 | 4.400 | 98.798 | 10.122 | reasonable |	active-user-facing
+docs/RESULTS.md	308	| FP16 keep_io 640 | `rt201` | experimental FP16 | pass | 13 | 28.166 | 420.125 | 17.430 | 485.721 | 2.059 | reasonable |	active-user-facing
+docs/RESULTS.md	309	| FP16 keep_io 640 | `rt202b1` | experimental FP16 | pass | 13 | 27.989 | 438.632 | 17.298 | 503.659 | 1.985 | reasonable |	active-user-facing
+docs/RESULTS.md	310	| FP16 keep_io 320 | `rt201` | experimental FP16 | expected fail | n/a | n/a | n/a | n/a | n/a | n/a | EP reshape failure |	active-user-facing
+docs/RESULTS.md	311	| Dynamic640 candidate | `rt202` stable | generated `dynamic640` INT8 | fail | n/a | n/a | n/a | n/a | n/a | n/a | aborts with `std::runtime_error` |	active-user-facing
+docs/RESULTS.md	312	| FP16 keep_io 640 candidate | `rt202` stable | experimental FP16 | fail | n/a | n/a | n/a | n/a | n/a | n/a | aborts with `std::runtime_error` |	active-user-facing
+docs/RESULTS.md	313	| Vendor320 candidate | `rt202` stable | official vendor320 INT8 | fail | n/a | n/a | n/a | n/a | n/a | n/a | aborts; no modern-runtime vendor320 fix |	active-user-facing
+docs/RESULTS.md	319	| Normal camera default | `rt201` | display auto -> on, headless off | `/dev/v4l/by-id/... -> /dev/video20`, MJPG, `1280x720` | 60 | 245.835 | 4.068 | 2.316 | pass |	active-user-facing
+docs/RESULTS.md	320	| Fast-live camera | `rt123` | display auto -> on, headless off | `/dev/v4l/by-id/... -> /dev/video20`, YUYV, `640x480` | 80 | 69.089 | 14.474 | 8.928 | pass |	active-user-facing
+docs/RESULTS.md	321	| Forced headless normal | `rt201` | display off, headless on | same USB camera | 20 | 248.222 | 4.029 | 2.279 | pass |	active-user-facing
+docs/RESULTS.md	322	| Forced headless fast-live | `rt123` | display off, headless on | same USB camera | 50 | 66.061 | 15.137 | 10.390 | pass |	active-user-facing
+docs/RESULTS.md	323	| Normal still save | `rt201` | headless still | JPEG `1280x720` | 1 | 863.934 | 1.157 | 0.758 | pass |	active-user-facing
+docs/RESULTS.md	324	| Fast-live still save | `rt123` | headless still | JPEG `640x480` | 1 | 88.895 | 11.249 | 2.356 | pass |	active-user-facing
+docs/RESULTS.md	326	Stable `rt202` was not expanded into camera testing because it failed the image	active-user-facing
+docs/RESULTS.md	336	| Vendor320 low-latency perf | `rt201` | official vendor320 INT8 | 24.4143 | 40.9483 | forward | 24.210065 | 41.305136 | perf-only branch |	active-user-facing
+docs/RESULTS.md	337	| Vendor320 trusted visual control | `rt123` | official vendor320 INT8 | 48.3266 | 20.6767 | forward | 49.095494 | 20.368468 | visual branch |	active-user-facing
+docs/RESULTS.md	338	| Vendor320 trusted visual control | `rt123` | official vendor320 INT8 | n/a | n/a | full | 57.540777 | 17.378980 | full image pipeline |	active-user-facing
+docs/RESULTS.md	339	| Primary dynamic640 visual | `rt201` | generated dynamic640 INT8 | 190.024 | 5.2623 | forward | 190.567794 | 5.247476 | primary production visual branch |	active-user-facing
+docs/RESULTS.md	340	| Primary dynamic640 visual | `rt201` | generated dynamic640 INT8 | n/a | n/a | full | 233.480423 | 4.283014 | full image pipeline |	active-user-facing
+docs/RESULTS.md	341	| FP16 keep_io 640 | `rt201` | experimental FP16 | 270.867 | 3.69176 | forward | 273.265611 | 3.659443 | experimental |	active-user-facing
+docs/RESULTS.md	342	| FP16 keep_io 640 | `rt202b1` | experimental FP16 | 293.060863 | 3.41212 | forward | 294.988206 | 3.389966 | experimental |	active-user-facing
+docs/RESULTS.md	343	| Dynamic640 candidate | `rt202` stable | generated dynamic640 INT8 | fail | fail | forward/full | fail | fail | `tcm buffer acquire/alloc failed` / abort |	active-user-facing
+docs/RESULTS.md	344	| FP16 keep_io 640 candidate | `rt202` stable | experimental FP16 | fail | fail | forward | fail | fail | abort; does not replace `rt202b1` |	active-user-facing
+docs/RESULTS.md	345	| Vendor320 candidate | `rt202` stable | official vendor320 INT8 | fail | fail | forward | fail | fail | abort; no vendor320 fix |	active-user-facing
+docs/RESULTS.md	351	| `rt123` | production trusted for vendor320 visual and fast-live | Keep. |	active-user-facing
+docs/RESULTS.md	352	| `rt201` | production primary dynamic640 and vendor320 perf | Keep. |	active-user-facing
+docs/RESULTS.md	353	| `rt202b1` | active experimental FP16 640 fallback | Keep because stable `rt202` failed replacement testing. |	active-user-facing
+docs/RESULTS.md	354	| `rt202` stable | evaluated, not adopted | Pinned and selectable only for reproducibility; crashes current paths. |	active-user-facing
+docs/RESULTS.md	356	YOLO26n remains P2. Day 2 did not reopen YOLO26n R&D because stable `rt202`	active-user-facing
+docs/RESULTS.md	369	- Primary production visual branch: generated `dynamic640` INT8 on `rt201`.	active-user-facing
+docs/RESULTS.md	370	- Default image visual path: generated `dynamic640` INT8 on `rt201`.	active-user-facing
+docs/RESULTS.md	371	- Default normal camera path: generated `dynamic640` INT8 on `rt201`.	active-user-facing
+docs/RESULTS.md	372	- Fast-live camera path: official vendor320 INT8 on `rt123`, `320x320` letterbox.	active-user-facing
+docs/RESULTS.md	373	- Vendor320 trusted visual path: official vendor320 INT8 on `rt123`.	active-user-facing
+docs/RESULTS.md	374	- Vendor320 low-latency benchmark path: raw `rt201`, perf-only.	active-user-facing
+docs/RESULTS.md	375	- FP16: experimental; `keep_io` FP16 `640x640` works on `rt201` and `rt202b1`.	active-user-facing
+docs/RESULTS.md	381	| Default production visual | `rt201` | generated `dynamic640` INT8 | pass | 14 | 27.932 | 820.408 | 17.365 | 887.258 | 1.127 | reasonable |	active-user-facing
+docs/RESULTS.md	382	| Vendor320 trusted visual | `rt123` | official vendor320 INT8 | pass | 8 | 10.326 | 63.708 | 4.411 | 97.765 | 10.229 | reasonable |	active-user-facing
+docs/RESULTS.md	383	| Vendor320 `rt201` raw perf | `rt201` | official vendor320 INT8 | pass | n/a | n/a | 25.135 forward-only | n/a | n/a | 39.786 forward-only | perf-only, not visual default |	active-user-facing
+docs/RESULTS.md	384	| Vendor320 `rt201` workaround | `rt201` | SHA256-guarded visual workaround | pass | 9 | 9.862 | 184.588 | 4.456 | 219.678 | 4.552 | reasonable, slower than `rt123` |	active-user-facing
+docs/RESULTS.md	385	| FP16 keep_io 640 | `rt201` | experimental FP16 | pass | 13 | 29.619 | 406.901 | 17.301 | 474.652 | 2.107 | reasonable |	active-user-facing
+docs/RESULTS.md	386	| FP16 keep_io 640 | `rt202b1` | experimental FP16 | pass | 13 | 27.777 | 435.406 | 17.336 | 499.653 | 2.001 | reasonable |	active-user-facing
+docs/RESULTS.md	387	| FP16 keep_io 320 | `rt201`/`rt202b1` | experimental FP16 | expected fail | n/a | n/a | n/a | n/a | n/a | n/a | remains unsupported |	active-user-facing
+docs/RESULTS.md	393	| Normal camera default | `rt201` | display off, headless on | `/dev/v4l/by-id/... -> /dev/video20`, MJPG, `1280x720` | 60 | 268.892 | 3.719 | pass |	active-user-facing
+docs/RESULTS.md	394	| Fast-live camera | `rt123` | display on, headless off | `/dev/v4l/by-id/... -> /dev/video20`, `640x480` | 80 | 68.883 | 14.517 | pass |	active-user-facing
+docs/RESULTS.md	395	| Forced headless normal | `rt201` | display off, headless on | same USB camera | 20 | 250.104 | 3.998 | pass |	active-user-facing
+docs/RESULTS.md	396	| Forced headless fast-live | `rt123` | display off, headless on | same USB camera | 50 | 67.980 | 14.710 | pass |	active-user-facing
+docs/RESULTS.md	397	| Normal still save | `rt201` | headless still | JPEG `1280x720` | 1 | 863.969 | 1.157 | pass |	active-user-facing
+docs/RESULTS.md	398	| Fast-live still save | `rt123` | headless still | JPEG `640x480` | 1 | 86.837 | 11.516 | pass |	active-user-facing
+docs/RESULTS.md	410	| Vendor320 low-latency perf | `rt201` | official vendor320 INT8 | 24.6879 | 40.4957 | forward | 25.134561 | 39.785855 | perf-only branch |	active-user-facing
+docs/RESULTS.md	411	| Vendor320 trusted visual control | `rt123` | official vendor320 INT8 | 48.7262 | 20.5072 | forward | 49.203386 | 20.323804 | visual branch |	active-user-facing
+docs/RESULTS.md	412	| Primary dynamic640 visual | `rt201` | generated dynamic640 INT8 | 190.245 | 5.25614 | forward | 192.232816 | 5.202025 | primary production visual branch |	active-user-facing
+docs/RESULTS.md	413	| Primary dynamic640 visual | `rt201` | generated dynamic640 INT8 | n/a | n/a | full | 232.189709 | 4.306823 | full image pipeline |	active-user-facing
+docs/RESULTS.md	414	| FP16 keep_io 640 | `rt201` | experimental FP16 | 272.964 | 3.663487 | forward | 273.233840 | 3.659869 | experimental |	active-user-facing
+docs/RESULTS.md	415	| FP16 keep_io 640 | `rt202b1` | experimental FP16 | 292.900412 | 3.414130 | forward | 294.169391 | 3.399402 | experimental |	active-user-facing
+docs/RESULTS.md	425	- Board rt201 app smoke ran both float ONNX and dynamic INT8 ONNX, but both produced a giant false `refrigerator` box on the canonical photo.	active-user-facing
+docs/RESULTS.md	431	- Required image: `<legacy-home-path>`	active-user-facing
+docs/RESULTS.md	432	- Vendor INT8 320x320 is now validated as a trustworthy visual path on runtime `rt123` (`spacemit-ort.riscv64.1.2.3`) with letterbox preprocessing.	active-user-facing
+docs/RESULTS.md	433	- Vendor INT8 320x320 remains the low-latency benchmark path on runtime `rt201` (`spacemit-ort.riscv64.2.0.1`).	active-user-facing
+docs/RESULTS.md	434	- Public `rt201` also has a correctness workaround for vendor320 visual inference:	active-user-facing
+docs/RESULTS.md	435	- `SPACEMIT_EP_DISABLE_FLOAT16_EPILOGUE=1`	active-user-facing
+docs/RESULTS.md	436	- `SPACEMIT_EP_DISABLE_OP_NAME_FILTER=/model.23/Slice;/model.23/Slice_1;/model.23/Add_1;/model.23/Add_2;/model.23/Sub;/model.23/Sub_1`	active-user-facing
+docs/RESULTS.md	437	- it produces semantically good canonical-photo detections, but it is much slower than `rt123`	active-user-facing
+docs/RESULTS.md	446	- model: official vendor320 INT8 ONNX	active-user-facing
+docs/RESULTS.md	447	- runtime: `rt123`	active-user-facing
+docs/RESULTS.md	490	- Measured live camera timing on the fast-live path (`vendor320 rt123`, `640x480`, `MAX_FRAMES=20`, headless):	active-user-facing
+docs/RESULTS.md	529	- Vendor320 perf stack (`rt201`) `onnxruntime_perf_test`:	active-user-facing
+docs/RESULTS.md	532	- Vendor320 perf stack (`rt201`) application forward-only:	active-user-facing
+docs/RESULTS.md	535	- Vendor320 visual stack (`rt123`) `onnxruntime_perf_test`:	active-user-facing
+docs/RESULTS.md	538	- Vendor320 visual stack (`rt123`) application forward-only:	active-user-facing
+docs/RESULTS.md	550	- Vendor320 visual stack (`rt123`) application full pipeline:	active-user-facing
+docs/RESULTS.md	556	- A corrected vendor320 camera run on the real USB camera with default settings:	active-user-facing
+docs/RESULTS.md	563	- The decisive root-cause pass showed that vendor320 is runtime-version-sensitive on the public stack:	active-user-facing
+docs/RESULTS.md	567	- A clean-room follow-up pass closed the remaining rt201 question:	active-user-facing
+docs/RESULTS.md	570	- official vendor example on `rt201` still failed semantically	active-user-facing
+docs/RESULTS.md	571	- repo app on `rt201` still failed semantically	active-user-facing
+docs/RESULTS.md	572	- `rt202b1` (`2.0.2+beta1`) matched the same bad vendor320 output family as `rt201`	active-user-facing
+docs/RESULTS.md	573	- public package line `1.2.4` was semantically good for vendor320 but still broke dynamic640 badly	active-user-facing
+docs/RESULTS.md	576	- `rt201`, tarball `rt202b1`, and package `pkg202fix` all stayed bad for vendor320 across graph optimization levels `0`, `1`, `2`, and `99`	active-user-facing
+docs/RESULTS.md	577	- public float `yolov11n_320x320.onnx` was not a rescue path on 2.0.x either; the EP failed during reshape/compile instead	active-user-facing
+docs/RESULTS.md	578	- no compatible public 2.0.x vendor320 chain was found	active-user-facing
+docs/RESULTS.md	580	- `SPACEMIT_EP_DISABLE_FLOAT16_EPILOGUE=1` alone does not fix vendor320 on `rt201` or `rt202b1`	active-user-facing
+docs/RESULTS.md	581	- optimized models generated by `rt123`, `rt201`, and `rt202b1` all replay with the same good CPU semantics on stable `rt123` CPU, so host graph rewrite is not the corruption point	active-user-facing
+docs/RESULTS.md	582	- the public `rt201` corruption is in EP execution, specifically the `/model.23` tail	active-user-facing
+docs/RESULTS.md	583	- keeping `/model.23/Slice`, `/model.23/Slice_1`, `/model.23/Add_1`, `/model.23/Add_2`, `/model.23/Sub`, and `/model.23/Sub_1` on CPU, together with `SPACEMIT_EP_DISABLE_FLOAT16_EPILOGUE=1`, restores a semantically good vendor320 result on `rt201`	active-user-facing
+docs/RESULTS.md	584	- the same workaround does not restore `rt202b1`	active-user-facing
+docs/RESULTS.md	586	- `1.2.x` vendor320 line (`1.2.3`, `1.2.4`) is stable across warmup counts	active-user-facing
+docs/RESULTS.md	587	- `2.0.x` public line (`2.0.1`, `2.0.2+beta1`) changes vendor320 raw output hashes across warmup counts even when input hash is fixed	active-user-facing
+docs/RESULTS.md	589	- vendor320 visual path -> `rt123`	active-user-facing
+docs/RESULTS.md	590	- vendor320 low-latency benchmark path -> `rt201`	active-user-facing
+docs/RESULTS.md	591	- dynamic640 path -> `rt201`	active-user-facing
+docs/RESULTS.md	592	- forced `rt201` visual runs now auto-apply the validated public workaround, but defaults still prefer `rt123` because the workaround is much slower	active-user-facing
+docs/RESULTS.md	594	- The validated `vendor320 rt201` visual workaround is now guarded by the official vendor320 model SHA256, so it is not silently applied to arbitrary `320`-named models.	active-user-facing
+docs/RESULTS.md	596	- `scripts/vendor320_runtime_matrix.sh`	active-user-facing
+docs/RESULTS.md	597	- it saves `rt123`, `rt201 raw`, and `rt201 fixed` image outputs plus a compact matrix table	active-user-facing
+docs/RESULTS.md	606	- Official vendor 640x640 INT8 YOLO11n model was not found in the pinned public archive.	active-user-facing
+docs/RESULTS.md	613	- model family: YOLO11n ONNX	active-user-facing
+docs/RESULTS.md	615	- runtimes tested: `rt123`, `rt201`, `rt202b1`	active-user-facing
+docs/RESULTS.md	617	- no public official/vendor YOLO11n FP16 ONNX for `320` or `640` was found in the pinned public sources used by this repo	active-user-facing
+docs/RESULTS.md	635	| `yolov11n_320x320.fp16.onnx` | true FP16 I/O | `FLOAT16` | `FLOAT16` | `ebcbf994e3fea1ca6dfc9be1a3b7c18ec760b078f71e929c192a0d48c671e411` | dtype-correct, but not runnable on the tested public board runtimes |	active-user-facing
+docs/RESULTS.md	636	| `yolov11n_640x640.fp16.onnx` | true FP16 I/O | `FLOAT16` | `FLOAT16` | `ec7a8b5db9b4b022f98ea3ce7e887119a996637ba07be839b51b4970c2df61fd` | dtype-correct, but not runnable on the tested public board runtimes |	active-user-facing
+docs/RESULTS.md	637	| `yolov11n_320x320.fp16_iop32.onnx` | internal FP16 / FP32 I/O | `FLOAT` | `FLOAT` | `3291474d7a8e40bc0fabf6feb054942675f562dab0c04666bddd47662eb27b69` | final tested `320` FP16 path |	active-user-facing
+docs/RESULTS.md	638	| `yolov11n_640x640.fp16_iop32.onnx` | internal FP16 / FP32 I/O | `FLOAT` | `FLOAT` | `4742625978c4b5cc25282bf02890837fcea7762d5536fe55e583311ce9b14593` | final tested `640` FP16 path |	active-user-facing
+docs/RESULTS.md	647	| `rt123` | `fp16-320 keep_io` | fail |  |  | heap corruption (`free(): invalid next size`) |	active-user-facing
+docs/RESULTS.md	648	| `rt123` | `fp16-640 keep_io` | fail |  |  | heap corruption (`free(): corrupted unsorted chunks`) |	active-user-facing
+docs/RESULTS.md	649	| `rt201` | `fp16-320 keep_io` | fail |  |  | SpaceMIT EP reshape error |	active-user-facing
+docs/RESULTS.md	650	| `rt201` | `fp16-640 keep_io` | ok | `271.549` | `3.682577` | stable |	active-user-facing
+docs/RESULTS.md	651	| `rt202b1` | `fp16-320 keep_io` | fail |  |  | SpaceMIT EP compile/reshape error |	active-user-facing
+docs/RESULTS.md	652	| `rt202b1` | `fp16-640 keep_io` | ok | `293.624088` | `3.405715` | stable |	active-user-facing
+docs/RESULTS.md	658	| `rt123` | `fp16-320 keep_io` | fail |  |  |  | heap corruption |	active-user-facing
+docs/RESULTS.md	659	| `rt123` | `fp16-640 keep_io` | fail |  |  |  | heap corruption |	active-user-facing
+docs/RESULTS.md	660	| `rt201` | `fp16-320 keep_io` | fail |  |  |  | metadata/runtime error before usable inference |	active-user-facing
+docs/RESULTS.md	661	| `rt201` | `fp16-640 keep_io` | ok | `273.951889` | `0.548755` | `3.650276` | stable |	active-user-facing
+docs/RESULTS.md	662	| `rt202b1` | `fp16-320 keep_io` | fail |  |  |  | metadata/runtime error before usable inference |	active-user-facing
+docs/RESULTS.md	663	| `rt202b1` | `fp16-640 keep_io` | ok | `295.421328` | `0.616934` | `3.384996` | stable |	active-user-facing
+docs/RESULTS.md	669	| `rt123` | `fp16-320 keep_io` | fail |  |  |  |  |  |  | heap corruption |	active-user-facing
+docs/RESULTS.md	670	| `rt123` | `fp16-640 keep_io` | fail |  |  |  |  |  |  | heap corruption |	active-user-facing
+docs/RESULTS.md	671	| `rt201` | `fp16-320 keep_io` | fail |  |  |  |  |  |  | metadata/runtime error |	active-user-facing
+docs/RESULTS.md	672	| `rt201` | `fp16-640 keep_io` | ok | `13` | `28.385` | `431.284` | `17.391` | `497.471` | `2.010` | semantically reasonable canonical-photo output |	active-user-facing
+docs/RESULTS.md	673	| `rt202b1` | `fp16-320 keep_io` | fail |  |  |  |  |  |  | metadata/runtime error |	active-user-facing
+docs/RESULTS.md	674	| `rt202b1` | `fp16-640 keep_io` | ok | `13` | `28.189` | `437.294` | `17.130` | `501.964` | `1.992` | semantically reasonable canonical-photo output |	active-user-facing
+docs/RESULTS.md	678	- `rt201 + fp16-640 keep_io`	active-user-facing
+docs/RESULTS.md	681	- `rt202b1 + fp16-640 keep_io`	active-user-facing
+docs/RESULTS.md	683	- slightly slower than `rt201`	active-user-facing
+docs/RESULTS.md	684	- `rt123 + fp16-320/640 keep_io`	active-user-facing
+docs/RESULTS.md	687	- `rt201/rt202b1 + fp16-320 keep_io`	active-user-facing
+docs/RESULTS.md	695	- this repository now has honest FP16 coverage for YOLO11n, but not a full “everything works” matrix	active-user-facing
+docs/RESULTS.md	699	- `rt201` or `rt202b1`	active-user-facing
+docs/PRODUCTION_TEST_MATRIX.md	15	| Loader | `app/bin/banana_yolo11_demo`, `bin/banana_yolo11_demo_rt201`, `bin/banana_yolo11_demo_rt123` | local repo runtime/OpenCV resolution | pass |	active-user-facing
+docs/PRODUCTION_TEST_MATRIX.md	16	| Image | default generated dynamic640 INT8 on `rt201` | semantically reasonable | pass |	active-user-facing
+docs/PRODUCTION_TEST_MATRIX.md	17	| Image | vendor320 trusted visual on `rt123` | semantically reasonable | pass |	active-user-facing
+docs/PRODUCTION_TEST_MATRIX.md	18	| Image | vendor320 raw `rt201` perf path | forward-only/perf sanity | pass |	active-user-facing
+docs/PRODUCTION_TEST_MATRIX.md	19	| Image | vendor320 `rt201` workaround | semantically reasonable and SHA256-guarded | pass |	active-user-facing
+docs/PRODUCTION_TEST_MATRIX.md	20	| Image | FP16 keep_io 640 on `rt201` | experimental smoke | pass |	active-user-facing
+docs/PRODUCTION_TEST_MATRIX.md	21	| Image | FP16 keep_io 640 on `rt202b1` | experimental smoke | pass |	active-user-facing
+docs/PRODUCTION_TEST_MATRIX.md	28	| Performance | vendor320/dynamic640/FP16 matrix | fresh Day 1 numbers captured | pass |	active-user-facing
+docs/PRODUCTION_TEST_MATRIX.md	49	| Default image visual | `./scripts/run_image_demo.sh` | `dynamic640` INT8 on `rt201` |	active-user-facing
+docs/PRODUCTION_TEST_MATRIX.md	50	| Normal camera | `./scripts/run_camera_demo.sh` | `dynamic640` INT8 on `rt201` |	active-user-facing
+docs/PRODUCTION_TEST_MATRIX.md	51	| Fast-live camera | `./scripts/run_camera_demo_fast.sh` | vendor320 INT8 on `rt123` |	active-user-facing
+docs/PRODUCTION_TEST_MATRIX.md	56	## Day 2 RC Soak / Stable rt202 Evaluation	active-user-facing
+docs/PRODUCTION_TEST_MATRIX.md	67	| Build | all active variants plus `rt202` candidate | pass | pass |	active-user-facing
+docs/PRODUCTION_TEST_MATRIX.md	68	| Deploy | `rt123`, `rt201`, `rt202b1`, `rt202` staged separately | pass | pass |	active-user-facing
+docs/PRODUCTION_TEST_MATRIX.md	70	| Image | default generated dynamic640 INT8 on `rt201` | semantically reasonable | pass |	active-user-facing
+docs/PRODUCTION_TEST_MATRIX.md	71	| Image | vendor320 trusted visual on `rt123` | semantically reasonable | pass |	active-user-facing
+docs/PRODUCTION_TEST_MATRIX.md	72	| Image | vendor320 raw `rt201` perf path | perf/raw sanity only | pass as perf/raw |	active-user-facing
+docs/PRODUCTION_TEST_MATRIX.md	73	| Image | vendor320 `rt201` workaround | semantically reasonable and SHA256-guarded | pass |	active-user-facing
+docs/PRODUCTION_TEST_MATRIX.md	74	| Image | FP16 keep_io 640 on `rt201` | experimental smoke | pass |	active-user-facing
+docs/PRODUCTION_TEST_MATRIX.md	75	| Image | FP16 keep_io 640 on `rt202b1` | experimental smoke | pass |	active-user-facing
+docs/PRODUCTION_TEST_MATRIX.md	77	| Stable rt202 | dynamic640, FP16 640, vendor320 | no crash before adoption | fail; not adopted |	active-user-facing
+docs/PRODUCTION_TEST_MATRIX.md	82	| Performance | vendor320/dynamic640/FP16 matrix | fresh Day 2 numbers captured | pass |	active-user-facing
+docs/PRODUCTION_TEST_MATRIX.md	85	Stable `rt202` did not become a camera candidate because it failed the image and	active-user-facing
+docs/PRODUCTION_TEST_MATRIX.md	105	| Loader | `app/bin/banana_yolo11_demo`, `bin/banana_yolo11_demo_rt201`, `bin/banana_yolo11_demo_rt123` | repo-local runtime/OpenCV resolution | pass |	active-user-facing
+docs/PRODUCTION_TEST_MATRIX.md	106	| Image | default generated dynamic640 INT8 on `rt201` | semantically reasonable | pass |	active-user-facing
+docs/PRODUCTION_SCOPE_2026-07-02.md	7	| Primary image visual | `rt201` | `models/generated/xquant_640/yolov11n_640x640.dynamic_int8.onnx` | supported | Main production visual branch. |	active-user-facing
+docs/PRODUCTION_SCOPE_2026-07-02.md	8	| Primary normal camera | `rt201` | generated dynamic640 INT8 | supported | Best production visual quality branch. |	active-user-facing
+docs/PRODUCTION_SCOPE_2026-07-02.md	9	| Fast-live camera | `rt123` | `models/vendor/yolo11/yolov11n_320x320.q.onnx` | supported | Responsive live branch, `320x320` letterbox, camera requested at `640x480`. |	active-user-facing
+docs/PRODUCTION_SCOPE_2026-07-02.md	10	| Vendor320 visual | `rt123` | official vendor320 INT8 | supported | Trusted visual runtime for vendor320. |	active-user-facing
+docs/PRODUCTION_SCOPE_2026-07-02.md	11	| Vendor320 low-latency benchmark | `rt201` | official vendor320 INT8 | supported as perf-only | Do not use as default visual path. |	active-user-facing
+docs/PRODUCTION_SCOPE_2026-07-02.md	12	| Vendor320 rt201 visual workaround | `rt201` | official vendor320 INT8 | available | SHA256-guarded, slower than `rt123`; not default. |	active-user-facing
+docs/PRODUCTION_SCOPE_2026-07-02.md	18	| FP16 keep_io 640 | `rt201` | experimental usable | Board-side coverage path, not production default. |	active-user-facing
+docs/PRODUCTION_SCOPE_2026-07-02.md	19	| FP16 keep_io 640 | `rt202b1` | experimental usable | Slightly slower than `rt201`, not production default. |	active-user-facing
+docs/PRODUCTION_SCOPE_2026-07-02.md	20	| Stable runtime evaluation | `rt202` | not adopted | Final public `spacemit-ort 2.0.2` is fetchable/selectable, but Day 2 clean retest aborted on current paths. |	active-user-facing
+docs/PRODUCTION_SCOPE_2026-07-02.md	21	| FP16 keep_io 320 | `rt201`/`rt202b1` | known fail | Keep documented as unsupported. |	active-user-facing
+docs/PRODUCTION_SCOPE_2026-07-02.md	37	`dynamic640` INT8 on `rt201` as the primary production visual branch.	active-user-facing
+docs/PRODUCTION_SCOPE_2026-07-02.md	42	`spacemit-ort.riscv64.2.0.2` is pinned for reproducible evaluation as `rt202`,	active-user-facing
+docs/PRODUCTION_SCOPE_2026-07-02.md	43	but it does not replace `rt201` or `rt202b1` because it aborted on dynamic640,	active-user-facing
+docs/PRODUCTION_SCOPE_2026-07-02.md	44	FP16 640, and vendor320 checks, including after a clean board reboot.	active-user-facing
+docs/PRODUCTION_SCOPE_2026-07-02.md	58	The `rt202b1` archive URL in `third_party_manifest/runtime.lock` uses URL	active-user-facing
+docs/PRODUCTION_RUNBOOK.md	10	cd /data/banana-yolo11-spacemit-demo	active-user-facing
+docs/PRODUCTION_RUNBOOK.md	26	'cd ~/banana-yolo11-spacemit-demo && readelf -d app/bin/banana_yolo11_demo && ldd app/bin/banana_yolo11_demo'	active-user-facing
+docs/PRODUCTION_RUNBOOK.md	40	This uses generated `dynamic640` INT8 on `rt201`.	active-user-facing
+docs/PRODUCTION_RUNBOOK.md	42	Trusted vendor320 visual path:	active-user-facing
+docs/PRODUCTION_RUNBOOK.md	45	BANANA_DEMO_RUNTIME_TAG=rt123 \	active-user-facing
+docs/PRODUCTION_RUNBOOK.md	48	models/vendor/yolo11/yolov11n_320x320.q.onnx \	active-user-facing
+docs/PRODUCTION_RUNBOOK.md	88	SAVE_OUTPUT=<legacy-home-path> \	active-user-facing
+docs/PRODUCTION_RUNBOOK.md	123	Only keep_io FP16 `640x640` on `rt201`/`rt202b1` is currently useful as an	active-user-facing
+docs/PRODUCTION_RUNBOOK.md	126	Stable `rt202` is selectable only for explicit regression:	active-user-facing
+docs/PRODUCTION_RUNBOOK.md	129	BANANA_DEMO_RUNTIME_TAG=rt202 ./scripts/run_image_demo.sh	active-user-facing
+docs/PRODUCTION_RUNBOOK.md	133	clean retesting showed aborts on dynamic640, FP16 640, and vendor320 paths.	active-user-facing
+docs/PRODUCTION_RUNBOOK.md	163	Day 3 also verifies that the public `rt202b1` archive URL is encoded as	active-user-facing
+docs/FPS_SUMMARY.md	34	| Supported production | Primary visual forward ceiling | `rt201` | generated dynamic640 INT8 | `perf_test forward` | 640x640 | 190.024 | 5.2623 | visual status from full/image rows: reasonable | primary production visual branch | Pure ORT ceiling only; no app pre/post. | Day 2 `performance_regression_matrix.md` |	active-user-facing
+docs/FPS_SUMMARY.md	35	| Supported production | Primary visual app forward | `rt201` | generated dynamic640 INT8 | `app forward-only` | 640x640 | 190.567794 | 5.247476 | reasonable in image regression | primary production visual branch | Forward-only, not full image/camera. | Day 2 `performance_regression_matrix.md` |	active-user-facing
+docs/FPS_SUMMARY.md	36	| Supported production | Primary visual full image | `rt201` | generated dynamic640 INT8 | `app full image` | 640x640 | 233.480423 | 4.283014 | 14 objects, reasonable | primary production visual branch | Use for still-image app pipeline; Day 4 final smoke also passed at 854.707 ms one-shot acceptance run. | Day 2 `performance_regression_matrix.md`; Day 4 `final_smoke_matrix.md` |	active-user-facing
+docs/FPS_SUMMARY.md	37	| Supported production | Normal camera effective | `rt201` | generated dynamic640 INT8 | `camera effective` | model 640x640; camera 1280x720 MJPG | N/A | 2.069 | pass; stable by-id camera | primary normal camera | Day 4 bounded final smoke over 10 frames; includes warmup/live loop overhead. | Day 4 `PRODUCTION_FINAL_ACCEPTANCE_REPORT.md` |	active-user-facing
+docs/FPS_SUMMARY.md	38	| Supported production | Normal camera instantaneous | `rt201` | generated dynamic640 INT8 | `camera instantaneous` | model 640x640; camera 1280x720 MJPG | 238.716 | 4.189 | pass at frame 10 | primary normal camera | Single frame timing from Day 4 camera smoke, not wall-clock loop FPS. | Day 4 `final_smoke_matrix.md` |	active-user-facing
+docs/FPS_SUMMARY.md	39	| Supported production | Fast-live camera effective | `rt123` | vendor320 INT8 letterbox | `camera effective` | model 320x320; camera 640x480 | N/A | 9.382 | pass; stable by-id camera | fast-live production branch | Day 4 bounded final smoke over 20 frames; includes warmup/live loop overhead. | Day 4 `PRODUCTION_FINAL_ACCEPTANCE_REPORT.md` |	active-user-facing
+docs/FPS_SUMMARY.md	40	| Supported production | Fast-live camera instantaneous | `rt123` | vendor320 INT8 letterbox | `camera instantaneous` | model 320x320; camera 640x480 | 67.121 | 14.898 | pass at frame 20 | fast-live production branch | Single frame timing; best responsiveness path, not highest-detail visual path. | Day 4 `final_smoke_matrix.md` |	active-user-facing
+docs/FPS_SUMMARY.md	41	| Supported production | Vendor320 trusted visual perf_test | `rt123` | official vendor320 INT8 | `perf_test forward` | 320x320 | 48.3266 | 20.6767 | visual branch reasonable | trusted vendor320 visual | Pure ORT ceiling only. | Day 2 `performance_regression_matrix.md` |	active-user-facing
+docs/FPS_SUMMARY.md	42	| Supported production | Vendor320 trusted visual app forward | `rt123` | official vendor320 INT8 | `app forward-only` | 320x320 | 49.095494 | 20.368468 | visual branch reasonable | trusted vendor320 visual | Forward-only. | Day 2 `performance_regression_matrix.md` |	active-user-facing
+docs/FPS_SUMMARY.md	43	| Supported production | Vendor320 trusted visual full image | `rt123` | official vendor320 INT8 | `app full image` | 320x320 | 57.540777 | 17.378980 | 8 objects, reasonable | trusted vendor320 visual | Full image benchmark; Day 4 final smoke also passed with 8 objects. | Day 2 `performance_regression_matrix.md`; Day 4 `final_smoke_matrix.md` |	active-user-facing
+docs/FPS_SUMMARY.md	44	| Supported production | Vendor320 low-latency perf perf_test | `rt201` | official vendor320 INT8 raw | `perf_test forward` | 320x320 | 24.4143 | 40.9483 | perf only | low-latency benchmark branch | Raw rt201 path is not a production visual default. | Day 2 `performance_regression_matrix.md` |	active-user-facing
+docs/FPS_SUMMARY.md	45	| Supported production | Vendor320 low-latency perf app forward | `rt201` | official vendor320 INT8 raw | `app forward-only` | 320x320 | 24.210065 | 41.305136 | perf only | low-latency benchmark branch | Raw rt201 path is benchmark/perf only; visual semantics are not trusted without workaround. | Day 2 `performance_regression_matrix.md` |	active-user-facing
+docs/FPS_SUMMARY.md	46	| Supported non-default | Vendor320 rt201 visual workaround | `rt201` | official vendor320 INT8 + SHA256-guarded EP workaround | `app full image` | 320x320 | 178.049 | 5.616 | 9 objects, reasonable | non-default available workaround | Much slower than trusted rt123 benchmark path; only enabled deliberately/guarded. | Day 2 `image_regression_matrix.md` |	active-user-facing
+docs/FPS_SUMMARY.md	47	| Experimental FP16 | FP16 keep_io 640 perf_test | `rt201` | `yolov11n_640x640.fp16_iop32.onnx` | `perf_test forward` | 640x640 | 270.867 | 3.69176 | experimental pass | experimental usable | Not production default; FP32 I/O with internal FP16 weights. | Day 2 `performance_regression_matrix.md` |	active-user-facing
+docs/FPS_SUMMARY.md	48	| Experimental FP16 | FP16 keep_io 640 app forward | `rt201` | `yolov11n_640x640.fp16_iop32.onnx` | `app forward-only` | 640x640 | 273.265611 | 3.659443 | experimental pass | experimental usable | Not production default. | Day 2 `performance_regression_matrix.md` |	active-user-facing
+docs/FPS_SUMMARY.md	49	| Experimental FP16 | FP16 keep_io 640 full image | `rt201` | `yolov11n_640x640.fp16_iop32.onnx` | `app full image` | 640x640 | 485.721 | 2.059 | 13 objects, reasonable | experimental usable | Canonical-photo visual sanity only; not production path. | Day 2 `image_regression_matrix.md` |	active-user-facing
+docs/FPS_SUMMARY.md	50	| Experimental FP16 | FP16 keep_io 640 perf_test | `rt202b1` | `yolov11n_640x640.fp16_iop32.onnx` | `perf_test forward` | 640x640 | 293.060863 | 3.41212 | experimental pass | experimental usable fallback | Stable rt202 does not replace rt202b1. | Day 2 `performance_regression_matrix.md` |	active-user-facing
+docs/FPS_SUMMARY.md	51	| Experimental FP16 | FP16 keep_io 640 app forward | `rt202b1` | `yolov11n_640x640.fp16_iop32.onnx` | `app forward-only` | 640x640 | 294.988206 | 3.389966 | experimental pass | experimental usable fallback | Not production default. | Day 2 `performance_regression_matrix.md` |	active-user-facing
+docs/FPS_SUMMARY.md	52	| Experimental FP16 | FP16 keep_io 640 full image | `rt202b1` | `yolov11n_640x640.fp16_iop32.onnx` | `app full image` | 640x640 | 503.659 | 1.985 | 13 objects, reasonable | experimental usable fallback | Canonical-photo visual sanity only; not production path. | Day 2 `image_regression_matrix.md` |	active-user-facing
+docs/FPS_SUMMARY.md	53	| Experimental FP16 | FP16 keep_io 320 | `rt201` / `rt202b1` | `yolov11n_320x320.fp16_iop32.onnx` | `fail / rejected` | 320x320 | N/A | N/A | expected fail | unsupported | EP reshape/compile failure; documented unsupported. | `docs/RESULTS.md` FP16 matrix |	active-user-facing
+docs/FPS_SUMMARY.md	54	| Experimental FP16 | True FP16 I/O models | `rt123` / `rt201` / `rt202b1` | `yolov11n_320x320.fp16.onnx`; `yolov11n_640x640.fp16.onnx` | `fail / rejected` | 320x320 and 640x640 | N/A | N/A | dtype-correct but not runnable | unsupported board path | Retained as dtype evidence, not usable board runtime chain. | `docs/RESULTS.md` FP16 model provenance |	active-user-facing
+docs/FPS_SUMMARY.md	55	| Rejected / P2 | Stable rt202 dynamic640 candidate | `rt202` | generated dynamic640 INT8 | `fail / rejected` | 640x640 | N/A | N/A | abort | rejected; not adopted | Aborts even after clean board reboot; does not replace rt201. | Day 2 `stable_rt202_decision.md` |	active-user-facing
+docs/FPS_SUMMARY.md	56	| Rejected / P2 | Stable rt202 FP16 640 candidate | `rt202` | FP16 keep_io 640 | `fail / rejected` | 640x640 | N/A | N/A | abort | rejected; not adopted | Aborts; does not replace rt202b1. | Day 2 `stable_rt202_decision.md` |	active-user-facing
+docs/FPS_SUMMARY.md	57	| Rejected / P2 | Stable rt202 vendor320 candidate | `rt202` | official vendor320 INT8 | `fail / rejected` | 320x320 | N/A | N/A | abort | rejected; not adopted | No stable rt202 vendor320 fix. | Day 2 `stable_rt202_decision.md` |	active-user-facing
+docs/FPS_SUMMARY.md	58	| Rejected / P2 | YOLO26n float 640 | `rt201` | YOLO26n float ONNX | `app full image feasibility` | 640x640 | 600.287 | 1.666 | giant false refrigerator box | P2 only; rejected for production | Timing exists only from failed feasibility smoke; semantic failure blocks adoption. | Day 1 `yolo26n_feasibility.md` / `docs/RESULTS.md` |	active-user-facing
+docs/FPS_SUMMARY.md	59	| Rejected / P2 | YOLO26n dynamic INT8 640 | `rt201` | YOLO26n dynamic INT8 ONNX | `app full image feasibility` | 640x640 | 1147.946 | 0.871 | giant false refrigerator box | P2 only; rejected for production | Slower than current dynamic640 and semantically bad. | Day 1 `yolo26n_feasibility.md` / `docs/RESULTS.md` |	active-user-facing
+docs/FPS_SUMMARY.md	60	| Rejected / P2 | rt202b1 production replacement | `rt202b1` | 2.0.2+beta1 runtime line | `visual sanity` | various | N/A | N/A | not adopted as production runtime | P2/historical-experimental | Still kept for FP16 keep_io 640 experimental because stable rt202 failed replacement. | Day 2 `stable_rt202_decision.md` |	active-user-facing
+docs/FPS_SUMMARY.md	61	| Rejected / P2 | Official public 640 INT8 artifact | N/A | official vendor YOLO11n 640 INT8 | `fail / rejected` | 640x640 | N/A | N/A | not found | P2 search only | No pinned official public artifact found; production uses generated dynamic640 INT8. | `docs/RESULTS.md` quantization notes |	active-user-facing
+docs/FPS_SUMMARY.md	66	- The fastest number in the table is the raw vendor320 `rt201` forward path, but	active-user-facing
+docs/FPS_SUMMARY.md	69	`rt201` because it gives the accepted production visual behavior.	active-user-facing
+docs/FPS_SUMMARY.md	70	- The responsive live branch is `run_camera_demo_fast.sh`, using vendor320 on	active-user-facing
+docs/FPS_SUMMARY.md	71	`rt123`. It is a separate product branch, not a replacement for the	active-user-facing
+docs/FPS_SUMMARY.md	73	- Stable `rt202` and YOLO26n are explicitly rejected for production in this	active-user-facing
+cmake/modules/FindVendorSpacemitOrt.cmake	2	@file FindVendorSpacemitOrt.cmake	active-build-runtime
+cmake/modules/FindVendorSpacemitOrt.cmake	26	"if(EXISTS ""${VENDOR_SPACEMIT_ORT_ROOT}/lib/libspacemit_ep.so"")"	active-build-runtime
+cmake/modules/FindVendorSpacemitOrt.cmake	27	"set(VENDOR_SPACEMIT_ORT_SPACEMIT_EP ""${VENDOR_SPACEMIT_ORT_ROOT}/lib/libspacemit_ep.so"")"	active-build-runtime
+cmake/modules/FindVendorSpacemitOrt.cmake	31	find_package_handle_standard_args(VendorSpacemitOrt	active-build-runtime
+cmake/modules/FindVendorSpacemitOrt.cmake	35	VENDOR_SPACEMIT_ORT_SPACEMIT_EP	active-build-runtime
+cmake/modules/FindVendorSpacemitOrt.cmake	38	if(VendorSpacemitOrt_FOUND)	active-build-runtime
+cmake/modules/FindVendorSpacemitOrt.cmake	47	if(NOT TARGET Vendor::spacemit_ep)	active-build-runtime
+cmake/modules/FindVendorSpacemitOrt.cmake	48	add_library(Vendor::spacemit_ep SHARED IMPORTED)	active-build-runtime
+cmake/modules/FindVendorSpacemitOrt.cmake	49	set_target_properties(Vendor::spacemit_ep PROPERTIES	active-build-runtime
+cmake/modules/FindVendorSpacemitOrt.cmake	50	"IMPORTED_LOCATION ""${VENDOR_SPACEMIT_ORT_SPACEMIT_EP}"""	active-build-runtime
+docs/RD_FINAL_REPORT_RU.md	10	замороженный production-релиз YOLO11.	active-user-facing
+docs/RD_FINAL_REPORT_RU.md	19	YOLO26n 640 e2e, native body-FP16/head-FP32 keep-IO, rt204 SpaceMIT EP	active-user-facing
+docs/RD_FINAL_REPORT_RU.md	24	vendor/runtime/tooling. Замороженный YOLO11 production остается deployable	active-user-facing
+docs/RD_FINAL_REPORT_RU.md	27	## Замороженный YOLO11 baseline	active-user-facing
+docs/RD_FINAL_REPORT_RU.md	32	/data/banana-yolo11-spacemit-demo	active-user-facing
+docs/RD_FINAL_REPORT_RU.md	40	| Primary image visual | dynamic640 INT8 на `rt201` | production |	active-user-facing
+docs/RD_FINAL_REPORT_RU.md	41	| Normal camera | dynamic640 INT8 на `rt201` | production |	active-user-facing
+docs/RD_FINAL_REPORT_RU.md	42	| Fast-live camera | vendor320 INT8 на `rt123`, 320 letterbox | production |	active-user-facing
+docs/RD_FINAL_REPORT_RU.md	43	| Vendor320 trusted visual | `rt123` | production |	active-user-facing
+docs/RD_FINAL_REPORT_RU.md	44	| Vendor320 low-latency perf | raw `rt201` | только perf |	active-user-facing
+docs/RD_FINAL_REPORT_RU.md	45	| Vendor320 rt201 workaround | SHA256-guarded | non-default |	active-user-facing
+docs/RD_FINAL_REPORT_RU.md	46	| FP16 | keep_io 640 на `rt201`/`rt202b1` | experimental |	active-user-facing
+docs/RD_FINAL_REPORT_RU.md	47	| YOLO26n | P2 only в YOLO11 repo | не production |	active-user-facing
+docs/RD_FINAL_REPORT_RU.md	48	| Stable rt202 | протестирован, не принят | не production |	active-user-facing
+docs/RD_FINAL_REPORT_RU.md	52	YOLO11 уже был принят, tagged и mirrored. YOLO26 требовал нового поведения	active-user-facing
+docs/RD_FINAL_REPORT_RU.md	61	YOLO11 production-репозиторий использовался только для read-only сравнения.	active-user-facing
+docs/RD_FINAL_REPORT_RU.md	63	## Находки по rt204 runtime и API	active-user-facing
+docs/RD_FINAL_REPORT_RU.md	67	`SPACEMIT_EP_DISABLE_PASSES_FILTER`, а также operator strings `YoloDecode`,	active-user-facing
+docs/RD_FINAL_REPORT_RU.md	70	Строка `SPACEMIT_EP_PERFER_CORE_ARCH` существует, но полезное документированное	active-user-facing
+docs/RD_FINAL_REPORT_RU.md	72	mode rt204.	active-user-facing
+docs/RD_FINAL_REPORT_RU.md	87	PyTorch, ONNX Runtime CPU и rt204 SpaceMIT EP семантически согласованы для	active-user-facing
+docs/RD_FINAL_REPORT_RU.md	97	| `perf_test forward` | rt204 SpaceMIT EP | 562.934799 | 1.776405 |	active-user-facing
+docs/RD_FINAL_REPORT_RU.md	98	| `app forward-only` | rt204 SpaceMIT EP | 573.281930 | 1.744342 |	active-user-facing
+docs/RD_FINAL_REPORT_RU.md	99	| `app full image benchmark` | rt204 SpaceMIT EP | 523.119274 | 1.911610 |	active-user-facing
+docs/RD_FINAL_REPORT_RU.md	101	Это R&D baseline метрики, не production claims YOLO11.	active-user-facing
+docs/RD_FINAL_REPORT_RU.md	108	| Candidate | Input dtype | Output dtype | rt204 status | Решение |	active-user-facing
+docs/RD_FINAL_REPORT_RU.md	130	Решение: full-I/O FP16 принят по корректности и rt204 execution, но keep-I/O	active-user-facing
+docs/RD_FINAL_REPORT_RU.md	141	| Manual ORT Q/DQ | CPU-good, но rt204/legacy runtimes блокируют Q/DQ Conv offload. |	active-user-facing
+docs/RD_FINAL_REPORT_RU.md	148	Actionable rt204 blocker:	active-user-facing
+docs/RD_FINAL_REPORT_RU.md	167	| rt204 Q/DQ Conv `clip minmax` bug report | готов к отправке vendor |	active-user-facing
+docs/RD_FINAL_REPORT_RU.md	173	## YOLO11 rt204 и XSlim retrospective	active-user-facing
+docs/RD_FINAL_REPORT_RU.md	175	R&D-only копии YOLO11 artifacts были протестированы под rt204. Замороженный	active-user-facing
+docs/RD_FINAL_REPORT_RU.md	176	YOLO11 репозиторий не изменялся.	active-user-facing
+docs/RD_FINAL_REPORT_RU.md	180	| YOLO11 dynamic640 INT8 on rt204 | pass, но медленнее production rt201 |	active-user-facing
+docs/RD_FINAL_REPORT_RU.md	181	| YOLO11 FP16 keep-I/O on rt204 | pass как R&D signal |	active-user-facing
+docs/RD_FINAL_REPORT_RU.md	182	| YOLO11 XSlim FP32/FP16 on rt204 | fail или timeout после `YoloDecode` dispatch errors |	active-user-facing
+docs/RD_FINAL_REPORT_RU.md	184	Пропущенная YOLO11 production opportunity не доказана.	active-user-facing
+docs/RD_FINAL_REPORT_RU.md	191	YOLO26n 640 e2e native body-FP16/head-FP32 keep-I/O on rt204	active-user-facing
+docs/RD_FINAL_REPORT_RU.md	198	## Почему YOLO26 не заменяет YOLO11 production	active-user-facing
+docs/RD_FINAL_REPORT_RU.md	200	YOLO26 FP16 улучшает YOLO26 FP32, но остается медленнее замороженных YOLO11 INT8	active-user-facing
+docs/RD_FINAL_REPORT_RU.md	201	production paths на K1X. YOLO26 INT8 acceleration заблокирован. YOLO11	active-user-facing
+docs/RD_FINAL_REPORT_RU.md	206	- Отправить rt204 Q/DQ Conv repro runtime vendor.	active-user-facing
+docs/RD_FINAL_REPORT_RU.md	210	- YOLO11 rt204 reevaluation держать отдельным adoption gate.	active-user-facing
+docs/RD_FINAL_REPORT_RU.md	216	| Frozen YOLO11 production commit/tag | `9c0933be58ee122389d1a43f45f81e80655d6904`, `production-2026-07-02` |	active-user-facing
+docs/RD_FINAL_REPORT_RU.md	219	| Runtime | `spacemit-ort.riscv64.2.0.4` (`rt204`) |	active-user-facing
+docs/LEGACY_RUNTIME_QDQ_SANITY.md	12	candidates better than `rt204`?	active-user-facing
+docs/LEGACY_RUNTIME_QDQ_SANITY.md	18	| `rt123` | `spacemit-ort.riscv64.1.2.3` | Minimal repros run, but full Q/DQ outputs do not match same-runtime CPU and no SpaceMIT subgraph dump was produced for the accepted-looking full row. Not accepted. |	active-user-facing
+docs/LEGACY_RUNTIME_QDQ_SANITY.md	19	| `rt201` | `spacemit-ort.riscv64.2.0.1` | Reproduces `output_type not implemented for clip minmax` on Q/DQ Conv. Filter fallback runs but disables Q/DQ/Conv and does not match CPU hash. |	active-user-facing
+docs/LEGACY_RUNTIME_QDQ_SANITY.md	20	| `rt202b1` | `spacemit-ort.riscv64.2.0.2+beta1` | Reproduces `clip minmax` on default Q/DQ Conv. Diagnostic filter rows can run, but do not preserve CPU hash and are fallback-only. |	active-user-facing
+docs/LEGACY_RUNTIME_QDQ_SANITY.md	21	| `rt202` | `spacemit-ort.riscv64.2.0.2` | Fails this gate with `tcm buffer alloc failed for core id 0` on SpaceMIT EP rows. |	active-user-facing
+docs/LEGACY_RUNTIME_QDQ_SANITY.md	22	| `rt204` | `spacemit-ort.riscv64.2.0.4` | Control runtime; reproduces the known `clip minmax` Q/DQ Conv blocker. |	active-user-facing
+docs/LEGACY_RUNTIME_QDQ_SANITY.md	28	| `15_conv_qdq_attr_kernel_shape.onnx` | Tiny synthetic Q/DQ Conv repro. | CPU passes on all runtimes. `rt201`, `rt202b1`, and `rt204` fail SpaceMIT EP with `clip minmax`; `rt202` fails with TCM allocation; `rt123` runs but does not prove a full-model path. |	active-user-facing
+docs/LEGACY_RUNTIME_QDQ_SANITY.md	30	| `manual_e2e_rep_conv_matmul_qdq.onnx` | CPU-good full YOLO26 e2e manual Q/DQ candidate. | Default SpaceMIT EP fails with `clip minmax` on `rt201`, `rt202b1`, and `rt204`; `rt202` fails TCM allocation; `rt123` runs but output hash differs from same-runtime CPU. |	active-user-facing
+docs/LEGACY_RUNTIME_QDQ_SANITY.md	31	| `manual_trad_rep_conv_matmul_qdq.onnx` | CPU-good full YOLO26 traditional manual Q/DQ candidate. | Same default failure class as e2e on `rt201`, `rt202b1`, and `rt204`; `rt123` output differs from same-runtime CPU. |	active-user-facing
+docs/LEGACY_RUNTIME_QDQ_SANITY.md	39	- `SPACEMIT_EP_DISABLE_OP_TYPE_FILTER=QuantizeLinear;DequantizeLinear;Conv`	active-user-facing
+docs/LEGACY_RUNTIME_QDQ_SANITY.md	42	- `SPACEMIT_EP_DISABLE_OP_TYPE_FILTER=MatMul;Add` on the stripped-kernel	active-user-facing
+docs/LEGACY_RUNTIME_QDQ_SANITY.md	45	- `rt123` full-model rows produced no SpaceMIT subgraph dump and did not match	active-user-facing
+docs/RD_FINAL_REPORT_EN.md	10	frozen YOLO11 production release.	active-user-facing
+docs/RD_FINAL_REPORT_EN.md	19	YOLO26n 640 e2e, native body-FP16/head-FP32 keep-IO, rt204 SpaceMIT EP	active-user-facing
+docs/RD_FINAL_REPORT_EN.md	24	vendor/runtime/tooling fixes. Frozen YOLO11 production remains the deployable	active-user-facing
+docs/RD_FINAL_REPORT_EN.md	27	## Frozen YOLO11 Baseline	active-user-facing
+docs/RD_FINAL_REPORT_EN.md	32	/data/banana-yolo11-spacemit-demo	active-user-facing
+docs/RD_FINAL_REPORT_EN.md	40	| Primary image visual | dynamic640 INT8 on `rt201` | production |	active-user-facing
+docs/RD_FINAL_REPORT_EN.md	41	| Normal camera | dynamic640 INT8 on `rt201` | production |	active-user-facing
+docs/RD_FINAL_REPORT_EN.md	42	| Fast-live camera | vendor320 INT8 on `rt123`, 320 letterbox | production |	active-user-facing
+docs/RD_FINAL_REPORT_EN.md	43	| Vendor320 trusted visual | `rt123` | production |	active-user-facing
+docs/RD_FINAL_REPORT_EN.md	44	| Vendor320 low-latency perf | raw `rt201` | perf-only |	active-user-facing
+docs/RD_FINAL_REPORT_EN.md	45	| Vendor320 rt201 workaround | SHA256-guarded | non-default |	active-user-facing
+docs/RD_FINAL_REPORT_EN.md	46	| FP16 | keep_io 640 on `rt201`/`rt202b1` | experimental |	active-user-facing
+docs/RD_FINAL_REPORT_EN.md	47	| YOLO26n | P2 only in YOLO11 repo | not production |	active-user-facing
+docs/RD_FINAL_REPORT_EN.md	48	| Stable rt202 | tested, not adopted | not production |	active-user-facing
+docs/RD_FINAL_REPORT_EN.md	52	YOLO11 was already accepted, tagged, and mirrored. YOLO26 required new	active-user-facing
+docs/RD_FINAL_REPORT_EN.md	61	The YOLO11 production repository was used only for read-only comparison.	active-user-facing
+docs/RD_FINAL_REPORT_EN.md	63	## rt204 Runtime and API Findings	active-user-facing
+docs/RD_FINAL_REPORT_EN.md	66	new diagnostic/runtime surfaces including `SPACEMIT_EP_DISABLE_PASSES_FILTER`	active-user-facing
+docs/RD_FINAL_REPORT_EN.md	70	The `SPACEMIT_EP_PERFER_CORE_ARCH` spelling exists, but no useful documented	active-user-facing
+docs/RD_FINAL_REPORT_EN.md	71	K1/K3/X60 override value was found. Default mode is the accepted rt204 mode for	active-user-facing
+docs/RD_FINAL_REPORT_EN.md	87	PyTorch, ONNX Runtime CPU, and rt204 SpaceMIT EP agree semantically for the	active-user-facing
+docs/RD_FINAL_REPORT_EN.md	96	| `perf_test forward` | rt204 SpaceMIT EP | 562.934799 | 1.776405 |	active-user-facing
+docs/RD_FINAL_REPORT_EN.md	97	| `app forward-only` | rt204 SpaceMIT EP | 573.281930 | 1.744342 |	active-user-facing
+docs/RD_FINAL_REPORT_EN.md	98	| `app full image benchmark` | rt204 SpaceMIT EP | 523.119274 | 1.911610 |	active-user-facing
+docs/RD_FINAL_REPORT_EN.md	100	These are R&D baseline metrics, not YOLO11 production claims.	active-user-facing
+docs/RD_FINAL_REPORT_EN.md	107	| Candidate | Input dtype | Output dtype | rt204 status | Decision |	active-user-facing
+docs/RD_FINAL_REPORT_EN.md	129	Decision: full-I/O FP16 is accepted for correctness and rt204 execution, but	active-user-facing
+docs/RD_FINAL_REPORT_EN.md	140	| Manual ORT Q/DQ | CPU-good, but rt204/legacy runtimes block Q/DQ Conv offload. |	active-user-facing
+docs/RD_FINAL_REPORT_EN.md	147	The actionable rt204 blocker is:	active-user-facing
+docs/RD_FINAL_REPORT_EN.md	166	| rt204 Q/DQ Conv `clip minmax` bug report | ready for vendor submission |	active-user-facing
+docs/RD_FINAL_REPORT_EN.md	172	## YOLO11 rt204 and XSlim Retrospective	active-user-facing
+docs/RD_FINAL_REPORT_EN.md	174	R&D-only copies of YOLO11 artifacts were tested under rt204. The frozen YOLO11	active-user-facing
+docs/RD_FINAL_REPORT_EN.md	179	| YOLO11 dynamic640 INT8 on rt204 | passes, but slower than production rt201 |	active-user-facing
+docs/RD_FINAL_REPORT_EN.md	180	| YOLO11 FP16 keep-I/O on rt204 | passes as R&D signal |	active-user-facing
+docs/RD_FINAL_REPORT_EN.md	181	| YOLO11 XSlim FP32/FP16 on rt204 | fails or times out after `YoloDecode` dispatch errors |	active-user-facing
+docs/RD_FINAL_REPORT_EN.md	183	No missed YOLO11 production opportunity was proven.	active-user-facing
+docs/RD_FINAL_REPORT_EN.md	190	YOLO26n 640 e2e native body-FP16/head-FP32 keep-I/O on rt204	active-user-facing
+docs/RD_FINAL_REPORT_EN.md	197	## Why YOLO26 Does Not Replace YOLO11 Production	active-user-facing
+docs/RD_FINAL_REPORT_EN.md	199	YOLO26 FP16 improves over YOLO26 FP32, but remains slower than frozen YOLO11	active-user-facing
+docs/RD_FINAL_REPORT_EN.md	200	INT8 production paths on K1X. YOLO26 INT8 acceleration is blocked. YOLO11	active-user-facing
+docs/RD_FINAL_REPORT_EN.md	205	- Submit rt204 Q/DQ Conv repro to the runtime vendor.	active-user-facing
+docs/RD_FINAL_REPORT_EN.md	209	- Keep YOLO11 rt204 reevaluation as a separate adoption gate.	active-user-facing
+docs/RD_FINAL_REPORT_EN.md	215	| Frozen YOLO11 production commit/tag | `9c0933be58ee122389d1a43f45f81e80655d6904`, `production-2026-07-02` |	active-user-facing
+docs/RD_FINAL_REPORT_EN.md	218	| Runtime | `spacemit-ort.riscv64.2.0.4` (`rt204`) |	active-user-facing
+docs/XSLIM_FP32_FP16_EFFECT_MATRIX.md	21	| FP32 vanilla e2e | rt204 | `app forward-only`, 50x5 | 578.041776 | 1.729979 | pass | baseline |	active-user-facing
+docs/XSLIM_FP32_FP16_EFFECT_MATRIX.md	22	| FP32 XSlim simplify-only | rt204 | `app forward-only`, 20x3 | 582.029471 | 1.718126 | pass | no app-level improvement |	active-user-facing
+docs/XSLIM_FP32_FP16_EFFECT_MATRIX.md	23	| FP32 XSlim simplify-only | rt204 | `app full image single` | 705.793 | 1.417 | pass, 5 objects | no useful full-image gain |	active-user-facing
+docs/XSLIM_FP32_FP16_EFFECT_MATRIX.md	24	| FP16 native body/head keep-IO | rt204 | `app forward-only`, 50x5 | 383.332266 | 2.608703 | pass | best FP16 path |	active-user-facing
+docs/XSLIM_FP32_FP16_EFFECT_MATRIX.md	25	| FP16 XSlim | rt204 | load/app smoke | N/A | N/A | fail at `/model.23/Concat_6` | rejected |	active-user-facing
+docs/XSLIM_FP32_FP16_EFFECT_MATRIX.md	31	## YOLO11 R&D-Copy Retrospective	active-user-facing
+docs/XSLIM_FP32_FP16_EFFECT_MATRIX.md	33	These checks used copied YOLO11 artifacts in the YOLO26 R&D workspace. The	active-user-facing
+docs/XSLIM_FP32_FP16_EFFECT_MATRIX.md	34	frozen production YOLO11 repository was not modified.	active-user-facing
+docs/XSLIM_FP32_FP16_EFFECT_MATRIX.md	38	| YOLO11 dynamic640 INT8 | rt204 | `app forward-only`, 10x2 | 201.454112 | 4.963910 | pass | slower than frozen rt201 production; no policy change |	active-user-facing
+docs/XSLIM_FP32_FP16_EFFECT_MATRIX.md	39	| YOLO11 FP32 vanilla | rt204 | `app forward-only`, 10x2 | 539.131433 | 1.854835 | pass | diagnostic only |	active-user-facing
+docs/XSLIM_FP32_FP16_EFFECT_MATRIX.md	40	| YOLO11 FP32 XSlim simplify-only | rt204 | app forward | N/A | N/A | fail/hang after `YoloDecode` dispatch error | rejected |	active-user-facing
+docs/XSLIM_FP32_FP16_EFFECT_MATRIX.md	41	| YOLO11 FP16 keep-IO | rt204 | `app forward-only`, 10x2 | 341.651391 | 2.926960 | pass | R&D signal only |	active-user-facing
+docs/XSLIM_FP32_FP16_EFFECT_MATRIX.md	42	| YOLO11 FP16 XSlim | rt204 | app forward/full | N/A | N/A | fail/timeout after `YoloDecode` dispatch error | rejected |	active-user-facing
+docs/XSLIM_FP32_FP16_EFFECT_MATRIX.md	49	YOLO26 INT8 ONNX board acceleration is blocked pending rt204/vendor EP compiler support.	active-user-facing
+docs/VENDOR_REPORT_PACKETS.md	30	/data/ncnn-logs/ort-logs/2026-06-30_20-54-29/vendor_packets/spacemit_ep_rt20x_qdq_conv_clip_minmax/	active-user-facing
+docs/VENDOR_REPORT_PACKETS.md	36	/data/ncnn-logs/ort-logs/2026-06-30_20-54-29/vendor_packets/spacemit_ep_rt20x_qdq_conv_clip_minmax_vendor_packet.tar.gz	active-user-facing
+docs/VENDOR_REPORT_PACKETS.md	58	`SPACEMIT_EP_DISABLE_OP_TYPE_FILTER=QuantizeLinear;DequantizeLinear;Conv`	active-user-facing
+docs/VENDOR_REPORT_PACKETS.md	104	body-FP16/head-FP32 keep-IO on rt204. Full-I/O FP16 is accepted but slightly	active-user-facing
+docs/VENDOR_REPORT_PACKETS.md	105	slower than keep-IO. Frozen YOLO11 production remains unchanged.	active-user-facing
+docs/YOLO26_FP16_STATUS.md	16	This is an isolated R&D result. It does not change the frozen YOLO11	active-user-facing
+docs/YOLO26_FP16_STATUS.md	21	| Candidate | Input dtype | Output dtype | CPU oracle | rt204 EP | App status | Decision |	active-user-facing
+docs/YOLO26_FP16_STATUS.md	34	## rt204 Benchmark	active-user-facing
+docs/YOLO26_FP16_STATUS.md	36	All rows use Banana-Pi BPI-F3/K1X, rt204, SpaceMITExecutionProvider,	active-user-facing
+docs/YOLO26_FP16_STATUS.md	48	output. The app originally rejected it because rt204 session metadata fallback	active-user-facing
+docs/YOLO26_FP16_STATUS.md	58	Full-I/O FP16 is accepted for correctness and rt204 execution. It is not the	active-user-facing

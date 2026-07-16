@@ -1,0 +1,11 @@
+script	status
+build_cross.sh	pass
+deploy_to_banana.sh	pass
+ensure_opencv.sh	pass
+detect_camera_formats.sh	pass
+run_image_demo.sh	pass
+run_camera_demo.sh	pass
+run_camera_demo_fast.sh	pass
+bench_forward_only.sh	pass
+bench_full_demo.sh	pass
+capture_camera_affinity.sh	pass

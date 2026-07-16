@@ -1,0 +1,6 @@
+pixel_format	width	height	reported_max_fps	tested_stage58	role
+MJPG	640	480	60.000	yes	camera-format-control
+MJPG	1280	720	60.000	yes	selected-full-camera-surface
+MJPG	1920	1080	30.000	no	reported-capability-only
+YUYV	640	480	30.000	yes	uncompressed-control
+YUYV	1280	720	7.500	no	reported-capability-only

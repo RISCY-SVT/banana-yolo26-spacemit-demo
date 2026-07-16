@@ -1,0 +1,2 @@
+surface	samples	mean_us	p95_us	output_hash	status
+stage57_release_low_latency_dedicated_o2_500	500	133887	134431	0xd43f5e018b415631	pass

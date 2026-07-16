@@ -1,0 +1,4 @@
+item	status	value
+o2_profile	pass	restored-inactive
+persistent_sysctl	pass	none
+emmc_write_exceptions	pass	0

@@ -1,0 +1,5 @@
+artifact	sha256
+release_tree_manifest.tsv	6907729f60454a41482f21ab2647d2f3ec397ad0b719feca7fc6e098c07d3411
+release_sha256.txt	c78f5ebe9b8e358b3143ed2bc6774fb793e5b124c5dbd8d4fdd110614796b95a
+banana-yolo26-k1x-int8-executor-0.9.1-riscv64.tar.gz	4b8db94d025d24f47c8b73d8f2525fd615f11b50d86b4587c07340be697f922d
+banana-yolo26-k1x-int8-executor-0.9.1-riscv64.zip	5e2b58497a08de000e97154aade68ce908fe1425074058e17fefeaa208d632c5

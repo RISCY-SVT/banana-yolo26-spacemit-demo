@@ -1,0 +1,5 @@
+test	status	detail
+original_13_symbols	pass	all retained
+new_symbols	pass	2 additive ABI1 exports
+old_consumer_source	pass	unchanged build and run
+timing_structure_layout	pass	unchanged

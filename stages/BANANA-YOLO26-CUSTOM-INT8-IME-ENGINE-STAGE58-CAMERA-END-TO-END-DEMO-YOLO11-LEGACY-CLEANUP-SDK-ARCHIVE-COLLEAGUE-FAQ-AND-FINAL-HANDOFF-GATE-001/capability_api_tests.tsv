@@ -1,0 +1,15 @@
+check	status
+null_build_info	pass
+build_info_init	pass
+build_info_query	pass
+abi_version	pass
+release_version	pass
+integer_contract	pass
+full_graph_profile	pass
+package_manifest	pass
+rgb_capability	pass
+undersized_build_info	pass
+wrong_info_version	pass
+ime_capability_board	pass
+rvv_capability_board	pass
+frozen_profile_board	pass

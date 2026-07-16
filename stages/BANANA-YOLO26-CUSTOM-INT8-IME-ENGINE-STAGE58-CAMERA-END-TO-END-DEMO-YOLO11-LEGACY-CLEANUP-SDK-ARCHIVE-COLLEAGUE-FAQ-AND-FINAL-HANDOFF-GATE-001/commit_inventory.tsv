@@ -1,0 +1,7 @@
+commit	role	status
+e05a4240ab9424ca243a01bd67a140a4bc3dfba4	release: add Stage58 YOLO26 camera handoff	local-validated
+b8d8d7ce4b87d15cf76f8fa78c34321ae89cd913	release: harden Stage58 maintenance and camera UI	local-validated
+64d17472fc40dd082c5fbed4b78d0106021bbd25	release: align Stage58 camera evidence and defaults	local-validated
+2317aa532413151b6867e8c4d03722b0178a26e8	release: finalize Stage58 camera evidence tooling	local-validated
+bcedf8651d0156355e105f2c6a1591e86b3d1b28	Harden K1X video playback evidence	local-validated
+8f49fc14288b03f580e6a4f1fb2635e805419e37	docs: finalize Stage58 measured handoff	local-validated

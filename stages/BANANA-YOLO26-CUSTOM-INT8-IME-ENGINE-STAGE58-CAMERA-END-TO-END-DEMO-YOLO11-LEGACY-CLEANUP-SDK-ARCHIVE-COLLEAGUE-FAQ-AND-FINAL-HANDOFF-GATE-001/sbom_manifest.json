@@ -1,0 +1,49 @@
+{
+  "bomFormat": "CycloneDX",
+  "components": [
+    {
+      "name": "y26-k1x-int8-executor",
+      "type": "library",
+      "version": "0.9.1"
+    },
+    {
+      "name": "y26-k1x-demo",
+      "type": "application",
+      "version": "0.9.1"
+    },
+    {
+      "name": "OpenCV",
+      "type": "library",
+      "version": "4.13.0"
+    },
+    {
+      "name": "K1X_INT8_V1_YOLO26N_640_FULL_GRAPH_001",
+      "type": "data",
+      "version": "fab4a72cf524ce0a205ceca0384144f2eee7bc79dff3f4db8b7208614e8407be"
+    }
+  ],
+  "metadata": {
+    "component": {
+      "name": "banana-yolo26-k1x-int8-executor",
+      "properties": [
+        {
+          "name": "source.commit",
+          "value": "2317aa532413151b6867e8c4d03722b0178a26e8"
+        },
+        {
+          "name": "integer.contract",
+          "value": "K1X_INT8_V1"
+        },
+        {
+          "name": "target",
+          "value": "Banana-Pi BPI-F3 / SpacemiT K1X"
+        }
+      ],
+      "type": "application",
+      "version": "0.9.1"
+    }
+  },
+  "serialNumber": "urn:y26:banana-yolo26-k1x-int8-executor:0.9.1",
+  "specVersion": "1.5",
+  "version": 1
+}

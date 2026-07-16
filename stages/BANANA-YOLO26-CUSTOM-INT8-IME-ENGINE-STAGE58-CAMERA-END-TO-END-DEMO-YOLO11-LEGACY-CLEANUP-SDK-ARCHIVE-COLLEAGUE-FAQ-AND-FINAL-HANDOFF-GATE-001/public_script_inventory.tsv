@@ -1,0 +1,11 @@
+script	help	board_or_host_role	active_backend
+scripts/build_cross.sh	pass	documented	frozen C ABI
+scripts/deploy_to_banana.sh	pass	documented	frozen C ABI
+scripts/ensure_opencv.sh	pass	documented	frozen C ABI
+scripts/detect_camera_formats.sh	pass	documented	frozen C ABI
+scripts/run_image_demo.sh	pass	documented	frozen C ABI
+scripts/run_camera_demo.sh	pass	documented	frozen C ABI
+scripts/run_camera_demo_fast.sh	pass	documented	frozen C ABI
+scripts/bench_forward_only.sh	pass	documented	frozen C ABI
+scripts/bench_full_demo.sh	pass	documented	frozen C ABI
+scripts/capture_camera_affinity.sh	pass	documented	frozen C ABI

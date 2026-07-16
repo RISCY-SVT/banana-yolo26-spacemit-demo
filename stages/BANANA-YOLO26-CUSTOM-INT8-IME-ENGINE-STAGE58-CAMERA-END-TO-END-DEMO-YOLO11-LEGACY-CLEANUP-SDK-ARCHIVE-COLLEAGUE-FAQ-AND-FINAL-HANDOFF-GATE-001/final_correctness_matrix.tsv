@@ -1,0 +1,11 @@
+fixture	integer_boundaries	board_release	cpu4_7_ime_count	status
+F0	215	exact	0	pass
+F1	215	exact	0	pass
+F2	215	exact	0	pass
+F3	215	exact	0	pass
+F4	215	exact	0	pass
+F5	215	exact	0	pass
+F6	215	exact	0	pass
+F7	215	exact	0	pass
+bus	215	exact	0	pass
+Zidane	215	exact	0	pass

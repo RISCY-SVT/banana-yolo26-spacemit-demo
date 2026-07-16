@@ -1,0 +1,6 @@
+bytes	file	origin	sha256	status
+723449	camera-annotated-1.png	physical-bpi-f3-session	bdc878d0f7aba997386356bfd0980f4e010522120674a9af8cc7e427b6c7ade6	pass
+705500	camera-annotated-2.png	physical-bpi-f3-session	a139324bc0ba91e2d65bd8735eed47f23696d72b8c389d3af60ce6531e319f5e	pass
+659040	camera-annotated-3.png	physical-bpi-f3-session	7c6a9231d0ce7656c9eaee20f9ae44851e2cf44025c727514390a3d540a34217	pass
+1764763	camera-desktop.png	physical-bpi-f3-session	79a50c2deb0679076797bb5286f207787c5765445642253bd76b1a065a82ff02	pass
+661501	camera-headless.png	physical-bpi-f3-session	93043e823e52e0172e76b526d0c6325b118eee5e00e900fe02a7a1598246c40c	pass

@@ -1,0 +1,5 @@
+status	surface	max_us	mean_us	median_us	min_us	p95_us	p99_us
+pass	final_serial_pipeline
+pass	final_double_buffer
+pass	real_100_image_corpus
+pass	rgb8_already_letterboxed	140454	138989	139006	137949	139484	139742
