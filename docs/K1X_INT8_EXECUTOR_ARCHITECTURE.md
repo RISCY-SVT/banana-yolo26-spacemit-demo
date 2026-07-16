@@ -12,10 +12,9 @@ The executor is a static AOT runtime for one frozen YOLO26n-640 profile.
 - Four persistent workers are pinned to CPU0-3. CPU4 is controller-only.
 - Dense Conv uses shape-dispatched direct-strided 1x1, P3 stride-2 delivery,
   or M12xN16 with exact N4/N8/M tails, explicit `smt.vmadot`, and the selected
-  exact E2c4 C8 Q62 `vsmul.e64` requantization/LUT/store path. E2c4 consumes
-  two raw C4 accumulator groups without a corrected-C8 stack round trip. The
-  older E2c route remains available only as a diagnostic control by setting
-  `Y26_STAGE52_E2C2=0` before prepare.
+  exact E2c5 dual-C4 Q62 `vsmul.e64` requantization/LUT/store path. The release
+  profile fixes this route at build time; candidate controls exist only in the
+  explicit research build.
 - Grouped/depthwise Conv uses prepare-time corrected bias, adjacent-X reuse,
   explicit RVV C8 interior/border handling, and Q62 E2c3 output.
 - Input quantization uses explicit RVV and a compact C3 representation consumed
@@ -32,12 +31,11 @@ The executor is a static AOT runtime for one frozen YOLO26n-640 profile.
   traversal, and emits `1x300x6`. Stage56 updates the exact best-class Q24
   reduction at the class producer, avoiding a later materialize-and-reread pass.
 
-The compatibility wake protocol uses condition variables. Setting
-`Y26_STAGE53_SPIN_POOL=1` and `Y26_STAGE55_FRAME_GATED_SPIN=1` before prepare
-selects the measured SCHED_OTHER frame-gated epoch-spin research mode. It keeps
-the same CPU affinity and arithmetic, spins only during `run`, and parks workers
-between frames. Raw spin remains diagnostic. The Stage54 prepared-static,
-pause, and adaptive-spin candidates remain rejected.
+The compatibility wake protocol uses condition variables. The public CLI/API
+low-latency profile selects SCHED_OTHER frame-gated epoch-spin explicitly. It
+keeps the same CPU affinity and arithmetic, spins only during `run`, and parks
+workers between frames. Raw spin and historical stage environment overrides
+remain research diagnostics and are not part of the release workflow.
 
 The optional Stage56 dedicated-board profile keeps SCHED_OTHER and adds only
 reversible runtime placement: CPU0-4 isolated cgroup, movable IRQs and unbound

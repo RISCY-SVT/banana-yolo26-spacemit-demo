@@ -25,13 +25,12 @@ load, worker affinity, controller CPU, scheduler mode, and package/binary
 hashes. Compare per-inference samples using the same statistical unit. Disable
 diagnostic boundary capture and operation profiling for headline timing.
 
-The condition-variable wake policy is used when `Y26_STAGE53_SPIN_POOL` is
-unset. The optimized-research policy requires both `Y26_STAGE53_SPIN_POOL=1`
-and `Y26_STAGE55_FRAME_GATED_SPIN=1` before executor prepare. It consumes more
-process CPU while a frame runs, then parks workers at the end of the active
-window. If idle CPU remains high between frames, verify the frame-gated variable
-was exported before prepare and that every run exits through the active-window
-guard.
+The `compatibility` profile uses condition-variable wake. The `low-latency`
+profile uses frame-gated epoch-spin, consumes more process CPU while a frame
+runs, then parks workers at the end of the active window. Select it explicitly
+through the CLI profile or C API wake policy. If idle CPU remains high between
+frames, run the healthcheck and verify the reported profile; release operation
+does not depend on stage-numbered environment variables.
 
 ## Different Detections
 

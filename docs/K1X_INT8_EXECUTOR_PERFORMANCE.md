@@ -191,11 +191,13 @@ in the Stage54 report and release manifest. This remains below 6 FPS, not
 
 ## Stage53 Optimized Research
 
-The selected Stage53 arithmetic, layout, and static graph remain
+The historical Stage53 arithmetic, layout, and static graph remained
 `K1X_INT8_V1`, `NCHWc8_SPATIAL_INNER_V1`, and exact Q62 E2c2. The optimized
 research benchmark additionally sets `Y26_STAGE53_SPIN_POOL=1` before prepare.
 It remains `SCHED_OTHER`; the environment setting changes worker wakeup from
-condition variables to a persistent epoch poll.
+condition variables to a persistent epoch poll. This is archived benchmark
+provenance, not an instruction for the 0.9.0 release, which exposes wake policy
+through the public CLI and C API.
 
 ```text
 fixed preprocessed input, final source, 10/100/5:

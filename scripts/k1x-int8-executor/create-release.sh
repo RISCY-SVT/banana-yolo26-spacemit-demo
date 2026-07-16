@@ -13,38 +13,63 @@ output=$5
 source_commit=$6
 
 case "$output" in
-  /data/releases/banana-yolo26-k1x-int8-executor|/data/releases/banana-yolo26-k1x-int8-executor/*) ;;
-  *) echo "refusing release path outside /data/releases/banana-yolo26-k1x-int8-executor" >&2; exit 2 ;;
+  /data/releases/banana-yolo26-k1x-int8-executor/0.9.0-stage57-final-handoff) ;;
+  *) echo "refusing unexpected Stage57 release path: $output" >&2; exit 2 ;;
 esac
 test -f "$fixture"
 test -f "$package/asset_hashes.tsv"
+test -x "$install_root/bin/yolo26_k1x_int8"
+test -x "$install_root/bin/y26_k1x_healthcheck"
 package_manifest_sha256=$(sha256sum "$package/asset_hashes.tsv" | awk '{print $1}')
+expected=fab4a72cf524ce0a205ceca0384144f2eee7bc79dff3f4db8b7208614e8407be
+[[ $package_manifest_sha256 == "$expected" ]] || {
+  echo "unexpected package manifest: $package_manifest_sha256" >&2
+  exit 1
+}
 
 rm -rf --one-file-system "$output"
-mkdir -p "$output"/{bin,lib,include,package,fixtures,config,docs,scripts,outputs,opencv/lib,licenses}
-cp -a "$install_root/bin/." "$output/bin/"
-cp -a "$install_root/lib/." "$output/lib/"
-cp -a "$install_root/include/." "$output/include/"
-cp -a "$package/." "$output/package/"
-cp -a "$fixture" "$output/fixtures/bus_640_nchw_f32.bin"
-cp -a "$repo/config/k1x-int8-executor-safe.conf" \
-  "$repo/config/k1x-int8-executor-stage54.env" \
-  "$repo/config/k1x-int8-executor-stage55.env" \
-  "$repo/config/k1x-int8-executor-stage56.env" "$output/config/"
-cp -a "$repo"/docs/{README_K1X_INT8_EXECUTOR.md,BUILDING_K1X_INT8_EXECUTOR.md,DEPLOYING_K1X_INT8_EXECUTOR.md,K1X_INT8_EXECUTOR_API.md,K1X_INT8_MODEL_PACKAGE_FORMAT.md,K1X_INT8_EXECUTOR_ARCHITECTURE.md,K1X_INT8_EXECUTOR_CORRECTNESS.md,K1X_INT8_EXECUTOR_ACCURACY.md,K1X_INT8_EXECUTOR_PERFORMANCE.md,K1X_INT8_EXECUTOR_LIMITATIONS.md,K1X_INT8_EXECUTOR_TROUBLESHOOTING.md,K1X_INT8_EXECUTOR_HANDOFF_CHECKLIST.md,K1X_INT8_EXECUTOR_NOTICES.md} "$output/docs/"
-cp -a "$repo"/scripts/k1x-int8-executor/{build.sh,package.sh,deploy.sh,smoke-test.sh,benchmark.sh,uninstall.sh,create-release.sh,stage56-system-profile.sh} "$output/scripts/"
-opencv_root=${Y26_K1X_OPENCV_ROOT:-/data/opencv/install-k1x-gtk3}
-for library in core imgproc imgcodecs; do
-  source=$(readlink -f "$opencv_root/lib/libopencv_${library}.so.413")
-  test -f "$source"
-  cp -a "$source" "$output/opencv/lib/libopencv_${library}.so.413"
+mkdir -p "$output"/{bin,lib/cmake,lib/pkgconfig,include,package,fixtures,config,docs,scripts,examples,licenses,sbom,outputs}
+
+install -m 0755 "$install_root/bin/yolo26_k1x_int8" "$output/bin/"
+install -m 0755 "$install_root/bin/y26_k1x_healthcheck" "$output/bin/"
+install -m 0644 "$install_root/lib/liby26_k1x_int8_executor.a" "$output/lib/"
+for name in liby26_k1x_int8_executor.so liby26_k1x_int8_executor.so.1 liby26_k1x_int8_executor.so.0.9.0; do
+  install -m 0644 -T "$install_root/lib/liby26_k1x_int8_executor.so.0.9.0" "$output/lib/$name"
 done
-cp -a /data/opencv/LICENSE "$output/licenses/OPENCV-LICENSE.txt"
-chmod 0755 "$output/bin/yolo26_k1x_int8" "$output/scripts/"*.sh
+cp -aL "$install_root/lib/cmake/." "$output/lib/cmake/"
+cp -aL "$install_root/lib/pkgconfig/." "$output/lib/pkgconfig/"
+install -m 0644 "$install_root/include/y26_k1x_executor.h" "$output/include/"
+cp -a "$package/." "$output/package/"
+install -m 0644 "$fixture" "$output/fixtures/bus_640_nchw_f32.bin"
+install -m 0644 "$repo/config/k1x-int8-executor-safe.conf" "$output/config/"
+cp -aL "$install_root/share/y26-k1x-int8-executor/examples/." "$output/examples/"
+
+docs=(
+  README_K1X_INT8_EXECUTOR.md HANDOFF_EN.md HANDOFF_RU.md QUICKSTART_RU.md
+  INTEGRATION_GUIDE.md RELEASE_PROFILES.md SYSTEM_PROFILE_O2.md
+  PERFORMANCE_AND_ACCURACY.md TROUBLESHOOTING_HANDOFF.md
+  RELEASE_NOTES_0.9.0.md CURRENT_GRAPH_FREEZE.md
+  K1X_INT8_EXECUTOR_ARCHITECTURE.md K1X_INT8_MODEL_PACKAGE_FORMAT.md
+  K1X_INT8_EXECUTOR_LIMITATIONS.md K1X_INT8_EXECUTOR_NOTICES.md
+  K1X_INT8_EXECUTOR_HANDOFF_CHECKLIST.md
+)
+for file in "${docs[@]}"; do
+  install -m 0644 "$repo/docs/$file" "$output/docs/"
+done
+
+scripts=(build.sh package.sh deploy.sh smoke-test.sh benchmark.sh uninstall.sh create-release.sh o2-system-profile.sh)
+for file in "${scripts[@]}"; do
+  install -m 0755 "$repo/scripts/k1x-int8-executor/$file" "$output/scripts/"
+done
+install -m 0644 "$repo/docs/K1X_INT8_EXECUTOR_NOTICES.md" \
+  "$output/licenses/THIRD_PARTY_NOTICES.md"
 
 python3 "$repo/custom_int8_engine/tools/stage52_release_bundle.py" \
   --root "$output" \
   --source-commit "$source_commit" \
   --package-manifest-sha256 "$package_manifest_sha256" \
-  --release-id "${Y26_RELEASE_ID:-banana-yolo26-k1x-int8-executor-stage52}"
-(cd "$output" && sha256sum -c release_sha256.txt)
+  --release-id banana-yolo26-k1x-int8-executor-0.9.0-stage57-final-handoff \
+  --release-version 0.9.0 \
+  --prediction-sha256 cda5c8c7a46d61d9c90f6292001eea190cb8f6617efe647a33dc6134dd57ccda \
+  --known-output-hash 0xd43f5e018b415631
+(cd "$output" && sha256sum -c SHA256SUMS)
