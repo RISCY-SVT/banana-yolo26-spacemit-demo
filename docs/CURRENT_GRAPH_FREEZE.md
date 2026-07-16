@@ -21,6 +21,14 @@ parity evidence. A tracked file cannot contain the hash of the commit that first
 contains itself; the post-push result packet is the canonical exact local/GitHub/
 GitLab parity record.
 
+## Frozen Measured Surface
+
+The installed release low-latency-dedicated O2 profile measured 133305.232 us
+mean and 133825.050 us p95 over 500 samples. Its separate 13,500-run soak measured
+135040.533 us mean, 138660.577 us p99.9, and 140242.000 us maximum. The
+compatibility 10,000-run soak measured 147746.663 us mean. COCO val2017 remained
+5000/5000 and byte-identical at mAP50-95 0.3707408944391919.
+
 ## Frozen Selected Routes
 
 - NCHWc8 spatial-inner activation layout.

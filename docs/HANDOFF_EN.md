@@ -134,6 +134,22 @@ The canonical Stage57 timing rows are in `PERFORMANCE_AND_ACCURACY.md`; fixed
 input, real corpus, RGB, serial pipeline, and double-buffer throughput are
 separate surfaces and must not be mixed.
 
+## Release Tree
+
+| Path | Contents |
+|---|---|
+| `bin/` | release CLI and healthcheck |
+| `lib/`, `include/` | ABI1 shared/static libraries, CMake/pkg-config metadata, public C header |
+| `package/`, `fixtures/` | frozen full-graph package and known exact input |
+| `config/`, `scripts/` | safe profile configuration, build/deploy/smoke/O2 helpers |
+| `docs/`, `examples/` | handoff guides and compilable C consumer |
+| `licenses/`, `sbom/` | notices and machine-readable component inventory |
+| `outputs/` | known-fixture, COCO, and separately labeled performance summaries |
+
+`release_manifest.json`, `release_sha256.txt`, and `SHA256SUMS` identify and
+verify the complete tree. Research candidates and stage environment files are
+not part of this primary handoff root.
+
 ## Operational Rules
 
 - Keep binaries, packages, logs, and outputs on NVMe `/data`.

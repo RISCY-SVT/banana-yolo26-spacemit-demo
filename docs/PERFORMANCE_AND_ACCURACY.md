@@ -15,11 +15,34 @@ The final exact contract remains `K1X_INT8_V1`.
 
 ## Performance Interpretation
 
-Canonical Stage57 rows are generated in the Stage57 final report. The selected
-source bundle (E2c5 plus attention C8 epilogue) cleared the randomized full-model
-selection gate with a paired mean improvement of 3.790254897% against the
-reproduced Stage56 source control. Final release/O2 statistics are reported after
-the release-only 500-run and 10,000-run measurements.
+The selected source bundle (E2c5 plus attention C8 epilogue) cleared the
+randomized full-model selection gate with a paired mean improvement of
+3.790254897% against the reproduced Stage56 source control. The installed release
+then passed independent 500-sample and long-soak measurements.
+
+### Fixed Preprocessed Input
+
+| Surface | Samples | Mean (us) | Median (us) | p95 (us) | p99 (us) | p99.9 (us) | Max (us) |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| compatibility | 500 | 147156.530 | 146493.000 | 151343.100 | 157373.510 | 162881.304 | 164031.000 |
+| low-latency, original OS | 500 | 133674.926 | 133479.500 | 135944.150 | 136817.000 | 138291.851 | 139465.000 |
+| low-latency-dedicated, O2 | 500 | 133305.232 | 133307.500 | 133825.050 | 134031.490 | 134956.415 | 135413.000 |
+| compatibility soak | 10000 | 147746.663 | 147181.500 | 151137.950 | 157663.060 | 163959.195 | 181280.000 |
+| low-latency-dedicated O2 soak | 13500 | 135040.533 | 134995.000 | 135637.000 | 136675.070 | 138660.577 | 140242.000 |
+
+The 500-sample O2 mean is 6.395163% lower than the accepted Stage56 O2 mean and
+71.222984% lower than matched B120 ORT. It corresponds to 7.501594 pure-model
+inferences per second. These figures do not constitute a 20 FPS claim.
+
+### Other Surfaces
+
+| Surface | Samples | Mean/interval (us) | Notes |
+|---|---:|---:|---|
+| 100-image in-memory corpus | 100 | 132913.617 | pure executor, data-dependent inputs |
+| RGB8 input | 500 | 131318.676 | compact RGB copy plus executor; no JPEG/resize |
+| serial preloaded-image pipeline | 500 | 188654.187 | preprocessing on CPU4; OpenCV inherited default |
+| double-buffer frame interval | 500 | 140555.108 | CPU5-7 preprocessing, OpenCV 3 threads; 7.114647 FPS throughput |
+| matched B120 ORT | 500 | 463234.271 | per-inference comparison distribution |
 
 Do not combine columns from different sample surfaces. In particular:
 

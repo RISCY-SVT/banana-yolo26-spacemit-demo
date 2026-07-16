@@ -26,6 +26,10 @@ First clean engineering-handoff release of the exact full YOLO26n-640
 - Add reversible, lock-protected O2 lifecycle with stale-state recovery and a
   reviewed IRQ policy.
 
+The final installed low-latency-dedicated O2 surface measured 133305.232 us mean
+and 133825.050 us p95 over 500 samples. The separate 13,500-run soak measured
+135040.533 us mean and 140242.000 us maximum. Full COCO remained byte-identical.
+
 ## Exact Identities
 
 Model, package, prediction, and known-fixture identities are listed in

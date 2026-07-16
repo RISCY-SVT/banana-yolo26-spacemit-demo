@@ -146,6 +146,20 @@ def label_rows(surface: str, rows: list[dict[str, str]]) -> list[dict[str, str]]
     return [{"surface": surface, **row} for row in rows]
 
 
+def arm_field_means(rows: list[dict[str, str]], field: str) -> list[dict[str, str]]:
+    result: list[dict[str, str]] = []
+    for arm, label in (("A", "control"), ("B", "candidate")):
+        values = [float(row[field]) for row in rows if row.get("arm") == arm and row.get(field)]
+        if values:
+            result.append({
+                "surface": f"{field}_{label}",
+                "arm": arm,
+                "samples": str(len(values)),
+                "mean_us": f"{statistics.fmean(values):.6f}",
+            })
+    return result
+
+
 def candidate_stats(path: Path, name: str) -> tuple[list[dict[str, str]], list[dict[str, Any]], dict[str, Any]]:
     rows = parse_cli(path)
     arm_a = [row for row in rows if row.get("arm") == "A"]
@@ -218,9 +232,9 @@ def parse_hpm(raw: Path) -> list[dict[str, Any]]:
             rows.append({
                 "arm": arm, "group_event": event, "operation_index": fields[1],
                 "M": fields[2], "N": fields[3], "K": fields[4],
-                "iteration": fields[5], "worker": fields[6], "event": fields[7],
+                "worker": fields[5], "worker_cpu": fields[6], "event": fields[7],
                 "status": fields[8], "errno": fields[9], "event_id": fields[10],
-                "worker_cpu": fields[11], "raw_u64": fields[12],
+                "iteration_count": fields[11], "raw_u64": fields[12],
                 "time_enabled": fields[13], "time_running": fields[14],
             })
     if not rows:
@@ -397,7 +411,8 @@ def main() -> None:
     hpm_rows = parse_hpm(args.raw)
     write_tsv(out / "e2c5_hpm.tsv", hpm_rows)
     copy_text(args.raw / "objdump/e2c5_disassembly.txt", out / "e2c5_disassembly.txt")
-    write_tsv(out / "e2c5_full_model_abba.tsv", e2c5_summary + [e2c5_decision])
+    write_tsv(out / "e2c5_full_model_abba.tsv",
+              arm_field_means(e2c5_raw, "dense_us") + e2c5_summary + [e2c5_decision])
     write_md(out / "e2c5_decision.md", "E2c5 Decision", [
         f"Selected. Mean delta was {e2c5_decision['delta_pct']}% with 95% CI "
         f"[{e2c5_decision['ci95_low_us']}, {e2c5_decision['ci95_high_us']}] us. "
@@ -415,9 +430,11 @@ def main() -> None:
         "rejected by full-model wall time.",
     ])
     write_tsv(out / "attention_matmul_c8_correctness.tsv", fixture_matrix())
-    write_tsv(out / "attention_matmul_c8_performance.tsv", att_m_summary + [att_m_decision])
+    write_tsv(out / "attention_matmul_c8_performance.tsv",
+              arm_field_means(att_m_raw, "attention_us") + att_m_summary + [att_m_decision])
     write_tsv(out / "attention_softmax_cache_correctness.tsv", fixture_matrix())
-    write_tsv(out / "attention_softmax_cache_performance.tsv", att_s_summary + [att_s_decision])
+    write_tsv(out / "attention_softmax_cache_performance.tsv",
+              arm_field_means(att_s_raw, "attention_us") + att_s_summary + [att_s_decision])
     copy_text(args.raw / "objdump/attention_micro_disassembly.txt", out / "attention_micro_disassembly.txt")
     write_tsv(out / "attention_micro_full_model_abba.tsv",
               att_m_summary + [att_m_decision] + att_s_summary + [att_s_decision])
@@ -436,10 +453,12 @@ def main() -> None:
         "threshold and its confidence interval crossed zero.",
     ])
     write_tsv(out / "head_bucket_correctness.tsv", fixture_matrix())
-    write_tsv(out / "head_bucket_performance.tsv", head_summary + [head_decision])
+    write_tsv(out / "head_bucket_performance.tsv",
+              arm_field_means(head_raw, "head_us") + head_summary + [head_decision])
     write_tsv(out / "head_bucket_full_model_abba.tsv", head_summary + [head_decision])
     write_tsv(out / "rgb_copy_rvv_correctness.tsv", fixture_matrix())
-    write_tsv(out / "rgb_copy_rvv_performance.tsv", rgb_summary + [rgb_decision])
+    write_tsv(out / "rgb_copy_rvv_performance.tsv",
+              arm_field_means(rgb_raw, "input_us") + rgb_summary + [rgb_decision])
     write_md(out / "candidate_c_decision.md", "Candidate C Decision", [
         f"Head buckets rejected ({head_decision['delta_pct']}%). The explicit contiguous RVV "
         f"RGB signed-storage copy selected for the RGB input surface ({rgb_decision['delta_pct']}%). "
@@ -467,10 +486,19 @@ def main() -> None:
         {"artifact": "Stage57 release static", "bytes": release_static.stat().st_size},
         {"artifact": "Stage57 release shared", "bytes": release_shared.stat().st_size},
     ])
+    load_prepare_rows = read_tsv(args.raw / "profiles/release-load-prepare/load_prepare.tsv")
+    load_prepare_means = {
+        surface: statistics.fmean(
+            float(row["wall_us"]) for row in load_prepare_rows if row["surface"] == surface)
+        for surface in {row["surface"] for row in load_prepare_rows}
+    }
     write_md(out / "release_target_dependency_report.md", "Release Target Dependencies", [
         "The shared library depends only on the expected C/C++ runtime, libc, libm, pthread "
         "surface, and loader. CLI RUNPATH is `$ORIGIN/../lib`; no absolute build path is "
         "present. The installed tree has no repository lookup dependency.",
+        f"Measured CLI process-start plus dynamic-load mean: "
+        f"{load_prepare_means['cli_process_start_and_dynamic_load']:.3f} us (50 launches). "
+        f"Executor prepare mean: {load_prepare_means['executor_prepare']:.3f} us (20 handles).",
     ])
     release_abba_raw, release_abba_summary, release_abba_decision = candidate_stats(
         args.raw / "profiles/release-target-abba/combined.log", "release_target")
@@ -500,8 +528,14 @@ def main() -> None:
     ])
 
     c_api_checks = read_tsv(args.raw / "logs/c_api_contract.tsv")
+    package_checks = read_tsv(args.raw / "logs/package_failure_tests.tsv")
     write_tsv(out / "c_abi_compatibility.tsv", c_api_checks)
-    write_tsv(out / "c_api_error_matrix.tsv", c_api_checks)
+    write_tsv(out / "c_api_error_matrix.tsv", c_api_checks + [{
+        "test": f"package_{row['case']}",
+        "status": row["result"],
+        "expected": row["expected"],
+        "exit_code": row["exit_code"],
+    } for row in package_checks])
     write_tsv(out / "external_consumer_builds.tsv", read_tsv(args.raw / "logs/consumer_matrix.tsv"))
     write_tsv(out / "installed_cmake_pkgconfig_test.tsv", read_tsv(args.raw / "logs/consumer_matrix.tsv"))
     write_md(out / "soname_symbol_visibility_report.md", "SONAME and Symbol Visibility", [
@@ -550,9 +584,11 @@ def main() -> None:
         "sha256": sha256(coco_json), "byte_identical_to_stage56": "yes",
     }])
     evaluation = args.raw / "coco/final57/evaluation"
-    results_source = evaluation / "full_coco_results.tsv"
+    results_source = evaluation / "results.tsv"
     if results_source.is_file():
         copy_text(results_source, out / "final_coco_results.tsv")
+        copy_text(evaluation / "per_class.tsv", out / "final_coco_per_class.tsv")
+        copy_text(evaluation / "bootstrap.tsv", out / "final_coco_bootstrap.tsv")
     else:
         write_tsv(out / "final_coco_results.tsv", [{
             "surface": "K1X_INT8_V1 Stage57", "images": 5000,
@@ -585,12 +621,20 @@ def main() -> None:
     # V5 reserve and future-project boundary.
     reserve = read_tsv(args.stage56 / "remaining_optimization_reserve_ledger.tsv")
     for row in reserve:
+        if row["status"] == "rejected":
+            row["status"] = "rejected-measured"
+        if row["reserve_id"] == "R05":
+            row["status"] = "theoretical"
+            row["why_not_selected"] = "No isolated exact cache-set/alignment candidate cleared the Stage56 scout gate"
         if row["reserve_id"] == "R02":
             row["why_not_selected"] = ("Tested Stage56 schedules lost; this does not prove every "
                                         "possible exact load-ahead schedule loses")
         if row["reserve_id"] == "R23":
             row["status"] = "moved-to-codesign"
             row["why_not_selected"] = "Q31 changes the numerical contract and is not exact maintenance"
+        if row["reserve_id"] == "R28":
+            row["status"] = "moved-to-codesign"
+            row["why_not_selected"] = "Resolution/model changes require a separate authorized project"
     reserve.extend([
         {"reserve_id": "S57-01", "category": "dense", "mechanism": "dual-C4 Q62 E2c5",
          "status": "selected", "evidence_stage_file": "Stage57/e2c5_full_model_abba.tsv",
@@ -662,6 +706,10 @@ def main() -> None:
     write_md(out / "source_hygiene_report.md", "Source Hygiene", [
         "Final diff checks, symlink scan, large-file scan, secret/private-path scan, and "
         "`/data/ncnn` non-mutation check passed. Generated release payload remains outside Git.",
+        "Focused ThreadSanitizer status: Stage18 threaded integration passed. The legacy "
+        "Stage19 pool remained asleep without completion for more than two minutes and was "
+        "terminated before Stage52 could run, so that TSan arm is recorded as unsupported/"
+        "inconclusive rather than passed. Normal and focused ASan/UBSan tests passed.",
     ])
     copy_text(args.raw / "o2/state-before.txt", out / "system_state_before.tsv")
     copy_text(args.raw / "o2/state-after.txt", out / "system_state_after.tsv")
