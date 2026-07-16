@@ -1,0 +1,14 @@
+symbol	visibility
+y26_executor_copy_boundary@@Y26_K1X_ABI_1	public ABI1
+y26_executor_create@@Y26_K1X_ABI_1	public ABI1
+y26_executor_destroy@@Y26_K1X_ABI_1	public ABI1
+y26_executor_get_output@@Y26_K1X_ABI_1	public ABI1
+y26_executor_last_error@@Y26_K1X_ABI_1	public ABI1
+y26_executor_options_init@@Y26_K1X_ABI_1	public ABI1
+y26_executor_prepare@@Y26_K1X_ABI_1	public ABI1
+y26_executor_run_preprocessed@@Y26_K1X_ABI_1	public ABI1
+y26_executor_run_rgb@@Y26_K1X_ABI_1	public ABI1
+y26_executor_tensor_bytes@@Y26_K1X_ABI_1	public ABI1
+y26_executor_tensor_id@@Y26_K1X_ABI_1	public ABI1
+y26_executor_version@@Y26_K1X_ABI_1	public ABI1
+y26_status_string@@Y26_K1X_ABI_1	public ABI1

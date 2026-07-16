@@ -1,0 +1,9 @@
+commit	purpose
+c123942	exact Stage57 source and ABI
+7539002	productization and handoff documentation
+b19c0a7	release script mode repair
+104d2dc	test evidence and co-design seed
+28490e7	measured handoff documentation and outputs
+cf2654a	frozen package identity in release helpers
+b98263cc3cced816c8e1be92a7446fbe4d03e8f7	corrected final statistical identities
+post-push-packet-canonical	final validation/evidence/freeze; exact hash in post-push packet

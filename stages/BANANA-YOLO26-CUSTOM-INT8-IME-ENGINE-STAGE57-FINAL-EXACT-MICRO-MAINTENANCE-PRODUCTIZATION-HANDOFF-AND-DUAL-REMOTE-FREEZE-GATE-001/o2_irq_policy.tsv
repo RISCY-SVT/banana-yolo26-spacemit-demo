@@ -1,0 +1,70 @@
+irq	description	selected	reason
+100	0 0 0 0 0 0 0 0 SiFive PLIC 99 Edge mmc0	yes	reviewed-device-class
+101	0 0 0 0 0 0 0 0 k1x-gpio-irqchip 80 Edge d4280000.sdh cd	no	not-reviewed
+102	18102582 0 0 0 0 0 1155005 646541 SiFive PLIC 100 Edge mmc1	yes	reviewed-device-class
+103	294027 0 0 0 0 17313 0 20673 SiFive PLIC 101 Edge mmc2	yes	reviewed-device-class
+104	0 0 0 0 0 0 0 0 SiFive PLIC 113 Edge spacemit-crypto-engine-0	no	not-reviewed
+105	14 0 0 0 0 0 0 0 SiFive PLIC 52 Edge d4013400.mailbox	no	critical-or-per-cpu-denylist
+106	0 0 0 0 0 0 0 0 RISC-V INTC 13 Edge riscv-pmu	no	critical-or-per-cpu-denylist
+107	0 0 0 0 0 0 0 0 k1x-gpio-irqchip 126 Edge es8326	no	not-reviewed
+108	3150324 0 0 0 0 197839 109561 0 SiFive PLIC 139 Edge DPU_ONLINE	yes	reviewed-device-class
+109	0 0 0 0 0 0 0 0 SiFive PLIC 138 Edge DPU_OFFLINE	yes	reviewed-device-class
+10		no	not-reviewed
+110	1 0 0 0 0 0 0 0 SiFive PLIC 136 Edge c0400500.hdmi	no	not-reviewed
+11	3711355 4492343 3637920 3857225 3019203 772800 1564779 5850913 RISC-V INTC 5 Edge riscv-timer	no	critical-or-per-cpu-denylist
+12	0 0 0 0 0 0 0 0 SiFive PLIC 60 Edge pinctrl	no	critical-or-per-cpu-denylist
+13	0 0 0 0 0 0 0 0 SiFive PLIC 58 Edge k1x-gpio	no	not-reviewed
+14	10 0 0 0 0 0 0 0 SiFive PLIC 72 Edge pdma	no	not-reviewed
+15	0 0 0 0 0 0 0 0 SiFive PLIC 36 Edge d4010800.i2c	no	critical-or-per-cpu-denylist
+16	743 0 0 0 0 0 0 0 SiFive PLIC 38 Edge d4012000.i2c	no	critical-or-per-cpu-denylist
+17	16853 0 0 0 0 0 362 723 SiFive PLIC 19 Edge d401d800.i2c	no	critical-or-per-cpu-denylist
+18	0 0 0 0 0 0 0 0 SiFive PLIC 64 Edge spm8821	no	not-reviewed
+1		no	not-reviewed
+26	0 0 0 0 0 0 0 0 spm8821 7 Edge p1-adc	no	not-reviewed
+29	0 0 0 0 0 0 0 0 spm8821 10 Edge rtc@pmic	no	critical-or-per-cpu-denylist
+2		no	not-reviewed
+3		no	not-reviewed
+4		no	not-reviewed
+56	0 0 0 0 0 0 0 0 spm8821 37 Edge spacemit_pwrkey_rise	no	critical-or-per-cpu-denylist
+57	0 0 0 0 0 0 0 0 spm8821 38 Edge spacemit_pwrkey_fall	no	critical-or-per-cpu-denylist
+58	0 0 0 0 0 0 0 0 spm8821 39 Edge spacemit_pwrkey_skey	no	critical-or-per-cpu-denylist
+59	0 0 0 0 0 0 0 0 spm8821 40 Edge spacemit_pwrkey_lkey	no	critical-or-per-cpu-denylist
+5		no	not-reviewed
+62	0 0 0 0 0 0 0 0 SiFive PLIC 146 Edge k1x-pcie	no	not-reviewed
+65	0 0 0 0 0 0 0 0 PCI-MSI 134217728 Edge PCIe PME, aerdrv	no	not-reviewed
+66	0 0 0 0 0 0 0 0 SiFive PLIC 147 Edge k1x-pcie	no	not-reviewed
+69	0 0 0 0 0 0 0 0 PCI-MSI 268435456 Edge PCIe PME, aerdrv	no	not-reviewed
+6		no	not-reviewed
+70	0 0 0 0 0 0 0 0 SiFive PLIC 87 Edge JPU	no	not-reviewed
+71	0 0 0 0 0 0 0 0 pinctrl 268 Edge rtw_wifi_gpio_wakeup	no	critical-or-per-cpu-denylist
+72	0 0 0 0 0 0 0 0 SiFive PLIC 86 Edge v2d-irq	no	not-reviewed
+73	0 0 0 0 0 0 0 0 SiFive PLIC 42 Edge UART1	yes	reviewed-device-class
+74	3774 0 0 0 0 3004 0 1992 SiFive PLIC 44 Edge UART3	yes	reviewed-device-class
+75	81 0 0 0 0 0 0 0 SiFive PLIC 75 Edge pvrsrvkm	yes	reviewed-device-class
+76	226 0 0 0 0 0 0 0 PCI-MSI 134742016 Edge nvme0q0	yes	reviewed-device-class
+77	912 0 0 0 0 0 0 0 PCI-MSI 134742017 Edge nvme0q1	yes	reviewed-device-class
+78	890 0 0 0 0 0 0 0 PCI-MSI 134742018 Edge nvme0q2	yes	reviewed-device-class
+79	2774 0 0 0 0 0 0 0 PCI-MSI 134742019 Edge nvme0q3	yes	reviewed-device-class
+7		no	not-reviewed
+80	1783 0 0 0 0 0 0 0 PCI-MSI 134742020 Edge nvme0q4	yes	reviewed-device-class
+81	19881 0 0 0 0 0 0 0 PCI-MSI 134742021 Edge nvme0q5	yes	reviewed-device-class
+82	4961 0 0 0 0 0 0 0 PCI-MSI 134742022 Edge nvme0q6	yes	reviewed-device-class
+83	3995 0 0 0 0 0 0 0 PCI-MSI 134742023 Edge nvme0q7	yes	reviewed-device-class
+84	3638 0 0 0 0 0 0 0 PCI-MSI 134742024 Edge nvme0q8	yes	reviewed-device-class
+85	2 0 0 0 0 0 0 0 SiFive PLIC 117 Edge d420c000.spi	no	not-reviewed
+86	74905 0 0 0 0 6050 0 0 SiFive PLIC 131 Edge end0	yes	reviewed-device-class
+87	0 0 0 0 0 0 0 0 SiFive PLIC 133 Edge end1	yes	reviewed-device-class
+88	0 0 0 0 0 0 0 0 SiFive PLIC 149 Edge dwc3-usb-wakeup	yes	reviewed-device-class
+89	4546 0 0 0 0 138 0 0 SiFive PLIC 125 Edge xhci-hcd:usb2	yes	reviewed-device-class
+8		no	not-reviewed
+90	0 0 0 0 0 0 0 0 SiFive PLIC 118 Edge ehci_hcd:usb1	yes	reviewed-device-class
+91	0 0 0 0 0 0 0 0 SiFive PLIC 148 Edge usb-wakeup	yes	reviewed-device-class
+92	0 0 0 0 0 0 0 0 SiFive PLIC 105 Edge mv_udc	no	not-reviewed
+93	0 0 0 0 0 0 0 0 SiFive PLIC 74 Edge c0500000.linlon-v5	yes	reviewed-device-class
+94	0 0 0 0 0 0 0 0 SiFive PLIC 81 Edge k1xccic	yes	reviewed-device-class
+95	0 0 0 0 0 0 0 0 SiFive PLIC 82 Edge k1xccic	yes	reviewed-device-class
+96	0 0 0 0 0 0 0 0 SiFive PLIC 83 Edge k1xccic	yes	reviewed-device-class
+97	4 0 0 0 0 0 0 0 SiFive PLIC 84 Edge mars-cpp	yes	reviewed-device-class
+98	0 0 0 0 0 0 0 0 SiFive PLIC 79 Edge feisp	yes	reviewed-device-class
+99	22 0 0 0 0 0 38 3 SiFive PLIC 61 Edge thermal_zone0, thermal_zone1, thermal_zone2, thermal_zone3	yes	reviewed-device-class
+9		no	not-reviewed

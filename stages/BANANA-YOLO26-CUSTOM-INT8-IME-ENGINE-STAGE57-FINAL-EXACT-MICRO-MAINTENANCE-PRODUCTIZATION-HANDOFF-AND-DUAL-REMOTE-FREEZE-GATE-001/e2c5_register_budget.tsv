@@ -1,0 +1,3 @@
+chain	raw	wide	multiplier	output	overlap
+low-C4	v2/e32	v2/e64,m2	v6/e64,m2	v2/e8	independent-low
+high-C4	v4/e32	v4/e64,m2	v8/e64,m2	v4/e8	independent-high

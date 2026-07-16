@@ -1,0 +1,4 @@
+test	exit_code	restored	result
+signal_term	143	yes	pass
+signal_int	130	yes	pass
+signal_hup	129	yes	pass

@@ -19,7 +19,7 @@ TASK_ID = (
     "MAINTENANCE-PRODUCTIZATION-HANDOFF-AND-DUAL-REMOTE-FREEZE-GATE-001"
 )
 START_HEAD = "4f5a7f2327bff63d8159a71eeaa950e22897b823"
-SOURCE_COMMIT = "cf2654a2706187c28d23a5a02c505b00c5d27036"
+SOURCE_COMMIT = "b98263cc3cced816c8e1be92a7446fbe4d03e8f7"
 CONTRACT = "K1X_INT8_V1"
 PROFILE = "K1X_INT8_V1_YOLO26N_640_FULL_GRAPH_001"
 MODEL_SHA = "30a94e4738606673b5e0a73499cbc977167f046f8fa8637d6040ce744f429c0c"
@@ -60,6 +60,8 @@ def write_tsv(path: Path, rows: Iterable[dict[str, Any]],
         writer.writeheader()
         for row in materialized:
             writer.writerow({field: row.get(field, "") for field in fields})
+    lines = path.read_text(encoding="utf-8").splitlines()
+    path.write_text("\n".join(line.rstrip("\t") for line in lines) + "\n", encoding="utf-8")
 
 
 def write_text(path: Path, text: str) -> None:
@@ -785,7 +787,8 @@ def main() -> None:
         {"commit": "b19c0a7", "purpose": "release script mode repair"},
         {"commit": "104d2dc", "purpose": "test evidence and co-design seed"},
         {"commit": "28490e7", "purpose": "measured handoff documentation and outputs"},
-        {"commit": SOURCE_COMMIT, "purpose": "frozen package identity in release helpers"},
+        {"commit": "cf2654a", "purpose": "frozen package identity in release helpers"},
+        {"commit": SOURCE_COMMIT, "purpose": "corrected final statistical identities"},
         {"commit": args.final_head, "purpose": "final validation/evidence/freeze; exact hash in post-push packet"},
     ])
     write_md(out / "final_dual_remote_report.md", "Final Dual-remote Publication", [

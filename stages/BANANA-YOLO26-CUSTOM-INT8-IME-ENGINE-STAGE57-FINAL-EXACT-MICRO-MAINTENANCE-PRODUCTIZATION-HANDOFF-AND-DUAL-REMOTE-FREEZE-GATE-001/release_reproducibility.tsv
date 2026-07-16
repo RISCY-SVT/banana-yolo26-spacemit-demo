@@ -1,0 +1,2 @@
+first_tree	second_tree	diff_exit	different_files	release_manifest_sha256	release_sha256_file_sha256	status
+repro-reference	clean rebuild	0	0	04c9f25e3a92ac4d68acea5db63e6175ab61fda082c4c8127919def59cb206ed	df34e8360346f774577878acdeb798d6dd503e43ba4868607b3007638b68335e	byte-identical

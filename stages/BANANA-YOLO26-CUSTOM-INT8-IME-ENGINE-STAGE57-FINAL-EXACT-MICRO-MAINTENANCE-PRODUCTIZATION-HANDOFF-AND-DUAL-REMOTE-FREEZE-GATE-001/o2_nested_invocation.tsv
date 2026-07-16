@@ -1,0 +1,2 @@
+test	exit_code	restored	result
+nested_invocation	1	yes	pass

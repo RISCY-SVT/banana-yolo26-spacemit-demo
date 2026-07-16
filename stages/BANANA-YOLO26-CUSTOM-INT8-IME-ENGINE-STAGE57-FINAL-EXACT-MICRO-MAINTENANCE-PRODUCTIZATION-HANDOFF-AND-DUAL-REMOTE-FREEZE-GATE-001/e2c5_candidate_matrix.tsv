@@ -1,0 +1,5 @@
+candidate	route	exact	selected
+A0	E2c4 C8 control	yes	no
+A1	E2c5 dual-C4	yes	yes
+A2	four-chain/two-row	not-selected	no
+A3/A4	shape/destructive fused variants	not-required-after-A1-win	no

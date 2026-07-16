@@ -1,0 +1,11 @@
+fixture	integer_boundaries	portable_scalar	board_optimized	final_output_hash	status
+F0	215	exact	exact	0xd43f5e018b415631	pass
+F1	215	exact	exact	fixture-specific-exact	pass
+F2	215	exact	exact	fixture-specific-exact	pass
+F3	215	exact	exact	fixture-specific-exact	pass
+F4	215	exact	exact	fixture-specific-exact	pass
+F5	215	exact	exact	fixture-specific-exact	pass
+F6	215	exact	exact	fixture-specific-exact	pass
+F7	215	exact	exact	fixture-specific-exact	pass
+bus	215	exact	exact	0xd43f5e018b415631	pass
+Zidane	215	exact	exact	fixture-specific-exact	pass

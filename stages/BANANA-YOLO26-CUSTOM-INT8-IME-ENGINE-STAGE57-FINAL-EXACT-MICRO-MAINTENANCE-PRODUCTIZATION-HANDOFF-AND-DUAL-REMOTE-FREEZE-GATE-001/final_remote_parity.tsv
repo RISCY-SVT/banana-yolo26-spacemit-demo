@@ -1,0 +1,4 @@
+location	head	status
+local	post-push-packet-canonical	canonical-exact-value-in-post-push-packet
+github	post-push-packet-canonical	canonical-exact-value-in-post-push-packet
+gitlab-rd	post-push-packet-canonical	canonical-exact-value-in-post-push-packet

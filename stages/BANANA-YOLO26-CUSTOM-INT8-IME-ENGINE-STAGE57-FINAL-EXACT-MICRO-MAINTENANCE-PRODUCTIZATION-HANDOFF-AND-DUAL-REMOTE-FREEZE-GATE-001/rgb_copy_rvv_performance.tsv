@@ -1,0 +1,6 @@
+surface	arm	samples	mean_us	stddev_us	cv_pct	median_us	p90_us	p95_us	p99_us	p999_us	max_us	output_hashes	cpu4_7_ime_count	process_cpu_mean_us	voluntary_cs_mean	involuntary_cs_mean	family	control_mean_us	candidate_mean_us	delta_us	delta_pct	ci95_low_us	ci95_high_us	control_p95_us	candidate_p95_us	control_p99_us	candidate_p99_us	hashes	blocks
+input_us_control	A	1000	2335.774980
+input_us_candidate	B	1000	549.259150
+rgb_copy_rvv_control		1000	138289.099000	1952.795695	1.412111	137816.000000	139819.800000	141002.450000	146439.150000	150494.294000	174764.000000	0xb75e8e0359ee5ccc	0	683472.901000	0.340000	1.662000
+rgb_copy_rvv_candidate		1000	136723.577000	1508.575977	1.103377	136304.000000	138120.300000	139256.100000	143671.760000	148823.244000	149067.000000	0xb75e8e0359ee5ccc	0	675481.878000	0.284000	1.283000
+																	rgb_copy_rvv	138289.099000	136723.577000	-1565.522000	-1.132064647	-2228.581294	-902.462706	141002.450000	139256.100000	146439.150000	143671.760000	0xb75e8e0359ee5ccc	10

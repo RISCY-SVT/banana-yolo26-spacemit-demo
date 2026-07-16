@@ -1,0 +1,7 @@
+test	status	output_hash	detail
+release_checksum_validation	pass		SHA256SUMS complete
+clean_environment_healthcheck	pass	0xd43f5e018b415631	installed tree only
+clean_environment_cli	pass	0xd43f5e018b415631	installed tree only
+release_uninstall_isolation	pass		versioned target removed
+sibling_sentinel_preserved	pass		unrelated sibling retained
+final_b98263c_board_release	pass	0xd43f5e018b415631	clean environment; frozen expected manifest

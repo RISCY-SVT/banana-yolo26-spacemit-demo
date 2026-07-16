@@ -1,0 +1,285 @@
+In archive /data/releases/banana-yolo26-k1x-int8-executor/0.9.0-stage57-final-handoff/lib/liby26_k1x_int8_executor.a:
+
+stage48_nchwc8_model5.cpp.o:     file format elf64-littleriscv
+
+
+Disassembly of section .text:
+
+Disassembly of section .text._ZNKSt5ctypeIcE8do_widenEc:
+
+Disassembly of section .text._ZNSt6thread24_M_thread_deps_never_runEv:
+
+Disassembly of section .text.unlikely:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEED2Ev:
+
+Disassembly of section .text._ZNSt10filesystem7__cxx114pathD2Ev:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEC2EOS4_:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEC2IS3_EEPKcRKS3_:
+
+Disassembly of section .text._ZNSt6vectorINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESaIS5_EED2Ev:
+
+Disassembly of section .text._ZNSt10_HashtableINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESt4pairIKS5_S5_ESaIS8_ENSt8__detail10_Select1stESt8equal_toIS5_ESt4hashIS5_ENSA_18_Mod_range_hashingENSA_20_Default_ranged_hashENSA_20_Prime_rehash_policyENSA_17_Hashtable_traitsILb1ELb0ELb1EEEED2Ev:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE10_M_disposeEv:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE6insertEmPKc:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE6appendEPKc:
+
+Disassembly of section .text._ZNSt11unique_lockISt5mutexE6unlockEv:
+
+Disassembly of section .text._ZN3y267stage4816Model5DirectConv4ImplD2Ev:
+
+stage49_persistent_slice.cpp.o:     file format elf64-littleriscv
+
+
+Disassembly of section .text:
+
+Disassembly of section .text._ZNKSt5ctypeIcE8do_widenEc:
+
+Disassembly of section .text._ZNSt6thread24_M_thread_deps_never_runEv:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEED2Ev:
+
+Disassembly of section .text.unlikely:
+
+Disassembly of section .text._ZNSt7__cxx119to_stringEi:
+
+Disassembly of section .text._ZNSt10filesystem7__cxx114pathD2Ev:
+
+Disassembly of section .text._ZN3y267stage4915PersistentSlice4Impl4dataEi:
+
+Disassembly of section .text._ZNK3y267stage4915PersistentSlice4Impl17tensor_id_for_keyESt17basic_string_viewIcSt11char_traitsIcEE:
+
+Disassembly of section .text._ZN3y267stage4915PersistentSlice4ImplD2Ev:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE9_M_assignERKS4_:
+
+Disassembly of section .text._ZSteqIcSt11char_traitsIcESaIcEEbRKNSt7__cxx1112basic_stringIT_T0_T1_EEPKS5_:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEC2EOS4_:
+
+Disassembly of section .text._ZNSt6vectorINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESaIS5_EED2Ev:
+
+Disassembly of section .text._ZNSt6vectorISt13unordered_mapINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES6_St4hashIS6_ESt8equal_toIS6_ESaISt4pairIKS6_S6_EEESaISF_EED2Ev:
+
+Disassembly of section .text._ZNSt6vectorIN3y267stage4913WorkerCounterESaIS2_EED2Ev:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE10_M_disposeEv:
+
+Disassembly of section .text._ZNSt10filesystem7__cxx114pathC2ERKS1_:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE6insertEmPKc:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE9_M_mutateEmmPKcm:
+
+Disassembly of section .text._ZNKSt17basic_string_viewIcSt11char_traitsIcEE7compareES2_:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE6appendEPKc:
+
+Disassembly of section .text._ZNSt8__detail22__from_chars_pow2_baseILb0EmEEbRPKcS2_RT0_i:
+
+Disassembly of section .text._ZNSt11unique_lockISt5mutexE6unlockEv:
+
+Disassembly of section .text._ZNSt6vectorIPaSaIS0_EE14_M_fill_insertEN9__gnu_cxx17__normal_iteratorIPS0_S2_EEmRKS0_:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE10_M_replaceEmmPKcm:
+
+stage51_q62_epilogue.cpp.o:     file format elf64-littleriscv
+
+
+Disassembly of section .text:
+
+0000000000000296 <_ZN3y267stage5131q62_e2c5_i32x4x2_bias_lut_to_s8EPKiS2_PKlS4_lPKaPa>:
+ 296:	02060893          	addi	a7,a2,32
+ 29a:	02068313          	addi	t1,a3,32
+ 29e:	00480e93          	addi	t4,a6,4
+ 2a2:	0ff00e13          	li	t3,255
+ 2a6:	cd727057          	vsetivli	zero,4,e32,mf2,ta,ma
+ 2aa:	02056007          	vle32.v	v0,(a0)
+ 2ae:	0205e087          	vle32.v	v1,(a1)
+ 2b2:	c6006157          	vwcvt.x.x.v	v2,v0
+ 2b6:	c6106257          	vwcvt.x.x.v	v4,v1
+ 2ba:	cd827057          	vsetivli	zero,4,e64,m1,ta,ma
+ 2be:	02067307          	vle64.v	v6,(a2)
+ 2c2:	0208f387          	vle64.v	v7,(a7)
+ 2c6:	0206f407          	vle64.v	v8,(a3)
+ 2ca:	02037487          	vle64.v	v9,(t1)
+ 2ce:	02230157          	vadd.vv	v2,v2,v6
+ 2d2:	02438257          	vadd.vv	v4,v4,v7
+ 2d6:	9e240157          	vsmul.vv	v2,v2,v8
+ 2da:	9e448257          	vsmul.vv	v4,v4,v9
+ 2de:	02274157          	vadd.vx	v2,v2,a4
+ 2e2:	02474257          	vadd.vx	v4,v4,a4
+ 2e6:	1e204157          	vmax.vx	v2,v2,zero
+ 2ea:	1e404257          	vmax.vx	v4,v4,zero
+ 2ee:	162e4157          	vmin.vx	v2,v2,t3
+ 2f2:	164e4257          	vmin.vx	v4,v4,t3
+ 2f6:	cd727057          	vsetivli	zero,4,e32,mf2,ta,ma
+ 2fa:	ba203557          	vnclipu.wi	v10,v2,0
+ 2fe:	ba4035d7          	vnclipu.wi	v11,v4,0
+ 302:	cce27057          	vsetivli	zero,4,e16,mf4,ta,ma
+ 306:	baa03657          	vnclipu.wi	v12,v10,0
+ 30a:	bab036d7          	vnclipu.wi	v13,v11,0
+ 30e:	cc527057          	vsetivli	zero,4,e8,mf8,ta,ma
+ 312:	bac03757          	vnclipu.wi	v14,v12,0
+ 316:	bad037d7          	vnclipu.wi	v15,v13,0
+ 31a:	06e78807          	vluxei8.v	v16,(a5),v14
+ 31e:	06f78887          	vluxei8.v	v17,(a5),v15
+ 322:	02080827          	vse8.v	v16,(a6)
+ 326:	020e88a7          	vse8.v	v17,(t4)
+ 32a:	8082                	ret
+
+vmadot_4x4x8_ime.cpp.o:     file format elf64-littleriscv
+
+
+Disassembly of section .text:
+
+int8_v1.cpp.o:     file format elf64-littleriscv
+
+
+Disassembly of section .text:
+
+package_loader.cpp.o:     file format elf64-littleriscv
+
+
+Disassembly of section .text:
+
+Disassembly of section .text._ZNKSt5ctypeIcE8do_widenEc:
+
+Disassembly of section .text.unlikely:
+
+Disassembly of section .text._ZNSt10filesystem7__cxx114pathD2Ev:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEC2EOS4_:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEC2IS3_EEPKcRKS3_:
+
+Disassembly of section .text._ZNSt6vectorINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESaIS5_EED2Ev:
+
+Disassembly of section .text._ZNSt10_HashtableINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESt4pairIKS5_S5_ESaIS8_ENSt8__detail10_Select1stESt8equal_toIS5_ESt4hashIS5_ENSA_18_Mod_range_hashingENSA_20_Default_ranged_hashENSA_20_Prime_rehash_policyENSA_17_Hashtable_traitsILb1ELb0ELb1EEEED2Ev:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE10_M_disposeEv:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE6insertEmPKc:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE6appendEPKc:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE9_M_appendEPKcm:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE10_M_replaceEmmPKcm:
+
+Disassembly of section .text._ZNSt10_HashtableINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESt4pairIKS5_S5_ESaIS8_ENSt8__detail10_Select1stESt8equal_toIS5_ESt4hashIS5_ENSA_18_Mod_range_hashingENSA_20_Default_ranged_hashENSA_20_Prime_rehash_policyENSA_17_Hashtable_traitsILb1ELb0ELb1EEEE21_M_insert_unique_nodeEmmPNSA_10_Hash_nodeIS8_Lb1EEEm:
+
+Disassembly of section .text._ZNSt8_Rb_treeINSt10filesystem7__cxx114pathES2_St9_IdentityIS2_ESt4lessIS2_ESaIS2_EE29_M_get_insert_hint_unique_posESt23_Rb_tree_const_iteratorIS2_ERKS2_:
+
+stage52_c_api.cpp.o:     file format elf64-littleriscv
+
+
+Disassembly of section .text:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEED2Ev:
+
+Disassembly of section .text._ZNSt10filesystem7__cxx114pathD2Ev:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE10_M_disposeEv:
+
+Disassembly of section .text._ZNSt10filesystem7__cxx114pathC2IPKcS1_EERKT_NS1_6formatE:
+
+stage52_full_executor.cpp.o:     file format elf64-littleriscv
+
+
+Disassembly of section .text:
+
+Disassembly of section .text._ZNKSt5ctypeIcE8do_widenEc:
+
+Disassembly of section .text._ZNSt6thread24_M_thread_deps_never_runEv:
+
+Disassembly of section .text._ZNSt23_Sp_counted_ptr_inplaceIN3y267stage5212FullExecutor4Impl16AttentionProfileESaIvELN9__gnu_cxx12_Lock_policyE1EED2Ev:
+
+Disassembly of section .text._ZNSt23_Sp_counted_ptr_inplaceIN3y267stage5212FullExecutor4Impl16AttentionProfileESaIvELN9__gnu_cxx12_Lock_policyE1EE10_M_disposeEv:
+
+Disassembly of section .text._ZNSt23_Sp_counted_ptr_inplaceIN3y267stage5212FullExecutor4Impl16AttentionProfileESaIvELN9__gnu_cxx12_Lock_policyE1EED0Ev:
+
+Disassembly of section .text.unlikely:
+
+Disassembly of section .text._ZNSt23_Sp_counted_ptr_inplaceIN3y267stage5212FullExecutor4Impl16AttentionProfileESaIvELN9__gnu_cxx12_Lock_policyE1EE10_M_destroyEv:
+
+Disassembly of section .text._ZNSt23_Sp_counted_ptr_inplaceIN3y267stage5212FullExecutor4Impl16AttentionProfileESaIvELN9__gnu_cxx12_Lock_policyE1EE14_M_get_deleterERKSt9type_info:
+
+Disassembly of section .text._ZN3y267stage5212FullExecutor4Impl17run_softmax_chunkERKNS0_12_GLOBAL__N_19OperationEmm:
+
+Disassembly of section .text._ZNK3y267stage5212FullExecutor4Impl18static_range_totalERKNS0_12_GLOBAL__N_19OperationE:
+
+Disassembly of section .text._ZN3y267stage5212FullExecutor4Impl13head_best_jobEPvii:
+
+Disassembly of section .text._ZN3y267stage5212FullExecutor4Impl14matmul_ime_jobEPvii:
+
+Disassembly of section .text._ZN3y267stage5212FullExecutor4Impl8conv_jobEPvii:
+
+Disassembly of section .text._ZNSt10filesystem7__cxx114pathD2Ev:
+
+Disassembly of section .text._ZN3y267stage5212FullExecutor4Impl11decode_headEPf:
+
+Disassembly of section .text._ZNSt5arrayIN3y267stage5212FullExecutor4Impl10CoreBridgeELm6EED2Ev:
+
+Disassembly of section .text._ZN3y267stage5212FullExecutor4ImplD2Ev:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE9_M_assignERKS4_:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEC2EOS4_:
+
+Disassembly of section .text._ZNSt6vectorINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESaIS5_EED2Ev:
+
+Disassembly of section .text._ZNSt6vectorISt13unordered_mapINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES6_St4hashIS6_ESt8equal_toIS6_ESaISt4pairIKS6_S6_EEESaISF_EED2Ev:
+
+Disassembly of section .text._ZNSt6vectorIiSaIiEE6resizeEm:
+
+Disassembly of section .text._ZNSt11unique_lockISt5mutexE6unlockEv:
+
+Disassembly of section .text._ZN3y267stage5212FullExecutor4Impl16dispatch_workersEiPFvPviiES3_:
+
+Disassembly of section .text._ZNSt6vectorIaSaIaEE6resizeEm:
+
+Disassembly of section .text._ZNSt6vectorIlSaIlEE6resizeEm:
+
+Disassembly of section .text._ZNSt6vectorIS_IaSaIaEESaIS1_EED2Ev:
+
+Disassembly of section .text._ZNSt10_HashtableIjSt4pairIKjtESaIS2_ENSt8__detail10_Select1stESt8equal_toIjESt4hashIjENS4_18_Mod_range_hashingENS4_20_Default_ranged_hashENS4_20_Prime_rehash_policyENS4_17_Hashtable_traitsILb0ELb0ELb1EEEED2Ev:
+
+Disassembly of section .text._ZNSt6vectorIN3y267stage5212FullExecutor4Impl12DenseScratchESaIS4_EED2Ev:
+
+Disassembly of section .text._ZNSt10unique_ptrIN3y267stage4915PersistentSliceESt14default_deleteIS2_EED2Ev:
+
+Disassembly of section .text._ZNSt6vectorIjSaIjEE6resizeEm:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE10_M_disposeEv:
+
+Disassembly of section .text._ZNSt10filesystem7__cxx114pathC2ERKS1_:
+
+Disassembly of section .text._ZNSt10filesystem7__cxx114pathC2IA15_cS1_EERKT_NS1_6formatE:
+
+Disassembly of section .text._ZN3y267stage5212FullExecutor4ImplC2Ev:
+
+Disassembly of section .text._ZN3y267stage5212FullExecutor4Impl19static_schedule_jobEPvii:
+
+Disassembly of section .text._ZN3y267stage5212FullExecutor4Impl9range_jobEPvii:
+
+Disassembly of section .text._ZNSt6vectorIN3y267stage4913WorkerCounterESaIS2_EED2Ev:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE6insertEmPKc:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE9_M_mutateEmmPKcm:
+
+Disassembly of section .text._ZNKSt17basic_string_viewIcSt11char_traitsIcEE7compareES2_:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE6appendEPKc:
+
+Disassembly of section .text._ZNSt6vectorIS_IaSaIaEESaIS1_EE17_M_default_appendEm:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE9_M_appendEPKcm:
+
+Disassembly of section .text._ZN3y267stage5212FullExecutor4Impl18run_optimized_coreEPNS_7stage4911SliceTimingE:

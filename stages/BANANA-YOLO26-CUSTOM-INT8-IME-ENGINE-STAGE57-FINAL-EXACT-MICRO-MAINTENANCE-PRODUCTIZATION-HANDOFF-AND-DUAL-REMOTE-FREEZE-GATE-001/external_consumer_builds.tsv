@@ -1,0 +1,5 @@
+consumer	linkage	build_status	run_status	output_hash	total_us
+pkgconfig	shared	pass	pass	0xd43f5e018b415631	134691.820
+pkgconfig	static	pass	pass	0xd43f5e018b415631	135096.919
+cmake	shared	pass	pass	0xd43f5e018b415631	135094.117
+cmake	static	pass	pass	0xd43f5e018b415631	136901.142
