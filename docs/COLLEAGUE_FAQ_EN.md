@@ -4,20 +4,20 @@
 
 The selected Stage58 live surface is 1280x720 at 60 FPS MJPG, V4L2,
 latest-frame, `low-latency` without O2, GUI display, boxes, and timing overlay.
-Across three independent 180-second runs it processed and displayed 5.573729
-FPS. Observed capture arrival was 9.877425 FPS and the application replaced
-43.716045% of captured frames because capture was faster than the complete
-pipeline. Mean/p95 read-return-to-display software latency was 229.061194 /
-271.674422 ms.
+Across three independent 180-second runs it processed and displayed 5.916864
+FPS over 3,200 measured frames. Observed capture arrival was 9.980414 FPS and
+the application replaced 40.869097% of captured frames because capture was
+faster than the complete pipeline. Mean/p95 read-return-to-display software
+latency was 218.715619 / 262.011456 ms.
 
 The no-recording number includes capture, exact resize/letterbox, BGR-to-RGB,
 the executor, box mapping, boxes, overlay, `imshow`, and event handling. It is
-not pure-model FPS. Recording is a separate measured surface at 4.706807 FPS.
-The 30-minute camera soak passed: 10,527 processed/displayed frames at 5.848 FPS,
-with 41.35% application-level latest-frame replacement and no demo failure.
-Capture-driver drop accounting was not exposed,
-so only application replacements are known. No sensor timestamps were
-correlated; the reported latency is not sensor-to-screen latency.
+not pure-model FPS. Recording is a separate measured surface at 4.738854 FPS.
+The 30-minute camera soak passed: 10,679 processed/displayed frames at 5.931789
+FPS, with 40.687822% application-level latest-frame replacement and no demo
+failure. Capture-driver drop accounting was not exposed, so only application
+replacements are known. No sensor timestamps were correlated; the reported
+latency is not sensor-to-screen latency.
 
 ## What is the model resolution?
 

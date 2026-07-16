@@ -66,12 +66,28 @@ Stage57 final executor values remain the arithmetic baseline for the installed 0
 maintenance route. Stage58 reports camera throughput separately. Neither stage demonstrates 20 FPS, an installed camera service, or production
 certification.
 
+### Stage58 Release Revalidation
+
+| Surface | Samples | Mean (us) | Median (us) | p95 (us) | p99 (us) | p99.9 (us) | Max (us) |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| compatibility | 500 | 154319.032 | 154055.500 | 156507.350 | 157870.420 | 163059.241 | 164926.000 |
+| low-latency, original OS | 500 | 141800.914 | 141213.000 | 145614.250 | 151626.520 | 154852.454 | 156077.000 |
+| low-latency-dedicated, O2 | 500 | 140875.230 | 140853.000 | 141455.100 | 141744.460 | 142935.286 | 143078.000 |
+| low-latency-dedicated O2 soak | 10000 | 140877.187 | 140848.000 | 141485.050 | 142478.040 | 144386.185 | 145307.000 |
+
+The Stage58 source changes are release and demo maintenance; they do not retune
+the frozen executor. The final soak retained `0xd43f5e018b415631` for all 10,000
+runs, kept IME on CPU0-3, and restored O2 after measurement. Other Stage58
+surfaces were 132505.910 us for the 100-image corpus, 138989 us for the already
+letterboxed RGB8 input, 186537.301 us for the serial preloaded pipeline, and
+139561.631 us per double-buffer interval (7.165293 FPS throughput).
+
 ### Stage58 Camera Surface
 
 | Surface | Effective mode | Frames | Processed/displayed FPS | Capture FPS | App drop | Mean/p95 software latency |
 |---|---|---:|---:|---:|---:|---:|
-| selected GUI, no recording | 1280x720@60 MJPG | 3015 | 5.573729 | 9.877425 | 43.716045% | 229.061 / 271.674 ms |
-| GUI with MJPG AVI recording | 1280x720@60 MJPG | 146 | 4.814760 / 4.706807 recorded | 9.868152 | 52.032520% | 255.996 / 302.639 ms |
+| selected GUI, no recording | 1280x720@60 MJPG | 3200 | 5.916864 | 9.980414 | 40.869097% | 218.716 / 262.011 ms |
+| GUI with MJPG AVI recording | 1280x720@60 MJPG | 146 | 4.833642 / 4.738854 recorded | 9.881496 | 51.771117% | 256.761 / 301.979 ms |
 
 The selected camera row pools three independent 180-second runs. It includes
 capture, exact 640x640 preprocessing, executor, output mapping, boxes, overlay,
