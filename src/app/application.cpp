@@ -16,8 +16,8 @@
 #include <atomic>
 #include <chrono>
 #include <condition_variable>
-#include <csignal>
 #include <cstdint>
+#include <deque>
 #include <filesystem>
 #include <fstream>
 #include <iomanip>
@@ -28,6 +28,7 @@
 #include <optional>
 #include <pthread.h>
 #include <sched.h>
+#include <signal.h>
 #include <sstream>
 #include <stdexcept>
 #include <string>
@@ -39,12 +40,31 @@ namespace banana_demo {
 namespace {
 
 using Clock = std::chrono::steady_clock;
-std::atomic<bool> g_stop{false};
+volatile sig_atomic_t g_stop_signal = 0;
 
-void StopSignal(int) { g_stop.store(true, std::memory_order_release); }
+void StopSignal(int) { g_stop_signal = 1; }
+
+bool StopRequested() noexcept { return g_stop_signal != 0; }
+
+void RequestStop() noexcept { g_stop_signal = 1; }
+
+bool InstallSignalHandlers() noexcept {
+    struct sigaction action {};
+    sigemptyset(&action.sa_mask);
+    action.sa_handler = StopSignal;
+    action.sa_flags = 0;
+    return sigaction(SIGINT, &action, nullptr) == 0 &&
+        sigaction(SIGTERM, &action, nullptr) == 0 &&
+        sigaction(SIGHUP, &action, nullptr) == 0;
+}
 
 double ElapsedMs(Clock::time_point begin, Clock::time_point end) {
     return std::chrono::duration<double, std::milli>(end - begin).count();
+}
+
+std::uint64_t SteadyNs(Clock::time_point value) {
+    return static_cast<std::uint64_t>(
+        std::chrono::duration_cast<std::chrono::nanoseconds>(value.time_since_epoch()).count());
 }
 
 bool DisplayPossible(const AppOptions& options) {
@@ -94,10 +114,18 @@ struct FramePacket {
     Clock::time_point read_return{};
 };
 
+struct CaptureSnapshot {
+    Clock::time_point time{};
+    std::uint64_t captured = 0;
+    std::uint64_t replacements = 0;
+};
+
 class LatestFrameCapture {
 public:
-    LatestFrameCapture(MediaSource& source, int reconnect_attempts, Logger& logger)
-        : source_(source), reconnect_attempts_(reconnect_attempts), logger_(logger) {}
+    LatestFrameCapture(MediaSource& source, int reconnect_attempts, int capture_cpu,
+                       Logger& logger)
+        : source_(source), reconnect_attempts_(reconnect_attempts),
+          capture_cpu_(capture_cpu), logger_(logger) {}
 
     ~LatestFrameCapture() { Stop(); }
 
@@ -114,10 +142,11 @@ public:
 
     bool Wait(FramePacket& packet) {
         std::unique_lock lock(mutex_);
-        condition_.wait(lock, [&] {
+        const auto ready = [&] {
             return slot_.has_value() || finished_ || stop_.load(std::memory_order_acquire) ||
-                g_stop.load(std::memory_order_acquire);
-        });
+                StopRequested();
+        };
+        while (!ready()) (void)condition_.wait_for(lock, std::chrono::milliseconds(100));
         if (!slot_.has_value()) return false;
         packet = std::move(*slot_);
         slot_.reset();
@@ -125,8 +154,18 @@ public:
     }
 
     std::uint64_t Captured() const noexcept { return captured_.load(std::memory_order_acquire); }
-    std::uint64_t Dropped() const noexcept { return dropped_.load(std::memory_order_acquire); }
-    double ArrivalFps() const {
+    std::uint64_t Replacements() const noexcept {
+        return replacements_.load(std::memory_order_acquire);
+    }
+    CaptureSnapshot Snapshot() const {
+        std::lock_guard lock(mutex_);
+        return {
+            Clock::now(),
+            captured_.load(std::memory_order_acquire),
+            replacements_.load(std::memory_order_acquire),
+        };
+    }
+    double DecodedFrameFps() const {
         const double seconds = std::chrono::duration<double>(Clock::now() - capture_start_).count();
         return seconds > 0.0 ? static_cast<double>(Captured()) / seconds : 0.0;
     }
@@ -135,19 +174,24 @@ private:
     void CaptureLoop() {
         cpu_set_t housekeeping;
         CPU_ZERO(&housekeeping);
-        CPU_SET(5, &housekeeping);
-        CPU_SET(6, &housekeeping);
-        CPU_SET(7, &housekeeping);
+        if (capture_cpu_ >= 0) {
+            CPU_SET(capture_cpu_, &housekeeping);
+        } else {
+            CPU_SET(5, &housekeeping);
+            CPU_SET(6, &housekeeping);
+            CPU_SET(7, &housekeeping);
+        }
         const int affinity_status = pthread_setaffinity_np(
             pthread_self(), sizeof(housekeeping), &housekeeping);
         if (affinity_status == 0)
-            logger_.Info("latest-frame capture affinity=5-7");
+            logger_.Info("latest-frame capture affinity=" +
+                         (capture_cpu_ >= 0 ? std::to_string(capture_cpu_) : "5-7"));
         else
             logger_.Warn("latest-frame capture affinity=effective-cgroup-mask status=" +
                          std::to_string(affinity_status));
         int reconnects = 0;
         while (!stop_.load(std::memory_order_acquire) &&
-               !g_stop.load(std::memory_order_acquire)) {
+               !StopRequested()) {
             cv::Mat frame;
             if (!source_.Read(frame)) {
                 if (!source_.IsCamera() || reconnects >= reconnect_attempts_) break;
@@ -161,12 +205,12 @@ private:
             reconnects = 0;
             FramePacket packet;
             packet.frame = std::move(frame);
-            packet.sequence = captured_.fetch_add(1, std::memory_order_acq_rel) + 1;
             packet.capture_ms = source_.LastReadMs();
             packet.read_return = Clock::now();
             {
                 std::lock_guard lock(mutex_);
-                if (slot_.has_value()) dropped_.fetch_add(1, std::memory_order_acq_rel);
+                packet.sequence = captured_.fetch_add(1, std::memory_order_acq_rel) + 1;
+                if (slot_.has_value()) replacements_.fetch_add(1, std::memory_order_acq_rel);
                 slot_ = std::move(packet);
             }
             condition_.notify_one();
@@ -180,10 +224,11 @@ private:
 
     MediaSource& source_;
     int reconnect_attempts_ = 0;
+    int capture_cpu_ = -1;
     Logger& logger_;
     std::atomic<bool> stop_{false};
     std::atomic<std::uint64_t> captured_{0};
-    std::atomic<std::uint64_t> dropped_{0};
+    std::atomic<std::uint64_t> replacements_{0};
     mutable std::mutex mutex_;
     std::condition_variable condition_;
     std::optional<FramePacket> slot_;
@@ -196,10 +241,14 @@ class MetricsWriter {
 public:
     explicit MetricsWriter(std::string path) : path_(std::move(path)) {
         if (path_.empty()) return;
-        buffer_ << "processed_index\tmeasured\tsource_sequence\tdropped\tcapture_ms"
+        buffer_ << "# metrics_schema_version=2\n";
+        buffer_ << "processed_index\tmeasured\tsource_sequence\tcaptured_total"
+                   "\tcaptured_measured\tapplication_slot_replacements_total"
+                   "\tapplication_slot_replacements_measured\tcapture_ms\twait_for_slot_ms"
                    "\tresize_letterbox_ms\tbgr_to_rgb_ms\tpreprocess_ms\texecutor_ms"
                    "\tpostprocess_ms\trender_ms\tdisplay_ms\trecord_ms\ttotal_ms"
-                   "\tread_to_display_ms\tobjects\toutput_hash\n";
+                   "\tconsumer_loop_ms\tdecoded_read_return_to_display_call_ms"
+                   "\tmeasured_window_start_ns\tframe_done_ns\tobjects\toutput_hash\n";
     }
 
     ~MetricsWriter() { (void)Flush(); }
@@ -208,12 +257,17 @@ public:
         if (path_.empty()) return;
         buffer_ << std::fixed << std::setprecision(6)
                 << index << '\t' << (measured ? 1 : 0) << '\t' << metrics.source_sequence
-                << '\t' << metrics.dropped_frames << '\t' << metrics.capture_ms
+                << '\t' << metrics.captured_total << '\t' << metrics.captured_measured
+                << '\t' << metrics.application_slot_replacements_total
+                << '\t' << metrics.application_slot_replacements_measured
+                << '\t' << metrics.capture_ms << '\t' << metrics.wait_for_slot_ms
                 << '\t' << metrics.resize_letterbox_ms << '\t' << metrics.bgr_to_rgb_ms
                 << '\t' << metrics.preprocess_ms << '\t' << metrics.inference_ms
                 << '\t' << metrics.postprocess_ms << '\t' << metrics.render_ms
                 << '\t' << metrics.display_ms << '\t' << metrics.record_ms
-                << '\t' << metrics.total_ms << '\t' << metrics.read_to_display_ms
+                << '\t' << metrics.total_ms << '\t' << metrics.consumer_loop_ms
+                << '\t' << metrics.decoded_read_return_to_display_call_ms
+                << '\t' << metrics.measured_window_start_ns << '\t' << metrics.frame_done_ns
                 << '\t' << metrics.objects << "\t0x" << std::hex << std::setw(16)
                 << std::setfill('0') << metrics.output_hash << std::dec << std::setfill(' ')
                 << '\n';
@@ -298,67 +352,269 @@ private:
 
 class Recorder {
 public:
-    explicit Recorder(Logger& logger) : logger_(logger) {}
+    Recorder(Logger& logger, bool asynchronous)
+        : logger_(logger), asynchronous_(asynchronous) {}
+
+    ~Recorder() { Stop(); }
 
     bool Start(const std::string& path, double fps, const cv::Size& size) {
         Stop();
         path_ = path;
+        fps_ = std::max(1.0, fps);
+        size_ = size;
         EnsureParent(path);
+        frame_index_.store(0, std::memory_order_release);
+        replacements_.store(0, std::memory_order_release);
+        failures_.store(0, std::memory_order_release);
+        if (asynchronous_) {
+            {
+                std::lock_guard lock(mutex_);
+                stop_requested_ = false;
+                ready_ = false;
+                active_.store(false, std::memory_order_release);
+                queue_.clear();
+            }
+            thread_ = std::thread([this] { WriterThreadEntry(); });
+            std::unique_lock lock(mutex_);
+            ready_condition_.wait(lock, [this] { return ready_; });
+            return active_.load(std::memory_order_acquire);
+        }
         const int fourcc = cv::VideoWriter::fourcc('M', 'J', 'P', 'G');
-        if (writer_.open(path, fourcc, std::max(1.0, fps), size)) {
-            logger_.Info("recording started path=" + path + " backend=" + BackendName());
+        if (sync_writer_.open(path, fourcc, fps_, size)) {
+            mode_ = "sync-mjpg-avi";
+            active_.store(true, std::memory_order_release);
+            logger_.Info("recording started mode=sync path=" + path +
+                         " backend=" + BackendName(sync_writer_));
             return true;
         }
         fallback_dir_ = path + ".frames";
         std::filesystem::create_directories(fallback_dir_);
+        mode_ = "sync-png-sequence";
+        active_.store(true, std::memory_order_release);
         logger_.Warn("MJPG writer unavailable; using PNG sequence: " + fallback_dir_);
         return true;
     }
 
     void Stop() {
-        if (writer_.isOpened()) writer_.release();
-        if (!path_.empty()) logger_.Info("recording stopped path=" + path_);
+        if (asynchronous_ && thread_.joinable()) {
+            {
+                std::lock_guard lock(mutex_);
+                stop_requested_ = true;
+            }
+            condition_.notify_all();
+            thread_.join();
+        }
+        if (sync_writer_.isOpened()) sync_writer_.release();
+        FlushSyncMetadata();
+        if (!path_.empty()) {
+            logger_.Info("recording stopped path=" + path_ +
+                         " frames=" + std::to_string(Frames()) +
+                         " queue_replacements=" + std::to_string(Replacements()) +
+                         " failures=" + std::to_string(Failures()));
+        }
+        active_.store(false, std::memory_order_release);
         path_.clear();
         fallback_dir_.clear();
-        frame_index_ = 0;
+        mode_ = "off";
     }
 
-    bool Active() const noexcept { return writer_.isOpened() || !fallback_dir_.empty(); }
-    std::uint64_t Frames() const noexcept { return frame_index_; }
-    std::string Mode() const { return writer_.isOpened() ? "mjpg-avi" :
-        (!fallback_dir_.empty() ? "png-sequence" : "off"); }
+    bool Active() const noexcept { return active_.load(std::memory_order_acquire); }
+    std::uint64_t Frames() const noexcept { return frame_index_.load(std::memory_order_acquire); }
+    std::uint64_t Replacements() const noexcept {
+        return replacements_.load(std::memory_order_acquire);
+    }
+    std::uint64_t Failures() const noexcept { return failures_.load(std::memory_order_acquire); }
+    std::string Mode() const { return mode_; }
 
-    bool Write(const cv::Mat& frame) {
-        if (writer_.isOpened()) {
-            writer_.write(frame);
-            ++frame_index_;
+    bool Write(const cv::Mat& frame, std::uint64_t source_sequence) {
+        if (!Active()) return false;
+        if (asynchronous_) {
+            RecordItem item{frame.clone(), source_sequence, SteadyNs(Clock::now())};
+            std::lock_guard lock(mutex_);
+            if (stop_requested_) return false;
+            if (queue_.size() == kQueueDepth) {
+                queue_.pop_front();
+                replacements_.fetch_add(1, std::memory_order_acq_rel);
+            }
+            queue_.push_back(std::move(item));
+            condition_.notify_one();
             return true;
         }
-        if (!fallback_dir_.empty()) {
-            std::ostringstream name;
-            name << fallback_dir_ << "/frame-" << std::setw(8) << std::setfill('0')
-                 << frame_index_++ << ".png";
-            return cv::imwrite(name.str(), frame);
+        bool result = false;
+        try {
+            result = WriteFrame(sync_writer_, fallback_dir_, frame, source_sequence,
+                                SteadyNs(Clock::now()), sync_metadata_);
+        } catch (const std::exception& error) {
+            logger_.Error("synchronous recording failure: " + std::string(error.what()));
+            active_.store(false, std::memory_order_release);
         }
-        return false;
+        if (!result) failures_.fetch_add(1, std::memory_order_acq_rel);
+        return result;
     }
 
 private:
-    std::string BackendName() const {
-        try { return writer_.getBackendName(); }
+    struct RecordItem {
+        cv::Mat frame;
+        std::uint64_t source_sequence = 0;
+        std::uint64_t enqueue_ns = 0;
+    };
+
+    static constexpr std::size_t kQueueDepth = 2;
+
+    bool WriteFrame(cv::VideoWriter& writer, const std::string& fallback_dir,
+                    const cv::Mat& frame, std::uint64_t source_sequence,
+                    std::uint64_t enqueue_ns,
+                    std::ostringstream& metadata) {
+        bool wrote = false;
+        const std::uint64_t output_index = frame_index_.load(std::memory_order_acquire);
+        if (writer.isOpened()) {
+            writer.write(frame);
+            wrote = true;
+        }
+        if (!fallback_dir.empty()) {
+            std::ostringstream name;
+            name << fallback_dir << "/frame-" << std::setw(8) << std::setfill('0')
+                 << output_index << ".png";
+            wrote = cv::imwrite(name.str(), frame);
+        }
+        if (wrote) {
+            frame_index_.fetch_add(1, std::memory_order_acq_rel);
+            metadata << output_index << '\t' << source_sequence << '\t' << enqueue_ns << '\t'
+                     << SteadyNs(Clock::now()) << '\n';
+        }
+        return wrote;
+    }
+
+    static std::string BackendName(const cv::VideoWriter& writer) {
+        try { return writer.getBackendName(); }
         catch (const cv::Exception&) { return "unknown"; }
     }
 
+    void WriterThreadEntry() noexcept {
+        try {
+            WriterLoop();
+        } catch (const std::exception& error) {
+            failures_.fetch_add(1, std::memory_order_acq_rel);
+            logger_.Error("async recording failure: " + std::string(error.what()));
+            {
+                std::lock_guard lock(mutex_);
+                queue_.clear();
+                ready_ = true;
+                stop_requested_ = true;
+                active_.store(false, std::memory_order_release);
+            }
+            ready_condition_.notify_all();
+            condition_.notify_all();
+        } catch (...) {
+            failures_.fetch_add(1, std::memory_order_acq_rel);
+            logger_.Error("async recording failure: unknown exception");
+            {
+                std::lock_guard lock(mutex_);
+                queue_.clear();
+                ready_ = true;
+                stop_requested_ = true;
+                active_.store(false, std::memory_order_release);
+            }
+            ready_condition_.notify_all();
+            condition_.notify_all();
+        }
+    }
+
+    void WriterLoop() {
+        cpu_set_t cpu;
+        CPU_ZERO(&cpu);
+        CPU_SET(6, &cpu);
+        const int affinity_status = pthread_setaffinity_np(pthread_self(), sizeof(cpu), &cpu);
+        if (affinity_status != 0) {
+            logger_.Warn("async recorder CPU6 affinity failed status=" +
+                         std::to_string(affinity_status));
+        }
+
+        cv::VideoWriter writer;
+        std::string fallback_dir;
+        const int fourcc = cv::VideoWriter::fourcc('M', 'J', 'P', 'G');
+        if (writer.open(path_, fourcc, fps_, size_)) {
+            mode_ = "async-mjpg-avi";
+            logger_.Info("recording started mode=async queue_depth=2 cpu=6 path=" + path_ +
+                         " backend=" + BackendName(writer));
+        } else {
+            fallback_dir = path_ + ".frames";
+            std::filesystem::create_directories(fallback_dir);
+            mode_ = "async-png-sequence";
+            logger_.Warn("async MJPG writer unavailable; using PNG sequence: " + fallback_dir);
+        }
+        std::ostringstream metadata;
+        metadata << "record_index\tsource_sequence\tenqueue_ns\twrite_done_ns\n";
+        {
+            std::lock_guard lock(mutex_);
+            active_.store(writer.isOpened() || !fallback_dir.empty(), std::memory_order_release);
+            ready_ = true;
+        }
+        ready_condition_.notify_one();
+
+        for (;;) {
+            RecordItem item;
+            {
+                std::unique_lock lock(mutex_);
+                condition_.wait(lock, [this] { return stop_requested_ || !queue_.empty(); });
+                if (queue_.empty() && stop_requested_) break;
+                item = std::move(queue_.front());
+                queue_.pop_front();
+            }
+            if (!WriteFrame(writer, fallback_dir, item.frame, item.source_sequence,
+                            item.enqueue_ns, metadata)) {
+                failures_.fetch_add(1, std::memory_order_acq_rel);
+            }
+        }
+        if (writer.isOpened()) writer.release();
+        try {
+            std::ofstream stream(path_ + ".frames.tsv", std::ios::out | std::ios::trunc);
+            stream << metadata.str();
+            if (!stream.good()) failures_.fetch_add(1, std::memory_order_acq_rel);
+        } catch (...) {
+            failures_.fetch_add(1, std::memory_order_acq_rel);
+        }
+    }
+
+    void FlushSyncMetadata() noexcept {
+        if (asynchronous_ || sync_metadata_.str().empty() || path_.empty()) return;
+        try {
+            std::ofstream stream(path_ + ".frames.tsv", std::ios::out | std::ios::trunc);
+            stream << "record_index\tsource_sequence\tenqueue_ns\twrite_done_ns\n"
+                   << sync_metadata_.str();
+            if (!stream.good()) failures_.fetch_add(1, std::memory_order_acq_rel);
+        } catch (...) {
+            failures_.fetch_add(1, std::memory_order_acq_rel);
+        }
+        sync_metadata_.str("");
+        sync_metadata_.clear();
+    }
+
     Logger& logger_;
-    cv::VideoWriter writer_;
+    bool asynchronous_ = false;
+    cv::VideoWriter sync_writer_;
     std::string path_;
     std::string fallback_dir_;
-    std::uint64_t frame_index_ = 0;
+    std::string mode_ = "off";
+    double fps_ = 1.0;
+    cv::Size size_;
+    std::atomic<bool> active_{false};
+    std::atomic<std::uint64_t> frame_index_{0};
+    std::atomic<std::uint64_t> replacements_{0};
+    std::atomic<std::uint64_t> failures_{0};
+    std::mutex mutex_;
+    std::condition_variable condition_;
+    std::condition_variable ready_condition_;
+    std::deque<RecordItem> queue_;
+    bool stop_requested_ = false;
+    bool ready_ = false;
+    std::thread thread_;
+    std::ostringstream sync_metadata_;
 };
 
 std::string SaveInteractiveFrame(const cv::Mat& frame, const AppOptions& options) {
     std::filesystem::create_directories(options.screenshot_dir);
-    const std::string path = options.screenshot_dir + "/yolo26-stage58-" +
+    const std::string path = options.screenshot_dir + "/yolo26-stage59-" +
         TimestampForPath() + ".png";
     if (!cv::imwrite(path, frame)) throw std::runtime_error("failed to save screenshot: " + path);
     return path;
@@ -369,9 +625,11 @@ std::string SaveInteractiveFrame(const cv::Mat& frame, const AppOptions& options
 Application::Application(AppOptions options) : options_(std::move(options)) {}
 
 int Application::Run() {
-    g_stop.store(false, std::memory_order_release);
-    std::signal(SIGINT, StopSignal);
-    std::signal(SIGTERM, StopSignal);
+    g_stop_signal = 0;
+    if (!InstallSignalHandlers()) {
+        std::cerr << "failed to install SIGINT/SIGTERM/SIGHUP handlers\n";
+        return 2;
+    }
     if (options_.print_build_info) return PrintBuildInfo();
     cv::setNumThreads(options_.opencv_threads);
     return options_.source.rfind("image:", 0) == 0 ? RunImage() : RunStream();
@@ -428,7 +686,12 @@ int Application::RunImage() {
     const auto render_end = Clock::now();
     result.metrics.render_ms = ElapsedMs(render_begin, render_end);
     result.metrics.total_ms = ElapsedMs(loop_begin, render_end);
-    result.metrics.read_to_display_ms = ElapsedMs(read_return, render_end);
+    result.metrics.consumer_loop_ms = ElapsedMs(read_return, render_end);
+    result.metrics.decoded_read_return_to_display_call_ms = result.metrics.consumer_loop_ms;
+    result.metrics.captured_total = 1;
+    result.metrics.captured_measured = 1;
+    result.metrics.measured_window_start_ns = SteadyNs(loop_begin);
+    result.metrics.frame_done_ns = SteadyNs(render_end);
 
     if (!options_.save_frame.empty()) {
         EnsureParent(options_.save_frame);
@@ -490,19 +753,21 @@ int Application::RunStream() {
 
     std::unique_ptr<LatestFrameCapture> latest;
     if (options_.flow == "latest-frame") {
-        latest = std::make_unique<LatestFrameCapture>(source, options_.reconnect_attempts, logger);
+        latest = std::make_unique<LatestFrameCapture>(
+            source, options_.reconnect_attempts, options_.capture_cpu, logger);
         latest->Start();
     }
 
     MetricsWriter metrics_writer(options_.metrics_tsv);
     DetectionWriter detection_writer(options_.detections_tsv);
     Renderer renderer;
-    Recorder recorder(logger);
+    Recorder recorder(logger, options_.record_mode == "async");
     cv::Mat last_annotated;
     const bool recording_requested = !options_.record_path.empty();
 
-    std::vector<double> totals;
-    std::vector<double> latencies;
+    std::vector<double> consumer_times;
+    std::vector<double> decoded_call_latencies;
+    std::vector<double> wait_times;
     std::vector<double> inference;
     std::uint64_t processed = 0;
     std::uint64_t measured = 0;
@@ -511,12 +776,29 @@ int Application::RunStream() {
     bool paused = false;
     double previous_render_ms = 0.0;
     double previous_display_ms = 0.0;
+    double previous_consumer_loop_ms = 0.0;
     const auto run_begin = Clock::now();
     std::optional<Clock::time_point> measured_begin;
+    std::uint64_t captured_at_measured_begin = 0;
+    std::uint64_t replacements_at_measured_begin = 0;
 
-    while (!g_stop.load(std::memory_order_acquire)) {
+    while (!StopRequested()) {
         FramePacket packet;
-        const auto loop_begin = Clock::now();
+        const auto wait_begin = Clock::now();
+        const bool next_frame_is_measured =
+            processed >= static_cast<std::uint64_t>(options_.warmup_frames);
+        if (next_frame_is_measured && !measured_begin.has_value()) {
+            if (latest) {
+                const CaptureSnapshot snapshot = latest->Snapshot();
+                measured_begin = snapshot.time;
+                captured_at_measured_begin = snapshot.captured;
+                replacements_at_measured_begin = snapshot.replacements;
+            } else {
+                measured_begin = wait_begin;
+                captured_at_measured_begin = sequential_sequence;
+                replacements_at_measured_begin = 0;
+            }
+        }
         if (latest) {
             if (!latest->Wait(packet)) break;
         } else {
@@ -536,12 +818,29 @@ int Application::RunStream() {
             packet.capture_ms = source.LastReadMs();
             packet.read_return = Clock::now();
         }
+        const auto consumer_begin = Clock::now();
 
         InferenceResult result = detector.Process(packet.frame);
         result.metrics.capture_ms = packet.capture_ms;
+        result.metrics.wait_for_slot_ms = ElapsedMs(wait_begin, consumer_begin);
         result.metrics.source_sequence = packet.sequence;
-        result.metrics.dropped_frames = latest ? latest->Dropped() : 0;
-        result.metrics.capture_fps = latest ? latest->ArrivalFps() : source.Fps();
+        const CaptureSnapshot producer_snapshot = latest
+            ? latest->Snapshot()
+            : CaptureSnapshot{consumer_begin, sequential_sequence, 0};
+        result.metrics.captured_total = producer_snapshot.captured;
+        result.metrics.application_slot_replacements_total = producer_snapshot.replacements;
+        result.metrics.captured_measured = measured_begin.has_value()
+            ? result.metrics.captured_total - captured_at_measured_begin : 0;
+        result.metrics.application_slot_replacements_measured = measured_begin.has_value()
+            ? result.metrics.application_slot_replacements_total - replacements_at_measured_begin : 0;
+        const double measured_capture_elapsed_ms = measured_begin.has_value()
+            ? ElapsedMs(*measured_begin, producer_snapshot.time) : 0.0;
+        result.metrics.opencv_decoded_frame_fps = measured_capture_elapsed_ms > 0.0
+            ? 1000.0 * static_cast<double>(result.metrics.captured_measured) /
+                measured_capture_elapsed_ms
+            : (latest ? latest->DecodedFrameFps() : source.Fps());
+        result.metrics.measured_window_start_ns = measured_begin.has_value()
+            ? SteadyNs(*measured_begin) : 0;
 
         const auto render_begin = Clock::now();
         result.metrics.processed_fps = measured > 0 && measured_begin.has_value()
@@ -549,24 +848,23 @@ int Application::RunStream() {
                 ElapsedMs(*measured_begin, render_begin) : 0.0;
         cv::Mat annotated = renderer.DrawDetections(packet.frame, result.detections,
                                                     detector.Labels());
-        const auto annotations_end = Clock::now();
-        result.metrics.render_ms = previous_render_ms;
-        result.metrics.display_ms = previous_display_ms;
-        result.metrics.total_ms = ElapsedMs(loop_begin, annotations_end) + previous_display_ms;
+        result.metrics.previous_render_ms = previous_render_ms;
+        result.metrics.previous_display_ms = previous_display_ms;
+        result.metrics.previous_consumer_loop_ms = previous_consumer_loop_ms;
         renderer.DrawOverlay(annotated, result.metrics, options_.profile, options_.flow,
                              source.EffectiveFormat());
         const auto render_end = Clock::now();
         const double current_render_ms = ElapsedMs(render_begin, render_end);
 
         if (recording_requested && !recorder.Active()) {
-            const double first_frame_ms = std::max(1.0, ElapsedMs(loop_begin, render_end));
+            const double first_frame_ms = std::max(1.0, ElapsedMs(consumer_begin, render_end));
             const double record_fps = std::clamp(1000.0 / first_frame_ms, 1.0,
                                                  std::max(1.0, source.Fps()));
             recorder.Start(options_.record_path, record_fps, annotated.size());
         }
 
         const auto record_begin = Clock::now();
-        if (recorder.Active() && !recorder.Write(annotated)) {
+        if (recorder.Active() && !recorder.Write(annotated, packet.sequence)) {
             logger.Warn("recording write failed");
         }
         const auto record_end = Clock::now();
@@ -584,18 +882,23 @@ int Application::RunStream() {
         const auto display_end = Clock::now();
         result.metrics.display_ms = display_enabled ? ElapsedMs(display_begin, display_end) : 0.0;
         result.metrics.render_ms = current_render_ms;
-        result.metrics.total_ms = ElapsedMs(loop_begin, display_end);
-        result.metrics.read_to_display_ms = ElapsedMs(packet.read_return, display_end);
+        result.metrics.consumer_loop_ms = ElapsedMs(consumer_begin, display_end);
+        result.metrics.total_ms = ElapsedMs(wait_begin, display_end);
+        result.metrics.decoded_read_return_to_display_call_ms =
+            ElapsedMs(packet.read_return, display_end);
+        result.metrics.frame_done_ns = SteadyNs(display_end);
         previous_render_ms = result.metrics.render_ms;
         previous_display_ms = result.metrics.display_ms;
+        previous_consumer_loop_ms = result.metrics.consumer_loop_ms;
 
         ++processed;
-        const bool is_measured = processed > static_cast<std::uint64_t>(options_.warmup_frames);
+        const bool is_measured = next_frame_is_measured;
         if (is_measured) {
-            if (!measured_begin.has_value()) measured_begin = loop_begin;
             ++measured;
-            totals.push_back(result.metrics.total_ms);
-            latencies.push_back(result.metrics.read_to_display_ms);
+            consumer_times.push_back(result.metrics.consumer_loop_ms);
+            decoded_call_latencies.push_back(
+                result.metrics.decoded_read_return_to_display_call_ms);
+            wait_times.push_back(result.metrics.wait_for_slot_ms);
             inference.push_back(result.metrics.inference_ms);
             if (display_enabled) ++measured_displayed;
         }
@@ -614,16 +917,16 @@ int Application::RunStream() {
                 const double fps = current_measured_ms > 0.0
                     ? 1000.0 * static_cast<double>(measured) / current_measured_ms
                     : std::max(1.0, std::min(source.Fps(), 7.0));
-                recorder.Start(options_.screenshot_dir + "/yolo26-stage58-" + TimestampForPath() + ".avi",
+                recorder.Start(options_.screenshot_dir + "/yolo26-stage59-" + TimestampForPath() + ".avi",
                                fps, last_annotated.size());
             }
         }
         if (key == ' ') paused = !paused;
-        while (paused && display_enabled && !g_stop.load(std::memory_order_acquire)) {
+        while (paused && display_enabled && !StopRequested()) {
             const int pause_key = cv::waitKey(30);
             if (pause_key == ' ') paused = false;
             else if (pause_key == 27 || pause_key == 'q' || pause_key == 'Q') {
-                g_stop.store(true, std::memory_order_release);
+                RequestStop();
             }
             else if (pause_key == 's' || pause_key == 'S') {
                 logger.Info("saved_frame=" + SaveInteractiveFrame(last_annotated, options_));
@@ -633,7 +936,8 @@ int Application::RunStream() {
         if (measured == 1 || (measured > 0 && measured % 100 == 0)) {
             logger.Info("progress measured_frames=" + std::to_string(measured) +
                         " source_sequence=" + std::to_string(packet.sequence) +
-                        " dropped=" + std::to_string(result.metrics.dropped_frames) +
+                        " slot_replacements_measured=" +
+                            std::to_string(result.metrics.application_slot_replacements_measured) +
                         " executor_ms=" + std::to_string(result.metrics.inference_ms));
         }
         if (options_.max_frames > 0 && measured >= static_cast<std::uint64_t>(options_.max_frames)) break;
@@ -641,10 +945,18 @@ int Application::RunStream() {
             std::chrono::duration<double>(Clock::now() - *measured_begin).count() >= options_.duration_seconds) break;
     }
 
+    const CaptureSnapshot capture_snapshot = latest
+        ? latest->Snapshot()
+        : CaptureSnapshot{Clock::now(), sequential_sequence, 0};
+    const auto measured_end = capture_snapshot.time;
+    const std::uint64_t captured_total_at_window_end = capture_snapshot.captured;
+    const std::uint64_t replacements_total_at_window_end = capture_snapshot.replacements;
     if (latest) latest->Stop();
-    const std::uint64_t recorded_frames = recorder.Frames();
     const std::string recording_mode = recorder.Mode();
     recorder.Stop();
+    const std::uint64_t recorded_frames = recorder.Frames();
+    const std::uint64_t recording_queue_replacements = recorder.Replacements();
+    const std::uint64_t recording_failures = recorder.Failures();
     if (!metrics_writer.Flush() || !detection_writer.Flush()) {
         logger.Error("failed to write stream evidence TSV");
         return 2;
@@ -659,40 +971,60 @@ int Application::RunStream() {
     }
     const auto run_end = Clock::now();
     const double measured_elapsed_ms = measured_begin.has_value()
-        ? ElapsedMs(*measured_begin, run_end) : 0.0;
+        ? ElapsedMs(*measured_begin, measured_end) : 0.0;
     const double processed_fps = measured_elapsed_ms > 0.0
         ? 1000.0 * static_cast<double>(measured) / measured_elapsed_ms : 0.0;
     const double displayed_fps = measured_elapsed_ms > 0.0
         ? 1000.0 * static_cast<double>(measured_displayed) / measured_elapsed_ms : 0.0;
-    const std::uint64_t captured = latest ? latest->Captured() : sequential_sequence;
-    const std::uint64_t dropped = latest ? latest->Dropped() : 0;
+    const std::uint64_t captured_total = captured_total_at_window_end;
+    const std::uint64_t replacements_total = replacements_total_at_window_end;
+    const std::uint64_t captured_measured = measured_begin.has_value()
+        ? captured_total - captured_at_measured_begin : 0;
+    const std::uint64_t replacements_measured = measured_begin.has_value()
+        ? replacements_total - replacements_at_measured_begin : 0;
     const double run_elapsed_ms = ElapsedMs(run_begin, run_end);
-    const double capture_fps = latest ? latest->ArrivalFps() :
-        (run_elapsed_ms > 0.0 ? 1000.0 * static_cast<double>(captured) / run_elapsed_ms : 0.0);
+    const double decoded_fps = measured_elapsed_ms > 0.0
+        ? 1000.0 * static_cast<double>(captured_measured) / measured_elapsed_ms : 0.0;
     const double recording_fps = run_elapsed_ms > 0.0
         ? 1000.0 * static_cast<double>(recorded_frames) / run_elapsed_ms : 0.0;
-    const double drop_pct = captured > 0 ? 100.0 * static_cast<double>(dropped) /
-        static_cast<double>(captured) : 0.0;
+    const double replacement_pct = captured_measured > 0
+        ? 100.0 * static_cast<double>(replacements_measured) /
+            static_cast<double>(captured_measured) : 0.0;
 
     std::cout << std::fixed << std::setprecision(6)
-              << "SUMMARY source=" << (source.IsCamera() ? "camera" : "video")
+              << "SUMMARY metrics_schema_version=2 source="
+              << (source.IsCamera() ? "camera" : "video")
               << " profile=" << options_.profile << " flow=" << options_.flow
               << " effective_format=\"" << source.EffectiveFormat() << "\""
+              << " requested_fps=" << options_.camera_fps
+              << " backend_reported_fps=" << source.Fps()
               << " warmup_frames=" << options_.warmup_frames
               << " measured_frames=" << measured
-              << " captured_frames=" << captured
-              << " dropped_frames=" << dropped
-              << " drop_pct=" << drop_pct
-              << " capture_fps=" << capture_fps
+              << " measured_window_start_ns="
+              << (measured_begin.has_value() ? SteadyNs(*measured_begin) : 0)
+              << " measured_window_end_ns=" << SteadyNs(measured_end)
+              << " captured_total=" << captured_total
+              << " captured_measured=" << captured_measured
+              << " application_slot_replacements_total=" << replacements_total
+              << " application_slot_replacements_measured=" << replacements_measured
+              << " application_slot_replacement_pct=" << replacement_pct
+              << " opencv_decoded_frame_fps=" << decoded_fps
               << " processed_fps=" << processed_fps
               << " displayed_fps=" << displayed_fps
               << " recorded_frames=" << recorded_frames
               << " recording_fps=" << recording_fps
               << " recording_mode=" << recording_mode
-              << " total_mean_ms=" << Mean(totals)
-              << " total_p95_ms=" << Percentile(totals, 0.95)
-              << " read_to_display_mean_ms=" << Mean(latencies)
-              << " read_to_display_p95_ms=" << Percentile(latencies, 0.95)
+              << " recording_queue_replacements=" << recording_queue_replacements
+              << " recording_failures=" << recording_failures
+              << " shutdown_finalize_ms=" << ElapsedMs(measured_end, run_end)
+              << " wait_for_slot_mean_ms=" << Mean(wait_times)
+              << " wait_for_slot_p95_ms=" << Percentile(wait_times, 0.95)
+              << " consumer_loop_mean_ms=" << Mean(consumer_times)
+              << " consumer_loop_p95_ms=" << Percentile(consumer_times, 0.95)
+              << " decoded_read_return_to_display_call_mean_ms="
+              << Mean(decoded_call_latencies)
+              << " decoded_read_return_to_display_call_p95_ms="
+              << Percentile(decoded_call_latencies, 0.95)
               << " executor_mean_ms=" << Mean(inference)
               << '\n';
     return measured > 0 || source.IsVideo() ? 0 : 2;

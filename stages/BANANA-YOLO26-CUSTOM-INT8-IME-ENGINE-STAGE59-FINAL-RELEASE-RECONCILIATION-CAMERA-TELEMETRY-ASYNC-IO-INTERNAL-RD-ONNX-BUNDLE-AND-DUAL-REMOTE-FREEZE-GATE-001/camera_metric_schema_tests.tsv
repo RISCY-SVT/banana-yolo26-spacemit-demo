@@ -1,0 +1,8 @@
+test	status	evidence
+schema_marker	pass	metrics TSV starts with metrics_schema_version=2
+required_columns	pass	captured/replacement/window/wait/consumer/decoded-call columns emitted
+warmup_snapshot	pass	measured counters start from warmup boundary
+shutdown_excluded_from_fps	pass	measured-window end captured before joins and flush
+ambiguous_stage58_names_absent	pass	no capture_fps/drop_pct/dropped_frames/read_to_display output fields
+headless_smoke	pass	640x480 MJPG board run produced parseable schema-v2 TSV
+gui_final	pass	nine matched 180-second schema-v2 GUI runs parsed successfully

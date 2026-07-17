@@ -359,22 +359,46 @@ extern "C" y26_status y26_executor_get_output(const y26_executor* executor,
 }
 
 extern "C" int y26_executor_tensor_id(const y26_executor* executor, const char* tensor_name) {
-    if (executor == nullptr || tensor_name == nullptr ||
-        !executor->prepared.load(std::memory_order_acquire) ||
-        executor->busy.load(std::memory_order_acquire)) return -1;
+    if (executor == nullptr) return -1;
+    auto* mutable_executor = const_cast<y26_executor*>(executor);
+    BusyGuard guard(mutable_executor);
+    if (!guard.acquired()) {
+        set_error(mutable_executor, "tensor lookup while executor is busy");
+        return -1;
+    }
+    if (tensor_name == nullptr || !executor->prepared.load(std::memory_order_acquire)) {
+        set_error(mutable_executor, tensor_name == nullptr
+            ? "null tensor name" : "tensor lookup before prepare");
+        return -1;
+    }
     try {
-        return executor->implementation.tensor_id_for_name(tensor_name);
+        const int tensor_id = executor->implementation.tensor_id_for_name(tensor_name);
+        set_error(mutable_executor, tensor_id >= 0 ? "" : "unknown tensor name");
+        return tensor_id;
     } catch (...) {
+        set_error(mutable_executor, "tensor lookup exception");
         return -1;
     }
 }
 
 extern "C" size_t y26_executor_tensor_bytes(const y26_executor* executor, int tensor_id) {
-    if (executor == nullptr || !executor->prepared.load(std::memory_order_acquire) ||
-        executor->busy.load(std::memory_order_acquire)) return 0;
+    if (executor == nullptr) return 0;
+    auto* mutable_executor = const_cast<y26_executor*>(executor);
+    BusyGuard guard(mutable_executor);
+    if (!guard.acquired()) {
+        set_error(mutable_executor, "tensor-size lookup while executor is busy");
+        return 0;
+    }
+    if (!executor->prepared.load(std::memory_order_acquire)) {
+        set_error(mutable_executor, "tensor-size lookup before prepare");
+        return 0;
+    }
     try {
-        return executor->implementation.tensor_bytes(tensor_id);
+        const size_t bytes = executor->implementation.tensor_bytes(tensor_id);
+        set_error(mutable_executor, bytes > 0 ? "" : "invalid tensor id");
+        return bytes;
     } catch (...) {
+        set_error(mutable_executor, "tensor-size lookup exception");
         return 0;
     }
 }

@@ -1,0 +1,5 @@
+width	height	fourcc	backend_reported_max_fps	stage59_role
+1280	720	MJPG	60	quality-wide candidate
+640	480	MJPG	60	performance candidate
+640	480	YUYV	30	performance candidate
+1280	720	YUYV	7.5	not selected for matched scout

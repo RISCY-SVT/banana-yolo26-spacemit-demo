@@ -160,15 +160,26 @@ InferenceResult Yolo26ExecutorDetector::Process(const cv::Mat& bgr) {
 
     const auto resize_begin = Clock::now();
     cv::Mat resized;
+    cv::Mat canvas;
+    cv::Mat rgb;
+    if (options_.reuse_buffers) {
+        resized_buffer_.create(result.letterbox.resized_height,
+                               result.letterbox.resized_width, CV_8UC3);
+        canvas_buffer_.create(640, 640, CV_8UC3);
+        rgb_buffer_.create(640, 640, CV_8UC3);
+        resized = resized_buffer_;
+        canvas = canvas_buffer_;
+        rgb = rgb_buffer_;
+    }
     cv::resize(bgr, resized,
                cv::Size(result.letterbox.resized_width, result.letterbox.resized_height),
                0.0, 0.0, cv::INTER_LINEAR);
-    cv::Mat canvas(640, 640, CV_8UC3, cv::Scalar(114, 114, 114));
+    if (canvas.empty()) canvas.create(640, 640, CV_8UC3);
+    canvas.setTo(cv::Scalar(114, 114, 114));
     resized.copyTo(canvas(cv::Rect(result.letterbox.paste_x, result.letterbox.paste_y,
                                   resized.cols, resized.rows)));
     const auto resize_end = Clock::now();
 
-    cv::Mat rgb;
     cv::cvtColor(canvas, rgb, cv::COLOR_BGR2RGB);
     if (!rgb.isContinuous()) rgb = rgb.clone();
     const auto color_end = Clock::now();

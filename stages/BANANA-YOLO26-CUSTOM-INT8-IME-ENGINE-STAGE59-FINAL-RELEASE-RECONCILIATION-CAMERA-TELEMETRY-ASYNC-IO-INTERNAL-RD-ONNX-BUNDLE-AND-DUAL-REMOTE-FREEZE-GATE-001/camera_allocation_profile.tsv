@@ -1,0 +1,6 @@
+buffer	shape_or_capacity	owner	reuse_scope	per_frame_reallocation_selected
+resized_frame	effective letterbox resize	detector	stream	no
+letterbox_canvas	640x640x3	detector	stream	no
+rgb_input	640x640x3	detector	stream	no
+annotated_output	source frame size	renderer/application	frame clone required for ownership	yes
+detections	stable reserved vector capacity	detector	stream	no

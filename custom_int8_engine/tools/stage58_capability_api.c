@@ -26,7 +26,7 @@ int main(void) {
           "build_info_query");
     check(info.abi_version == Y26_K1X_EXECUTOR_ABI_VERSION,
           "abi_version");
-    check(strcmp(info.release_version, "0.9.1") == 0,
+    check(strcmp(info.release_version, "0.9.2") == 0,
           "release_version");
     check(strcmp(info.integer_contract_id, "K1X_INT8_V1") == 0,
           "integer_contract");

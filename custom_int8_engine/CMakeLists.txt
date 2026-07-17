@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(y26_k1x_custom_int8_engine VERSION 0.9.1 LANGUAGES C CXX)
+project(y26_k1x_custom_int8_engine VERSION 0.9.2 LANGUAGES C CXX)
 
 find_package(Threads REQUIRED)
 include(GNUInstallDirs)
@@ -21,6 +21,8 @@ option(Y26_K1X_BUILD_RELEASE_TOOLS "Build the release CLI and healthcheck" ON)
 option(Y26_K1X_BUILD_RESEARCH "Build historical and candidate research sources" OFF)
 option(Y26_K1X_BUILD_TOOLS "Build research helper tools" OFF)
 option(Y26_K1X_INSTALL_DEVELOPMENT_HEADERS "Install internal C++ development headers" OFF)
+option(Y26_K1X_OFFICIAL_RELEASE
+       "Require the exact K1X IME release compiler and frozen-profile contract" OFF)
 set(Y26_K1X_SOURCE_COMMIT "unknown" CACHE STRING "Source commit embedded in ABI1 build metadata")
 set(Y26_K1X_OPENCV_DIR "" CACHE PATH "Optional OpenCV package directory for the Stage52 COCO predictor")
 
@@ -36,6 +38,16 @@ set(Y26_K1X_RELEASE_SOURCES
 )
 
 if(Y26_K1X_BUILD_RELEASE)
+    if(Y26_K1X_OFFICIAL_RELEASE)
+        if(NOT Y26_K1X_ENABLE_IME)
+            message(FATAL_ERROR "Official K1X release requires Y26_K1X_ENABLE_IME=ON")
+        endif()
+        if(NOT CMAKE_SYSTEM_PROCESSOR MATCHES "riscv")
+            message(FATAL_ERROR
+                "Official K1X release requires a RISC-V cross target; "
+                "use Y26_K1X_OFFICIAL_RELEASE=OFF for host scalar tests")
+        endif()
+    endif()
     add_library(y26_k1x_release_objects OBJECT ${Y26_K1X_RELEASE_SOURCES})
     target_include_directories(y26_k1x_release_objects
         PUBLIC
@@ -43,6 +55,16 @@ if(Y26_K1X_BUILD_RELEASE)
             "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
     )
     target_compile_options(y26_k1x_release_objects PRIVATE -Wall -Wextra -Wpedantic)
+    if(Y26_K1X_OFFICIAL_RELEASE)
+        # Keep the frozen hot-code contract on the release objects themselves. This
+        # prevents a top-level consumer from silently dropping the X60 tuning flags.
+        target_compile_options(y26_k1x_release_objects PRIVATE
+            -march=rv64gcv_zvfh
+            -mabi=lp64d
+            -mtune=spacemit-x60
+            -funroll-loops
+        )
+    endif()
     target_compile_definitions(y26_k1x_release_objects PRIVATE
         Y26_K1X_BUILDING_LIBRARY=1
         Y26_K1X_FROZEN_RELEASE_PROFILE=1
@@ -163,6 +185,15 @@ if(Y26_K1X_BUILD_RELEASE)
         target_link_libraries(stage58_capability_api PRIVATE y26_k1x_executor_shared Threads::Threads)
         target_compile_options(stage58_capability_api PRIVATE -Wall -Wextra -Wpedantic)
         set_target_properties(stage58_capability_api PROPERTIES LINKER_LANGUAGE CXX)
+        add_executable(stage59_abi_race tools/stage59_abi_race.c)
+        target_link_libraries(stage59_abi_race PRIVATE y26_k1x_executor_shared Threads::Threads)
+        target_compile_options(stage59_abi_race PRIVATE -Wall -Wextra -Wpedantic)
+        set_target_properties(stage59_abi_race PROPERTIES LINKER_LANGUAGE CXX)
+        add_executable(stage59_dlopen_bench tools/stage59_dlopen_bench.cpp)
+        target_include_directories(stage59_dlopen_bench PRIVATE
+            "${CMAKE_CURRENT_SOURCE_DIR}/include")
+        target_link_libraries(stage59_dlopen_bench PRIVATE ${CMAKE_DL_LIBS})
+        target_compile_options(stage59_dlopen_bench PRIVATE -Wall -Wextra -Wpedantic)
         if(BUILD_TESTING)
             add_test(NAME release_capability_api COMMAND stage58_capability_api)
         endif()

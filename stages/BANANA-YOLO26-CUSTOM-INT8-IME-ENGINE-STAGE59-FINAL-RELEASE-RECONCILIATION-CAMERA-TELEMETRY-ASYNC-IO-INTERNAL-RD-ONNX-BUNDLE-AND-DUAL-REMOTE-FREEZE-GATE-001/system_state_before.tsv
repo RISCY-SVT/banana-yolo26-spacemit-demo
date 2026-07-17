@@ -1,0 +1,13 @@
+setting	value	status
+online_cpus	0-7	captured
+cpu_governor_cpu0_7	performance	captured
+cpu_frequency_cpu0_7_khz	1600000	captured
+workqueue_cpumask	ff	captured
+o2_profile	inactive	captured
+data_mount	/dev/nvme0n1p1 ext4 rw,noatime	captured
+root_mount	/dev/mmcblk2p6 ext4 rw,noatime	captured
+emmc_project_writes	0	required
+thermal_zone0_millic	48000	captured
+thermal_zone1_millic	48000	captured
+thermal_zone2_millic	49000	captured
+thermal_zone3_millic	49000	captured

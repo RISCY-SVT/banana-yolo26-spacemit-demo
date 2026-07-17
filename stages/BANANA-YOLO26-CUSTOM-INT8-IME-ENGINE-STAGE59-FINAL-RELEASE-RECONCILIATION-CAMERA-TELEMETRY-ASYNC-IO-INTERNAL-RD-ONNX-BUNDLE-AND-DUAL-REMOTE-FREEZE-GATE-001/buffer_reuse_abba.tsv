@@ -1,0 +1,3 @@
+arm	reuse_buffers	measured_frames	processed_fps	consumer_mean_ms	consumer_p95_ms	consumer_p99_ms	executor_mean_ms	delta_vs_reuse_pct	decision
+no-record-reuse	yes	1185	6.578935	151.655175	154.709390	160.108894	138.027464	0.000000	selected-maintenance
+no-record-no-reuse	no	1186	6.586899	151.473642	154.199205	158.697846	137.911924	0.121053	control

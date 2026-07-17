@@ -1,10 +1,13 @@
 # Distribution Archive
 
-The Stage58 delivery is available as both a deterministic tar archive and ZIP:
+Stage59 publishes separate runtime and internal-R&D deliveries, each as a
+deterministic tar archive and ZIP:
 
 ```text
-banana-yolo26-k1x-int8-executor-0.9.1-riscv64.tar.gz
-banana-yolo26-k1x-int8-executor-0.9.1-riscv64.zip
+banana-yolo26-k1x-int8-executor-0.9.2-runtime-riscv64.tar.gz
+banana-yolo26-k1x-int8-executor-0.9.2-runtime-riscv64.zip
+banana-yolo26-k1x-int8-executor-0.9.2-internal-rd-riscv64.tar.gz
+banana-yolo26-k1x-int8-executor-0.9.2-internal-rd-riscv64.zip
 ```
 
 Extract under the board NVMe `/data`, then verify from the extracted root:
@@ -21,10 +24,12 @@ prepared immutable `package/`, known fixture, scripts, examples, documentation,
 OpenCV 4.13 demo runtime closure, licenses, SBOM, and curated outputs.
 
 The executor libraries do not depend on OpenCV. Only `y26_k1x_demo` uses the
-bundled OpenCV component. The source ONNX is intentionally not redistributed:
-the trained-weight redistribution provenance was not sufficiently closed for
-this handoff. `model/MODEL_SOURCE_NOT_REDISTRIBUTED.md` records its SHA-256 and
-regeneration identity. The prepared runtime package is included unconditionally.
+bundled OpenCV component. The runtime bundle excludes the source ONNX. The
+separately marked internal-R&D bundle includes the exact
+`manual_e2e_rep_conv_matmul_qdq.onnx` under the direct internal-use
+authorization, with provenance and license caveats. External ONNX
+redistribution is not cleared. The prepared runtime package is included in both
+bundles.
 
 No archive path is absolute, no symlink escapes the root, and clean-extract
 tests do not use repository build paths. Runtime assets, logs, screenshots, and

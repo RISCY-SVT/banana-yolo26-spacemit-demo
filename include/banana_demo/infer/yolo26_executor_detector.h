@@ -48,12 +48,22 @@ struct FrameMetrics {
     double display_ms = 0.0;
     double record_ms = 0.0;
     double total_ms = 0.0;
-    double read_to_display_ms = 0.0;
+    double wait_for_slot_ms = 0.0;
+    double consumer_loop_ms = 0.0;
+    double decoded_read_return_to_display_call_ms = 0.0;
+    double previous_render_ms = 0.0;
+    double previous_display_ms = 0.0;
+    double previous_consumer_loop_ms = 0.0;
     double processed_fps = 0.0;
-    double capture_fps = 0.0;
+    double opencv_decoded_frame_fps = 0.0;
     std::uint64_t output_hash = 0;
     std::uint64_t source_sequence = 0;
-    std::uint64_t dropped_frames = 0;
+    std::uint64_t captured_total = 0;
+    std::uint64_t captured_measured = 0;
+    std::uint64_t application_slot_replacements_total = 0;
+    std::uint64_t application_slot_replacements_measured = 0;
+    std::uint64_t measured_window_start_ns = 0;
+    std::uint64_t frame_done_ns = 0;
     int objects = 0;
 };
 
@@ -91,6 +101,9 @@ private:
     y26_build_info build_info_{};
     std::vector<std::string> labels_;
     std::vector<float> output_;
+    cv::Mat resized_buffer_;
+    cv::Mat canvas_buffer_;
+    cv::Mat rgb_buffer_;
 };
 
 }  // namespace banana_demo

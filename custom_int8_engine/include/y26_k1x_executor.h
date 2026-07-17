@@ -107,6 +107,13 @@ typedef struct y26_build_info {
     const char* expected_package_manifest_sha256;
 } y26_build_info;
 
+/*
+ * A handle owns one worker pool and must be used as a serialized stream.
+ * Concurrent handle operations fail with Y26_STATUS_BUSY, or with the documented
+ * sentinel for tensor metadata queries. Independent handles may run concurrently.
+ * y26_executor_destroy() must never race with any operation on the same handle.
+ */
+
 Y26_K1X_API void y26_executor_options_init(y26_executor_options* options);
 Y26_K1X_API void y26_build_info_init(y26_build_info* info);
 Y26_K1X_API y26_status y26_executor_get_build_info(y26_build_info* info);

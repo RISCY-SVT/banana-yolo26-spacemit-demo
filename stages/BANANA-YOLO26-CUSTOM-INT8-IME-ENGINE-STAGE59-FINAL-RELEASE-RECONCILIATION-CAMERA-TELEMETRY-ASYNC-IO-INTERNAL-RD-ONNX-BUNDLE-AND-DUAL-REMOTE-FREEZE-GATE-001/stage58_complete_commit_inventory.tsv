@@ -1,0 +1,9 @@
+sequence	commit	message	publication_status
+1	e05a4240ab9424ca243a01bd67a140a4bc3dfba4	release: add Stage58 YOLO26 camera handoff	published
+2	b8d8d7ce4b87d15cf76f8fa78c34321ae89cd913	release: harden Stage58 maintenance and camera UI	published
+3	64d17472fc40dd082c5fbed4b78d0106021bbd25	release: align Stage58 camera evidence and defaults	published
+4	2317aa532413151b6867e8c4d03722b0178a26e8	release: finalize Stage58 camera evidence tooling	published
+5	bcedf8651d0156355e105f2c6a1591e86b3d1b28	Harden K1X video playback evidence	published
+6	8f49fc14288b03f580e6a4f1fb2635e805419e37	docs: finalize Stage58 measured handoff	published
+7	bf965e83e650839a95c32027f1a6443d35d44caa	docs: add Stage58 camera handoff evidence	published
+8	5465b68cf41f5547d6455dc229b196c77e590743	release: close Stage58 camera handoff	published-final

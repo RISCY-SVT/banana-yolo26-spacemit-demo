@@ -133,16 +133,18 @@ void Renderer::DrawOverlay(cv::Mat& out, const FrameMetrics& metrics,
         std::ostringstream text;
         text.setf(std::ios::fixed);
         text.precision(2);
-        text << "render=" << metrics.render_ms << " ms display=" << metrics.display_ms
-             << " ms total=" << metrics.total_ms << " ms";
+        text << "prev_render=" << metrics.previous_render_ms
+             << " ms prev_display=" << metrics.previous_display_ms
+             << " ms prev_consumer=" << metrics.previous_consumer_loop_ms << " ms";
         lines.push_back(text.str());
     }
     {
         std::ostringstream text;
         text.setf(std::ios::fixed);
         text.precision(2);
-        text << "processed_fps=" << metrics.processed_fps << " capture_fps="
-             << metrics.capture_fps << " dropped=" << metrics.dropped_frames;
+        text << "processed_fps=" << metrics.processed_fps << " decoded_fps="
+             << metrics.opencv_decoded_frame_fps << " slot_replaced="
+             << metrics.application_slot_replacements_measured;
         lines.push_back(text.str());
     }
     lines.push_back("profile=" + profile + " flow=" + flow + " input=640x640");

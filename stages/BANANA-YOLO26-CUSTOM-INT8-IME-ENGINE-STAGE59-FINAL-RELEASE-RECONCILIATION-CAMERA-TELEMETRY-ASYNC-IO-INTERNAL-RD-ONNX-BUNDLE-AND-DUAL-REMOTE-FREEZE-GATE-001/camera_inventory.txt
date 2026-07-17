@@ -1,0 +1,11 @@
+Selected camera: BBA USB CAMERA (usb-xhci-hcd.0.auto-1.2.1)
+Capture node: /dev/video20
+Metadata node: /dev/video21
+Stable by-id capture path:
+  /dev/v4l/by-id/usb-JQ-FAY-220422_BBA_USB_CAMERA_01.00.00-video-index0
+Stable by-path capture path:
+  /dev/v4l/by-path/platform-xhci-hcd.0.auto-usb-0:1.2.1:1.0-video-index0
+Driver path: xhci-hcd.0.auto, USB port 1.2.1
+Reviewed USB host IRQ: 89 (xhci-hcd:usb2)
+Raw v4l2-ctl inventory:
+  /data/ncnn-logs/ai-team/2026-07-17/2026-07-17_06-17-54__codex__BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE59-FINAL-RELEASE-RECONCILIATION-CAMERA-TELEMETRY-ASYNC-IO-INTERNAL-RD-ONNX-BUNDLE-AND-DUAL-REMOTE-FREEZE-GATE-001__stage59-final-closure/board_environment_and_camera_inventory.log

@@ -6,6 +6,7 @@
 #pragma once
 
 #include <fstream>
+#include <mutex>
 #include <string>
 
 namespace banana_demo {
@@ -38,6 +39,7 @@ private:
     bool quiet_ = false;
     /** Optional append-only log file stream. */
     std::ofstream file_;
+    std::mutex mutex_;
 };
 
 }  // namespace banana_demo

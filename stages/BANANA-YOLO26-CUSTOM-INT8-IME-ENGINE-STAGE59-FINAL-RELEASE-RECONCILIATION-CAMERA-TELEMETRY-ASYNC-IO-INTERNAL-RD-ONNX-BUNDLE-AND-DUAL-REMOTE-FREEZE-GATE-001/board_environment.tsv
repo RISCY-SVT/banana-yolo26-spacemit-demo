@@ -1,0 +1,15 @@
+field	value
+hostname	bf3
+kernel	6.6.63 #2.2.7.2 SMP PREEMPT
+architecture	riscv64
+online_cpus	0-7
+cpu_governor	performance
+cpu_frequency_khz	1600000
+data_device	/dev/nvme0n1p1
+data_filesystem	ext4
+data_mount_options	rw,noatime
+board_os	Bianbu 2.2.1
+boot_id	0a0691d1-7502-44c3-903b-444dba83c1d9
+toolchain	riscv64-unknown-linux-gnu-gcc 14.3.0 (SpacemiT)
+compiler_contract	-march=rv64gcv_zvfh -mabi=lp64d -mtune=spacemit-x60 -funroll-loops
+sysroot_policy	read-only base plus /data/sysroots/k1x-gtk3-overlay

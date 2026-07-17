@@ -1,0 +1,5 @@
+surface	mean_us	p95_us	status	measurement_stage	exact_source_file	note
+final_serial_pipeline	188654.187238	191797.3384	inherited-measured	Stage57	stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE57-FINAL-EXACT-MICRO-MAINTENANCE-PRODUCTIZATION-HANDOFF-AND-DUAL-REMOTE-FREEZE-GATE-001/final_image_pipeline_timing.tsv	Stage58 did not remeasure this surface
+final_double_buffer	140555.107644	144883.56185	inherited-measured	Stage57	stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE57-FINAL-EXACT-MICRO-MAINTENANCE-PRODUCTIZATION-HANDOFF-AND-DUAL-REMOTE-FREEZE-GATE-001/final_double_buffer_timing.tsv	pipeline interval; Stage58 did not remeasure
+real_100_image_corpus	132913.617240	NA	inherited-measured	Stage57	stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE57-FINAL-EXACT-MICRO-MAINTENANCE-PRODUCTIZATION-HANDOFF-AND-DUAL-REMOTE-FREEZE-GATE-001/stage57_final_facts.json	pure executor mean; Stage58 did not remeasure
+rgb8_already_letterboxed	138989	139484	measured	Stage58	stages/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE58-CAMERA-END-TO-END-DEMO-YOLO11-LEGACY-CLEANUP-SDK-ARCHIVE-COLLEAGUE-FAQ-AND-FINAL-HANDOFF-GATE-001/final_pipeline_performance.tsv	Stage58 measured row

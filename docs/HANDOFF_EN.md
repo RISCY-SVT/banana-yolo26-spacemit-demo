@@ -1,4 +1,4 @@
-# YOLO26 K1X INT8 Executor 0.9.1
+# YOLO26 K1X INT8 Executor 0.9.2
 
 ## What This Is
 
@@ -51,7 +51,7 @@ CPU0-3: IME workers       CPU4: controller       CPU5-7: housekeeping only
 The release is installed under NVMe `/data`:
 
 ```bash
-RELEASE=/data/releases/banana-yolo26-k1x-int8-executor/0.9.1-stage58-camera-handoff
+RELEASE=/data/releases/banana-yolo26-k1x-int8-executor/0.9.2-stage59-final-runtime
 PACKAGE=$RELEASE/package
 
 $RELEASE/bin/y26_k1x_healthcheck \

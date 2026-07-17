@@ -1,0 +1,4 @@
+remote	url	branch	head	expected	status
+local	/data/banana-yolo26-spacemit-demo	yolo26-custom-int8-engine	5465b68cf41f5547d6455dc229b196c77e590743	5465b68cf41f5547d6455dc229b196c77e590743	exact
+github	git@github.com:RISCY-SVT/banana-yolo26-spacemit-demo.git	yolo26-custom-int8-engine	5465b68cf41f5547d6455dc229b196c77e590743	5465b68cf41f5547d6455dc229b196c77e590743	exact
+gitlab-rd	git@gitlab.itglobal.com:riscy/sw/banana-yolo26-spacemit-demo.git	yolo26-custom-int8-engine	5465b68cf41f5547d6455dc229b196c77e590743	5465b68cf41f5547d6455dc229b196c77e590743	exact

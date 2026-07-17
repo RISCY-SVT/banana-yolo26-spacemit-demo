@@ -1,7 +1,7 @@
 # K1X INT8 Executor C API
 
 The stable colleague-facing interface is C ABI1 in `y26_k1x_executor.h`.
-Version 0.9.1 exports 15 C functions from SONAME 1. The two build-information
+Version 0.9.2 exports 15 C functions from SONAME 1. The two build-information
 functions are additive to the 13-function 0.9.0 ABI:
 
 ```c
@@ -40,7 +40,9 @@ letterboxed 640x640 RGB8. Output is 300 float32 rows of
 `[x1,y1,x2,y2,confidence,class]`.
 
 One handle owns one arena and worker pool. Calls on one handle must be serialized;
-concurrent use returns `Y26_STATUS_BUSY`. Independent handles are supported.
+concurrent status-returning calls return `Y26_STATUS_BUSY`. Tensor metadata
+queries return their `-1`/`0` sentinels and set a busy `last_error`. Independent
+handles are supported.
 Preparing twice and running before prepare return `Y26_STATUS_INVALID_STATE`.
 Null, undersized, overlapping, and invalid-topology inputs are rejected.
 

@@ -1,0 +1,4 @@
+signal	measured_frames	metrics_rows	metrics_columns	malformed_rows	recorded_frames	avi_bytes	avi_format	recording_failures	status
+SIGINT	37	42	24	0	42	6162722	MJPG_AVI	0	pass
+SIGTERM	32	37	24	0	37	5495600	MJPG_AVI	0	pass
+SIGHUP	53	58	24	0	58	8525020	MJPG_AVI	0	pass

@@ -1,0 +1,3 @@
+mode	artifact	summary_frames	decoded_frames	failures	bytes_approx	sha256	codec	dimensions	duration_seconds	status
+sync	sync-record.avi	1124	1124	0	172414382	671d4409ec597403447abe233b88b8053724f33da2ed51d3efd078cc2ffaa0f9	mjpeg	640x480	173.293362	pass
+async	async-record.avi	1212	1212	0	185588418	8a19caf26b6fd0189b6a33bce2a9be3d281fae7397692eb9390e37fd20724c0a	mjpeg	640x480	178.858252	pass

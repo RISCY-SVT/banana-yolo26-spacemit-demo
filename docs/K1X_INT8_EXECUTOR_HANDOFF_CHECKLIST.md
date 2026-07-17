@@ -1,7 +1,7 @@
 # K1X INT8 Executor Handoff Checklist
 
 - [ ] Release `SHA256SUMS` validates.
-- [ ] Version reports 0.9.1, the frozen full-graph profile, and ABI1 capabilities.
+- [ ] Version reports 0.9.2, the frozen full-graph profile, and ABI1 capabilities.
 - [ ] Package manifest equals `fab4a72c...e8407be`.
 - [ ] Healthcheck returns fixture hash `0xd43f5e018b415631`.
 - [ ] Compatibility runs without stage environment variables.

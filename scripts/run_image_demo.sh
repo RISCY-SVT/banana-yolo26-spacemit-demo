@@ -9,7 +9,7 @@ fi
 (( $# >= 1 )) || { echo "image path is required" >&2; exit 2; }
 image=$1
 shift
-output=${1:-/data/Screenshots/yolo26-stage58-image.png}
+output=${1:-/data/Screenshots/yolo26-stage59-image.png}
 if (($#)); then shift; fi
 root=$Y26_BOARD_RELEASE_ROOT
 args=("$root/bin/y26_k1x_demo" --package "$root/package" --labels "$root/labels/coco80.txt"

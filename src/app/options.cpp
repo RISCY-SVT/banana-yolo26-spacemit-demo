@@ -77,9 +77,12 @@ ParseResult ParseAppOptions(int argc, char** argv, AppOptions& options, std::str
         else if (arg == "--warmup-frames" && NeedValue(i, argc) && ParseInt(argv[++i], options.warmup_frames)) {}
         else if (arg == "--opencv-threads" && NeedValue(i, argc) && ParseInt(argv[++i], options.opencv_threads)) {}
         else if (arg == "--reconnect-attempts" && NeedValue(i, argc) && ParseInt(argv[++i], options.reconnect_attempts)) {}
+        else if (arg == "--capture-cpu" && NeedValue(i, argc) && ParseInt(argv[++i], options.capture_cpu)) {}
+        else if (arg == "--reuse-buffers" && NeedValue(i, argc) && ParseBool(argv[++i], options.reuse_buffers)) {}
         else if (arg == "--save-frame" && NeedValue(i, argc)) options.save_frame = argv[++i];
         else if (arg == "--screenshot-dir" && NeedValue(i, argc)) options.screenshot_dir = argv[++i];
         else if (arg == "--record" && NeedValue(i, argc)) options.record_path = argv[++i];
+        else if (arg == "--record-mode" && NeedValue(i, argc)) options.record_mode = argv[++i];
         else if (arg == "--metrics-tsv" && NeedValue(i, argc)) options.metrics_tsv = argv[++i];
         else if (arg == "--detections-tsv" && NeedValue(i, argc)) options.detections_tsv = argv[++i];
         else if (arg == "--log-file" && NeedValue(i, argc)) options.log_file = argv[++i];
@@ -101,6 +104,8 @@ ParseResult ParseAppOptions(int argc, char** argv, AppOptions& options, std::str
         error = "--profile must be compatibility|low-latency|low-latency-dedicated";
     else if (options.flow != "sequential" && options.flow != "latest-frame")
         error = "--flow must be sequential|latest-frame";
+    else if (options.record_mode != "sync" && options.record_mode != "async")
+        error = "--record-mode must be sync|async";
     else if (!(options.confidence_threshold >= 0.0f && options.confidence_threshold <= 1.0f))
         error = "--conf must be in [0,1]";
     else if (options.camera_width <= 0 || options.camera_height <= 0 || options.camera_fps <= 0.0)
@@ -108,6 +113,8 @@ ParseResult ParseAppOptions(int argc, char** argv, AppOptions& options, std::str
     else if (options.max_frames < 0 || options.duration_seconds < 0.0 ||
              options.warmup_frames < 0 || options.opencv_threads < 1 || options.reconnect_attempts < 0)
         error = "frame, duration, thread, or reconnect count is invalid";
+    else if (options.capture_cpu < -1 || options.capture_cpu > 7)
+        error = "--capture-cpu must be -1 or a CPU in [0,7]";
 
     return error.empty() ? ParseResult::kRun : ParseResult::kError;
 }
@@ -125,10 +132,12 @@ std::string BuildUsage(const char* program) {
         << "  --expected-manifest-sha256 HEX --labels FILE --conf FLOAT\n"
         << "  --build-info\n\n"
         << "Output and measurement:\n"
-        << "  --display 0|1 --headless --record FILE --save-frame FILE\n"
+        << "  --display 0|1 --headless --record FILE --record-mode sync|async\n"
+        << "  --save-frame FILE\n"
         << "  --screenshot-dir DIR --metrics-tsv FILE --detections-tsv FILE --log-file FILE\n"
         << "  --warmup-frames N --max-frames N --duration SECONDS\n"
-        << "  --opencv-threads N --reconnect-attempts N --quiet\n\n"
+        << "  --opencv-threads N --reconnect-attempts N --capture-cpu -1|0..7\n"
+        << "  --reuse-buffers 0|1 --quiet\n\n"
         << "GUI keys: q/Esc exit, s save PNG, r toggle recording, space pause.\n"
         << "The model input is always exact 640x640 RGB8 letterbox; no second NMS is run.\n";
     return out.str();

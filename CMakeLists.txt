@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(banana_yolo26_k1x_demo VERSION 0.9.1 LANGUAGES C CXX)
+project(banana_yolo26_k1x_demo VERSION 0.9.2 LANGUAGES C CXX)
 
 include(GNUInstallDirs)
 
@@ -11,6 +11,8 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 option(Y26_DEMO_USE_INSTALLED_EXECUTOR "Build against an installed y26 executor package" OFF)
 option(Y26_DEMO_ENABLE_ASAN "Enable AddressSanitizer for the demo" OFF)
 option(Y26_DEMO_BUILD_TESTS "Build demo geometry tests" ON)
+option(Y26_DEMO_OFFICIAL_K1X_RELEASE
+       "Build the embedded executor under the fail-closed K1X release contract" OFF)
 set(Y26_DEMO_EXECUTOR_DIR "" CACHE PATH "Installed y26K1xExecutor CMake package directory")
 
 find_package(Threads REQUIRED)
@@ -20,13 +22,14 @@ if(Y26_DEMO_USE_INSTALLED_EXECUTOR)
     if(Y26_DEMO_EXECUTOR_DIR)
         set(y26K1xExecutor_DIR "${Y26_DEMO_EXECUTOR_DIR}")
     endif()
-    find_package(y26K1xExecutor 0.9.1 CONFIG REQUIRED)
+    find_package(y26K1xExecutor 0.9.2 CONFIG REQUIRED)
 else()
     set(Y26_K1X_BUILD_RELEASE ON CACHE BOOL "" FORCE)
     set(Y26_K1X_BUILD_RELEASE_TOOLS ON CACHE BOOL "" FORCE)
     set(Y26_K1X_BUILD_RESEARCH OFF CACHE BOOL "" FORCE)
     set(Y26_K1X_BUILD_TOOLS OFF CACHE BOOL "" FORCE)
     set(Y26_K1X_INSTALL_DEVELOPMENT_HEADERS OFF CACHE BOOL "" FORCE)
+    set(Y26_K1X_OFFICIAL_RELEASE ${Y26_DEMO_OFFICIAL_K1X_RELEASE} CACHE BOOL "" FORCE)
     add_subdirectory(custom_int8_engine)
 endif()
 
@@ -64,6 +67,9 @@ set_target_properties(y26_k1x_demo PROPERTIES
 )
 
 install(TARGETS y26_k1x_demo RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
+add_executable(y26_v4l2_probe tools/stage59_v4l2_probe.cpp)
+target_compile_options(y26_v4l2_probe PRIVATE -Wall -Wextra -Wpedantic)
+install(TARGETS y26_v4l2_probe RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
 install(FILES assets/coco80.txt DESTINATION "${CMAKE_INSTALL_DATADIR}/y26-k1x-demo/labels")
 
 if(Y26_DEMO_BUILD_TESTS)

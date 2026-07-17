@@ -1,4 +1,4 @@
-# Передача исполнителя YOLO26 K1X INT8 0.9.1
+# Передача исполнителя YOLO26 K1X INT8 0.9.2
 
 ## Назначение
 
@@ -49,7 +49,7 @@ CPU0-3: IME-воркеры   CPU4: контроллер   CPU5-7: только �
 ## Быстрый запуск
 
 ```bash
-RELEASE=/data/releases/banana-yolo26-k1x-int8-executor/0.9.1-stage58-camera-handoff
+RELEASE=/data/releases/banana-yolo26-k1x-int8-executor/0.9.2-stage59-final-runtime
 PACKAGE=$RELEASE/package
 
 $RELEASE/bin/y26_k1x_healthcheck \

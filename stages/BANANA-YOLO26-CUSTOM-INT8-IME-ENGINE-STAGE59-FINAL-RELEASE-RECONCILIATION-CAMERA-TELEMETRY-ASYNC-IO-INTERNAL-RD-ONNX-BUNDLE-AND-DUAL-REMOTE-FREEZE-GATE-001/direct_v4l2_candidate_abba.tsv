@@ -1,0 +1,3 @@
+candidate	implementation	decoded_path	full_camera_abba	selection_status
+OpenCV_V4L2	selected_release_path	OpenCV_VideoCapture	covered_by_matched_presets	selected
+direct_V4L2_latest_compressed	sidecar_telemetry_only	not_implemented	optional_candidate_not_measured	not_selected

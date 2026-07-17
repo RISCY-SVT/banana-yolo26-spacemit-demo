@@ -52,6 +52,7 @@ void Logger::Error(const std::string& message)
 
 void Logger::Write(const char* level, const std::string& message)
 {
+    std::lock_guard lock(mutex_);
     // Keep console and file logs identical so copied snippets remain comparable.
     const std::string line = "[" + TimestampNow() + "] " + level + " " + message;
     if (!quiet_ || std::string(level) == "ERROR")

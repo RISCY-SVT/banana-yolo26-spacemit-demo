@@ -3,7 +3,7 @@ set -euo pipefail
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/y26_executor_common.sh"
 
 [[ ${1:-} != --help && ${1:-} != -h ]] || {
-  echo "usage: $0 [PID]  # inspect Stage58 demo threads, cgroup, and IRQ placement"
+  echo "usage: $0 [PID]  # inspect Stage59 demo threads, cgroup, and IRQ placement"
   exit 0
 }
 inspect='set -euo pipefail

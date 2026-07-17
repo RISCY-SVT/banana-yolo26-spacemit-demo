@@ -1,0 +1,4 @@
+mode	buffers	first_sequence	last_sequence	sequence_gap_count	raw_v4l2_buffer_fps	timestamp_clock	timestamp_source	bytesused_min	bytesused_max	flags	effective_format
+1280x720-mjpg	5395	0	5394	0	30.001628	monotonic	soe	21001	161017	0x12001	1280x720@60 MJPG
+640x480-mjpg	5395	0	5394	0	30.001626	monotonic	soe	7373	52400	0x12001	640x480@60 MJPG
+640x480-yuyv	5395	0	5394	0	30.000977	monotonic	soe	614400	614400	0x12001	640x480@30 YUYV

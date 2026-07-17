@@ -5,7 +5,12 @@ if [[ ${1:-} == --help || ${1:-} == -h ]]; then
   echo "usage: $0 [RELEASE_ROOT]"
   exit 0
 fi
-root=${1:-/data/y26-k1x-int8-executor/0.9.1}
+script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+release_env=$script_dir/../config/release.env
+[[ -f $release_env ]] || release_env=$script_dir/../../config/release.env
+# shellcheck disable=SC1090
+source "$release_env"
+root=${1:-$Y26_BOARD_INSTALL_ROOT}
 case "$root" in
   /data/y26-k1x-int8-executor|/data/y26-k1x-int8-executor/*) ;;
   *) echo "refusing unsafe removal root: $root" >&2; exit 2 ;;

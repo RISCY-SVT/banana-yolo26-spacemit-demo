@@ -62,9 +62,24 @@ Do not combine columns from different sample surfaces. In particular:
 | real 100-image corpus | 141733.800 | separately reported |
 | matched B120 ORT | 459954.787608 | separately reported |
 
-Stage57 final executor values remain the arithmetic baseline for the installed 0.9.1
-maintenance route. Stage58 reports camera throughput separately. Neither stage demonstrates 20 FPS, an installed camera service, or production
-certification.
+Stage57 final executor values remain the arithmetic baseline for the installed
+0.9.2 maintenance route. Stage58 and Stage59 report camera throughput
+separately. None of these stages demonstrates 20 FPS, an installed camera
+service, or production certification.
+
+### Stage59 Matched Camera Presets
+
+| Preset | Requested/reported mode | Runs | Processed/displayed FPS | OpenCV decoded FPS | App slot replacement | Mean call latency |
+|---|---|---:|---:|---:|---:|---:|
+| quality-wide | 1280x720 MJPG, 60 requested | 3 x 180 s | 5.976975 | 9.999262 | 40.225839% | 219.143 ms |
+| performance | 640x480 MJPG, 60 requested | 3 x 180 s | 6.619983 | 14.993076 | 55.846398% | 184.200 ms |
+| performance + async record | 640x480 MJPG, 60 requested | 180 s | 6.562994 | 15.002716 | 56.254626% | 185.375 ms |
+
+Direct V4L2 MMAP telemetry measured 30.0016 dequeued buffers per second and
+zero driver-visible sequence gaps for both MJPG modes. The timestamp flag was
+monotonic SOE. This is not a sensor-to-display timestamp chain. The public fast
+launcher selects the measured 640x480 performance preset without O2; O2 remains
+an explicitly named diagnostic.
 
 ### Stage58 Release Revalidation
 
@@ -84,16 +99,18 @@ letterboxed RGB8 input, 186537.301 us for the serial preloaded pipeline, and
 
 ### Stage58 Camera Surface
 
-| Surface | Effective mode | Frames | Processed/displayed FPS | Capture FPS | App drop | Mean/p95 software latency |
+| Surface | Requested/reported mode | Frames | Processed/displayed FPS | OpenCV decoded FPS | App slot replacement | Mean/p95 call latency |
 |---|---|---:|---:|---:|---:|---:|
 | selected GUI, no recording | 1280x720@60 MJPG | 3200 | 5.916864 | 9.980414 | 40.869097% | 218.716 / 262.011 ms |
 | GUI with MJPG AVI recording | 1280x720@60 MJPG | 146 | 4.833642 / 4.738854 recorded | 9.881496 | 51.771117% | 256.761 / 301.979 ms |
 
-The selected camera row pools three independent 180-second runs. It includes
+This historical Stage58 row pools three independent 180-second runs. It includes
 capture, exact 640x640 preprocessing, executor, output mapping, boxes, overlay,
 GUI display, and event handling. It is not pure-model throughput, and the
-software latency is not sensor-to-screen latency because sensor timestamps were
-not correlated. The driver did not expose an independent dropped-buffer count.
+call latency is not sensor-to-screen latency because sensor timestamps were not
+correlated. `40.869097%` is application slot replacement, not a complete camera
+drop rate. Stage59's direct V4L2 probe supersedes the older interpretation of
+the OpenCV decoded rate but does not construct a sensor-to-display chain.
 
 ## HPM Language
 

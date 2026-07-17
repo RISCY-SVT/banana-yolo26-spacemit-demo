@@ -17,7 +17,7 @@ Build on the lab host:
 scripts/build_cross.sh
 ```
 
-Deploy the 0.9.1 release and run a camera:
+Deploy the 0.9.2 release and run a camera:
 
 ```bash
 scripts/deploy_to_banana.sh

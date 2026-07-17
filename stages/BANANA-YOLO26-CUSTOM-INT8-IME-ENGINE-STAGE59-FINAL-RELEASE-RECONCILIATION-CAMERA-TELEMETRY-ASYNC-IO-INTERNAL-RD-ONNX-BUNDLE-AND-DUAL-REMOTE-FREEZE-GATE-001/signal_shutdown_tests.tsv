@@ -1,0 +1,4 @@
+signal	display	reconnect_state	exit_code	capture_join	writer_join	metrics_flush	detections_flush	status
+SIGINT	headless	no	0	pass	pass	pass	pass	pass
+SIGTERM	GUI	no	0	pass	pass	pass	pass	pass
+SIGHUP	headless	USB-reset/reconnect	0	pass	pass	pass	pass	pass

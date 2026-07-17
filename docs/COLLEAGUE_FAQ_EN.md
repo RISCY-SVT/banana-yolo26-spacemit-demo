@@ -2,22 +2,26 @@
 
 ## What is the full FPS directly from the camera?
 
-The selected Stage58 live surface is 1280x720 at 60 FPS MJPG, V4L2,
-latest-frame, `low-latency` without O2, GUI display, boxes, and timing overlay.
-Across three independent 180-second runs it processed and displayed 5.916864
-FPS over 3,200 measured frames. Observed capture arrival was 9.980414 FPS and
-the application replaced 40.869097% of captured frames because capture was
-faster than the complete pipeline. Mean/p95 read-return-to-display software
-latency was 218.715619 / 262.011456 ms.
+Stage59 provides two matched full-GUI presets. `quality-wide` requests
+1280x720 MJPG at 60 FPS and processed/displayed 5.976975 FPS across three
+independent 180-second runs. `performance` requests 640x480 MJPG at 60 FPS and
+processed/displayed 6.619983 FPS under the same protocol, a 10.758% increase.
+Both use V4L2, latest-frame flow, `low-latency` without O2, boxes, and the
+timing overlay. The OpenCV decoded-frame rates were 9.999262 and 14.993076 FPS;
+the corresponding application slot-replacement rates were 40.225839% and
+55.846398%. Mean decoded-read-return-to-display-call latency was 219.143 ms for
+quality-wide and 184.200 ms for performance.
 
 The no-recording number includes capture, exact resize/letterbox, BGR-to-RGB,
 the executor, box mapping, boxes, overlay, `imshow`, and event handling. It is
-not pure-model FPS. Recording is a separate measured surface at 4.738854 FPS.
-The 30-minute camera soak passed: 10,679 processed/displayed frames at 5.931789
-FPS, with 40.687822% application-level latest-frame replacement and no demo
-failure. Capture-driver drop accounting was not exposed, so only application
-replacements are known. No sensor timestamps were correlated; the reported
-latency is not sensor-to-screen latency.
+not pure-model FPS. On the performance preset, bounded asynchronous MJPG
+recording processed 6.562994 FPS and wrote 6.522417 FPS, within 0.243% of the
+matched no-recording control; synchronous recording was rejected at 6.077503
+FPS. Direct V4L2 MMAP telemetry measured approximately 30.002 dequeued buffers
+per second with no sequence gaps in each tested MJPG mode. These kernel
+timestamps are monotonic SOE timestamps, but no complete sensor-to-display
+timestamp chain exists, so the reported call latency is not sensor-to-screen
+latency.
 
 ## What is the model resolution?
 
@@ -33,13 +37,14 @@ threshold matter. See `MODEL_RESOLUTION_AND_OBJECT_SIZE_EN.md` and the TSVs.
 Yes. On the BPI-F3:
 
 ```bash
-/data/y26-k1x-int8-executor/0.9.1/scripts/run_camera_demo.sh
+/data/y26-k1x-int8-executor/0.9.2/scripts/run_camera_demo.sh
 ```
 
-The selected full-camera launcher intentionally does not apply O2: on this
-board, O2 constrained the capture thread and reduced full-pipeline throughput.
-`run_camera_demo_fast.sh` remains an explicit O2 diagnostic for the dedicated
-pure-executor policy. Pass `--headless --save-frame /data/Screenshots/yolo26.png`
+The selected camera launchers intentionally do not apply O2. The quality
+launcher uses 1280x720 MJPG; `run_camera_demo_fast.sh` uses the measured
+640x480 MJPG performance preset. O2 is available only through the explicitly
+named `run_camera_demo_o2_diagnostic.sh`. Pass
+`--headless --save-frame /data/Screenshots/yolo26.png`
 for a non-GUI run. The release includes
 real board screenshots in `outputs/screenshots/` and an annotated recording in
 `outputs/demo-video/`. GUI keys are `q`/Esc, `s`, `r`, and Space.
@@ -54,7 +59,7 @@ fab4a72cf524ce0a205ceca0384144f2eee7bc79dff3f4db8b7208614e8407be
 ```
 
 Use `pkg-config --cflags --libs y26-k1x-int8-executor` or
-`find_package(y26K1xExecutor 0.9.1 CONFIG REQUIRED)` and link
+`find_package(y26K1xExecutor 0.9.2 CONFIG REQUIRED)` and link
 `y26::executor_shared` or `y26::executor_static`. Initialize options, create one
 handle, prepare once with the expected manifest, run serialized frames, and
 destroy after all calls finish. Use either float32 NCHW RGB `[0,1]` or an

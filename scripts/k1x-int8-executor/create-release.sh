@@ -2,7 +2,7 @@
 set -euo pipefail
 
 usage() {
-  echo "usage: $0 REPO INSTALL_ROOT PACKAGE FIXTURE OUTPUT SOURCE_COMMIT"
+  echo "usage: $0 REPO INSTALL_ROOT PACKAGE FIXTURE SOURCE_ONNX SOURCE_COMMIT"
 }
 if [[ ${1:-} == --help || ${1:-} == -h ]]; then usage; exit 0; fi
 if (( $# != 6 )); then usage >&2; exit 2; fi
@@ -11,134 +11,176 @@ repo=$(cd "$1" && pwd)
 install_root=$(cd "$2" && pwd)
 package=$(cd "$3" && pwd)
 fixture=$(realpath "$4")
-output=$5
+source_model=$(realpath "$5")
 source_commit=$6
-readonly expected_manifest=fab4a72cf524ce0a205ceca0384144f2eee7bc79dff3f4db8b7208614e8407be
-readonly prediction_sha=cda5c8c7a46d61d9c90f6292001eea190cb8f6617efe647a33dc6134dd57ccda
-readonly release_parent=/data/releases/banana-yolo26-k1x-int8-executor
-readonly expected_output=$release_parent/0.9.1-stage58-camera-handoff
-readonly archive_basename=banana-yolo26-k1x-int8-executor-0.9.1-riscv64
-opencv_prefix=${Y26_OPENCV_PREFIX:-/data/opencv/install-k1x-gtk3}
-report_root=${Y26_STAGE58_REPORT_ROOT:-}
-media_root=${Y26_STAGE58_MEDIA_ROOT:-/data/Screenshots/yolo26-stage58/release-curated}
+# shellcheck source=../../config/release.env
+source "$repo/config/release.env"
 
-[[ $output == "$expected_output" ]] || {
-  echo "refusing unexpected Stage58 release path: $output" >&2
-  exit 2
-}
+readonly runtime_root=$Y26_RUNTIME_RELEASE_ROOT
+readonly internal_root=$Y26_INTERNAL_RD_RELEASE_ROOT
+readonly release_parent=$(dirname "$runtime_root")
+readonly runtime_archive_base=$Y26_RUNTIME_ARCHIVE_BASE
+readonly internal_archive_base=$Y26_INTERNAL_RD_ARCHIVE_BASE
+opencv_prefix=${Y26_OPENCV_PREFIX:-/data/opencv/install-k1x-gtk3}
+report_root=${Y26_STAGE59_REPORT_ROOT:-}
+media_root=${Y26_STAGE59_MEDIA_ROOT:-}
+
 [[ $source_commit =~ ^[0-9a-f]{40}$ ]] || { echo "invalid source commit" >&2; exit 2; }
 test -f "$fixture"
-test -f "$package/asset_hashes.tsv"
-test -x "$install_root/bin/yolo26_k1x_int8"
-test -x "$install_root/bin/y26_k1x_healthcheck"
-test -x "$install_root/bin/y26_k1x_demo"
-install_so=$install_root/lib/liby26_k1x_int8_executor.so.0.9.1
-test -f "$install_so"
-grep -aFq '0.9.1/K1X_INT8_V1_YOLO26N_640_FULL_GRAPH_001/abi1/ime1/rvv1/frozen1' \
-  "$install_so" || {
-  echo "refusing non-IME/RVV/frozen-profile release library" >&2
-  exit 1
+test -f "$source_model"
+[[ $(basename "$source_model") == "$Y26_SOURCE_MODEL_FILENAME" ]] || {
+  echo "unexpected source-model filename" >&2; exit 1;
+}
+[[ $(sha256sum "$source_model" | awk '{print $1}') == "$Y26_SOURCE_MODEL_SHA256" ]] || {
+  echo "source-model SHA-256 mismatch" >&2; exit 1;
 }
 manifest_sha=$(sha256sum "$package/asset_hashes.tsv" | awk '{print $1}')
-[[ $manifest_sha == "$expected_manifest" ]] || {
-  echo "unexpected package manifest: $manifest_sha" >&2
-  exit 1
+[[ $manifest_sha == "$Y26_EXPECTED_MANIFEST_SHA256" ]] || {
+  echo "package-manifest SHA-256 mismatch" >&2; exit 1;
 }
 
-rm -rf --one-file-system "$output"
-mkdir -p "$output"/{bin,lib/cmake,lib/pkgconfig,include,package,model,labels,fixtures,config,scripts,examples,docs,licenses,sbom,opencv/lib,outputs/{correctness,accuracy,performance,camera,screenshots,demo-video}}
-
-install -m 0755 "$install_root/bin/yolo26_k1x_int8" "$output/bin/"
-install -m 0755 "$install_root/bin/y26_k1x_healthcheck" "$output/bin/"
-install -m 0755 "$install_root/bin/y26_k1x_demo" "$output/bin/"
-install -m 0644 "$install_root/lib/liby26_k1x_int8_executor.a" "$output/lib/"
-for name in liby26_k1x_int8_executor.so liby26_k1x_int8_executor.so.1 liby26_k1x_int8_executor.so.0.9.1; do
-  install -m 0644 -T "$install_root/lib/liby26_k1x_int8_executor.so.0.9.1" "$output/lib/$name"
+install_so=$install_root/lib/liby26_k1x_int8_executor.so.$Y26_RELEASE_VERSION
+for path in \
+  "$install_so" \
+  "$install_root/lib/liby26_k1x_int8_executor.a" \
+  "$install_root/bin/yolo26_k1x_int8" \
+  "$install_root/bin/y26_k1x_healthcheck" \
+  "$install_root/bin/y26_k1x_demo" \
+  "$install_root/bin/y26_v4l2_probe"; do
+  test -f "$path"
 done
-cp -aL "$install_root/lib/cmake/." "$output/lib/cmake/"
-cp -aL "$install_root/lib/pkgconfig/." "$output/lib/pkgconfig/"
-install -m 0644 "$install_root/include/y26_k1x_executor.h" "$output/include/"
-cp -a "$package/." "$output/package/"
-install -m 0644 "$repo/assets/coco80.txt" "$output/labels/"
-install -m 0644 "$fixture" "$output/fixtures/bus_640_nchw_f32.bin"
-install -m 0644 "$repo/config/k1x-int8-executor-safe.conf" "$output/config/"
-cp -aL "$install_root/share/y26-k1x-int8-executor/examples/." "$output/examples/"
+capability_marker="$Y26_RELEASE_VERSION/$Y26_FULL_GRAPH_PROFILE_ID/abi$Y26_ABI_VERSION/ime1/rvv1/frozen1"
+grep -aFq "$capability_marker" \
+  "$install_so" || { echo "refusing non-official K1X release library" >&2; exit 1; }
+
+rm -rf --one-file-system "$runtime_root" "$internal_root"
+mkdir -p "$runtime_root"/{bin,lib/cmake,lib/pkgconfig,include,package,model,labels,fixtures,config,scripts,examples,docs,licenses,sbom,opencv/lib,outputs/{correctness,accuracy,performance,camera}}
+
+for binary in yolo26_k1x_int8 y26_k1x_healthcheck y26_k1x_demo y26_v4l2_probe; do
+  install -m 0755 "$install_root/bin/$binary" "$runtime_root/bin/"
+done
+install -m 0644 "$install_root/lib/liby26_k1x_int8_executor.a" "$runtime_root/lib/"
+for name in liby26_k1x_int8_executor.so \
+            liby26_k1x_int8_executor.so.$Y26_SOVERSION \
+            liby26_k1x_int8_executor.so.$Y26_RELEASE_VERSION; do
+  install -m 0644 -T "$install_so" "$runtime_root/lib/$name"
+done
+cp -aL "$install_root/lib/cmake/." "$runtime_root/lib/cmake/"
+cp -aL "$install_root/lib/pkgconfig/." "$runtime_root/lib/pkgconfig/"
+install -m 0644 "$install_root/include/y26_k1x_executor.h" "$runtime_root/include/"
+cp -a "$package/." "$runtime_root/package/"
+install -m 0644 "$repo/assets/coco80.txt" "$runtime_root/labels/"
+install -m 0644 "$fixture" "$runtime_root/fixtures/bus_640_nchw_f32.bin"
+install -m 0644 "$repo/config/release.env" "$runtime_root/config/"
+install -m 0644 "$repo/config/k1x-int8-executor-safe.conf" "$runtime_root/config/"
+cp -aL "$install_root/share/y26-k1x-int8-executor/examples/." "$runtime_root/examples/"
 
 for module in core imgproc imgcodecs highgui videoio; do
-  source="$opencv_prefix/lib/libopencv_${module}.so.4.13.0"
-  test -f "$source"
-  install -m 0644 -T "$source" "$output/opencv/lib/libopencv_${module}.so.413"
+  opencv_so=$opencv_prefix/lib/libopencv_${module}.so.4.13.0
+  test -f "$opencv_so"
+  install -m 0644 -T "$opencv_so" "$runtime_root/opencv/lib/libopencv_${module}.so.413"
 done
-install -m 0644 "$repo/docs/K1X_INT8_EXECUTOR_NOTICES.md" "$output/licenses/THIRD_PARTY_NOTICES.md"
-install -m 0644 /data/opencv/LICENSE "$output/licenses/OPENCV_LICENSE.txt"
+install -m 0644 "$repo/INTERNAL_USE_NOTICE.md" "$runtime_root/licenses/PROJECT_INTERNAL_USE_NOTICE.md"
+install -m 0644 "$repo/docs/K1X_INT8_EXECUTOR_NOTICES.md" "$runtime_root/licenses/THIRD_PARTY_NOTICES.md"
+install -m 0644 /data/opencv/LICENSE "$runtime_root/licenses/OPENCV_LICENSE.txt"
+install -m 0644 \
+  "$repo/.deps/venvs/ultralytics_latest/lib/python3.12/site-packages/ultralytics-8.4.82.dist-info/licenses/LICENSE" \
+  "$runtime_root/licenses/ULTRALYTICS_AGPL-3.0.txt"
 
-docs=(
-  README_K1X_INT8_EXECUTOR.md HANDOFF_EN.md HANDOFF_RU.md QUICKSTART_RU.md
-  INTEGRATION_GUIDE.md RELEASE_PROFILES.md SYSTEM_PROFILE_O2.md
-  PERFORMANCE_AND_ACCURACY.md TROUBLESHOOTING_HANDOFF.md CURRENT_GRAPH_FREEZE.md
-  K1X_INT8_EXECUTOR_ARCHITECTURE.md K1X_INT8_MODEL_PACKAGE_FORMAT.md
-  K1X_INT8_EXECUTOR_LIMITATIONS.md K1X_INT8_EXECUTOR_NOTICES.md
-  K1X_INT8_EXECUTOR_HANDOFF_CHECKLIST.md BUILDING_K1X_INT8_EXECUTOR.md
-  COLLEAGUE_FAQ_RU.md COLLEAGUE_FAQ_EN.md CAMERA_DEMO_RU.md CAMERA_DEMO_EN.md
-  MODEL_RESOLUTION_AND_OBJECT_SIZE_RU.md MODEL_RESOLUTION_AND_OBJECT_SIZE_EN.md
-  DISTRIBUTION_ARCHIVE_RU.md DISTRIBUTION_ARCHIVE_EN.md RELEASE_NOTES_0.9.1.md
-)
-for file in "${docs[@]}"; do install -m 0644 "$repo/docs/$file" "$output/docs/"; done
-for file in MODEL_CARD_RU.md MODEL_CARD_EN.md MODEL_SOURCE_NOT_REDISTRIBUTED.md; do
-  install -m 0644 "$repo/model/$file" "$output/model/"
+find "$repo/docs" -maxdepth 1 -type f -name '*.md' -print0 | while IFS= read -r -d '' file; do
+  install -m 0644 "$file" "$runtime_root/docs/"
+done
+for file in MODEL_CARD_RU.md MODEL_CARD_EN.md MODEL_SOURCE_NOT_REDISTRIBUTED.md \
+            MODEL_PROVENANCE.md MODEL_LICENSE_RECORD.md SOURCE_MODEL_SHA256; do
+  install -m 0644 "$repo/model/$file" "$runtime_root/model/"
 done
 
-executor_scripts=(build.sh package.sh deploy.sh smoke-test.sh benchmark.sh uninstall.sh create-release.sh o2-system-profile.sh)
-for file in "${executor_scripts[@]}"; do
-  install -m 0755 "$repo/scripts/k1x-int8-executor/$file" "$output/scripts/"
+find "$repo/scripts/k1x-int8-executor" -maxdepth 1 -type f -name '*.sh' -print0 | \
+  while IFS= read -r -d '' file; do install -m 0755 "$file" "$runtime_root/scripts/"; done
+for file in run_image_demo.sh run_camera_demo.sh run_camera_demo_fast.sh \
+            run_camera_demo_o2_diagnostic.sh bench_forward_only.sh bench_full_demo.sh \
+            detect_camera_formats.sh capture_camera_affinity.sh y26_executor_common.sh \
+            verify-system-dependencies.sh; do
+  install -m 0755 "$repo/scripts/$file" "$runtime_root/scripts/"
 done
-demo_scripts=(run_image_demo.sh run_camera_demo.sh run_camera_demo_fast.sh bench_forward_only.sh bench_full_demo.sh detect_camera_formats.sh capture_camera_affinity.sh y26_executor_common.sh)
-for file in "${demo_scripts[@]}"; do install -m 0755 "$repo/scripts/$file" "$output/scripts/"; done
 
-cat >"$output/outputs/correctness/known_fixture.tsv" <<'EOF'
-fixture	input	output_schema	expected_output_hash	status
-bus	fixtures/bus_640_nchw_f32.bin	1x300x6	0xd43f5e018b415631	exact
-EOF
-cat >"$output/outputs/accuracy/full_coco_summary.tsv" <<'EOF'
-surface	images	map50_95	map50	ap_small	ap_medium	ap_large	prediction_sha256
-COCO_val2017	5000	0.3707408944391919	0.5258465300872381	0.18397294626227842	0.4142627352606523	0.5440433811804918	cda5c8c7a46d61d9c90f6292001eea190cb8f6617efe647a33dc6134dd57ccda
-EOF
-
+printf 'fixture\tinput\toutput_schema\texpected_output_hash\tstatus\n' \
+  >"$runtime_root/outputs/correctness/known_fixture.tsv"
+printf 'bus\tfixtures/bus_640_nchw_f32.bin\t1x300x6\t%s\texact\n' \
+  "$Y26_EXPECTED_OUTPUT_HASH" >>"$runtime_root/outputs/correctness/known_fixture.tsv"
+printf 'surface\timages\tmap50_95\tmap50\tap_small\tap_medium\tap_large\tprediction_sha256\n' \
+  >"$runtime_root/outputs/accuracy/full_coco_summary.tsv"
+printf 'COCO_val2017\t5000\t0.3707408944391919\t0.5258465300872381\t0.18397294626227842\t0.4142627352606523\t0.5440433811804918\t%s\n' \
+  "$Y26_EXPECTED_PREDICTION_SHA256" >>"$runtime_root/outputs/accuracy/full_coco_summary.tsv"
 if [[ -n $report_root && -d $report_root ]]; then
-  for file in final_correctness_matrix.tsv final_coco_report.md final_coco_prediction_hashes.tsv; do
-    [[ -f $report_root/$file ]] && install -m 0644 "$report_root/$file" "$output/outputs/correctness/"
-  done
-  for file in final_executor_performance.tsv final_camera_performance.tsv final_pipeline_performance.tsv camera_full_fps_report_en.md camera_full_fps_report_ru.md; do
-    [[ -f $report_root/$file ]] && install -m 0644 "$report_root/$file" "$output/outputs/performance/"
-  done
+  find "$report_root" -maxdepth 1 -type f \( -name 'final_*.tsv' -o -name '*camera*.md' \) -print0 | \
+    while IFS= read -r -d '' file; do install -m 0644 "$file" "$runtime_root/outputs/performance/"; done
 fi
-required_screenshots=(
-  camera-annotated-1.png camera-annotated-2.png camera-annotated-3.png
-  camera-desktop.png camera-headless.png
-)
-for file in "${required_screenshots[@]}"; do
-  test -f "$media_root/$file"
-  install -m 0644 "$media_root/$file" "$output/outputs/screenshots/"
-done
-test -f "$media_root/camera-demo-30s.avi"
-install -m 0644 "$media_root/camera-demo-30s.avi" "$output/outputs/demo-video/"
+if [[ -n $media_root && -d $media_root ]]; then
+  cp -aL "$media_root/." "$runtime_root/outputs/camera/"
+fi
 
-python3 "$repo/custom_int8_engine/tools/stage58_release_bundle.py" \
-  --root "$output" --source-commit "$source_commit" \
-  --package-manifest-sha256 "$manifest_sha" --prediction-sha256 "$prediction_sha" \
-  --known-output-hash 0xd43f5e018b415631
-(cd "$output" && sha256sum -c SHA256SUMS)
+install -m 0644 "$repo/docs/SUPPORTED_PLATFORM.md" "$runtime_root/SUPPORTED_PLATFORM.md"
+needed_tmp=$(mktemp)
+bundled_tmp=$(mktemp)
+trap 'rm -f "$needed_tmp" "$bundled_tmp"' EXIT
+find "$runtime_root/lib" "$runtime_root/opencv/lib" -maxdepth 2 -type f -printf '%f\n' | sort -u >"$bundled_tmp"
+find "$runtime_root/bin" "$runtime_root/lib" "$runtime_root/opencv/lib" -maxdepth 2 -type f -print0 | \
+  while IFS= read -r -d '' elf; do
+    readelf -d "$elf" 2>/dev/null | sed -n 's/.*Shared library: \[\([^]]*\)\].*/\1/p' || true
+  done | sort -u >"$needed_tmp"
+{
+  printf 'soname\trole\n'
+  while IFS= read -r soname; do
+    grep -Fx "$soname" "$bundled_tmp" >/dev/null || printf '%s\tsupported-board-system\n' "$soname"
+  done <"$needed_tmp"
+} >"$runtime_root/required-system-sonames.tsv"
+install -m 0755 "$repo/scripts/verify-system-dependencies.sh" \
+  "$runtime_root/scripts/verify-system-dependencies.sh"
+
+python3 "$repo/custom_int8_engine/tools/stage59_release_bundle.py" \
+  --root "$runtime_root" --bundle-kind runtime --source-commit "$source_commit" \
+  --release-version "$Y26_RELEASE_VERSION" \
+  --model-sha256 "$Y26_SOURCE_MODEL_SHA256" \
+  --integer-contract-id "$Y26_INTEGER_CONTRACT_ID" \
+  --full-graph-profile-id "$Y26_FULL_GRAPH_PROFILE_ID" \
+  --package-manifest-sha256 "$manifest_sha" \
+  --prediction-sha256 "$Y26_EXPECTED_PREDICTION_SHA256" \
+  --known-output-hash "$Y26_EXPECTED_OUTPUT_HASH"
+(cd "$runtime_root" && sha256sum -c SHA256SUMS)
+
+cp -a "$runtime_root" "$internal_root"
+rm -f "$internal_root/model/MODEL_SOURCE_NOT_REDISTRIBUTED.md"
+install -m 0644 "$source_model" "$internal_root/model/$Y26_SOURCE_MODEL_FILENAME"
+install -m 0644 "$repo/model/INTERNAL_R&D_ONLY.md" "$internal_root/INTERNAL_R&D_ONLY.md"
+install -m 0644 "$repo/model/INTERNAL_R&D_ONLY.md" "$internal_root/model/"
+python3 "$repo/custom_int8_engine/tools/stage59_release_bundle.py" \
+  --root "$internal_root" --bundle-kind internal-rd --source-commit "$source_commit" \
+  --release-version "$Y26_RELEASE_VERSION" \
+  --model-sha256 "$Y26_SOURCE_MODEL_SHA256" \
+  --integer-contract-id "$Y26_INTEGER_CONTRACT_ID" \
+  --full-graph-profile-id "$Y26_FULL_GRAPH_PROFILE_ID" \
+  --package-manifest-sha256 "$manifest_sha" \
+  --prediction-sha256 "$Y26_EXPECTED_PREDICTION_SHA256" \
+  --known-output-hash "$Y26_EXPECTED_OUTPUT_HASH"
+(cd "$internal_root" && sha256sum -c SHA256SUMS)
 
 source_date_epoch=$(git -C "$repo" show -s --format=%ct "$source_commit")
-archive_tmp=$(mktemp -d "$release_parent/.stage58-archive.XXXXXX")
-trap 'rm -rf --one-file-system "$archive_tmp"' EXIT
-archive_root="$archive_tmp/$archive_basename"
-cp -a "$output" "$archive_root"
-find "$archive_root" -exec touch -h -d "@$source_date_epoch" {} +
-tar_path="$release_parent/$archive_basename.tar.gz"
-zip_path="$release_parent/$archive_basename.zip"
-rm -f "$tar_path" "$zip_path"
-tar --sort=name --mtime="@$source_date_epoch" --owner=0 --group=0 --numeric-owner \
-  -C "$archive_tmp" -cf - "$archive_basename" | gzip -n >"$tar_path"
-(cd "$archive_tmp" && find "$archive_basename" -print | LC_ALL=C sort | zip -X -q "$zip_path" -@)
-sha256sum "$tar_path" "$zip_path"
+make_archives() {
+  local root=$1 base=$2 temp archive_root tar_path zip_path
+  temp=$(mktemp -d "$release_parent/.stage59-archive.XXXXXX")
+  archive_root=$temp/$base
+  cp -a "$root" "$archive_root"
+  find "$archive_root" -exec touch -h -d "@$source_date_epoch" {} +
+  tar_path=$release_parent/$base.tar.gz
+  zip_path=$release_parent/$base.zip
+  rm -f "$tar_path" "$zip_path"
+  tar --sort=name --mtime="@$source_date_epoch" --owner=0 --group=0 --numeric-owner \
+    -C "$temp" -cf - "$base" | gzip -n >"$tar_path"
+  (cd "$temp" && find "$base" -print | LC_ALL=C sort | zip -X -q "$zip_path" -@)
+  rm -rf --one-file-system "$temp"
+  sha256sum "$tar_path" "$zip_path"
+}
+
+make_archives "$runtime_root" "$runtime_archive_base"
+make_archives "$internal_root" "$internal_archive_base"

@@ -2,21 +2,23 @@
 set -euo pipefail
 
 Y26_REPO_ROOT=${Y26_REPO_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}
+release_env=$Y26_REPO_ROOT/config/release.env
+[[ -f $release_env ]] || { echo "missing release identity: $release_env" >&2; return 1 2>/dev/null || exit 1; }
+# shellcheck source=../config/release.env
+source "$release_env"
 if [[ -x $Y26_REPO_ROOT/bin/y26_k1x_demo && -d $Y26_REPO_ROOT/package ]]; then
   y26_default_release_root=$Y26_REPO_ROOT
 else
-  y26_default_release_root=/data/releases/banana-yolo26-k1x-int8-executor/0.9.1-stage58-camera-handoff
+  y26_default_release_root=$Y26_RUNTIME_RELEASE_ROOT
 fi
 Y26_RELEASE_ROOT=${Y26_RELEASE_ROOT:-$y26_default_release_root}
 Y26_BOARD_TARGET=${Y26_BOARD_TARGET:-svt@banana}
 if [[ $(uname -m) == riscv64 && -d /data && -x $Y26_RELEASE_ROOT/bin/y26_k1x_demo ]]; then
   y26_default_board_root=$Y26_RELEASE_ROOT
 else
-  y26_default_board_root=/data/y26-k1x-int8-executor/0.9.1
+  y26_default_board_root=$Y26_BOARD_INSTALL_ROOT
 fi
 Y26_BOARD_RELEASE_ROOT=${Y26_BOARD_RELEASE_ROOT:-$y26_default_board_root}
-Y26_EXPECTED_MANIFEST_SHA256=${Y26_EXPECTED_MANIFEST_SHA256:-fab4a72cf524ce0a205ceca0384144f2eee7bc79dff3f4db8b7208614e8407be}
-
 y26_is_board() {
   [[ $(uname -m) == riscv64 && -d /data ]]
 }

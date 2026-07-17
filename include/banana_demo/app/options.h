@@ -25,9 +25,12 @@ struct AppOptions {
     int warmup_frames = 30;
     int opencv_threads = 1;
     int reconnect_attempts = 3;
+    int capture_cpu = -1;
+    bool reuse_buffers = true;
     std::string save_frame;
     std::string screenshot_dir = "/data/Screenshots";
     std::string record_path;
+    std::string record_mode = "async";
     std::string metrics_tsv;
     std::string detections_tsv;
     std::string log_file;

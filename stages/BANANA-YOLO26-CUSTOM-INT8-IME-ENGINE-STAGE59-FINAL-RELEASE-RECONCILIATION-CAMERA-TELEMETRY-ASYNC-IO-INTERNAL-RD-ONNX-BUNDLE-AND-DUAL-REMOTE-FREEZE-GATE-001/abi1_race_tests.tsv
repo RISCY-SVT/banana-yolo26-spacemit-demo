@@ -1,0 +1,10 @@
+test	status	observed_contract
+run_vs_tensor_id	pass	-1 sentinel and busy last_error while run owns handle
+run_vs_tensor_bytes	pass	0 sentinel and busy last_error while run owns handle
+run_vs_get_output	pass	Y26_STATUS_BUSY
+run_vs_copy_boundary	pass	Y26_STATUS_BUSY
+metadata_after_run	pass	original tensor id and byte count restored
+output_after_run	pass	Y26_STATUS_OK
+boundary_after_run	pass	Y26_STATUS_OK
+parallel_independent_handles	pass	two prepared handles ran concurrently and both returned 0xd43f5e018b415631
+destroy_concurrently	forbidden-by-contract	not executed

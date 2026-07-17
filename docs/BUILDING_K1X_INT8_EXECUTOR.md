@@ -20,17 +20,19 @@ new exactness, disassembly, and full-model timing gate.
 
 ## Cross Build
 
-Use the source-controlled Stage58 build wrapper. It configures the frozen
+Use the source-controlled Stage59 build wrapper. It configures the frozen
 executor, camera demo, static library, and shared library in one build:
 
 ```bash
 scripts/build_cross.sh \
-  --build-root /data/build/banana-yolo26-k1x-demo-0.9.1 \
-  --install-root /data/install/banana-yolo26-k1x-demo-0.9.1
+  --build-root /data/build/banana-yolo26-k1x-demo-0.9.2 \
+  --install-root /data/install/banana-yolo26-k1x-demo-0.9.2
 ```
 
-The official configure sets `Y26_K1X_ENABLE_IME=ON` and verifies the embedded
-IME/RVV/frozen-profile capability marker. Installed artifacts are
+The official configure sets `Y26_DEMO_OFFICIAL_K1X_RELEASE=ON` and
+`Y26_K1X_ENABLE_IME=ON`. Configuration fails closed on a non-RISC-V target or
+without IME, and the wrapper verifies the embedded IME/RVV/frozen-profile
+capability marker. Installed artifacts are
 `liby26_k1x_int8_executor.a` and `liby26_k1x_int8_executor.so`.
 The install also contains `yolo26_k1x_int8` and the C11 ABI lifecycle probe
 `y26_k1x_healthcheck`, plus `y26_k1x_demo`.
@@ -44,12 +46,13 @@ inventories before publishing a handoff bundle.
 ## Host Tests
 
 ```bash
-cmake -S custom_int8_engine -B .deps/custom_int8_engine/build-host-release \
+CC=/usr/bin/gcc CXX=/usr/bin/g++ cmake -S custom_int8_engine \
+  -B .deps/custom_int8_engine/build-host-release \
   -GNinja -DCMAKE_CXX_COMPILER=/usr/bin/g++ \
   -DCMAKE_BUILD_TYPE=Release \
   -DBUILD_TESTING=ON \
   -DY26_K1X_ENABLE_IME=OFF \
-  -DY26_K1X_ENABLE_TESTS=ON \
+  -DY26_K1X_OFFICIAL_RELEASE=OFF \
   -DY26_K1X_BUILD_RESEARCH=ON
 cmake --build .deps/custom_int8_engine/build-host-release -j8
 ctest --test-dir .deps/custom_int8_engine/build-host-release --output-on-failure
