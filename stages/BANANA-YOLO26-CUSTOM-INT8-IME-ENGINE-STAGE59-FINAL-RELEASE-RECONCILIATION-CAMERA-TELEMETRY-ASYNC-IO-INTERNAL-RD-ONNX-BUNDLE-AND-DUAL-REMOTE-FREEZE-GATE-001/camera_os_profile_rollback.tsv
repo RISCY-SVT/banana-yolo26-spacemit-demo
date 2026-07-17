@@ -1,0 +1,9 @@
+case	operation	command_status	candidate_effective_cpu	restored_requested_affinity	restored_effective_affinity	stale_state	output_integrity	status
+direct_probe	write_irq_89_cpu5_then_restore	0	5	0-7	0	no	not-applicable	pass
+matched_abba	control_then_candidate_with_EXIT_trap	0	5	0-7	0	no	metrics_complete	pass
+wrapper_normal	run_success	0	5	0-7	0	no	command_complete	pass
+wrapper_failure	run_child_exit_7	7	5	0-7	0	no	exit_status_preserved	pass
+wrapper_SIGINT	camera_async_recording_process_group	0	5	0-7	0	no	metrics_96_lines_video_readable	pass
+wrapper_SIGTERM	camera_async_recording_process_group	143	5	0-7	0	no	metrics_45_lines_video_readable	pass
+wrapper_SIGHUP	camera_async_recording_process_group	129	5	0-7	0	no	metrics_45_lines_video_readable	pass
+artificial_wrapper_only_SIGINT	background_shell_inherited_SIGINT_ignore_then_SIGKILL	137	5	0-7	0	recovered-by-restore-stale	not-public-process-group_semantics	diagnostic-recovered

@@ -1,0 +1,5 @@
+irq	action	requested_affinity_before	effective_affinity_before	movable	candidate_cpu	requested_affinity_candidate	effective_affinity_candidate	requested_affinity_restored	effective_affinity_restored	classification
+89	xhci-hcd:usb2	0-7	0	yes	5	5	5	0-7	0	selected-camera-xhci
+88	dwc3-usb-wakeup	0-7	0	not-tested				0-7	0	wake-only-no-observed-traffic
+90	ehci_hcd:usb1	0-7	0	not-tested				0-7	0	unrelated-controller
+91	usb-wakeup	0-7	0	not-tested				0-7	0	wake-only-no-observed-traffic

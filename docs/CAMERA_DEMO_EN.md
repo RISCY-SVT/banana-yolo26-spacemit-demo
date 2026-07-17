@@ -21,9 +21,11 @@ $RELEASE/bin/y26_k1x_demo \
 
 From the build host, `scripts/run_camera_demo.sh` runs the quality-wide preset
 over SSH. `scripts/run_camera_demo_fast.sh` selects the matched Stage59
-performance preset without O2. The fast script does not select a different
-model or model-input resolution. The old O2 behavior is available only as the
-explicit `scripts/run_camera_demo_o2_diagnostic.sh` diagnostic.
+performance preset without O2 and temporarily moves the reviewed camera xHCI
+IRQ plus capture thread to CPU5. Its narrow profile restores IRQ affinity on
+normal exit, failure, INT, TERM, and HUP. The fast script does not select a
+different model or model-input resolution. The old O2 behavior is available
+only as the explicit `scripts/run_camera_demo_o2_diagnostic.sh` diagnostic.
 
 On the Stage59 board/camera combination, the selected full-camera profile is
 the plain `low-latency` launcher without O2. Applying O2 to the whole demo

@@ -14,9 +14,11 @@ run_board() {
     --expected-manifest-sha256 "$Y26_EXPECTED_MANIFEST_SHA256" --source camera:auto
     --camera-width "${Y26_CAMERA_WIDTH:-640}" --camera-height "${Y26_CAMERA_HEIGHT:-480}"
     --camera-fps "${Y26_CAMERA_FPS:-60}" --camera-fourcc "${Y26_CAMERA_FOURCC:-MJPG}"
-    --profile low-latency --flow latest-frame --record-mode async "$@")
-  y26_print_command "${args[@]}"
-  "${args[@]}"
+    --profile low-latency --flow latest-frame --record-mode async
+    --capture-cpu "${Y26_CAMERA_CAPTURE_CPU:-5}" "$@")
+  local camera_profile="$root/scripts/camera-system-profile.sh"
+  y26_print_command "$camera_profile" run -- "${args[@]}"
+  "$camera_profile" run -- "${args[@]}"
 }
 if y26_is_board; then
   run_board "$@"

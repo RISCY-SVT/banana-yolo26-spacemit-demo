@@ -21,7 +21,8 @@ weights, graph structure, or model resolution.
 
 - Public quality-wide and matched performance presets are distinct.
 - `run_camera_demo_fast.sh` no longer silently selects the slower O2 camera
-  diagnostic.
+  diagnostic; it uses the measured 640x480 preset and a reversible, validated
+  camera-only CPU5/xHCI IRQ profile.
 - Recording defaults to a bounded asynchronous queue with one writer owner.
 - Resize, letterbox, RGB, and annotated-frame buffers are reusable.
 - Requested/backend-reported FPS, raw V4L2 buffer cadence, OpenCV decoded FPS,

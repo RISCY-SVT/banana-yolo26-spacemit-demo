@@ -42,8 +42,9 @@ Yes. On the BPI-F3:
 
 The selected camera launchers intentionally do not apply O2. The quality
 launcher uses 1280x720 MJPG; `run_camera_demo_fast.sh` uses the measured
-640x480 MJPG performance preset. O2 is available only through the explicitly
-named `run_camera_demo_o2_diagnostic.sh`. Pass
+640x480 MJPG performance preset and a reversible camera-only CPU5/xHCI IRQ
+profile. O2 is available only through the explicitly named
+`run_camera_demo_o2_diagnostic.sh`. Pass
 `--headless --save-frame /data/Screenshots/yolo26.png`
 for a non-GUI run. The release includes
 real board screenshots in `outputs/screenshots/` and an annotated recording in

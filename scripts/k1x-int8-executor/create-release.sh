@@ -100,7 +100,7 @@ find "$repo/scripts/k1x-int8-executor" -maxdepth 1 -type f -name '*.sh' -print0 
 for file in run_image_demo.sh run_camera_demo.sh run_camera_demo_fast.sh \
             run_camera_demo_o2_diagnostic.sh bench_forward_only.sh bench_full_demo.sh \
             detect_camera_formats.sh capture_camera_affinity.sh y26_executor_common.sh \
-            verify-system-dependencies.sh; do
+            verify-system-dependencies.sh camera-system-profile.sh; do
   install -m 0755 "$repo/scripts/$file" "$runtime_root/scripts/"
 done
 
