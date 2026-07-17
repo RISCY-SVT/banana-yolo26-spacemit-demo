@@ -1,0 +1,2 @@
+surface	runs	mean_us	median_us	p90_us	p95_us	p99_us	p99_9_us	max_us	process_cpu_mean_us	voluntary_cs_mean	involuntary_cs_mean	temp_min_mC	temp_max_mC	frequency_min_khz	frequency_max_khz	output_hash	affinity_failures	cpu4_7_ime_count	benchmark_status	wrapper_status
+low_latency_dedicated_o2	13500	133381.666593	133355.000000	133765.100000	133912.000000	134478.050000	135151.521000	135853.000000	659037.541852	0.235852	0.760667	45000	61000	1600000	1600000	0xd43f5e018b415631	0	0	pass	post-benchmark duplicate fixture copy failed; all primary evidence preserved and O2 restored

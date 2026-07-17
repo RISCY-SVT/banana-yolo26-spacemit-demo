@@ -54,7 +54,7 @@ grep -aFq "$capability_marker" \
   "$install_so" || { echo "refusing non-official K1X release library" >&2; exit 1; }
 
 rm -rf --one-file-system "$runtime_root" "$internal_root"
-mkdir -p "$runtime_root"/{bin,lib/cmake,lib/pkgconfig,include,package,model,labels,fixtures,config,scripts,examples,docs,licenses,sbom,opencv/lib,outputs/{correctness,accuracy,performance,camera}}
+mkdir -p "$runtime_root"/{bin,lib/cmake,lib/pkgconfig,include,package,model,labels,fixtures,config,scripts,examples,docs,licenses,sbom,opencv/lib,outputs/{correctness,accuracy,performance,camera,screenshots,demo-video}}
 
 for binary in yolo26_k1x_int8 y26_k1x_healthcheck y26_k1x_demo y26_v4l2_probe; do
   install -m 0755 "$install_root/bin/$binary" "$runtime_root/bin/"
@@ -117,7 +117,11 @@ if [[ -n $report_root && -d $report_root ]]; then
     while IFS= read -r -d '' file; do install -m 0644 "$file" "$runtime_root/outputs/performance/"; done
 fi
 if [[ -n $media_root && -d $media_root ]]; then
-  cp -aL "$media_root/." "$runtime_root/outputs/camera/"
+  for media_kind in camera screenshots demo-video; do
+    if [[ -d $media_root/$media_kind ]]; then
+      cp -aL "$media_root/$media_kind/." "$runtime_root/outputs/$media_kind/"
+    fi
+  done
 fi
 
 install -m 0644 "$repo/docs/SUPPORTED_PLATFORM.md" "$runtime_root/SUPPORTED_PLATFORM.md"

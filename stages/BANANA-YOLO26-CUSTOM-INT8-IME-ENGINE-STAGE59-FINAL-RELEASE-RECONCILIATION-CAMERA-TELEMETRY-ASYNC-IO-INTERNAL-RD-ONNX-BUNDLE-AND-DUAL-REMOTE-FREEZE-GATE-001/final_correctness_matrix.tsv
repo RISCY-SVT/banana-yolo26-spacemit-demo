@@ -1,0 +1,21 @@
+gate	case	files_or_samples	output_hash	status	evidence
+boundary	F0	216	fixture-specific	exact	optimized versus scalar byte comparison
+boundary	F1	216	fixture-specific	exact	optimized versus scalar byte comparison
+boundary	F2	216	fixture-specific	exact	optimized versus scalar byte comparison
+boundary	F3	216	fixture-specific	exact	optimized versus scalar byte comparison
+boundary	F4	216	fixture-specific	exact	optimized versus scalar byte comparison
+boundary	F5	216	fixture-specific	exact	optimized versus scalar byte comparison
+boundary	F6	216	fixture-specific	exact	optimized versus scalar byte comparison
+boundary	F7	216	fixture-specific	exact	optimized versus scalar byte comparison
+boundary	bus	216	0xd43f5e018b415631	exact	optimized versus scalar byte comparison
+boundary	zidane	216	fixture-specific	exact	optimized versus scalar byte comparison
+csr	FRM_RNE_RTZ_RDN_RUP_RMM	5	0xd43f5e018b415631	pass	ambient FRM restored after every run
+csr	vcsr_vxrm_vxsat	5	0xd43f5e018b415631	pass	ambient vcsr values 0,3,4,7,2 restored
+affinity	CPU0_3_IME	13500	0xd43f5e018b415631	pass	worker affinity valid for every soak run
+affinity	CPU4_7_IME	13500	0xd43f5e018b415631	pass	count zero for every soak run
+c_api	metadata_busy_guard	5	0xd43f5e018b415631	pass	run versus tensor_id/tensor_bytes/get_output/copy_boundary
+c_api	independent_handles	2	0xd43f5e018b415631	pass	parallel independent handles exact
+sanitizer	ASan_UBSan	1	host-scalar-reference	pass	focused ABI race suite, no diagnostics
+sanitizer	TSan	1	host-scalar-reference	pass	focused ABI race suite, no diagnostics
+signal	SIGINT_SIGTERM_SIGHUP	3	not-applicable	pass	capture and recorder joined; metrics and AVI readable; system profile restored
+package	known_fixture	1	0xd43f5e018b415631	pass	expected manifest and output identities enforced

@@ -1,6 +1,6 @@
 test	configuration	expected	observed	status
 official_without_ime	Y26_K1X_OFFICIAL_RELEASE=ON,Y26_K1X_ENABLE_IME=OFF	configure failure	Official K1X release requires IME	pass
 official_host_scalar	Y26_K1X_OFFICIAL_RELEASE=ON,host gcc/g++	configure failure	Official K1X release requires RISC-V target	pass
-research_host_scalar	Y26_K1X_OFFICIAL_RELEASE=OFF,Y26_K1X_ENABLE_IME=OFF	configure/build/test pass	pending final sanitizer rerun	pending
+research_host_scalar	Y26_K1X_OFFICIAL_RELEASE=OFF,Y26_K1X_ENABLE_IME=OFF	configure/build/test pass	ASan/UBSan and TSan focused ABI race suites pass	pass
 official_cross	Y26_K1X_OFFICIAL_RELEASE=ON,RISC-V,IME=ON	build with exact X60 flags	cross build pass	pass
-release_bundle_capability_guard	IME/RVV/frozen capability string absent	bundle creation failure	guard implemented; final negative test pending	pending
+release_bundle_capability_guard	IME/RVV/frozen capability string absent	bundle creation failure	exit 1: refusing non-official K1X release library	pass
