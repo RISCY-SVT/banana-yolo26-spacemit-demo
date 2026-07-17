@@ -1,3 +1,4 @@
 mode	artifact	summary_frames	decoded_frames	failures	bytes_approx	sha256	codec	dimensions	duration_seconds	status
 sync	sync-record.avi	1124	1124	0	172414382	671d4409ec597403447abe233b88b8053724f33da2ed51d3efd078cc2ffaa0f9	mjpeg	640x480	173.293362	pass
 async	async-record.avi	1212	1212	0	185588418	8a19caf26b6fd0189b6a33bce2a9be3d281fae7397692eb9390e37fd20724c0a	mjpeg	640x480	178.858252	pass
+async_30min	stage59-performance-async-soak.avi	12322	12322	0	1853683622	78e68f5d9fd09a01d6de410321f2d3fa391cea7ac8555749829b94b9c766b0aa	mjpeg	640x480	1827.216730	pass_zero_queue_replacements

@@ -15,6 +15,11 @@ improved from 6.620014 to 6.826387 FPS (`+3.117410%`). Consumer-loop mean,
 p95, and nearest-rank p99 improved by 3.031970%, 3.862755%, and 5.402076%.
 The gate of at least 1% processed-FPS gain is met.
 
+The selected 30-minute public performance run processed 12,478 frames at
+6.818437 FPS with a 146.540016 ms consumer-loop mean and 154.882199 ms p99.
+CPU0-4 remained at 1.6 GHz, temperature stayed between 48 and 62 C, and the
+original IRQ affinity was restored at exit.
+
 ## Safety
 
 `camera-system-profile.sh` discovers exactly one numeric IRQ from the reviewed

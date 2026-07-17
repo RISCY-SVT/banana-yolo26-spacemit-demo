@@ -15,6 +15,27 @@ The final exact contract remains `K1X_INT8_V1`.
 
 ## Performance Interpretation
 
+### Stage59 Final Release Reconciliation
+
+Stage59 found that the published 0.9.1 top-level cross build had omitted
+`-mtune=spacemit-x60 -funroll-loops`. A neutral ABI1 `dlopen` harness rebuilt
+Stage57 and the final 0.9.2 library with identical accepted flags, prepared
+outside the timed loop, and interleaved 1,000 samples per arm in one O2 window.
+
+| Surface | Samples | Mean (us) | Median (us) | p95 (us) | p99 (us) | Max (us) |
+|---|---:|---:|---:|---:|---:|---:|
+| rebuilt Stage57 control | 1000 | 133356.369 | 133127.000 | 134949.350 | 135336.040 | 135718.000 |
+| final 0.9.2 O2 | 1000 | 134100.921 | 133846.000 | 135724.150 | 136137.060 | 136465.000 |
+| final 0.9.2 O2 soak | 13500 | 133381.666593 | 133355.000 | 133912.000 | 134478.050 | 135853.000 |
+
+The final same-session mean delta is +0.558%, inside the required 1%
+equivalence gate and below the absolute 135500 us mean / 137000 us p95 limits.
+Every arm retained `0xd43f5e018b415631`, and the final COCO prediction remained
+byte-identical. The 1,000-sample and 13,500-run rows are separate statistical
+surfaces and their tail columns must not be mixed.
+
+### Stage57 Selected Source Reference
+
 The selected source bundle (E2c5 plus attention C8 epilogue) cleared the
 randomized full-model selection gate with a paired mean improvement of
 3.790254897% against the reproduced Stage56 source control. The installed release
@@ -74,12 +95,17 @@ service, or production certification.
 | quality-wide | 1280x720 MJPG, 60 requested | 3 x 180 s | 5.976975 | 9.999262 | 40.225839% | 219.143 ms |
 | performance | 640x480 MJPG, 60 requested | 3 x 180 s | 6.619983 | 14.993076 | 55.846398% | 184.200 ms |
 | performance + async record | 640x480 MJPG, 60 requested | 180 s | 6.562994 | 15.002716 | 56.254626% | 185.375 ms |
+| quality-wide soak | 1280x720 MJPG, 60 requested | 1830 s | 5.980417 | 9.999235 | 40.191257% | 218.781 ms |
+| performance + camera profile soak | 640x480 MJPG, 60 requested | 1830 s | 6.818437 | 14.983294 | 54.493071% | 180.007 ms |
+| performance + async record soak | 640x480 MJPG, 60 requested | 1830 s | 6.716931 / 6.712772 recorded | 14.983587 | 55.171408% | 182.481 ms |
 
 Direct V4L2 MMAP telemetry measured 30.0016 dequeued buffers per second and
 zero driver-visible sequence gaps for both MJPG modes. The timestamp flag was
 monotonic SOE. This is not a sensor-to-display timestamp chain. The public fast
-launcher selects the measured 640x480 performance preset without O2; O2 remains
-an explicitly named diagnostic.
+launcher selects the measured 640x480 performance preset and reversible
+camera-only CPU5/xHCI IRQ profile without O2; O2 remains an explicitly named
+diagnostic. Long-soak rows are separate statistical surfaces from the matched
+three-run comparison and are not pooled into its percentages.
 
 ### Stage58 Release Revalidation
 

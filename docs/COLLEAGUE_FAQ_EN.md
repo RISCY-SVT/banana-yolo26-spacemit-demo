@@ -12,13 +12,23 @@ the corresponding application slot-replacement rates were 40.225839% and
 55.846398%. Mean decoded-read-return-to-display-call latency was 219.143 ms for
 quality-wide and 184.200 ms for performance.
 
+The separate 30-minute public-launcher soaks measured 5.980417 FPS for
+quality-wide and 6.818437 FPS for performance. The performance launcher also
+applied its selected reversible CPU5/xHCI IRQ profile; its consumer-loop mean,
+p95, and p99 were 146.540, 149.710, and 154.882 ms. These long-soak values are
+not pooled with the matched no-profile preset comparison above.
+
 The no-recording number includes capture, exact resize/letterbox, BGR-to-RGB,
 the executor, box mapping, boxes, overlay, `imshow`, and event handling. It is
 not pure-model FPS. On the performance preset, bounded asynchronous MJPG
 recording processed 6.562994 FPS and wrote 6.522417 FPS, within 0.243% of the
 matched no-recording control; synchronous recording was rejected at 6.077503
-FPS. Direct V4L2 MMAP telemetry measured approximately 30.002 dequeued buffers
-per second with no sequence gaps in each tested MJPG mode. These kernel
+FPS. Its separate 30-minute stability run processed 6.716931 FPS and wrote
+6.712772 FPS: 12,322 readable MJPG frames, zero recorder-queue replacements,
+and zero write failures. That is 1.489% below the selected 30-minute
+no-recording performance surface. Direct V4L2 MMAP telemetry measured
+approximately 30.002 dequeued buffers per second with no sequence gaps in each
+tested MJPG mode. These kernel
 timestamps are monotonic SOE timestamps, but no complete sensor-to-display
 timestamp chain exists, so the reported call latency is not sensor-to-screen
 latency.

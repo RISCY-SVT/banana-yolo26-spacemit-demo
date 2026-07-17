@@ -27,6 +27,9 @@ weights, graph structure, or model resolution.
 - Resize, letterbox, RGB, and annotated-frame buffers are reusable.
 - Requested/backend-reported FPS, raw V4L2 buffer cadence, OpenCV decoded FPS,
   processed/displayed FPS, and application slot replacements are separate.
+- The selected 30-minute performance run sustained 6.818437 processed/displayed
+  FPS. Its 30-minute asynchronous-recording run sustained 6.716931 processed
+  and 6.712772 recorded FPS with zero writer-queue replacements or failures.
 
 ## Distribution
 

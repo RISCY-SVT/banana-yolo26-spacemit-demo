@@ -18,3 +18,9 @@ MJPG therefore wins the measured full-GUI surface narrowly over YUYV and by
 The requested/reported 60 FPS value is not a measured sensor rate. The direct
 V4L2 evidence reports the dequeued compressed-buffer cadence separately.
 Application slot replacement is not a complete camera-drop metric.
+
+Separate 30-minute public-launcher validation passed at 5.980417
+processed/displayed FPS for quality-wide and 6.818437 FPS for performance. The
+performance launcher includes the independently selected reversible camera IRQ
+profile, so those long rows are not pooled with the matched no-profile preset
+comparison above.

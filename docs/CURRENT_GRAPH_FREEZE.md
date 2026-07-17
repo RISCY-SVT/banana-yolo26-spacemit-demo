@@ -24,11 +24,13 @@ GitLab parity record.
 
 ## Frozen Measured Surface
 
-The installed release low-latency-dedicated O2 profile measured 133305.232 us
-mean and 133825.050 us p95 over 500 samples. Its separate 13,500-run soak measured
-135040.533 us mean, 138660.577 us p99.9, and 140242.000 us maximum. The
-compatibility 10,000-run soak measured 147746.663 us mean. COCO val2017 remained
-5000/5000 and byte-identical at mAP50-95 0.3707408944391919.
+The final 0.9.2 library measured 134100.921 us total mean and 135724.150 us
+p95 in a same-session 1,000-sample O2 comparison. The rebuilt Stage57 control
+measured 133356.369 us, so 0.9.2 is within the required 1% performance-
+equivalence gate after restoring the accidentally omitted X60 tuning flags.
+The separate 13,500-run 0.9.2 soak measured 133381.666593 us mean,
+135151.521 us p99.9, and 135853.000 us maximum. COCO val2017 remained 5000/5000
+and byte-identical at mAP50-95 0.3707408944391919.
 
 ## Frozen Selected Routes
 

@@ -1,0 +1,8 @@
+surface	measurement_stage	frames_or_samples	mean_or_rate	p95	p99	unit	status	exact_source
+serial_preloaded_image_pipeline	Stage57	500	188654.187238	191797.3384	not-reported	us_per_frame	inherited-measured	Stage57/final_image_pipeline_timing.tsv
+double_buffer_pipeline_interval	Stage57	500	140555.107644	144883.56185	not-reported	us_per_interval	inherited-measured	Stage57/final_double_buffer_timing.tsv
+real_100_image_executor_corpus	Stage57	100	132913.617240	not-reported	not-reported	us_per_inference	inherited-measured	Stage57/stage57_final_facts.json
+rgb8_already_letterboxed	Stage58	500	138989	139484	not-reported	us_per_inference	inherited-measured	Stage58/final_pipeline_performance.tsv
+quality_camera_consumer_loop	Stage59	10945	167.092851	170.499456	176.441335	ms_per_processed_frame	pass	board camera/quality-soak/metrics.tsv
+performance_camera_consumer_loop	Stage59	12478	146.540016	149.710342	154.882199	ms_per_processed_frame	pass	board camera/performance-soak/metrics.tsv
+async_recording_camera_consumer_loop	Stage59	12292	148.755668	151.967393	158.163933	ms_per_processed_frame	pass_6.716931_processed_fps_6.712772_recorded_fps	board camera/async-recording-soak/metrics.tsv

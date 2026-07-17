@@ -14,3 +14,11 @@ Shutdown under SIGINT, SIGTERM, and SIGHUP produced readable AVIs and complete
 metrics. The AVI uses the measured initial processing cadence as its nominal
 rate; `*.frames.tsv` is authoritative for variable-rate source sequence and
 write timing.
+
+The selected 30-minute stability arm processed 12,292 measured frames at
+6.716931 FPS and wrote 12,322 MJPG frames at 6.712772 FPS. This was 1.488699%
+below the matching selected-profile no-recording soak, within the 2% gate.
+Queue replacements and write failures remained zero; RSS was 95,396 KiB and
+96,804 KiB at two samples 330 seconds apart. `ffprobe` read all 12,322 frames
+from the 1,853,683,622-byte AVI. The camera IRQ profile restored to its original
+mask after completion.
