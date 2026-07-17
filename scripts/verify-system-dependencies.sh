@@ -21,7 +21,8 @@ while IFS=$'\t' read -r soname role; do
   found=
   for directory in /lib /usr/lib /lib64 /usr/lib64; do
     [[ -d $directory ]] || continue
-    found=$(find "$directory" -type f -name "$soname" -print -quit 2>/dev/null || true)
+    found=$(find "$directory" \( -type f -o -type l \) -name "$soname" \
+      -print -quit 2>/dev/null || true)
     [[ -z $found ]] || break
   done
   if [[ -n $found ]]; then
