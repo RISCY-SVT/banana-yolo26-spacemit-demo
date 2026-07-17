@@ -31,3 +31,13 @@ loop and interleaved 1,000 samples per arm in one O2 window:
 The rebuilt Stage58 delta is +0.416558%, within the required 1% equivalence
 gate. Both arms produced only `0xd43f5e018b415631`, had zero affinity
 failures, and executed zero IME operations on CPU4-7.
+
+## Final 0.9.2 Confirmation
+
+After the maintenance source was frozen, the same harness compared the final
+0.9.2 library with the Stage57 control using another 1,000 samples per arm.
+Total means were 133356.369 us and 134100.921 us respectively, a +0.558%
+Stage59 delta. Internal executor means were 130699.600 us and 131422.434 us, a
++0.553% delta. The final result remains inside the prompt's 1% same-session
+equivalence gate and below its preferred absolute mean/p95 ceilings. This
+closes the published 0.9.1 regression without changing executor arithmetic.
