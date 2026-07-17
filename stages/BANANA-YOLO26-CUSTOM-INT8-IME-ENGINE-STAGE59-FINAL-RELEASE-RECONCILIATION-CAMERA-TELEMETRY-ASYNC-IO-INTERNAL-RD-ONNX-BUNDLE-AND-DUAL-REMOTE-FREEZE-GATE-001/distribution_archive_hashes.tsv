@@ -1,0 +1,5 @@
+distribution	archive	bytes	sha256	status
+runtime	tar.gz	51393480	c73462963e9b0b577947199b1a0b77238e9653aff750a9958259315c8fad9e1a	pass
+runtime	zip	51878354	b6dba15ade70e51995bbd8f92872f4e8494b6afd8a15bd1be7e4cdf524cb676b	pass
+internal-rd	tar.gz	53593222	2b8dbbf35b10fa7cf0de2eb9feeded49db575a1815b2e0ff9ba13d0d291c9397	pass
+internal-rd	zip	54088447	cdf808ece13db4db65a2c8a99874b23e137e07968e66614eab949dd698273e11	pass

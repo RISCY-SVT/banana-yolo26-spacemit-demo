@@ -1,0 +1,14 @@
+setting	value	status
+online_cpus	0-7	restored
+cpu_governor_cpu0_7	performance	restored
+cpu_frequency_cpu0_7_khz	1600000	restored
+workqueue_cpumask	ff	restored
+o2_profile	inactive	restored
+o2_cgroup	absent	restored
+camera_profile	inactive	restored
+camera_irq	IRQ89_requested_0-7_effective_0	restored
+camera_processes	absent	restored
+data_mount	/dev/nvme0n1p1 ext4   rw,noatime	selected
+root_mount	/dev/mmcblk2p6 ext4   rw,noatime,errors=remount-ro	unchanged
+thermal_zone0_millic	44000	captured
+emmc_project_writes	0	pass

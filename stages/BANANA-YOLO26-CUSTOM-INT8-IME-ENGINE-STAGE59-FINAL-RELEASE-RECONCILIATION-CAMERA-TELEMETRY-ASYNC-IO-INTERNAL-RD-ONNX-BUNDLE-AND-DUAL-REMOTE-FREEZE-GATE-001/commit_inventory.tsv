@@ -1,0 +1,8 @@
+ordinal	commit	subject	publication_state
+1	8db172a7bf3c6079cd784b3839ffbba5a32bd45c	stage59: repair release and camera telemetry	local
+2	5a08e0e4f4c9157cdcdcab976169006be431efd9	stage59: select reversible camera IRQ profile	local
+3	bf1e27d019c9c88910a4f6e6675a8a07149d5e23	stage59: close pure-model release regression	local
+4	2d98f15fb6b884e54adf328ec2601f8be5a9e65e	stage59: close exact executor validation	local
+5	64a4a823404fa32d7485c59660ff386953c630b4	stage59: freeze camera and handoff evidence	local
+6	3a707258e050a6a90347d46b30a728a1fed12829	stage59: fix extracted dependency verification	local
+7	containing-final-evidence-commit	stage59: publish final release reconciliation	post-commit identity recorded in result packet
