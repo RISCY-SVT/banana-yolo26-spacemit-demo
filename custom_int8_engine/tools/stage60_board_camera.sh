@@ -46,6 +46,27 @@ output=$stage_root/camera/$mode
 ram=/dev/shm/y26-stage60-camera-$mode-$$
 mkdir -p "$output" "$ram" "$stage_root/camera/screenshots"
 
+# Freeze the accepted 0.9.2 operator route. Resolution and camera flow are the
+# only intended variables in this harness.
+export Y26_STAGE54_E2C3=1
+export Y26_STAGE55_E2C4=1
+export Y26_STAGE55_DENSE_FAMILY_A=1
+export Y26_STAGE54_DIRECT_1X1=1
+export Y26_STAGE54_DENSE_PACK_RVV=1
+export Y26_STAGE53_FUSED_LUT=1
+export Y26_STAGE54_DEPTHWISE_V2=1
+export Y26_STAGE54_DEPTHWISE_X2=1
+export Y26_STAGE54_DEPTHWISE_BORDER_V2=1
+export Y26_STAGE54_INPUT_RVV_V2=1
+export Y26_STAGE54_INPUT_COMPACT_C3=1
+export Y26_STAGE54_LUT2_RVV=1
+export Y26_STAGE54_ATTENTION_V2=1
+export Y26_STAGE56_HEAD_PRODUCER_REDUCTION=1
+export Y26_STAGE56_ATTENTION_DIRECT_PACK=1
+export Y26_STAGE57_E2C5=1
+export Y26_STAGE57_ATTENTION_MATMUL_C8=1
+export Y26_STAGE57_RGB_COPY_RVV=1
+
 for required in "$demo" "$labels" "$profile"; do
   [[ -f $required ]] || { echo "missing Stage60 camera dependency: $required" >&2; exit 1; }
 done
@@ -112,8 +133,10 @@ run_arm() {
   sampler_pid=
   stop_file=
   printf '%s\n' "$status" >"$prefix.exit-status.txt"
+  sha256sum "$demo" "$stage_root/packages/r$resolution/asset_hashes.tsv" \
+    "$labels" "$profile" >"$prefix.identities.txt"
   for suffix in metrics.tsv detections.tsv application.log stdout.log stderr.log \
-                system.tsv exit-status.txt; do
+                system.tsv exit-status.txt identities.txt; do
     if [[ -f $prefix.$suffix ]]; then
       cp "$prefix.$suffix" "$final_prefix.$suffix"
     fi
