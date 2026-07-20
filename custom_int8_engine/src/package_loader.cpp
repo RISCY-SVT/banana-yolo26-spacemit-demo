@@ -339,7 +339,8 @@ PackageVerification verify_package(const std::filesystem::path& package_dir,
         }
         const auto package = parse_flat_json(root / "package.json");
         if (required_json(package, "contract_id") != expected_contract_id ||
-            required_json(package, "profile_id") != expected_profile_id ||
+            (!expected_profile_id.empty() &&
+             required_json(package, "profile_id") != expected_profile_id) ||
             required_json(package, "layout_id") != expected_layout_id ||
             required_json(package, "byte_order") != "little-endian") {
             throw std::runtime_error("package identity mismatch");
@@ -349,10 +350,30 @@ PackageVerification verify_package(const std::filesystem::path& package_dir,
             throw std::runtime_error("package schema version mismatch");
         }
         const std::string& model_sha256 = required_json(package, "model_sha256");
+        const std::string& source_lineage_id = required_json(package, "source_lineage_id");
         if (!valid_sha256(model_sha256) ||
             (!expected_model_sha256.empty() && model_sha256 != expected_model_sha256) ||
-            required_json(package, "source_lineage_id").empty()) {
+            source_lineage_id.empty()) {
             throw std::runtime_error("package model identity or source lineage mismatch");
+        }
+        result.profile_id = required_json(package, "profile_id");
+        result.model_sha256 = model_sha256;
+        result.source_lineage_id = source_lineage_id;
+        const auto input_height_field = package.find("input_dim2");
+        const auto input_width_field = package.find("input_dim3");
+        if ((input_height_field == package.end()) != (input_width_field == package.end())) {
+            throw std::runtime_error("incomplete package input geometry");
+        }
+        if (input_height_field != package.end()) {
+            const auto input_height = parse_u64(input_height_field->second, "input_dim2");
+            const auto input_width = parse_u64(input_width_field->second, "input_dim3");
+            if (input_height == 0 || input_width == 0 ||
+                input_height > static_cast<std::uint64_t>(std::numeric_limits<int>::max()) ||
+                input_width > static_cast<std::uint64_t>(std::numeric_limits<int>::max())) {
+                throw std::runtime_error("invalid package input geometry");
+            }
+            result.input_height = static_cast<int>(input_height);
+            result.input_width = static_cast<int>(input_width);
         }
         result.ok = true;
     } catch (const std::exception& error) {

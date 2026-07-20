@@ -78,6 +78,43 @@ constexpr int kDenseN = 16;
 constexpr const char* kFullGraphModelSha256 =
     "30a94e4738606673b5e0a73499cbc977167f046f8fa8637d6040ce744f429c0c";
 
+bool valid_full_graph_identity(const int8_v1::PackageVerification& package) {
+    if (package.input_height != package.input_width) return false;
+    const int resolution = package.input_height;
+    struct StaticProfileIdentity {
+        int resolution;
+        const char* model_sha256;
+    };
+    constexpr std::array<StaticProfileIdentity, 8> kStage60Profiles {{
+        {640, kFullGraphModelSha256},
+        {512, "7d4497181ac78b85ec124031332c21187ccd8265cba94e92fd9882f297f3169f"},
+        {448, "c90cc44d33df53a447430d34a51fcb4b4e18124c876359b6207758cc05c7131a"},
+        {416, "993b79c7918d893744c7e1b3a18aed7bb6c01efe32fda19729b789a4cd857c72"},
+        {384, "0bd42b5ef9b6a4c1001346d3c88dcbb3423664848e0f608ac111e055ae86895e"},
+        {352, "72c7f56f87a545595cdd0dea909f498a6676a02b48d53a8258ca62891f051b23"},
+        {320, "7f3859353b5db7f9f3b00d42465459d7702f4c63e88f8894aef1f60917b96c08"},
+        {256, "f5ed20749bc3da62fc8660e9e07c7a3e72ab934d00fb32c9e40cef2d82c8ed67"},
+    }};
+    const auto identity = std::find_if(
+        kStage60Profiles.begin(), kStage60Profiles.end(),
+        [resolution](const StaticProfileIdentity& candidate) {
+            return candidate.resolution == resolution;
+        });
+    if (identity == kStage60Profiles.end() || package.model_sha256 != identity->model_sha256) {
+        return false;
+    }
+    const std::string expected_profile =
+        "K1X_INT8_V1_YOLO26N_" + std::to_string(resolution) + "_FULL_GRAPH_001";
+    if (package.profile_id != expected_profile) return false;
+    if (resolution == 640) {
+        return package.source_lineage_id ==
+                std::string("accepted-yolo26-qdq:") + kFullGraphModelSha256 + ":stage52-full";
+    }
+    return package.source_lineage_id ==
+            std::string("accepted-yolo26-qdq:") + kFullGraphModelSha256 +
+            ":stage60-static-r" + std::to_string(resolution);
+}
+
 #if !defined(Y26_K1X_ENABLE_IME_ASM) || !defined(__riscv)
 void scalar_m12n16(const std::int8_t* a, const std::int8_t* b,
                    int k_tiles, std::int32_t* c) noexcept {
@@ -934,11 +971,11 @@ struct FullExecutor::Impl {
     };
     std::array<CoreBridge, 6> core_bridges;
     std::array<HeadScale, 3> head;
-    std::array<std::uint32_t, 8400> head_best_score_q24 {};
-    std::array<std::uint8_t, 8400> head_best_class {};
-    std::array<Point, 8400> head_points {};
+    std::vector<std::uint32_t> head_best_score_q24;
+    std::vector<std::uint8_t> head_best_class;
+    std::vector<Point> head_points;
     std::array<Point, 300> head_top_points {};
-    std::array<int, 8400> head_point_order {};
+    std::vector<int> head_point_order;
     std::array<int, 300 * 80> head_candidate_order {};
     std::array<Candidate, 300> head_selected_candidates {};
     std::vector<std::uint32_t> head_score_levels;
@@ -1001,6 +1038,9 @@ struct FullExecutor::Impl {
     bool static_schedule_enabled = false;
     std::vector<int> static_batch_end;
     bool ready = false;
+    int input_height = 0;
+    int input_width = 0;
+    std::size_t input_elements = 0;
     std::uint64_t profile_run_sequence = 0;
     std::uint64_t attention_profile_run_sequence = 0;
     std::shared_ptr<AttentionProfile> attention_profile = std::make_shared<AttentionProfile>();
@@ -3490,12 +3530,14 @@ struct FullExecutor::Impl {
             }
             return;
         }
-        constexpr std::size_t kPlane = 640U * 640U;
+        const std::size_t height = static_cast<std::size_t>(output.dims[2]);
+        const std::size_t width = static_cast<std::size_t>(output.dims[3]);
+        const std::size_t plane = height * width;
         for (std::size_t flat = begin; flat < end; ++flat) {
-            const std::size_t channel = flat / kPlane;
-            const std::size_t spatial = flat % kPlane;
-            const std::size_t y = spatial / 640U;
-            const std::size_t x = spatial % 640U;
+            const std::size_t channel = flat / plane;
+            const std::size_t spatial = flat % plane;
+            const std::size_t y = spatial / width;
+            const std::size_t x = spatial % width;
             set_code(operation.output, flat,
                      rgb[y * static_cast<std::size_t>(stride) + x * 3U + channel]);
         }
@@ -3577,8 +3619,9 @@ struct FullExecutor::Impl {
     }
 
     void decode_head(float* output) {
-        std::array<Point, 8400> local_points {};
-        auto& points = head_bucket_enabled ? head_points : local_points;
+        // The static profile determines this size at prepare time. Reuse the
+        // executor-owned workspace so resolution sweeps do not allocate per run.
+        auto& points = head_points;
         int global = 0;
         for (int scale_index = 0; scale_index < 3; ++scale_index) {
             const HeadScale& scale = head[static_cast<std::size_t>(scale_index)];
@@ -3801,13 +3844,22 @@ int FullExecutor::prepare(const std::filesystem::path& package_dir,
     try {
         const auto verified = int8_v1::verify_package(
             package_dir, trusted_manifest_sha256, int8_v1::kContractId,
-            kFullGraphProfileId, int8_v1::kNchwc8LayoutId, 2,
-            kFullGraphModelSha256);
+            {}, int8_v1::kNchwc8LayoutId, 2, {});
         if (!verified.ok) throw std::runtime_error("package verification failed: " + verified.error);
+        if (!valid_full_graph_identity(verified)) {
+            throw std::runtime_error("unsupported full-graph profile, model, or static-resolution lineage");
+        }
+        if (verified.input_width != 640 && !config.allow_stage60_static_profiles) {
+            throw std::runtime_error("non-640 static profiles are research-only in Stage60");
+        }
         Impl prepared;
         prepared.package = std::filesystem::canonical(package_dir);
         prepared.manifest = verified.manifest_sha256;
         prepared.config = config;
+        prepared.input_height = verified.input_height;
+        prepared.input_width = verified.input_width;
+        prepared.input_elements = 3U * static_cast<std::size_t>(verified.input_height) *
+            static_cast<std::size_t>(verified.input_width);
         prepared.controller_affinity_ok = pin_thread(config.controller_cpu);
 #if defined(Y26_K1X_FROZEN_RELEASE_PROFILE)
         prepared.e2c2_enabled = true;
@@ -4182,6 +4234,22 @@ int FullExecutor::prepare(const std::filesystem::path& package_dir,
             scale.reg_q16 = read_binary<std::int32_t>(prepared.package / value(row, "reg_lut_file"), 4U * 256U);
             scale.cls_q24 = read_binary<std::uint32_t>(prepared.package / value(row, "cls_lut_file"), 256);
         }
+        std::size_t head_point_count = 0;
+        for (const HeadScale& scale : prepared.head) {
+            if (scale.resolution <= 0 || scale.stride <= 0 || scale.reg_tensor < 0 ||
+                scale.cls_tensor < 0) {
+                throw std::runtime_error("incomplete head scale descriptors");
+            }
+            head_point_count += static_cast<std::size_t>(scale.resolution) *
+                static_cast<std::size_t>(scale.resolution);
+        }
+        if (head_point_count < 300U) {
+            throw std::runtime_error("head point lattice is smaller than the fixed top-300 output");
+        }
+        prepared.head_best_score_q24.resize(head_point_count);
+        prepared.head_best_class.resize(head_point_count);
+        prepared.head_points.resize(head_point_count);
+        prepared.head_point_order.resize(head_point_count);
         if (prepared.head_bucket_enabled) {
             prepared.head_score_levels.reserve(3U * 256U);
             for (const HeadScale& scale : prepared.head) {
@@ -4371,7 +4439,7 @@ int FullExecutor::prepare(const std::filesystem::path& package_dir,
 int FullExecutor::run_preprocessed(const float* input, std::size_t input_count,
                                    float* output, std::size_t output_count,
                                    RunTiming* timing) {
-    if (input == nullptr || input_count != 3U * 640U * 640U) return 1;
+    if (!impl_ || input == nullptr || input_count != impl_->input_elements) return 1;
     return run_input_surface(input, nullptr, 0, output, output_count, timing);
 }
 
@@ -4591,10 +4659,8 @@ int FullExecutor::run_input_surface(const float* input, const std::uint8_t* rgb,
 int FullExecutor::run_rgb(const std::uint8_t* rgb, int width, int height, int stride,
                           float* output, std::size_t output_count, RunTiming* timing) {
     if (!impl_ || rgb == nullptr || width <= 0 || height <= 0 || stride < width * 3) return 1;
-    // This bounded API route intentionally accepts only the already-letterboxed
-    // 640x640 RGB surface.  The CLI performs file decode and letterbox explicitly.
-    if (width != 640 || height != 640) {
-        impl_->error = "run_rgb requires a 640x640 letterboxed RGB image";
+    if (width != impl_->input_width || height != impl_->input_height) {
+        impl_->error = "run_rgb geometry does not match the prepared static profile";
         return 4;
     }
     return run_input_surface(nullptr, rgb, stride, output, output_count, timing);
@@ -4784,6 +4850,7 @@ int FullExecutor::diagnostic_benchmark_conv_shape(
             static_cast<double>(samples.size());
         result->median_us = percentile(0.5);
         result->p95_us = percentile(0.95);
+        result->p99_us = percentile(0.99);
         result->maximum_us = ordered.back();
         result->output_hash = expected_hash;
         result->deterministic = deterministic;
@@ -4870,6 +4937,9 @@ std::size_t FullExecutor::tensor_bytes(int tensor_id) const noexcept {
 
 int FullExecutor::operation_count() const noexcept { return impl_ ? static_cast<int>(impl_->operations.size()) : 0; }
 int FullExecutor::tensor_count() const noexcept { return impl_ ? static_cast<int>(impl_->tensors.size()) : 0; }
+int FullExecutor::input_height() const noexcept { return impl_ ? impl_->input_height : 0; }
+int FullExecutor::input_width() const noexcept { return impl_ ? impl_->input_width : 0; }
+std::size_t FullExecutor::input_elements() const noexcept { return impl_ ? impl_->input_elements : 0; }
 std::size_t FullExecutor::arena_bytes() const noexcept { return impl_ ? impl_->arena.size() : 0; }
 std::size_t FullExecutor::packed_weight_bytes() const noexcept { return impl_ ? impl_->total_weight_bytes : 0; }
 const std::string& FullExecutor::package_manifest_sha256() const noexcept { return impl_->manifest; }

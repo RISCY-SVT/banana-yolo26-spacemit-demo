@@ -5,6 +5,7 @@
 #include <opencv2/core.hpp>
 
 #include <cstdint>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -38,6 +39,7 @@ struct LetterboxInfo {
 };
 
 struct FrameMetrics {
+    int input_resolution = 640;
     double capture_ms = 0.0;
     double resize_letterbox_ms = 0.0;
     double bgr_to_rgb_ms = 0.0;
@@ -73,11 +75,19 @@ struct InferenceResult {
     FrameMetrics metrics;
 };
 
-LetterboxInfo ComputeLetterbox(int source_width, int source_height);
+LetterboxInfo ComputeLetterbox(int source_width, int source_height,
+                               int input_resolution = 640);
 std::vector<Detection> DecodeYolo26Output(const float* output, std::size_t elements,
                                           const LetterboxInfo& letterbox,
                                           float confidence_threshold,
-                                          int class_count);
+                                          int class_count,
+                                          int input_resolution = 640);
+
+#if defined(Y26_DEMO_STAGE60_STATIC_PROFILE)
+namespace stage60_detail {
+class ResearchExecutor;
+}
+#endif
 
 class Yolo26ExecutorDetector {
 public:
@@ -91,6 +101,7 @@ public:
     const std::vector<std::string>& Labels() const noexcept;
     std::string BuildInfoSummary() const;
     const y26_build_info& BuildInfo() const noexcept;
+    int InputResolution() const noexcept;
 
 private:
     void LoadLabels(const std::string& path);
@@ -98,6 +109,10 @@ private:
 
     AppOptions options_;
     y26_executor* executor_ = nullptr;
+#if defined(Y26_DEMO_STAGE60_STATIC_PROFILE)
+    std::unique_ptr<stage60_detail::ResearchExecutor> research_executor_;
+#endif
+    int input_resolution_ = 640;
     y26_build_info build_info_{};
     std::vector<std::string> labels_;
     std::vector<float> output_;

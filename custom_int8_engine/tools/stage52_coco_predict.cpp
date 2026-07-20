@@ -123,22 +123,23 @@ std::vector<std::filesystem::path> list_images(const std::filesystem::path& dire
     return images;
 }
 
-Letterbox letterbox(const std::filesystem::path& path) {
+Letterbox letterbox(const std::filesystem::path& path, int resolution) {
     const cv::Mat bgr = cv::imread(path.string(), cv::IMREAD_COLOR);
     if (bgr.empty()) throw std::runtime_error("failed to decode " + path.string());
     Letterbox result;
     result.original_width = bgr.cols;
     result.original_height = bgr.rows;
-    result.ratio = std::min(640.0 / bgr.cols, 640.0 / bgr.rows);
+    result.ratio = std::min(static_cast<double>(resolution) / bgr.cols,
+                            static_cast<double>(resolution) / bgr.rows);
     const int resized_width = static_cast<int>(std::nearbyint(bgr.cols * result.ratio));
     const int resized_height = static_cast<int>(std::nearbyint(bgr.rows * result.ratio));
-    result.pad_x = (640.0 - resized_width) / 2.0;
-    result.pad_y = (640.0 - resized_height) / 2.0;
+    result.pad_x = (static_cast<double>(resolution) - resized_width) / 2.0;
+    result.pad_y = (static_cast<double>(resolution) - resized_height) / 2.0;
     const int x0 = static_cast<int>(std::nearbyint(result.pad_x - 0.1));
     const int y0 = static_cast<int>(std::nearbyint(result.pad_y - 0.1));
     cv::Mat resized;
     cv::resize(bgr, resized, cv::Size(resized_width, resized_height), 0.0, 0.0, cv::INTER_LINEAR);
-    cv::Mat canvas(640, 640, CV_8UC3, cv::Scalar(114, 114, 114));
+    cv::Mat canvas(resolution, resolution, CV_8UC3, cv::Scalar(114, 114, 114));
     resized.copyTo(canvas(cv::Rect(x0, y0, resized_width, resized_height)));
     cv::cvtColor(canvas, result.rgb, cv::COLOR_BGR2RGB);
     return result;
@@ -214,7 +215,9 @@ int main(int argc, char** argv) {
         config.worker_cpu_begin = 0;
         config.controller_cpu = 4;
         config.scheduler = y26::stage52::SchedulerMode::safe;
+        config.wake_policy = y26::stage52::WakePolicy::frame_gated_spin;
         config.compute = y26::stage52::ComputeMode::optimized;
+        config.allow_stage60_static_profiles = true;
         y26::stage52::FullExecutor executor;
         const std::string manifest = y26::int8_v1::sha256_file(options.package / "asset_hashes.tsv");
         if (executor.prepare(options.package, manifest, config) != 0) {
@@ -224,7 +227,7 @@ int main(int argc, char** argv) {
         std::ofstream timing(options.timing_tsv);
         if (!timing) throw std::runtime_error("cannot write " + options.timing_tsv.string());
         timing << "index\timage_id\twidth\theight\tdecode_letterbox_us\texecutor_us\tdecode_output_us"
-                  "\tdetections\toutput_hash\n";
+                  "\tdetections\toutput_hash\taffinity_ok\tcpu4_7_ime_count\n";
         std::vector<Prediction> all_predictions;
         std::array<float, 1800> output {};
         std::vector<double> executor_samples;
@@ -232,13 +235,16 @@ int main(int argc, char** argv) {
         const auto evaluation_begin = Clock::now();
         for (std::size_t index = 0; index < images.size(); ++index) {
             const auto preprocess_begin = Clock::now();
-            const Letterbox transformed = letterbox(images[index]);
+            const Letterbox transformed = letterbox(images[index], executor.input_width());
             const auto executor_begin = Clock::now();
             y26::stage52::RunTiming run_timing;
-            if (executor.run_rgb(transformed.rgb.data, 640, 640,
+            if (executor.run_rgb(transformed.rgb.data, executor.input_width(), executor.input_height(),
                                  static_cast<int>(transformed.rgb.step), output.data(), output.size(),
                                  &run_timing) != 0) {
                 throw std::runtime_error("execution failed: " + executor.last_error());
+            }
+            if (run_timing.affinity_ok != 1 || run_timing.cpu4_7_ime_count != 0) {
+                throw std::runtime_error("COCO affinity or IME ownership contract failed");
             }
             const auto executor_end = Clock::now();
             const int id = image_id(images[index]);
@@ -250,7 +256,8 @@ int main(int argc, char** argv) {
                    << transformed.original_height << '\t'
                    << elapsed_us(preprocess_begin, executor_begin) << '\t' << run_timing.total_us << '\t'
                    << elapsed_us(executor_end, decode_end) << '\t' << predictions.size() << "\t0x"
-                   << std::hex << run_timing.output_hash << std::dec << '\n';
+                   << std::hex << run_timing.output_hash << std::dec << '\t'
+                   << run_timing.affinity_ok << '\t' << run_timing.cpu4_7_ime_count << '\n';
             if (options.log_every > 0 && ((index + 1) % static_cast<std::size_t>(options.log_every) == 0 ||
                                           index + 1 == images.size())) {
                 std::cerr << "progress=" << (index + 1) << '/' << images.size()

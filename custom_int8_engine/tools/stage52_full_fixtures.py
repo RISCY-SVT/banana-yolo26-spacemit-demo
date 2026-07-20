@@ -23,17 +23,21 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--f0", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--resolution", type=int, default=640)
     args = parser.parse_args()
+    if args.resolution <= 0 or args.resolution % 32 != 0:
+        raise ValueError("resolution must be a positive multiple of 32")
     args.output.mkdir(parents=True, exist_ok=True)
-    shape = (3, 640, 640)
+    shape = (3, args.resolution, args.resolution)
     f0 = np.fromfile(args.f0, dtype="<f4")
     if f0.size != np.prod(shape):
-        raise ValueError("F0 must contain 1x3x640x640 float32 values")
+        raise ValueError(f"F0 must contain 1x3x{args.resolution}x{args.resolution} float32 values")
     f0 = f0.reshape(shape)
-    y, x = np.indices((640, 640), dtype=np.int32)
-    x_ramp = np.broadcast_to(np.linspace(0.0, 1.0, 640, dtype=np.float32), shape)
+    y, x = np.indices((args.resolution, args.resolution), dtype=np.int32)
+    x_ramp = np.broadcast_to(
+        np.linspace(0.0, 1.0, args.resolution, dtype=np.float32), shape)
     y_ramp = np.broadcast_to(
-        np.linspace(0.0, 1.0, 640, dtype=np.float32)[None, :, None], shape)
+        np.linspace(0.0, 1.0, args.resolution, dtype=np.float32)[None, :, None], shape)
     channel_scale = np.asarray([0.25, 0.5, 1.0], dtype=np.float32)[:, None, None]
     rng = np.random.default_rng(52001)
     fixtures = [
@@ -53,7 +57,7 @@ def main() -> int:
         rows.append({
             "fixture": fixture_id,
             "description": description,
-            "shape": "1x3x640x640",
+            "shape": f"1x3x{args.resolution}x{args.resolution}",
             "dtype": "float32-little-endian",
             "bytes": path.stat().st_size,
             "sha256": sha256(path),

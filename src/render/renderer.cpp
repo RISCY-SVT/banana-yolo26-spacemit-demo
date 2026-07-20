@@ -147,7 +147,9 @@ void Renderer::DrawOverlay(cv::Mat& out, const FrameMetrics& metrics,
              << metrics.application_slot_replacements_measured;
         lines.push_back(text.str());
     }
-    lines.push_back("profile=" + profile + " flow=" + flow + " input=640x640");
+    lines.push_back("profile=" + profile + " flow=" + flow + " input=" +
+                    std::to_string(metrics.input_resolution) + "x" +
+                    std::to_string(metrics.input_resolution));
     lines.push_back("camera=" + camera_format);
 
     double font_scale = 0.50;

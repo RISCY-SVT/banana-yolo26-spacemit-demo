@@ -103,7 +103,12 @@ def generate(args: argparse.Namespace) -> None:
     placement_rows = apply_direct_concat_placement(builder)
     write_tsv(output / "concat_placement.tsv", placement_rows)
     tensors, operations = derive_integer_assets(output, builder)
-    fixture_rows = generate_fixtures(args, output, tensors, operations)
+    if args.skip_fixtures:
+        fixture_rows = []
+    else:
+        if args.stage43_oracle_root is None:
+            raise ValueError("--stage43-oracle-root is required unless --skip-fixtures is used")
+        fixture_rows = generate_fixtures(args, output, tensors, operations)
     package_meta = {
         "arena_bytes": max(int(row["arena_offset"]) + int(row["bytes"]) for row in tensors),
         "byte_order": "little-endian",
@@ -156,7 +161,8 @@ def generate(args: argparse.Namespace) -> None:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", type=Path, required=True)
-    parser.add_argument("--stage43-oracle-root", type=Path, required=True)
+    parser.add_argument("--stage43-oracle-root", type=Path)
+    parser.add_argument("--skip-fixtures", action="store_true")
     parser.add_argument("--out-dir", type=Path, required=True)
     generate(parser.parse_args())
     return 0

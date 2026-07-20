@@ -12,14 +12,13 @@
 
 namespace {
 
-std::vector<float> read_input(const std::filesystem::path& path) {
-    constexpr std::size_t kElements = 3U * 640U * 640U;
+std::vector<float> read_input(const std::filesystem::path& path, std::size_t elements) {
     std::ifstream stream(path, std::ios::binary | std::ios::ate);
-    if (!stream || stream.tellg() != static_cast<std::streamsize>(kElements * sizeof(float))) {
+    if (!stream || stream.tellg() != static_cast<std::streamsize>(elements * sizeof(float))) {
         throw std::runtime_error("invalid preprocessed input");
     }
     stream.seekg(0);
-    std::vector<float> input(kElements);
+    std::vector<float> input(elements);
     if (!stream.read(reinterpret_cast<char*>(input.data()),
                      static_cast<std::streamsize>(input.size() * sizeof(float)))) {
         throw std::runtime_error("cannot read preprocessed input");
@@ -70,12 +69,13 @@ int main(int argc, char** argv) {
             }
         }
         config.capture_boundaries = selected_tensor < 0;
+        config.allow_stage60_static_profiles = true;
         y26::stage52::FullExecutor executor;
         const std::string manifest = y26::int8_v1::sha256_file(package / "asset_hashes.tsv");
         if (executor.prepare(package, manifest, config) != 0) {
             throw std::runtime_error(executor.last_error());
         }
-        const std::vector<float> input = read_input(argv[2]);
+        const std::vector<float> input = read_input(argv[2], executor.input_elements());
         std::vector<float> output(300U * 6U);
         y26::stage52::RunTiming timing;
         if (executor.run_preprocessed(input.data(), input.size(), output.data(), output.size(), &timing) != 0) {

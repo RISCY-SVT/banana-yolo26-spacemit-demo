@@ -138,8 +138,12 @@ std::string BuildUsage(const char* program) {
         << "  --warmup-frames N --max-frames N --duration SECONDS\n"
         << "  --opencv-threads N --reconnect-attempts N --capture-cpu -1|0..7\n"
         << "  --reuse-buffers 0|1 --quiet\n\n"
-        << "GUI keys: q/Esc exit, s save PNG, r toggle recording, space pause.\n"
-        << "The model input is always exact 640x640 RGB8 letterbox; no second NMS is run.\n";
+        << "GUI keys: q/Esc exit, s save PNG, r toggle recording, space pause.\n";
+#if defined(Y26_DEMO_STAGE60_STATIC_PROFILE)
+    out << "Stage60 research mode uses the prepared static package resolution; no second NMS is run.\n";
+#else
+    out << "The model input is always exact 640x640 RGB8 letterbox; no second NMS is run.\n";
+#endif
     return out.str();
 }
 

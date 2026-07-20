@@ -13,16 +13,15 @@
 
 namespace {
 
-std::vector<float> read_input(const std::filesystem::path& path) {
-    constexpr std::size_t kElements = 3U * 640U * 640U;
+std::vector<float> read_input(const std::filesystem::path& path, std::size_t elements) {
     std::ifstream stream(path, std::ios::binary | std::ios::ate);
     if (!stream) throw std::runtime_error("cannot open input: " + path.string());
     const std::streamsize bytes = stream.tellg();
-    if (bytes != static_cast<std::streamsize>(kElements * sizeof(float))) {
-        throw std::runtime_error("input must contain 1x3x640x640 float32 values");
+    if (bytes != static_cast<std::streamsize>(elements * sizeof(float))) {
+        throw std::runtime_error("input size does not match the prepared static profile");
     }
     stream.seekg(0);
-    std::vector<float> result(kElements);
+    std::vector<float> result(elements);
     if (!stream.read(reinterpret_cast<char*>(result.data()), bytes)) {
         throw std::runtime_error("failed to read input");
     }
@@ -74,18 +73,19 @@ int main(int argc, char** argv) {
     }
     try {
         const std::filesystem::path package = argv[1];
-        const std::vector<float> input = read_input(argv[2]);
         y26::stage52::RunConfig config;
         config.workers = 4;
         config.worker_cpu_begin = 0;
         config.controller_cpu = 4;
         config.scheduler = y26::stage52::SchedulerMode::safe;
         config.compute = y26::stage52::ComputeMode::optimized;
+        config.allow_stage60_static_profiles = true;
         y26::stage52::FullExecutor executor;
         const std::string manifest = y26::int8_v1::sha256_file(package / "asset_hashes.tsv");
         if (executor.prepare(package, manifest, config) != 0) {
             throw std::runtime_error("prepare failed: " + executor.last_error());
         }
+        const std::vector<float> input = read_input(argv[2], executor.input_elements());
 
         const unsigned saved_frm = read_frm();
         const unsigned saved_vcsr = read_vcsr();

@@ -39,7 +39,7 @@ struct Options {
 };
 
 struct Slot {
-    cv::Mat rgb {640, 640, CV_8UC3};
+    cv::Mat rgb;
     double prepare_us = 0.0;
     bool ready = false;
     bool requested = false;
@@ -104,18 +104,21 @@ std::vector<std::uint8_t> read_bytes(const std::filesystem::path& path) {
     return bytes;
 }
 
-double prepare_rgb(const std::vector<std::uint8_t>& encoded, cv::Mat& rgb) {
+double prepare_rgb(const std::vector<std::uint8_t>& encoded, cv::Mat& rgb, int resolution) {
     const auto begin = Clock::now();
     const cv::Mat bgr = cv::imdecode(encoded, cv::IMREAD_COLOR);
     if (bgr.empty()) throw std::runtime_error("OpenCV image decode failed");
-    const double ratio = std::min(640.0 / bgr.cols, 640.0 / bgr.rows);
+    const double ratio = std::min(static_cast<double>(resolution) / bgr.cols,
+                                  static_cast<double>(resolution) / bgr.rows);
     const int width = static_cast<int>(std::nearbyint(bgr.cols * ratio));
     const int height = static_cast<int>(std::nearbyint(bgr.rows * ratio));
-    const int x0 = static_cast<int>(std::nearbyint((640.0 - width) / 2.0 - 0.1));
-    const int y0 = static_cast<int>(std::nearbyint((640.0 - height) / 2.0 - 0.1));
+    const int x0 = static_cast<int>(std::nearbyint(
+        (static_cast<double>(resolution) - width) / 2.0 - 0.1));
+    const int y0 = static_cast<int>(std::nearbyint(
+        (static_cast<double>(resolution) - height) / 2.0 - 0.1));
     cv::Mat resized;
     cv::resize(bgr, resized, cv::Size(width, height), 0.0, 0.0, cv::INTER_LINEAR);
-    cv::Mat canvas(640, 640, CV_8UC3, cv::Scalar(114, 114, 114));
+    cv::Mat canvas(resolution, resolution, CV_8UC3, cv::Scalar(114, 114, 114));
     resized.copyTo(canvas(cv::Rect(x0, y0, width, height)));
     cv::cvtColor(canvas, rgb, cv::COLOR_BGR2RGB);
     return elapsed_us(begin, Clock::now());
@@ -123,8 +126,10 @@ double prepare_rgb(const std::vector<std::uint8_t>& encoded, cv::Mat& rgb) {
 
 class Preprocessor {
 public:
-    Preprocessor(const std::vector<std::uint8_t>& encoded, std::array<Slot, 2>& slots)
-        : encoded_(encoded), slots_(slots), thread_([this]() { loop(); }) {}
+    Preprocessor(const std::vector<std::uint8_t>& encoded, std::array<Slot, 2>& slots,
+                 int resolution)
+        : encoded_(encoded), slots_(slots), resolution_(resolution),
+          thread_([this]() { loop(); }) {}
 
     ~Preprocessor() {
         {
@@ -173,7 +178,7 @@ private:
                     pending_ = -1;
                 }
                 const double duration = prepare_rgb(
-                    encoded_, slots_[static_cast<std::size_t>(index)].rgb);
+                    encoded_, slots_[static_cast<std::size_t>(index)].rgb, resolution_);
                 {
                     std::lock_guard lock(mutex_);
                     Slot& slot = slots_[static_cast<std::size_t>(index)];
@@ -195,6 +200,7 @@ private:
 
     const std::vector<std::uint8_t>& encoded_;
     std::array<Slot, 2>& slots_;
+    int resolution_ = 0;
     std::thread thread_;
     std::mutex mutex_;
     std::condition_variable request_cv_;
@@ -240,7 +246,9 @@ int main(int argc, char** argv) {
         config.worker_cpu_begin = 0;
         config.controller_cpu = 4;
         config.scheduler = y26::stage52::SchedulerMode::safe;
+        config.wake_policy = y26::stage52::WakePolicy::frame_gated_spin;
         config.compute = y26::stage52::ComputeMode::optimized;
+        config.allow_stage60_static_profiles = true;
         y26::stage52::FullExecutor executor;
         const std::string manifest = y26::int8_v1::sha256_file(options.package / "asset_hashes.tsv");
         if (executor.prepare(options.package, manifest, config) != 0) {
@@ -248,18 +256,24 @@ int main(int argc, char** argv) {
         }
 
         std::array<Slot, 2> slots;
+        for (Slot& slot : slots) {
+            slot.rgb.create(executor.input_height(), executor.input_width(), CV_8UC3);
+        }
         std::array<float, 1800> output {};
         for (int index = 0; index < options.warmup; ++index) {
-            (void)prepare_rgb(encoded, slots[0].rgb);
+            (void)prepare_rgb(encoded, slots[0].rgb, executor.input_width());
             y26::stage52::RunTiming timing;
-            if (executor.run_rgb(slots[0].rgb.data, 640, 640,
+            if (executor.run_rgb(slots[0].rgb.data, executor.input_width(), executor.input_height(),
                                  static_cast<int>(slots[0].rgb.step), output.data(), output.size(),
                                  &timing) != 0) {
                 throw std::runtime_error("warmup execution failed: " + executor.last_error());
             }
+            if (timing.affinity_ok != 1 || timing.cpu4_7_ime_count != 0) {
+                throw std::runtime_error("warmup CPU affinity or IME ownership contract failed");
+            }
         }
 
-        Preprocessor preprocessor(encoded, slots);
+        Preprocessor preprocessor(encoded, slots, executor.input_width());
         std::vector<double> prepare_values;
         std::vector<double> executor_values;
         std::vector<double> interval_values;
@@ -272,7 +286,7 @@ int main(int argc, char** argv) {
         std::cout << std::setprecision(12)
                   << "sample\trepeat\trun\tprepare_us\texecutor_us\tinterval_us\toutput_hash\tdetections\n";
 
-        slots[0].prepare_us = prepare_rgb(encoded, slots[0].rgb);
+        slots[0].prepare_us = prepare_rgb(encoded, slots[0].rgb, executor.input_width());
         slots[0].ready = true;
         preprocessor.request(1);
         int current = 0;
@@ -283,10 +297,13 @@ int main(int argc, char** argv) {
                 const double prepare_us = preprocessor.consume(current);
                 y26::stage52::RunTiming timing;
                 if (executor.run_rgb(slots[static_cast<std::size_t>(current)].rgb.data,
-                                     640, 640,
+                                     executor.input_width(), executor.input_height(),
                                      static_cast<int>(slots[static_cast<std::size_t>(current)].rgb.step),
                                      output.data(), output.size(), &timing) != 0) {
                     throw std::runtime_error("pipeline execution failed: " + executor.last_error());
+                }
+                if (timing.affinity_ok != 1 || timing.cpu4_7_ime_count != 0) {
+                    throw std::runtime_error("pipeline CPU affinity or IME ownership contract failed");
                 }
                 int detections = 0;
                 for (std::size_t row = 0; row < 300U; ++row) {
@@ -317,6 +334,9 @@ int main(int argc, char** argv) {
         print_summary("executor", executor_values);
         print_summary("pipeline_interval", interval_values);
         std::cout << "metadata\ttotal_elapsed_us\t" << total_us << '\n'
+                  << "metadata\tresolution\t" << executor.input_width() << '\n'
+                  << "metadata\tpackage_manifest_sha256\t"
+                  << executor.package_manifest_sha256() << '\n'
                   << "metadata\tsteady_state_fps\t" << sample_count * 1.0e6 / total_us << '\n'
                   << "metadata\toutput_hash\t0x" << std::hex << expected_hash << std::dec << '\n'
                   << "metadata\tdetections\t" << expected_detections << '\n'

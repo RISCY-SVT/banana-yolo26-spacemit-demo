@@ -23,6 +23,7 @@ struct RunConfig {
     WakePolicy wake_policy = WakePolicy::condition_variable;
     ComputeMode compute = ComputeMode::optimized;
     bool capture_boundaries = false;
+    bool allow_stage60_static_profiles = false;
 };
 
 struct RunTiming {
@@ -65,6 +66,7 @@ struct DiagnosticConvShapeResult {
     double mean_us = 0.0;
     double median_us = 0.0;
     double p95_us = 0.0;
+    double p99_us = 0.0;
     double maximum_us = 0.0;
     std::uint64_t output_hash = 0;
     bool deterministic = false;
@@ -106,6 +108,9 @@ public:
     std::size_t tensor_bytes(int tensor_id) const noexcept;
     int operation_count() const noexcept;
     int tensor_count() const noexcept;
+    int input_height() const noexcept;
+    int input_width() const noexcept;
+    std::size_t input_elements() const noexcept;
     std::size_t arena_bytes() const noexcept;
     std::size_t packed_weight_bytes() const noexcept;
     const std::string& package_manifest_sha256() const noexcept;
@@ -113,7 +118,7 @@ public:
 
 private:
     int run_input_surface(const float* nchw_rgb_0_to_1,
-                          const std::uint8_t* rgb640,
+                          const std::uint8_t* rgb,
                           int rgb_row_stride_bytes,
                           float* output_1x300x6,
                           std::size_t output_count,
