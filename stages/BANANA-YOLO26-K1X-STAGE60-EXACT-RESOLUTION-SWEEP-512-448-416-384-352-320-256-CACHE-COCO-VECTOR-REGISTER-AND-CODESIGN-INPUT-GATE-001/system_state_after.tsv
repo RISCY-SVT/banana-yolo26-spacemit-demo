@@ -1,0 +1,19 @@
+field	value	evidence
+hostname	bf3	board query
+boot_id	0a0691d1-7502-44c3-903b-444dba83c1d9	/proc/sys/kernel/random/boot_id
+online_cpus	0-7	/sys/devices/system/cpu/online
+cpu0_governor	performance	cpufreq
+cpu4_governor	performance	cpufreq
+cpu0_frequency_khz	1600000	cpufreq
+cpu4_frequency_khz	1600000	cpufreq
+data_mount	/dev/nvme0n1p1,ext4,,,rw,noatime	findmnt
+root_mount	/dev/mmcblk2p6,ext4,,,rw,noatime,errors=remount-ro	findmnt
+workqueue_cpumask	ff	/sys/devices/virtual/workqueue/cpumask
+kernel_isolated	none	/sys/devices/system/cpu/isolated is empty
+kernel_nohz_full	not-present	path absent on accepted kernel
+kernel_rcu_nocbs	not-present	path absent on accepted kernel
+o2_profile	profile y26-o2;snapshot absent;cgroup absent;workqueue_cpumask ff;	profile status
+camera_profile	action=xhci-hcd:usb2 irq=89 requested_affinity=0-7 effective_affinity=0 camera_cpu=5 state=inactive;	profile status
+stage_process_count	0	pgrep
+cpu4_7_ime_count	0	all final executor evidence
+emmc_project_writes	0	Stage60 ledger

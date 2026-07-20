@@ -1,0 +1,2 @@
+device	resolved_device	requested_mode	effective_mode	buffer_count	dequeued_buffers	sequence_gaps	raw_v4l2_dequeued_compressed_buffer_fps	timestamp_clock	timestamp_source	raw_file_sha256	status
+/dev/v4l/by-id/usb-JQ-FAY-220422_BBA_USB_CAMERA_01.00.00-video-index0	/dev/video20	640x480_MJPG_60_requested	640x480_MJPG_60_reported	4	5395	0	30.002748	monotonic	soe	b2d6499ffee76454198d75618bbcb9f520e4b3192472a656318d77c1bf4e52c1	pass
