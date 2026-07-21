@@ -14,7 +14,8 @@ unchanged YOLO26n-640 graph.
 | Prediction SHA-256 | `cda5c8c7a46d61d9c90f6292001eea190cb8f6617efe647a33dc6134dd57ccda` |
 | Known output hash | `0xd43f5e018b415631` |
 | Frozen executor release | `0.9.0-stage57-final-handoff` |
-| Camera maintenance release | `0.9.2-stage59-final-runtime` |
+| Stage59 camera maintenance release | `0.9.2-stage59-final-runtime` |
+| Stage60M scheduler maintenance release | `0.9.3-stage60m-maintenance-runtime` |
 
 The source release commit and the containing publication commit are recorded in
 the release manifest, `current_graph_freeze_record.md`, and post-push remote

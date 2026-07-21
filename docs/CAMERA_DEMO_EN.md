@@ -9,7 +9,7 @@ always a 640x640 RGB letterbox, regardless of camera capture resolution.
 On the board:
 
 ```bash
-export RELEASE=/data/y26-k1x-int8-executor/0.9.2
+export RELEASE=/data/y26-k1x-int8-executor/0.9.3
 $RELEASE/bin/y26_k1x_demo \
   --package "$RELEASE/package" \
   --expected-manifest-sha256 fab4a72cf524ce0a205ceca0384144f2eee7bc79dff3f4db8b7208614e8407be \

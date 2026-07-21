@@ -1,6 +1,6 @@
 # Internal-R&D Distribution
 
-The `0.9.2-stage59-final-internal-rd` bundle is restricted to authorized
+The `0.9.3-stage60m-maintenance-internal-rd` bundle is restricted to authorized
 internal research and engineering handoff. It includes the exact source model:
 
 ```text

@@ -1,9 +1,9 @@
-# Deploying the K1X INT8 Executor 0.9.2
+# Deploying the K1X INT8 Executor 0.9.3
 
 Keep the complete versioned release on board NVMe:
 
 ```text
-/data/releases/banana-yolo26-k1x-int8-executor/0.9.2-stage59-final-runtime
+/data/releases/banana-yolo26-k1x-int8-executor/0.9.3-stage60m-maintenance-runtime
 ```
 
 Do not place packages, logs, or build trees on eMMC. Verify `SHA256SUMS`, then run

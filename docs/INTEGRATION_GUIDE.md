@@ -3,7 +3,7 @@
 ## ABI
 
 The installed interface is C ABI version 1 in `include/y26_k1x_executor.h`.
-Release 0.9.2 has shared-library SONAME `liby26_k1x_int8_executor.so.1`.
+Release 0.9.3 has shared-library SONAME `liby26_k1x_int8_executor.so.1`.
 Only C ABI symbols are exported; C++ and research headers are not installed by
 the default release build.
 

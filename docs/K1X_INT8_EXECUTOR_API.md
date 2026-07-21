@@ -1,7 +1,7 @@
 # K1X INT8 Executor C API
 
 The stable colleague-facing interface is C ABI1 in `y26_k1x_executor.h`.
-Version 0.9.2 exports 15 C functions from SONAME 1. The two build-information
+Version 0.9.3 exports 15 C functions from SONAME 1. The two build-information
 functions are additive to the 13-function 0.9.0 ABI:
 
 ```c

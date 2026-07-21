@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(y26_k1x_custom_int8_engine VERSION 0.9.2 LANGUAGES C CXX)
+project(y26_k1x_custom_int8_engine VERSION 0.9.3 LANGUAGES C CXX)
 
 find_package(Threads REQUIRED)
 include(GNUInstallDirs)

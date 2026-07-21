@@ -47,7 +47,7 @@ COCO впервые превысила 50% в диапазоне 64-96 пикс�
 Да. На BPI-F3 выполните:
 
 ```bash
-/data/y26-k1x-int8-executor/0.9.2/scripts/run_camera_demo.sh
+/data/y26-k1x-int8-executor/0.9.3/scripts/run_camera_demo.sh
 ```
 
 Выбранные камерные скрипты намеренно не применяют O2. Обычный скрипт использует
@@ -69,7 +69,7 @@ fab4a72cf524ce0a205ceca0384144f2eee7bc79dff3f4db8b7208614e8407be
 ```
 
 Можно использовать `pkg-config --cflags --libs y26-k1x-int8-executor` или
-`find_package(y26K1xExecutor 0.9.2 CONFIG REQUIRED)` и цель
+`find_package(y26K1xExecutor 0.9.3 CONFIG REQUIRED)` и цель
 `y26::executor_shared`/`y26::executor_static`. Инициализируйте параметры,
 создайте один дескриптор, один раз подготовьте его с ожидаемым манифестом,
 последовательно передавайте кадры и уничтожайте только после завершения всех

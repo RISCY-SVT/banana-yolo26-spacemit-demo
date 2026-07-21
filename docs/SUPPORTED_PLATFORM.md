@@ -1,6 +1,6 @@
 # Supported Platform
 
-The 0.9.2 runtime is validated only on the following platform contract:
+The 0.9.3 runtime is validated only on the following platform contract:
 
 - Banana-Pi BPI-F3 with SpacemiT K1X/X60 CPUs;
 - Bianbu 2.2.1 user space;

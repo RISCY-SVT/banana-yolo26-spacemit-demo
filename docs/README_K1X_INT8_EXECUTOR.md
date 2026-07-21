@@ -1,6 +1,6 @@
 # YOLO26 K1X INT8 Executor
 
-Version 0.9.2 is the camera-demo maintenance release for one frozen exact target:
+Version 0.9.3 is the scheduler-liveness maintenance release for one frozen exact target:
 YOLO26n-640 on Banana-Pi BPI-F3 / SpacemiT K1X under `K1X_INT8_V1`.
 
 Start here:

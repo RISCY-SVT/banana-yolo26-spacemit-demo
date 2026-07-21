@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(banana_yolo26_k1x_demo VERSION 0.9.2 LANGUAGES C CXX)
+project(banana_yolo26_k1x_demo VERSION 0.9.3 LANGUAGES C CXX)
 
 include(GNUInstallDirs)
 
@@ -22,7 +22,7 @@ if(Y26_DEMO_USE_INSTALLED_EXECUTOR)
     if(Y26_DEMO_EXECUTOR_DIR)
         set(y26K1xExecutor_DIR "${Y26_DEMO_EXECUTOR_DIR}")
     endif()
-    find_package(y26K1xExecutor 0.9.2 CONFIG REQUIRED)
+    find_package(y26K1xExecutor 0.9.3 CONFIG REQUIRED)
 else()
     set(Y26_K1X_BUILD_RELEASE ON CACHE BOOL "" FORCE)
     set(Y26_K1X_BUILD_RELEASE_TOOLS ON CACHE BOOL "" FORCE)

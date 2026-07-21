@@ -4,10 +4,10 @@ Stage59 выпускает отдельные комплекты для испо
 каждый доступен в виде детерминированных tar.gz и ZIP:
 
 ```text
-banana-yolo26-k1x-int8-executor-0.9.2-runtime-riscv64.tar.gz
-banana-yolo26-k1x-int8-executor-0.9.2-runtime-riscv64.zip
-banana-yolo26-k1x-int8-executor-0.9.2-internal-rd-riscv64.tar.gz
-banana-yolo26-k1x-int8-executor-0.9.2-internal-rd-riscv64.zip
+banana-yolo26-k1x-int8-executor-0.9.3-runtime-riscv64.tar.gz
+banana-yolo26-k1x-int8-executor-0.9.3-runtime-riscv64.zip
+banana-yolo26-k1x-int8-executor-0.9.3-internal-rd-riscv64.tar.gz
+banana-yolo26-k1x-int8-executor-0.9.3-internal-rd-riscv64.zip
 ```
 
 Распакуйте архив на NVMe-раздел `/data` платы и проверьте его из корня:

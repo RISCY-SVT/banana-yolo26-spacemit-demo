@@ -47,7 +47,7 @@ threshold matter. See `MODEL_RESOLUTION_AND_OBJECT_SIZE_EN.md` and the TSVs.
 Yes. On the BPI-F3:
 
 ```bash
-/data/y26-k1x-int8-executor/0.9.2/scripts/run_camera_demo.sh
+/data/y26-k1x-int8-executor/0.9.3/scripts/run_camera_demo.sh
 ```
 
 The selected camera launchers intentionally do not apply O2. The quality
@@ -70,7 +70,7 @@ fab4a72cf524ce0a205ceca0384144f2eee7bc79dff3f4db8b7208614e8407be
 ```
 
 Use `pkg-config --cflags --libs y26-k1x-int8-executor` or
-`find_package(y26K1xExecutor 0.9.2 CONFIG REQUIRED)` and link
+`find_package(y26K1xExecutor 0.9.3 CONFIG REQUIRED)` and link
 `y26::executor_shared` or `y26::executor_static`. Initialize options, create one
 handle, prepare once with the expected manifest, run serialized frames, and
 destroy after all calls finish. Use either float32 NCHW RGB `[0,1]` or an

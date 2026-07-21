@@ -25,8 +25,8 @@ executor, camera demo, static library, and shared library in one build:
 
 ```bash
 scripts/build_cross.sh \
-  --build-root /data/build/banana-yolo26-k1x-demo-0.9.2 \
-  --install-root /data/install/banana-yolo26-k1x-demo-0.9.2
+  --build-root /data/build/banana-yolo26-k1x-demo-0.9.3 \
+  --install-root /data/install/banana-yolo26-k1x-demo-0.9.3
 ```
 
 The official configure sets `Y26_DEMO_OFFICIAL_K1X_RELEASE=ON` and

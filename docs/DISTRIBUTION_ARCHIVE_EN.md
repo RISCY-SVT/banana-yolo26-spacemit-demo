@@ -4,10 +4,10 @@ Stage59 publishes separate runtime and internal-R&D deliveries, each as a
 deterministic tar archive and ZIP:
 
 ```text
-banana-yolo26-k1x-int8-executor-0.9.2-runtime-riscv64.tar.gz
-banana-yolo26-k1x-int8-executor-0.9.2-runtime-riscv64.zip
-banana-yolo26-k1x-int8-executor-0.9.2-internal-rd-riscv64.tar.gz
-banana-yolo26-k1x-int8-executor-0.9.2-internal-rd-riscv64.zip
+banana-yolo26-k1x-int8-executor-0.9.3-runtime-riscv64.tar.gz
+banana-yolo26-k1x-int8-executor-0.9.3-runtime-riscv64.zip
+banana-yolo26-k1x-int8-executor-0.9.3-internal-rd-riscv64.tar.gz
+banana-yolo26-k1x-int8-executor-0.9.3-internal-rd-riscv64.zip
 ```
 
 Extract under the board NVMe `/data`, then verify from the extracted root:
