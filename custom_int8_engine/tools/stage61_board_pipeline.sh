@@ -49,6 +49,7 @@ for resolution in "$@"; do
   }
   for mode in serial double-buffer; do
     prefix=$ram/r${resolution}_${mode}
+    file_mode=${mode//-/_}
     if [[ $mode == serial ]]; then
       command=("$stage_root/bin/stage52_image_pipeline_bench"
         --package "$package" --image "$image" --threads 4
@@ -63,9 +64,9 @@ for resolution in "$@"; do
     status=$?
     set -e
     printf '%s\n' "$status" >"$prefix.exit-status.txt"
-    cp "$prefix.tsv" "$output/r${resolution}_${mode}.tsv"
-    cp "$prefix.stderr" "$output/r${resolution}_${mode}.stderr"
-    cp "$prefix.exit-status.txt" "$output/r${resolution}_${mode}.exit-status.txt"
+    cp "$prefix.tsv" "$output/r${resolution}_${file_mode}.tsv"
+    cp "$prefix.stderr" "$output/r${resolution}_${file_mode}.stderr"
+    cp "$prefix.exit-status.txt" "$output/r${resolution}_${file_mode}.exit-status.txt"
     [[ $status -eq 0 ]] || {
       echo "Stage61 $mode pipeline failed for R$resolution" >&2
       exit "$status"

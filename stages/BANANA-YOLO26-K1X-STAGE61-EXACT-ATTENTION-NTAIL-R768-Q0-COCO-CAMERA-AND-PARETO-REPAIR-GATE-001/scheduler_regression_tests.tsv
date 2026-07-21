@@ -1,0 +1,8 @@
+surface	runs_or_cases	transitions_or_events	timeout_s	races_or_races	status	raw_evidence
+native_ctest	54	54 tests	600	0 failures	pass	0058__host-native-final-ctest.stdout.txt
+asan_ubsan_ctest	54	54 tests	600	0 sanitizer findings	pass	0059__asan-ubsan-final.stdout.txt
+tsan_ctest	54	54 tests	600	0 race reports	pass	0060__tsan-final.stdout.txt
+threaded_startup_repeat	20	8000 workspaces; 20000 readiness publications	60	0 timeouts	pass	0013 command ledger and repeated stdout
+active_window_repeat	20	40000 begin/end transitions	60	0 timeouts or stale replays	pass	0014 command ledger and repeated stdout
+board_lifecycle_smoke	1	2000 begin/end transitions	900	0 hangs	pass	0011 command ledger; board/performance/lifecycle_2000.tsv
+unsupported_partial_worker_mode	1	fail-closed assertion	60	0 entries into unsupported mode	pass	test_stage61_worker_lifecycle

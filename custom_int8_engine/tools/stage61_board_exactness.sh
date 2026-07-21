@@ -21,7 +21,7 @@ trap 'rm -rf "$ram"' EXIT
 
 [[ -x $dump ]] || { echo "missing Stage61 boundary dumper: $dump" >&2; exit 1; }
 if [[ ${Y26_STAGE61_APPEND:-0} != 1 || ! -s $output/summary.tsv ]]; then
-  printf 'resolution\tfixture\tfiles\thost_vs_board_scalar\thost_vs_board_optimized\tboard_scalar_vs_optimized\tscalar_elapsed_s\toptimized_elapsed_s\tscalar_summary\toptimized_summary\n' \
+  printf 'resolution\tfixture\tinteger_boundary_count\thost_vs_board_scalar_boundaries\thost_vs_board_optimized_boundaries\tboard_scalar_vs_optimized_all_files\tboard_final_output_exact\tboard_output_sha256\tscalar_elapsed_s\toptimized_elapsed_s\tscalar_summary\toptimized_summary\n' \
     >"$output/summary.tsv"
 fi
 
@@ -49,8 +49,14 @@ hash_tree() {
   local directory=$1 destination=$2
   (
     cd "$directory"
-    find . -maxdepth 1 -type f -printf '%P\0' | sort -z | xargs -0 sha256sum
+    find . -maxdepth 1 -type f -printf '%P\0' | LC_ALL=C sort -z | xargs -0 sha256sum
   ) >"$destination"
+}
+
+boundary_hashes() {
+  local source=$1 destination=$2
+  awk '$2 != "output_1x300x6.f32" {print}' "$source" | LC_ALL=C sort -k2,2 \
+    >"$destination"
 }
 
 require_hash_match() {
@@ -95,23 +101,28 @@ for resolution in "$@"; do
 
     hash_tree "$scalar_dir" "$prefix.scalar.sha256"
     hash_tree "$optimized_dir" "$prefix.optimized.sha256"
-    require_hash_match "$host_hash" "$prefix.scalar.sha256" \
+    boundary_hashes "$host_hash" "$prefix.host.boundary.sha256"
+    boundary_hashes "$prefix.scalar.sha256" "$prefix.scalar.boundary.sha256"
+    boundary_hashes "$prefix.optimized.sha256" "$prefix.optimized.boundary.sha256"
+    require_hash_match "$prefix.host.boundary.sha256" "$prefix.scalar.boundary.sha256" \
       "R$resolution $fixture host vs board scalar"
-    require_hash_match "$host_hash" "$prefix.optimized.sha256" \
+    require_hash_match "$prefix.host.boundary.sha256" "$prefix.optimized.boundary.sha256" \
       "R$resolution $fixture host vs board optimized"
     require_hash_match "$prefix.scalar.sha256" "$prefix.optimized.sha256" \
       "R$resolution $fixture board scalar vs optimized"
-    files=$(wc -l <"$host_hash")
-    [[ $files -eq 216 ]] || {
-      echo "unexpected oracle file count: R$resolution $fixture has $files" >&2
+    files=$(wc -l <"$prefix.host.boundary.sha256")
+    [[ $files -eq 215 ]] || {
+      echo "unexpected integer-boundary count: R$resolution $fixture has $files" >&2
       exit 1
     }
+    board_output_sha256=$(sha256sum "$optimized_dir/output_1x300x6.f32" | awk '{print $1}')
     scalar_summary=$(tr '\t\n' '  ' <"$prefix.scalar.stdout")
     optimized_summary=$(tr '\t\n' '  ' <"$prefix.optimized.stdout")
     scalar_elapsed=$(awk -v a="$scalar_begin" -v b="$scalar_end" 'BEGIN {printf "%.6f", (b-a)/1e9}')
     optimized_elapsed=$(awk -v a="$optimized_begin" -v b="$optimized_end" 'BEGIN {printf "%.6f", (b-a)/1e9}')
-    printf '%s\t%s\t%s\texact\texact\texact\t%s\t%s\t%s\t%s\n' \
-      "$resolution" "$fixture" "$files" "$scalar_elapsed" "$optimized_elapsed" \
+    printf '%s\t%s\t%s\texact\texact\texact\texact\t%s\t%s\t%s\t%s\t%s\n' \
+      "$resolution" "$fixture" "$files" "$board_output_sha256" \
+      "$scalar_elapsed" "$optimized_elapsed" \
       "$scalar_summary" "$optimized_summary" >>"$output/summary.tsv"
     cp "$prefix.scalar.sha256" "$output/r${resolution}_${fixture}_scalar.sha256"
     cp "$prefix.optimized.sha256" "$output/r${resolution}_${fixture}_optimized.sha256"

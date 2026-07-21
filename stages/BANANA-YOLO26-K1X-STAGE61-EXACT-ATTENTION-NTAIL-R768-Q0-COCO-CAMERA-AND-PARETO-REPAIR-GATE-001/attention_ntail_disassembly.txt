@@ -1,0 +1,527 @@
+[dev] glibc: ldd (Ubuntu GLIBC 2.39-0ubuntu8.7) 2.39
+[dev] node : /usr/bin/node  v24.15.0 | npm: 12.0.1
+[dev] codex: /home/svt/.npm-global/bin/codex
+[dev] claude: /home/svt/.npm-global/bin/claude
+[dev] riscv default: /opt/riscv -> /opt/SpacemiT
+
+build/cross-research/CMakeFiles/y26_k1x_custom_int8_engine.dir/src/stage52_full_executor.cpp.o:     file format elf64-littleriscv
+
+
+Disassembly of section .text:
+
+Disassembly of section .text._ZNKSt5ctypeIcE8do_widenEc:
+
+Disassembly of section .text._ZNSt6thread24_M_thread_deps_never_runEv:
+
+Disassembly of section .text._ZNSt23_Sp_counted_ptr_inplaceIN3y267stage5212FullExecutor4Impl16AttentionProfileESaIvELN9__gnu_cxx12_Lock_policyE1EED2Ev:
+
+Disassembly of section .text._ZNSt23_Sp_counted_ptr_inplaceIN3y267stage5212FullExecutor4Impl16AttentionProfileESaIvELN9__gnu_cxx12_Lock_policyE1EE10_M_disposeEv:
+
+Disassembly of section .text._ZNSt23_Sp_counted_ptr_inplaceIN3y267stage5212FullExecutor4Impl16AttentionProfileESaIvELN9__gnu_cxx12_Lock_policyE1EED0Ev:
+
+Disassembly of section .text.unlikely:
+
+Disassembly of section .text._ZNSt23_Sp_counted_ptr_inplaceIN3y267stage5212FullExecutor4Impl16AttentionProfileESaIvELN9__gnu_cxx12_Lock_policyE1EE10_M_destroyEv:
+
+Disassembly of section .text._ZNSt23_Sp_counted_ptr_inplaceIN3y267stage5212FullExecutor4Impl16AttentionProfileESaIvELN9__gnu_cxx12_Lock_policyE1EE14_M_get_deleterERKSt9type_info:
+
+Disassembly of section .text._ZN3y267stage5212FullExecutor4Impl17run_softmax_chunkERKNS0_12_GLOBAL__N_19OperationEmm:
+
+Disassembly of section .text._ZNK3y267stage5212FullExecutor4Impl18static_range_totalERKNS0_12_GLOBAL__N_19OperationE:
+
+Disassembly of section .text._ZN3y267stage5212FullExecutor4Impl13head_best_jobEPvii:
+
+Disassembly of section .text._ZN3y267stage5212FullExecutor4Impl14matmul_ime_jobEPvii:
+
+Disassembly of section .text._ZN3y267stage5212FullExecutor4Impl8conv_jobEPvii:
+
+Disassembly of section .text._ZNSt7__cxx119to_stringEi:
+
+Disassembly of section .text._ZNSt10filesystem7__cxx114pathD2Ev:
+
+Disassembly of section .text._ZN3y267stage5212FullExecutor4Impl11decode_headEPf:
+
+Disassembly of section .text._ZN3y267int8_v119PackageVerificationD2Ev:
+
+Disassembly of section .text._ZNSt5arrayIN3y267stage5212FullExecutor4Impl10CoreBridgeELm6EED2Ev:
+
+Disassembly of section .text._ZN3y267stage5212FullExecutor4ImplD2Ev:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE9_M_assignERKS4_:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEC2EOS4_:
+
+Disassembly of section .text._ZNSt6vectorINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESaIS5_EED2Ev:
+
+Disassembly of section .text._ZNSt6vectorISt13unordered_mapINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES6_St4hashIS6_ESt8equal_toIS6_ESaISt4pairIKS6_S6_EEESaISF_EED2Ev:
+
+Disassembly of section .text._ZNSt6vectorIiSaIiEE6resizeEm:
+
+Disassembly of section .text._ZNSt11unique_lockISt5mutexE6unlockEv:
+
+Disassembly of section .text._ZN3y267stage5212FullExecutor4Impl16dispatch_workersEiPFvPviiES3_:
+
+Disassembly of section .text._ZNSt6vectorIaSaIaEE6resizeEm:
+
+Disassembly of section .text._ZNSt6vectorIlSaIlEE6resizeEm:
+
+Disassembly of section .text._ZNSt6vectorIS_IaSaIaEESaIS1_EED2Ev:
+
+Disassembly of section .text._ZNSt10_HashtableIjSt4pairIKjtESaIS2_ENSt8__detail10_Select1stESt8equal_toIjESt4hashIjENS4_18_Mod_range_hashingENS4_20_Default_ranged_hashENS4_20_Prime_rehash_policyENS4_17_Hashtable_traitsILb0ELb0ELb1EEEED2Ev:
+
+Disassembly of section .text._ZNSt6vectorIN3y267stage5212FullExecutor4Impl12DenseScratchESaIS4_EED2Ev:
+
+Disassembly of section .text._ZNSt10unique_ptrIN3y267stage4915PersistentSliceESt14default_deleteIS2_EED2Ev:
+
+Disassembly of section .text._ZNSt6vectorIjSaIjEE6resizeEm:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE10_M_disposeEv:
+
+Disassembly of section .text._ZNSt10filesystem7__cxx114pathC2ERKS1_:
+
+Disassembly of section .text._ZN3y267stage5212FullExecutor4ImplC2Ev:
+
+Disassembly of section .text._ZN3y267stage5212FullExecutor4Impl19static_schedule_jobEPvii:
+
+Disassembly of section .text._ZN3y267stage5212FullExecutor4Impl9range_jobEPvii:
+
+Disassembly of section .text._ZNSt6vectorIN3y267stage4913WorkerCounterESaIS2_EED2Ev:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE6insertEmPKc:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE9_M_mutateEmmPKcm:
+
+Disassembly of section .text._ZNKSt17basic_string_viewIcSt11char_traitsIcEE7compareES2_:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE6appendEPKc:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE6appendEPKcm:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE9_M_appendEPKcm:
+
+Disassembly of section .text._ZN3y267stage5212FullExecutor4Impl18run_optimized_coreEPNS_7stage4911SliceTimingE:
+
+build/cross-research/CMakeFiles/y26_k1x_custom_int8_engine.dir/kernels/stage48_nchwc8_model5.cpp.o:     file format elf64-littleriscv
+
+
+Disassembly of section .text:
+
+0000000000000b04 <y26_stage53_kernel_m12n4>:
+     b04:	011072d7          	vsetvli	t0,zero,e32,m2,tu,mu
+     b08:	2e840457          	vxor.vv	v8,v8,v8
+     b0c:	2ea50557          	vxor.vv	v10,v10,v10
+     b10:	2ec60657          	vxor.vv	v12,v12,v12
+     b14:	000072d7          	vsetvli	t0,zero,e8,m1,tu,mu
+     b18:	8332                	mv	t1,a2
+     b1a:	8e2a                	mv	t3,a0
+     b1c:	8eae                	mv	t4,a1
+
+0000000000000b1e <.L1^B6>:
+     b1e:	020e0007          	vle8.v	v0,(t3)
+     b22:	020e0f13          	addi	t5,t3,32
+     b26:	020f0087          	vle8.v	v1,(t5)
+     b2a:	040e0f13          	addi	t5,t3,64
+     b2e:	020f0107          	vle8.v	v2,(t5)
+     b32:	020e8207          	vle8.v	v4,(t4)
+     b36:	e240342b          	smt.vmadot	v8,v0,v4
+     b3a:	e240b52b          	smt.vmadot	v10,v1,v4
+     b3e:	e241362b          	smt.vmadot	v12,v2,v4
+     b42:	060e0e13          	addi	t3,t3,96
+     b46:	080e8e93          	addi	t4,t4,128
+     b4a:	137d                	addi	t1,t1,-1
+     b4c:	fc0319e3          	bnez	t1,b1e <.L1^B6>
+			b4c: R_RISCV_BRANCH	.L1^B6
+     b50:	011072d7          	vsetvli	t0,zero,e32,m2,tu,mu
+     b54:	83b6                	mv	t2,a3
+     b56:	0203e427          	vse32.v	v8,(t2)
+     b5a:	04038393          	addi	t2,t2,64
+     b5e:	0203e527          	vse32.v	v10,(t2)
+     b62:	04038393          	addi	t2,t2,64
+     b66:	0203e627          	vse32.v	v12,(t2)
+     b6a:	04038393          	addi	t2,t2,64
+     b6e:	8082                	ret
+
+Disassembly of section .text._ZNKSt5ctypeIcE8do_widenEc:
+
+Disassembly of section .text._ZNSt6thread24_M_thread_deps_never_runEv:
+
+Disassembly of section .text.unlikely:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEED2Ev:
+
+Disassembly of section .text._ZNSt10filesystem7__cxx114pathD2Ev:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEC2EOS4_:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEC2IS3_EEPKcRKS3_:
+
+Disassembly of section .text._ZNSt6vectorINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESaIS5_EED2Ev:
+
+Disassembly of section .text._ZNSt10_HashtableINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESt4pairIKS5_S5_ESaIS8_ENSt8__detail10_Select1stESt8equal_toIS5_ESt4hashIS5_ENSA_18_Mod_range_hashingENSA_20_Default_ranged_hashENSA_20_Prime_rehash_policyENSA_17_Hashtable_traitsILb1ELb0ELb1EEEED2Ev:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE10_M_disposeEv:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE6insertEmPKc:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE6appendEPKc:
+
+Disassembly of section .text._ZNSt11unique_lockISt5mutexE6unlockEv:
+
+Disassembly of section .text._ZN3y267stage4816Model5DirectConv4ImplD2Ev:
+
+build/cross-research/CMakeFiles/y26_k1x_custom_int8_engine.dir/kernels/stage48_nchwc8_model5.cpp.o:     file format elf64-littleriscv
+
+
+Disassembly of section .text:
+
+0000000000000b70 <y26_stage53_kernel_m12n8>:
+     b70:	011072d7          	vsetvli	t0,zero,e32,m2,tu,mu
+     b74:	2e840457          	vxor.vv	v8,v8,v8
+     b78:	2ea50557          	vxor.vv	v10,v10,v10
+     b7c:	2ec60657          	vxor.vv	v12,v12,v12
+     b80:	2ee70757          	vxor.vv	v14,v14,v14
+     b84:	2f080857          	vxor.vv	v16,v16,v16
+     b88:	2f290957          	vxor.vv	v18,v18,v18
+     b8c:	000072d7          	vsetvli	t0,zero,e8,m1,tu,mu
+     b90:	8332                	mv	t1,a2
+     b92:	8e2a                	mv	t3,a0
+     b94:	8eae                	mv	t4,a1
+
+0000000000000b96 <.L1^B7>:
+     b96:	020e0007          	vle8.v	v0,(t3)
+     b9a:	020e0f13          	addi	t5,t3,32
+     b9e:	020f0087          	vle8.v	v1,(t5)
+     ba2:	040e0f13          	addi	t5,t3,64
+     ba6:	020f0107          	vle8.v	v2,(t5)
+     baa:	020e8207          	vle8.v	v4,(t4)
+     bae:	020e8f13          	addi	t5,t4,32
+     bb2:	020f0287          	vle8.v	v5,(t5)
+     bb6:	e240342b          	smt.vmadot	v8,v0,v4
+     bba:	e240b52b          	smt.vmadot	v10,v1,v4
+     bbe:	e241362b          	smt.vmadot	v12,v2,v4
+     bc2:	e250372b          	smt.vmadot	v14,v0,v5
+     bc6:	e250b82b          	smt.vmadot	v16,v1,v5
+     bca:	e251392b          	smt.vmadot	v18,v2,v5
+     bce:	060e0e13          	addi	t3,t3,96
+     bd2:	080e8e93          	addi	t4,t4,128
+     bd6:	137d                	addi	t1,t1,-1
+     bd8:	fa031fe3          	bnez	t1,b96 <.L1^B7>
+			bd8: R_RISCV_BRANCH	.L1^B7
+     bdc:	011072d7          	vsetvli	t0,zero,e32,m2,tu,mu
+     be0:	83b6                	mv	t2,a3
+     be2:	0203e427          	vse32.v	v8,(t2)
+     be6:	04038393          	addi	t2,t2,64
+     bea:	0203e527          	vse32.v	v10,(t2)
+     bee:	04038393          	addi	t2,t2,64
+     bf2:	0203e627          	vse32.v	v12,(t2)
+     bf6:	04038393          	addi	t2,t2,64
+     bfa:	0203e727          	vse32.v	v14,(t2)
+     bfe:	04038393          	addi	t2,t2,64
+     c02:	0203e827          	vse32.v	v16,(t2)
+     c06:	04038393          	addi	t2,t2,64
+     c0a:	0203e927          	vse32.v	v18,(t2)
+     c0e:	04038393          	addi	t2,t2,64
+     c12:	8082                	ret
+
+Disassembly of section .text._ZNKSt5ctypeIcE8do_widenEc:
+
+Disassembly of section .text._ZNSt6thread24_M_thread_deps_never_runEv:
+
+Disassembly of section .text.unlikely:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEED2Ev:
+
+Disassembly of section .text._ZNSt10filesystem7__cxx114pathD2Ev:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEC2EOS4_:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEC2IS3_EEPKcRKS3_:
+
+Disassembly of section .text._ZNSt6vectorINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESaIS5_EED2Ev:
+
+Disassembly of section .text._ZNSt10_HashtableINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESt4pairIKS5_S5_ESaIS8_ENSt8__detail10_Select1stESt8equal_toIS5_ESt4hashIS5_ENSA_18_Mod_range_hashingENSA_20_Default_ranged_hashENSA_20_Prime_rehash_policyENSA_17_Hashtable_traitsILb1ELb0ELb1EEEED2Ev:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE10_M_disposeEv:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE6insertEmPKc:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE6appendEPKc:
+
+Disassembly of section .text._ZNSt11unique_lockISt5mutexE6unlockEv:
+
+Disassembly of section .text._ZN3y267stage4816Model5DirectConv4ImplD2Ev:
+
+build/cross-research/CMakeFiles/y26_k1x_custom_int8_engine.dir/kernels/stage48_nchwc8_model5.cpp.o:     file format elf64-littleriscv
+
+
+Disassembly of section .text:
+
+00000000000008de <y26_stage48_kernel_m12n16>:
+     8de:	011072d7          	vsetvli	t0,zero,e32,m2,tu,mu
+     8e2:	2e840457          	vxor.vv	v8,v8,v8
+     8e6:	2ea50557          	vxor.vv	v10,v10,v10
+     8ea:	2ec60657          	vxor.vv	v12,v12,v12
+     8ee:	2ee70757          	vxor.vv	v14,v14,v14
+     8f2:	2f080857          	vxor.vv	v16,v16,v16
+     8f6:	2f290957          	vxor.vv	v18,v18,v18
+     8fa:	2f4a0a57          	vxor.vv	v20,v20,v20
+     8fe:	2f6b0b57          	vxor.vv	v22,v22,v22
+     902:	2f8c0c57          	vxor.vv	v24,v24,v24
+     906:	2fad0d57          	vxor.vv	v26,v26,v26
+     90a:	2fce0e57          	vxor.vv	v28,v28,v28
+     90e:	2fef0f57          	vxor.vv	v30,v30,v30
+     912:	000072d7          	vsetvli	t0,zero,e8,m1,tu,mu
+     916:	8332                	mv	t1,a2
+     918:	8e2a                	mv	t3,a0
+     91a:	8eae                	mv	t4,a1
+
+000000000000091c <.L1^B4>:
+     91c:	020e0007          	vle8.v	v0,(t3)
+     920:	020e0f13          	addi	t5,t3,32
+     924:	020f0087          	vle8.v	v1,(t5)
+     928:	040e0f13          	addi	t5,t3,64
+     92c:	020f0107          	vle8.v	v2,(t5)
+     930:	020e8207          	vle8.v	v4,(t4)
+     934:	020e8f13          	addi	t5,t4,32
+     938:	020f0287          	vle8.v	v5,(t5)
+     93c:	040e8f13          	addi	t5,t4,64
+     940:	020f0307          	vle8.v	v6,(t5)
+     944:	060e8f13          	addi	t5,t4,96
+     948:	020f0387          	vle8.v	v7,(t5)
+     94c:	e240342b          	smt.vmadot	v8,v0,v4
+     950:	e240b52b          	smt.vmadot	v10,v1,v4
+     954:	e241362b          	smt.vmadot	v12,v2,v4
+     958:	e250372b          	smt.vmadot	v14,v0,v5
+     95c:	e250b82b          	smt.vmadot	v16,v1,v5
+     960:	e251392b          	smt.vmadot	v18,v2,v5
+     964:	e2603a2b          	smt.vmadot	v20,v0,v6
+     968:	e260bb2b          	smt.vmadot	v22,v1,v6
+     96c:	e2613c2b          	smt.vmadot	v24,v2,v6
+     970:	e2703d2b          	smt.vmadot	v26,v0,v7
+     974:	e270be2b          	smt.vmadot	v28,v1,v7
+     978:	e2713f2b          	smt.vmadot	v30,v2,v7
+     97c:	060e0e13          	addi	t3,t3,96
+     980:	080e8e93          	addi	t4,t4,128
+     984:	137d                	addi	t1,t1,-1
+     986:	f8031be3          	bnez	t1,91c <.L1^B4>
+			986: R_RISCV_BRANCH	.L1^B4
+     98a:	011072d7          	vsetvli	t0,zero,e32,m2,tu,mu
+     98e:	83b6                	mv	t2,a3
+     990:	0203e427          	vse32.v	v8,(t2)
+     994:	04038393          	addi	t2,t2,64
+     998:	0203e527          	vse32.v	v10,(t2)
+     99c:	04038393          	addi	t2,t2,64
+     9a0:	0203e627          	vse32.v	v12,(t2)
+     9a4:	04038393          	addi	t2,t2,64
+     9a8:	0203e727          	vse32.v	v14,(t2)
+     9ac:	04038393          	addi	t2,t2,64
+     9b0:	0203e827          	vse32.v	v16,(t2)
+     9b4:	04038393          	addi	t2,t2,64
+     9b8:	0203e927          	vse32.v	v18,(t2)
+     9bc:	04038393          	addi	t2,t2,64
+     9c0:	0203ea27          	vse32.v	v20,(t2)
+     9c4:	04038393          	addi	t2,t2,64
+     9c8:	0203eb27          	vse32.v	v22,(t2)
+     9cc:	04038393          	addi	t2,t2,64
+     9d0:	0203ec27          	vse32.v	v24,(t2)
+     9d4:	04038393          	addi	t2,t2,64
+     9d8:	0203ed27          	vse32.v	v26,(t2)
+     9dc:	04038393          	addi	t2,t2,64
+     9e0:	0203ee27          	vse32.v	v28,(t2)
+     9e4:	04038393          	addi	t2,t2,64
+     9e8:	0203ef27          	vse32.v	v30,(t2)
+     9ec:	04038393          	addi	t2,t2,64
+     9f0:	8082                	ret
+
+Disassembly of section .text._ZNKSt5ctypeIcE8do_widenEc:
+
+Disassembly of section .text._ZNSt6thread24_M_thread_deps_never_runEv:
+
+Disassembly of section .text.unlikely:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEED2Ev:
+
+Disassembly of section .text._ZNSt10filesystem7__cxx114pathD2Ev:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEC2EOS4_:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEC2IS3_EEPKcRKS3_:
+
+Disassembly of section .text._ZNSt6vectorINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESaIS5_EED2Ev:
+
+Disassembly of section .text._ZNSt10_HashtableINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESt4pairIKS5_S5_ESaIS8_ENSt8__detail10_Select1stESt8equal_toIS5_ESt4hashIS5_ENSA_18_Mod_range_hashingENSA_20_Default_ranged_hashENSA_20_Prime_rehash_policyENSA_17_Hashtable_traitsILb1ELb0ELb1EEEED2Ev:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE10_M_disposeEv:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE6insertEmPKc:
+
+Disassembly of section .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE6appendEPKc:
+
+Disassembly of section .text._ZNSt11unique_lockISt5mutexE6unlockEv:
+
+Disassembly of section .text._ZN3y267stage4816Model5DirectConv4ImplD2Ev:
+
+===== DISPATCHER =====
+[dev] glibc: ldd (Ubuntu GLIBC 2.39-0ubuntu8.7) 2.39
+[dev] node : /usr/bin/node  v24.15.0 | npm: 12.0.1
+[dev] codex: /home/svt/.npm-global/bin/codex
+[dev] claude: /home/svt/.npm-global/bin/claude
+[dev] riscv default: /opt/riscv -> /opt/SpacemiT
+
+build/cross-research/CMakeFiles/y26_k1x_custom_int8_engine.dir/src/stage52_full_executor.cpp.o:     file format elf64-littleriscv
+
+
+Disassembly of section .text:
+
+00000000000092aa <y26::stage61::run_m12n_tail(signed char const*, signed char const*, int, int, y26::stage61::Ntail13Strategy, int*, unsigned long)>:
+    92aa:	cd39                	beqz	a0,9308 <.L3646>
+			92aa: R_RISCV_RVC_BRANCH	.L3646
+    92ac:	cdb1                	beqz	a1,9308 <.L3646>
+			92ac: R_RISCV_RVC_BRANCH	.L3646
+    92ae:	cfa9                	beqz	a5,9308 <.L3646>
+			92ae: R_RISCV_RVC_BRANCH	.L3646
+    92b0:	7179                	addi	sp,sp,-48
+    92b2:	f022                	sd	s0,32(sp)
+    92b4:	f406                	sd	ra,40(sp)
+    92b6:	842a                	mv	s0,a0
+    92b8:	4501                	li	a0,0
+    92ba:	04c05363          	blez	a2,9300 <.L3652>
+			92ba: R_RISCV_BRANCH	.L3652
+    92be:	fff6889b          	addiw	a7,a3,-1
+    92c2:	433d                	li	t1,15
+    92c4:	03136e63          	bltu	t1,a7,9300 <.L3652>
+			92c4: R_RISCV_BRANCH	.L3652
+    92c8:	0036829b          	addiw	t0,a3,3
+    92cc:	4022d39b          	sraiw	t2,t0,0x2
+    92d0:	00139e13          	slli	t3,t2,0x1
+    92d4:	007e0eb3          	add	t4,t3,t2
+    92d8:	004e9f13          	slli	t5,t4,0x4
+    92dc:	03e86263          	bltu	a6,t5,9300 <.L3652>
+			92dc: R_RISCV_BRANCH	.L3652
+    92e0:	00161813          	slli	a6,a2,0x1
+    92e4:	00c80fb3          	add	t6,a6,a2
+    92e8:	005f9893          	slli	a7,t6,0x5
+    92ec:	00888333          	add	t1,a7,s0
+    92f0:	006e9293          	slli	t0,t4,0x6
+    92f4:	0067fc63          	bgeu	a5,t1,930c <.L3637>
+			92f4: R_RISCV_BRANCH	.L3637
+    92f8:	00f283b3          	add	t2,t0,a5
+    92fc:	00747863          	bgeu	s0,t2,930c <.L3637>
+			92fc: R_RISCV_BRANCH	.L3637
+
+0000000000009300 <.L3652>:
+    9300:	7402                	ld	s0,32(sp)
+    9302:	70a2                	ld	ra,40(sp)
+    9304:	6145                	addi	sp,sp,48
+    9306:	8082                	ret
+
+0000000000009308 <.L3646>:
+    9308:	4501                	li	a0,0
+    930a:	8082                	ret
+
+000000000000930c <.L3637>:
+    930c:	00761513          	slli	a0,a2,0x7
+    9310:	00b50e33          	add	t3,a0,a1
+    9314:	01c7f763          	bgeu	a5,t3,9322 <.L3638>
+			9314: R_RISCV_BRANCH	.L3638
+    9318:	00578eb3          	add	t4,a5,t0
+    931c:	4501                	li	a0,0
+    931e:	ffd5e1e3          	bltu	a1,t4,9300 <.L3652>
+			931e: R_RISCV_BRANCH	.L3652
+
+0000000000009322 <.L3638>:
+    9322:	4f11                	li	t5,4
+    9324:	02df5463          	bge	t5,a3,934c <.L3657>
+			9324: R_RISCV_BRANCH	.L3657
+    9328:	4821                	li	a6,8
+    932a:	02d85963          	bge	a6,a3,935c <.L3658>
+			932a: R_RISCV_BRANCH	.L3658
+    932e:	4fb1                	li	t6,12
+    9330:	02dfde63          	bge	t6,a3,936c <.L3659>
+			9330: R_RISCV_BRANCH	.L3659
+    9334:	48c1                	li	a7,16
+    9336:	01168363          	beq	a3,a7,933c <.L3643>
+			9336: R_RISCV_BRANCH	.L3643
+    933a:	c325                	beqz	a4,939a <.L3660>
+			933a: R_RISCV_RVC_BRANCH	.L3660
+
+000000000000933c <.L3643>:
+    933c:	8522                	mv	a0,s0
+    933e:	86be                	mv	a3,a5
+    9340:	00000097          	auipc	ra,0x0
+			9340: R_RISCV_CALL_PLT	y26_stage48_kernel_m12n16
+			9340: R_RISCV_RELAX	*ABS*
+    9344:	000080e7          	jalr	ra # 9340 <.L3643+0x4>
+    9348:	4505                	li	a0,1
+    934a:	bf5d                	j	9300 <.L3652>
+			934a: R_RISCV_RVC_JUMP	.L3652
+
+000000000000934c <.L3657>:
+    934c:	8522                	mv	a0,s0
+    934e:	86be                	mv	a3,a5
+    9350:	00000097          	auipc	ra,0x0
+			9350: R_RISCV_CALL_PLT	y26_stage53_kernel_m12n4
+			9350: R_RISCV_RELAX	*ABS*
+    9354:	000080e7          	jalr	ra # 9350 <.L3657+0x4>
+    9358:	4505                	li	a0,1
+    935a:	b75d                	j	9300 <.L3652>
+			935a: R_RISCV_RVC_JUMP	.L3652
+
+000000000000935c <.L3658>:
+    935c:	8522                	mv	a0,s0
+    935e:	86be                	mv	a3,a5
+    9360:	00000097          	auipc	ra,0x0
+			9360: R_RISCV_CALL_PLT	y26_stage53_kernel_m12n8
+			9360: R_RISCV_RELAX	*ABS*
+    9364:	000080e7          	jalr	ra # 9360 <.L3658+0x4>
+    9368:	4505                	li	a0,1
+    936a:	bf59                	j	9300 <.L3652>
+			936a: R_RISCV_RVC_JUMP	.L3652
+
+000000000000936c <.L3659>:
+    936c:	86be                	mv	a3,a5
+    936e:	8522                	mv	a0,s0
+    9370:	ec3e                	sd	a5,24(sp)
+    9372:	e832                	sd	a2,16(sp)
+    9374:	e42e                	sd	a1,8(sp)
+    9376:	00000097          	auipc	ra,0x0
+			9376: R_RISCV_CALL_PLT	y26_stage53_kernel_m12n8
+			9376: R_RISCV_RELAX	*ABS*
+    937a:	000080e7          	jalr	ra # 9376 <.L3659+0xa>
+    937e:	6662                	ld	a2,24(sp)
+    9380:	6722                	ld	a4,8(sp)
+    9382:	8522                	mv	a0,s0
+    9384:	18060693          	addi	a3,a2,384
+    9388:	6642                	ld	a2,16(sp)
+    938a:	04070593          	addi	a1,a4,64
+    938e:	00000097          	auipc	ra,0x0
+			938e: R_RISCV_CALL_PLT	y26_stage53_kernel_m12n4
+			938e: R_RISCV_RELAX	*ABS*
+    9392:	000080e7          	jalr	ra # 938e <.L3659+0x22>
+    9396:	4505                	li	a0,1
+    9398:	b7a5                	j	9300 <.L3652>
+			9398: R_RISCV_RVC_JUMP	.L3652
+
+000000000000939a <.L3660>:
+    939a:	86be                	mv	a3,a5
+    939c:	8522                	mv	a0,s0
+    939e:	ec3e                	sd	a5,24(sp)
+    93a0:	e832                	sd	a2,16(sp)
+    93a2:	e42e                	sd	a1,8(sp)
+    93a4:	00000097          	auipc	ra,0x0
+			93a4: R_RISCV_CALL_PLT	y26_stage53_kernel_m12n8
+			93a4: R_RISCV_RELAX	*ABS*
+    93a8:	000080e7          	jalr	ra # 93a4 <.L3660+0xa>
+    93ac:	67e2                	ld	a5,24(sp)
+    93ae:	65a2                	ld	a1,8(sp)
+    93b0:	6642                	ld	a2,16(sp)
+    93b2:	8522                	mv	a0,s0
+    93b4:	18078693          	addi	a3,a5,384
+    93b8:	04058593          	addi	a1,a1,64
+    93bc:	00000097          	auipc	ra,0x0
+			93bc: R_RISCV_CALL_PLT	y26_stage53_kernel_m12n8
+			93bc: R_RISCV_RELAX	*ABS*
+    93c0:	000080e7          	jalr	ra # 93bc <.L3660+0x22>
+    93c4:	4505                	li	a0,1
+    93c6:	bf2d                	j	9300 <.L3652>
+			93c6: R_RISCV_RVC_JUMP	.L3652

@@ -1,0 +1,9 @@
+resolution	accepted_stage60_mean_us	initial_reproduction_mean_us	initial_delta_us	initial_delta_pct	same_session_abba_control_mean_us	abba_control_delta_us	abba_control_delta_pct	tolerance_us	identity_exact	output_hash_exact	timing_status	aligned_control
+640	133012.150460	132711.193556	-300.956904	-0.226263	131410.638187	-1601.512273	-1.204035	1330.121505	pass	pass	within-gate	1
+512	99057.581572	97841.818048	-1215.763524	-1.227330	98972.904633	-84.676939	-0.085483	1000.000000	pass	pass	documented-scalar-fallback-variance-randomized-abba-authority	1
+448	169388.555060	173469.529872	4080.974812	2.409239	167070.621428	-2317.933632	-1.368412	1693.885551	pass	pass	documented-scalar-fallback-variance-randomized-abba-authority	0
+416	132060.275730	135252.741580	3192.465850	2.417431	130211.211392	-1849.064338	-1.400167	1320.602757	pass	pass	documented-scalar-fallback-variance-randomized-abba-authority	0
+384	47388.843746	47328.869318	-59.974428	-0.126558	47228.310464	-160.533282	-0.338758	1000.000000	pass	pass	within-gate	1
+352	79713.709900	81249.806858	1536.096958	1.927017	78769.306205	-944.403695	-1.184744	1000.000000	pass	pass	documented-scalar-fallback-variance-randomized-abba-authority	0
+320	60898.329450	61888.653270	990.323820	1.626192	60214.735396	-683.594054	-1.122517	1000.000000	pass	pass	within-gate	0
+256	24317.202768	24237.835530	-79.367238	-0.326383	24228.092196	-89.110572	-0.366451	1000.000000	pass	pass	within-gate	1

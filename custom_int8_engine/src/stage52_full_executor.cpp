@@ -519,6 +519,20 @@ std::int8_t quantize_input_f32(float value) noexcept {
         std::clamp<std::int64_t>(rounded, 0, 255)));
 }
 
+#if !defined(__riscv_vector)
+std::uint8_t quantize_input_u8_rvv_contract(float value) noexcept {
+    // RVV multiplies in f32 before the explicit RNE conversion. Keep the
+    // portable oracle at that same precision instead of widening first.
+    const float scaled_f32 = value * 255.0F;
+    const double scaled = static_cast<double>(scaled_f32);
+    const double floor_value = std::floor(scaled);
+    const double fraction = scaled - floor_value;
+    std::int64_t rounded = static_cast<std::int64_t>(floor_value);
+    if (fraction > 0.5 || (fraction == 0.5 && (rounded & 1))) ++rounded;
+    return static_cast<std::uint8_t>(std::clamp<std::int64_t>(rounded, 0, 255));
+}
+#endif
+
 std::vector<std::string> split(std::string_view text, char delimiter) {
     std::vector<std::string> result;
     std::size_t begin = 0;
@@ -3642,15 +3656,9 @@ struct FullExecutor::Impl {
 #else
             for (std::size_t spatial = begin; spatial < end; ++spatial) {
                 for (int channel = 0; channel < output.dims[1]; ++channel) {
-                    const double scaled = static_cast<double>(
-                        input[static_cast<std::size_t>(channel) * plane + spatial]) * 255.0;
-                    const double floor_value = std::floor(scaled);
-                    const double fraction = scaled - floor_value;
-                    std::int64_t rounded = static_cast<std::int64_t>(floor_value);
-                    if (fraction > 0.5 || (fraction == 0.5 && (rounded & 1))) ++rounded;
                     destination[spatial * pixel_stride + static_cast<std::size_t>(channel)] =
-                        int8_v1::signed_storage(static_cast<std::uint8_t>(
-                            std::clamp<std::int64_t>(rounded, 0, 255)));
+                        int8_v1::signed_storage(quantize_input_u8_rvv_contract(
+                            input[static_cast<std::size_t>(channel) * plane + spatial]));
                 }
                 if (!compact_c3) {
                     std::fill(destination + spatial * pixel_stride + output.dims[1],
@@ -3662,6 +3670,7 @@ struct FullExecutor::Impl {
             return;
         }
         for (std::size_t flat = begin; flat < end; ++flat) {
+#if defined(__riscv_vector)
             const double scaled = static_cast<double>(input[flat]) * 255.0;
             const double floor_value = std::floor(scaled);
             const double fraction = scaled - floor_value;
@@ -3669,6 +3678,9 @@ struct FullExecutor::Impl {
             if (fraction > 0.5 || (fraction == 0.5 && (rounded & 1))) ++rounded;
             set_code(operation.output, flat,
                      static_cast<std::uint8_t>(std::clamp<std::int64_t>(rounded, 0, 255)));
+#else
+            set_code(operation.output, flat, quantize_input_u8_rvv_contract(input[flat]));
+#endif
         }
     }
 
