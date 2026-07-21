@@ -1,0 +1,3 @@
+surface	runs	transitions_per_run	total_transitions	constructions_per_run	active_workers	stale_replays	failures	timeouts	status	evidence
+host_repeated_focused	20	2000	40000	20	1,2,3,4	0	0	0	pass	lifecycle_host_20.tsv
+board_K1X	5	2000	10000	20	1,2,3,4	0	0	0	pass	board_active_window_10000.tsv

@@ -16,3 +16,11 @@ Release 0.9.3 is a scheduler-liveness maintenance update to the frozen YOLO26n-6
 - Runtime bundle excludes source ONNX; external ONNX redistribution remains not cleared.
 
 The Stage60 resolution/profile implementation is intentionally absent. This release is a non-regression maintenance backport, not a performance or model release.
+
+## Build identity
+
+The official runtime binaries embed implementation commit
+`c0c3f1a13662aec9ba168963c651e164541905ba`. Packaging commit `2965f59`
+adds only release-root-relative library lookup to the extracted-tree shell
+launchers after RPATH/RUNPATH removal. The final evidence/publication commit is
+recorded separately in `commit_inventory.tsv` and `final_remote_parity.tsv`.

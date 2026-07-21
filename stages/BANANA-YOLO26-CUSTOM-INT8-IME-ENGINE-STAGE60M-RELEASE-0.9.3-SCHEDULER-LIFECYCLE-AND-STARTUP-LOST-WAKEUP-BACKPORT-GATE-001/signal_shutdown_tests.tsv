@@ -1,0 +1,10 @@
+case	injection_target	signal_or_failure	app_exit_status	metrics	detections	recorded_media	leftover_demo_processes	camera_profile_after	classification	note
+normal	none	normal_duration_exit	0	readable	readable	readable_21.424837s	0	inactive	pass	async recorder joined and flushed
+int-wrapper-rejected	outer_profile_wrapper	SIGINT	0	readable	readable	readable_21.264151s	0	inactive	rejected_harness	outer shell absorbed SIGINT and demo reached natural duration; not accepted as signal proof
+term-wrapper-supplemental	outer_profile_wrapper	SIGTERM	143	readable	readable	readable_13.256484s	0	inactive	supplemental_pass	wrapper cleanup and rollback passed
+hup-wrapper-supplemental	outer_profile_wrapper	SIGHUP	129	readable	readable	readable_13.464646s	0	inactive	supplemental_pass	wrapper cleanup and rollback passed
+capture-failure	direct_USB_device	usbreset	0	readable	readable	readable_8.539474s	0	inactive	pass	capture failure terminated without worker hang and flushed outputs
+recorder-failure	recorder_open	unwritable_/proc_path	0	readable	readable	not_created_expected	0	inactive	pass	recording_failures=1 and inference exited cleanly
+int-direct	demo_child	SIGINT	0	readable	readable	readable_10.536082s	0	inactive	pass	signal-safe demo handler exited through wrapper cleanup
+term-direct	demo_child	SIGTERM	0	readable	readable	readable_10.643836s	0	inactive	pass	signal-safe demo handler exited through wrapper cleanup
+hup-direct	demo_child	SIGHUP	0	readable	readable	readable_10.652591s	0	inactive	pass	signal-safe demo handler exited through wrapper cleanup

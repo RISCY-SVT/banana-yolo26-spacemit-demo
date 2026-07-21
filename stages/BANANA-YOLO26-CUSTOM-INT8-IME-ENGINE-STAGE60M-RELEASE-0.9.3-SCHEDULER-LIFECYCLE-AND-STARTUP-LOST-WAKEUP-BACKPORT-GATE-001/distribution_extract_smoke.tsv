@@ -1,0 +1,5 @@
+delivery	format	sha256sums	dependency_verifier	capability_healthcheck	known_fixture	cli_smoke	image_smoke	video_smoke	camera_smoke	cmake_shared_consumer	cmake_static_consumer	pkgconfig_consumer	rpath_runpath_textrel	source_onnx	status
+runtime	tar.gz	pass	pass	ime1_rvv1_frozen1	0xd43f5e018b415631	pass	pass	pass	pass	pass	pass	pass	absent	absent	pass
+runtime	zip	pass	pass	ime1_rvv1_frozen1	0xd43f5e018b415631	pass	pass	pass	pass	pass	pass	pass	absent	absent	pass
+internal-RD	tar.gz	pass	pass	ime1_rvv1_frozen1	0xd43f5e018b415631	pass	pass	pass	pass	pass	pass	pass	absent	exact_30a94e4738606673b5e0a73499cbc977167f046f8fa8637d6040ce744f429c0c_internal_only	pass
+internal-RD	zip	pass	pass	ime1_rvv1_frozen1	0xd43f5e018b415631	pass	pass	pass	pass	pass	pass	pass	absent	exact_30a94e4738606673b5e0a73499cbc977167f046f8fa8637d6040ce744f429c0c_internal_only	pass

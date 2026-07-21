@@ -1,0 +1,2 @@
+release	profile	warmup	measured	mean_us	stddev_us	cv_pct	median_us	p90_us	p95_us	p99_us	p99_9_us	max_us	process_cpu_mean_us	process_voluntary_cs	process_involuntary_cs	max_rss_kib	temp_min_mC	temp_max_mC	freq_min_khz	freq_max_khz	affinity_failures	cpu4_7_ime_count	output_hash	boot_id	status
+0.9.3	low-latency-dedicated_O2	10	13500	132367.100222	420.837977	0.317932	132316.000000	132694.100000	132874.000000	134150.010000	136077.044000	137243.000000	654056.771333	308260	7542	34896	47000	62000	1600000	1600000	0	0	0xd43f5e018b415631	0a0691d1-7502-44c3-903b-444dba83c1d9	pass

@@ -1,0 +1,2 @@
+artifact	path	sha256	expected_sha256	match	status
+stage60m_prediction_json	/data/k1x-stage-runs/BANANA-YOLO26-CUSTOM-INT8-IME-ENGINE-STAGE60M-RELEASE-0.9.3-SCHEDULER-LIFECYCLE-AND-STARTUP-LOST-WAKEUP-BACKPORT-GATE-001/coco/stage60m-coco.json	cda5c8c7a46d61d9c90f6292001eea190cb8f6617efe647a33dc6134dd57ccda	cda5c8c7a46d61d9c90f6292001eea190cb8f6617efe647a33dc6134dd57ccda	1	pass
