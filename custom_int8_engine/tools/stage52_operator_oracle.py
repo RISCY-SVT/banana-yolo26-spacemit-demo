@@ -78,7 +78,7 @@ def audit(package: Path) -> tuple[list[dict[str, object]], dict[str, object]]:
 
     if metadata["contract_id"] != "K1X_INT8_V1":
         raise ValueError("unexpected contract")
-    if re.fullmatch(r"K1X_INT8_V1_YOLO26N_(?:256|288|320|352|384|416|448|512|640)_FULL_GRAPH_001",
+    if re.fullmatch(r"K1X_INT8_V1_YOLO26N_(?:256|288|320|352|384|416|448|512|640|768)_FULL_GRAPH_001",
                     metadata["profile_id"]) is None:
         raise ValueError("unexpected profile")
     if metadata["byte_order"] != "little-endian":
