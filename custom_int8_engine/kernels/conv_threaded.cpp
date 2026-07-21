@@ -397,7 +397,12 @@ void worker_loop(Y26ThreadedConvWorkspace* workspace, std::size_t worker_index) 
     ThreadWorker& worker = workspace->workers[worker_index];
     worker.affinity_set = pin_current_thread_to_cpu(worker.plan.cpu) ? 1 : 0;
     worker.observed_cpu = current_cpu();
-    workspace->ready_count.fetch_add(1, std::memory_order_release);
+    {
+        // Publish readiness while holding the condition-variable mutex so the
+        // creator cannot miss the transition between its predicate and wait.
+        std::lock_guard<std::mutex> lock(workspace->ready_mutex);
+        workspace->ready_count.fetch_add(1, std::memory_order_release);
+    }
     workspace->ready_cv.notify_one();
     for (;;) {
         workspace->start_barrier->arrive_and_wait();

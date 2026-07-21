@@ -1,0 +1,38 @@
+path	stage60_change_class	disposition	reason
+CMakeLists.txt	resolution research targets	rejected	Stage60 build targets and resolution tools are outside maintenance scope
+custom_int8_engine/CMakeLists.txt	resolution research targets	rejected	No Stage60 resolution executables or package tooling are backported
+custom_int8_engine/include/y26_k1x_full_executor.h	dynamic resolution API internals	rejected	The frozen R640 executor shape and ABI remain unchanged
+custom_int8_engine/include/y26_k1x_package.h	package profile dimensions	rejected	No new dimensions or profile IDs are allowed
+custom_int8_engine/src/package_loader.cpp	resolution-aware package validation	rejected	The 0.9.2 R640 package contract remains unchanged
+custom_int8_engine/src/stage52_full_executor.cpp	dynamic/static resolution execution	rejected	No graph shape, arena, dispatch, or tensor-layout changes are allowed
+custom_int8_engine/tools/stage51_next_region_package.py	resolution parameterization	rejected	No per-resolution package generation is included
+custom_int8_engine/tools/stage52_boundary_dump.cpp	resolution-aware fixture tool	rejected	The frozen R640 boundary tool is retained
+custom_int8_engine/tools/stage52_coco_predict.cpp	resolution-aware COCO tool	rejected	The frozen R640 COCO path is retained
+custom_int8_engine/tools/stage52_full_fixtures.py	resolution fixture generation	rejected	No R512/R448/R416/R384/R352/R320/R256 fixtures are included
+custom_int8_engine/tools/stage52_full_package.py	resolution package generation	rejected	No resolution/profile/qparam package changes are allowed
+custom_int8_engine/tools/stage52_image_pipeline_bench.cpp	resolution pipeline parameterization	rejected	Camera and image policy remain unchanged
+custom_int8_engine/tools/stage52_operator_oracle.py	resolution oracle parameterization	rejected	No resolution-specific oracle changes are included
+custom_int8_engine/tools/stage52_state_probe.cpp	resolution state probing	rejected	Frozen R640 state probe retained
+custom_int8_engine/tools/stage56_double_buffer_bench.cpp	resolution pipeline behavior	rejected	No camera or pipeline policy change is allowed
+custom_int8_engine/tools/stage60_board_camera.sh	Stage60 camera sweep tool	rejected	Resolution camera research is prohibited
+custom_int8_engine/tools/stage60_board_coco.sh	Stage60 COCO sweep tool	rejected	Resolution COCO research is prohibited
+custom_int8_engine/tools/stage60_board_finalist_abba.sh	Stage60 finalist A/B tool	rejected	Resolution performance research is prohibited
+custom_int8_engine/tools/stage60_board_pipeline.sh	Stage60 pipeline sweep tool	rejected	Resolution pipeline research is prohibited
+custom_int8_engine/tools/stage60_board_soak.sh	Stage60 resolution soak tool	rejected	Only the existing R640 maintenance soak is allowed
+custom_int8_engine/tools/stage60_board_sweep.sh	Stage60 resolution sweep tool	rejected	Resolution sweep support is prohibited
+custom_int8_engine/tools/stage60_camera_summary.py	Stage60 resolution camera analysis	rejected	Resolution camera analysis is prohibited
+custom_int8_engine/tools/stage60_coco_evaluate.py	Stage60 resolution COCO analysis	rejected	No new resolution evaluator is included
+custom_int8_engine/tools/stage60_finalize_evidence.py	Stage60 resolution evidence generation	rejected	Stage60M has separate maintenance evidence
+custom_int8_engine/tools/stage60_parse_pipeline.py	Stage60 pipeline parser	rejected	Resolution pipeline evidence is not backported
+custom_int8_engine/tools/stage60_parse_shape_matrix.py	Stage60 shape parser	rejected	Resolution shape research is prohibited
+custom_int8_engine/tools/stage60_resolution_bench.cpp	resolution benchmark	rejected	No alternate resolution runtime or benchmark is included
+custom_int8_engine/tools/stage60_resolution_census.py	resolution census	rejected	No alternate profile/shape census is included
+custom_int8_engine/tools/stage60_resolution_fixtures.py	resolution fixtures	rejected	No alternate resolution fixtures are included
+custom_int8_engine/tools/stage60_shape_matrix.cpp	resolution shape benchmark	rejected	No M8/M12 resolution research is included
+custom_int8_engine/tools/stage60_static_resolution.py	static ONNX resolution rewrite	rejected	Model graph and source ONNX are immutable
+custom_int8_engine/tools/stage60_summarize_performance.py	resolution performance analysis	rejected	No resolution performance research is included
+custom_int8_engine/tools/stage60_vector_register_budget.py	future hardware memo tooling	rejected	Future hardware/co-design work is outside Stage60M
+include/banana_demo/infer/yolo26_executor_detector.h	demo resolution state	rejected	Public/demo input-output behavior remains unchanged
+src/app/options.cpp	demo resolution option	rejected	No new resolution CLI option is allowed
+src/infer/yolo26_executor_detector.cpp	demo dynamic resolution behavior	rejected	Camera and executor dispatch policy remain frozen
+src/render/renderer.cpp	demo resolution overlay	rejected	No camera overlay or behavior change is allowed

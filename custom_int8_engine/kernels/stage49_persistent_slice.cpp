@@ -548,13 +548,23 @@ public:
 
     void begin_active_window() noexcept {
         if (!spin_mode_ || !frame_gated_spin_) return;
+        std::unique_lock lock(mutex_);
         active_window_.store(true, std::memory_order_release);
         active_window_cv_.notify_all();
+        active_window_cv_.wait(lock, [this]() {
+            return active_window_parked_ == 0 ||
+                spin_stopping_.load(std::memory_order_relaxed);
+        });
     }
 
     void end_active_window() noexcept {
         if (!spin_mode_ || !frame_gated_spin_) return;
+        std::unique_lock lock(mutex_);
         active_window_.store(false, std::memory_order_release);
+        active_window_cv_.wait(lock, [this]() {
+            return active_window_parked_ == count_ ||
+                spin_stopping_.load(std::memory_order_relaxed);
+        });
     }
 
     bool affinity_ok() const noexcept {
@@ -681,10 +691,18 @@ private:
             if (spin_mode_) {
                 if (frame_gated_spin_ && !active_window_.load(std::memory_order_acquire)) {
                     std::unique_lock lock(mutex_);
-                    active_window_cv_.wait(lock, [&]() {
-                        return spin_stopping_.load(std::memory_order_relaxed) ||
-                            active_window_.load(std::memory_order_acquire);
-                    });
+                    // Recheck under the lifecycle mutex. A new active window may
+                    // have started after the fast-path atomic load.
+                    if (!active_window_.load(std::memory_order_acquire)) {
+                        ++active_window_parked_;
+                        active_window_cv_.notify_all();
+                        active_window_cv_.wait(lock, [&]() {
+                            return spin_stopping_.load(std::memory_order_relaxed) ||
+                                active_window_.load(std::memory_order_acquire);
+                        });
+                        --active_window_parked_;
+                        active_window_cv_.notify_all();
+                    }
                     if (spin_stopping_.load(std::memory_order_relaxed)) return;
                 }
                 std::uint64_t generation = spin_generation_.load(std::memory_order_acquire);
@@ -698,6 +716,9 @@ private:
                     spin_wait(wait_iterations);
                     generation = spin_generation_.load(std::memory_order_acquire);
                 }
+                // A new active window can begin after the park check but before this
+                // worker observes a new job generation. Do not replay the previous job.
+                if (generation == local_generation) continue;
                 if (frame_gated_spin_ &&
                     !active_window_.load(std::memory_order_acquire)) {
                     continue;
@@ -822,6 +843,7 @@ private:
     int spin_policy_ = 0;
     bool spin_mode_ = false;
     bool frame_gated_spin_ = false;
+    int active_window_parked_ = 0;
     std::atomic<std::uint64_t> spin_generation_ {0};
     std::atomic<int> spin_completed_ {0};
     std::atomic<bool> spin_stopping_ {false};

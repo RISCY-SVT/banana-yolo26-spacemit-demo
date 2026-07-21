@@ -1,0 +1,53 @@
+diff --git a/custom_int8_engine/kernels/conv_threaded.cpp b/custom_int8_engine/kernels/conv_threaded.cpp
+index 4ff467e..e6e2dae 100644
+--- a/custom_int8_engine/kernels/conv_threaded.cpp
++++ b/custom_int8_engine/kernels/conv_threaded.cpp
+@@ -400 +400,6 @@ void worker_loop(Y26ThreadedConvWorkspace* workspace, std::size_t worker_index)
+-    workspace->ready_count.fetch_add(1, std::memory_order_release);
++    {
++        // Publish readiness while holding the condition-variable mutex so the
++        // creator cannot miss the transition between its predicate and wait.
++        std::lock_guard<std::mutex> lock(workspace->ready_mutex);
++        workspace->ready_count.fetch_add(1, std::memory_order_release);
++    }
+diff --git a/custom_int8_engine/kernels/stage49_persistent_slice.cpp b/custom_int8_engine/kernels/stage49_persistent_slice.cpp
+index b58884c..1f67b35 100644
+--- a/custom_int8_engine/kernels/stage49_persistent_slice.cpp
++++ b/custom_int8_engine/kernels/stage49_persistent_slice.cpp
+@@ -550,0 +551 @@ public:
++        std::unique_lock lock(mutex_);
+@@ -552,0 +554,4 @@ public:
++        active_window_cv_.wait(lock, [this]() {
++            return active_window_parked_ == 0 ||
++                spin_stopping_.load(std::memory_order_relaxed);
++        });
+@@ -556,0 +562 @@ public:
++        std::unique_lock lock(mutex_);
+@@ -557,0 +564,4 @@ public:
++        active_window_cv_.wait(lock, [this]() {
++            return active_window_parked_ == count_ ||
++                spin_stopping_.load(std::memory_order_relaxed);
++        });
+@@ -684,4 +694,12 @@ private:
+-                    active_window_cv_.wait(lock, [&]() {
+-                        return spin_stopping_.load(std::memory_order_relaxed) ||
+-                            active_window_.load(std::memory_order_acquire);
+-                    });
++                    // Recheck under the lifecycle mutex. A new active window may
++                    // have started after the fast-path atomic load.
++                    if (!active_window_.load(std::memory_order_acquire)) {
++                        ++active_window_parked_;
++                        active_window_cv_.notify_all();
++                        active_window_cv_.wait(lock, [&]() {
++                            return spin_stopping_.load(std::memory_order_relaxed) ||
++                                active_window_.load(std::memory_order_acquire);
++                        });
++                        --active_window_parked_;
++                        active_window_cv_.notify_all();
++                    }
+@@ -700,0 +719,3 @@ private:
++                // A new active window can begin after the park check but before this
++                // worker observes a new job generation. Do not replay the previous job.
++                if (generation == local_generation) continue;
+@@ -824,0 +846 @@ private:
++    int active_window_parked_ = 0;
