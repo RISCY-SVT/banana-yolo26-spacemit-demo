@@ -71,3 +71,6 @@ if(NOT MSVC)
 endif()
 add_test(NAME test_stage60m_worker_lifecycle COMMAND test_stage60m_worker_lifecycle)
 set_tests_properties(test_stage60m_worker_lifecycle PROPERTIES TIMEOUT 60)
+
+y26_add_test(test_stage60m_threaded_startup)
+set_tests_properties(test_stage60m_threaded_startup PROPERTIES TIMEOUT 60)
