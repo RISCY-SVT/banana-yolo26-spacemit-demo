@@ -4,6 +4,7 @@
 #include "y26_k1x_package.h"
 #include "y26_k1x_stage49_slice.h"
 #include "y26_k1x_stage51_q62.h"
+#include "y26_k1x_stage61_attention_ntail.h"
 
 #include <algorithm>
 #include <array>
@@ -67,6 +68,153 @@ extern "C" void y26_stage49_load_contiguous_c8x4(const std::int8_t*, std::int8_t
 #include <sched.h>
 #endif
 
+namespace y26::stage61 {
+namespace {
+
+constexpr int kM12Rows = 12;
+constexpr int kN16Columns = 16;
+constexpr int kDotLanes = 8;
+constexpr int kAccumulatorGroupElements = 3 * 16;
+
+bool ranges_overlap(const void* first, std::size_t first_bytes,
+                    const void* second, std::size_t second_bytes) noexcept {
+    const auto first_begin = reinterpret_cast<std::uintptr_t>(first);
+    const auto second_begin = reinterpret_cast<std::uintptr_t>(second);
+    return first_begin < second_begin + second_bytes &&
+           second_begin < first_begin + first_bytes;
+}
+
+#if !defined(Y26_K1X_ENABLE_IME_ASM) || !defined(__riscv)
+void scalar_m12n_groups(const std::int8_t* a, const std::int8_t* b,
+                        int k_tiles, int output_groups,
+                        std::int32_t* c) noexcept {
+    std::fill(c, c + static_cast<std::size_t>(output_groups) *
+                       kAccumulatorGroupElements, 0);
+    for (int tile = 0; tile < k_tiles; ++tile) {
+        const auto* at = a + static_cast<std::size_t>(tile) * kM12Rows * kDotLanes;
+        const auto* bt = b + static_cast<std::size_t>(tile) * kN16Columns * kDotLanes;
+        for (int output_group = 0; output_group < output_groups; ++output_group) {
+            for (int row_group = 0; row_group < 3; ++row_group) {
+                auto* result = c +
+                    static_cast<std::size_t>(output_group * 3 + row_group) * 16;
+                for (int row = 0; row < 4; ++row) {
+                    for (int output_column = 0; output_column < 4; ++output_column) {
+                        std::int32_t sum = result[row * 4 + output_column];
+                        for (int lane = 0; lane < kDotLanes; ++lane) {
+                            sum += static_cast<std::int32_t>(
+                                       at[(row_group * 4 + row) * kDotLanes + lane]) *
+                                   static_cast<std::int32_t>(
+                                       bt[(output_group * 4 + output_column) *
+                                          kDotLanes + lane]);
+                        }
+                        result[row * 4 + output_column] = sum;
+                    }
+                }
+            }
+        }
+    }
+}
+#endif
+
+void run_n4(const std::int8_t* a, const std::int8_t* b,
+            int k_tiles, std::int32_t* c) noexcept {
+#if defined(Y26_K1X_ENABLE_IME_ASM) && defined(__riscv)
+    y26_stage53_kernel_m12n4(a, b, k_tiles, c);
+#else
+    scalar_m12n_groups(a, b, k_tiles, 1, c);
+#endif
+}
+
+void run_n8(const std::int8_t* a, const std::int8_t* b,
+            int k_tiles, std::int32_t* c) noexcept {
+#if defined(Y26_K1X_ENABLE_IME_ASM) && defined(__riscv)
+    y26_stage53_kernel_m12n8(a, b, k_tiles, c);
+#else
+    scalar_m12n_groups(a, b, k_tiles, 2, c);
+#endif
+}
+
+void run_n16(const std::int8_t* a, const std::int8_t* b,
+             int k_tiles, std::int32_t* c) noexcept {
+#if defined(Y26_K1X_ENABLE_IME_ASM) && defined(__riscv)
+    y26_stage48_kernel_m12n16(a, b, k_tiles, c);
+#else
+    scalar_m12n_groups(a, b, k_tiles, 4, c);
+#endif
+}
+
+}  // namespace
+
+NtailRouteCount ntail_route_count(int live_columns,
+                                  Ntail13Strategy strategy) noexcept {
+    NtailRouteCount count;
+    if (live_columns < 1 || live_columns > 16) return count;
+    if (live_columns <= 4) {
+        count.n4 = 1;
+        count.padded_dead_columns = 4 - live_columns;
+    } else if (live_columns <= 8) {
+        count.n8 = 1;
+        count.padded_dead_columns = 8 - live_columns;
+    } else if (live_columns <= 12) {
+        count.n8 = 1;
+        count.n4 = 1;
+        count.padded_dead_columns = 12 - live_columns;
+    } else if (live_columns < 16 && strategy == Ntail13Strategy::n8_n8) {
+        count.n8 = 2;
+        count.padded_dead_columns = 16 - live_columns;
+    } else {
+        count.n16 = 1;
+        count.padded_dead_columns = 16 - live_columns;
+    }
+    return count;
+}
+
+bool run_m12n_tail(const std::int8_t* packed_a,
+                   const std::int8_t* packed_b,
+                   int k_tiles,
+                   int live_columns,
+                   Ntail13Strategy strategy,
+                   std::int32_t* output,
+                   std::size_t output_elements) noexcept {
+    if (packed_a == nullptr || packed_b == nullptr || output == nullptr ||
+        k_tiles <= 0 || live_columns < 1 || live_columns > 16) {
+        return false;
+    }
+    const std::size_t output_groups =
+        static_cast<std::size_t>((live_columns + 3) / 4);
+    const std::size_t required_output_elements =
+        output_groups * kAccumulatorGroupElements;
+    const std::size_t a_bytes =
+        static_cast<std::size_t>(k_tiles) * kM12Rows * kDotLanes;
+    const std::size_t b_bytes =
+        static_cast<std::size_t>(k_tiles) * kN16Columns * kDotLanes;
+    const std::size_t output_bytes = required_output_elements * sizeof(*output);
+    if (output_elements < required_output_elements ||
+        ranges_overlap(output, output_bytes, packed_a, a_bytes) ||
+        ranges_overlap(output, output_bytes, packed_b, b_bytes)) {
+        return false;
+    }
+
+    if (live_columns <= 4) {
+        run_n4(packed_a, packed_b, k_tiles, output);
+    } else if (live_columns <= 8) {
+        run_n8(packed_a, packed_b, k_tiles, output);
+    } else if (live_columns <= 12) {
+        run_n8(packed_a, packed_b, k_tiles, output);
+        run_n4(packed_a, packed_b + 8 * kDotLanes, k_tiles,
+               output + 2 * kAccumulatorGroupElements);
+    } else if (live_columns < 16 && strategy == Ntail13Strategy::n8_n8) {
+        run_n8(packed_a, packed_b, k_tiles, output);
+        run_n8(packed_a, packed_b + 8 * kDotLanes, k_tiles,
+               output + 2 * kAccumulatorGroupElements);
+    } else {
+        run_n16(packed_a, packed_b, k_tiles, output);
+    }
+    return true;
+}
+
+}  // namespace y26::stage61
+
 namespace y26::stage52 {
 namespace {
 
@@ -85,7 +233,8 @@ bool valid_full_graph_identity(const int8_v1::PackageVerification& package) {
         int resolution;
         const char* model_sha256;
     };
-    constexpr std::array<StaticProfileIdentity, 8> kStage60Profiles {{
+    constexpr std::array<StaticProfileIdentity, 9> kStage60Profiles {{
+        {768, "3bb1695a5506b9e0c15ce4c511c30d3006db212c7c0c4ff5fb2c289183edfc8b"},
         {640, kFullGraphModelSha256},
         {512, "7d4497181ac78b85ec124031332c21187ccd8265cba94e92fd9882f297f3169f"},
         {448, "c90cc44d33df53a447430d34a51fcb4b4e18124c876359b6207758cc05c7131a"},
@@ -673,6 +822,7 @@ struct Operation {
     std::array<std::int64_t, 256> lut2_left_terms {};
     std::array<std::int64_t, 256> lut2_right_terms {};
     bool softmax_direct_matmul_pack = false;
+    int softmax_direct_right_zero_point = 0;
     bool matmul_right_prepacked = false;
     int head_scale_index = -1;
 };
@@ -1032,6 +1182,13 @@ struct FullExecutor::Impl {
     bool e2c5_enabled = false;
     bool attention_matmul_c8_enabled = false;
     bool attention_softmax_cache_enabled = false;
+    bool attention_ntail_enabled = true;
+    stage61::Ntail13Strategy attention_ntail_13_strategy =
+        stage61::Ntail13Strategy::n8_n8;
+    bool attention_route_counts_enabled = false;
+    stage61::NtailRouteCount attention_route_count;
+    std::uint64_t attention_k_padding_lanes = 0;
+    std::uint64_t attention_scalar_fallback_count = 0;
     bool head_bucket_enabled = false;
     bool rgb_copy_rvv_enabled = false;
     bool dense_pack_rvv_enabled = false;
@@ -3043,11 +3200,13 @@ struct FullExecutor::Impl {
         const Tensor& right = tensor(operation.inputs[1]);
         const int k = right.dims[static_cast<std::size_t>(right.rank - 2)];
         const int n = right.dims[static_cast<std::size_t>(right.rank - 1)];
-        const int k_tiles = k / 8;
-        const int n_blocks = n / kDenseN;
+        const int k_tiles = (k + 7) / 8;
+        const int n_blocks = (n + kDenseN - 1) / kDenseN;
         const std::size_t matrix_elements = static_cast<std::size_t>(k) * n;
         const int batches = static_cast<int>(right.logical_elements / matrix_elements);
         const auto* source = arena.data() + right.offset;
+        const std::int8_t neutral_right =
+            int8_v1::signed_storage(static_cast<std::uint8_t>(operation.right_zero_point));
         std::fill(matmul_right_sums.begin(),
                   matmul_right_sums.begin() + static_cast<std::size_t>(batches) * n, 0);
         for (int batch = 0; batch < batches; ++batch) {
@@ -3060,10 +3219,14 @@ struct FullExecutor::Impl {
                                kDenseN + output) * 8U);
                         for (int lane = 0; lane < 8; ++lane) {
                             const int inner = k_tile * 8 + lane;
-                            const std::int8_t raw = source[
-                                (static_cast<std::size_t>(batch) * k + inner) * n + column];
+                            const bool live = inner < k && column < n;
+                            const std::int8_t raw = live
+                                ? source[(static_cast<std::size_t>(batch) * k + inner) * n + column]
+                                : neutral_right;
                             destination[lane] = raw;
-                            matmul_right_sums[static_cast<std::size_t>(batch) * n + column] += raw;
+                            if (column < n) {
+                                matmul_right_sums[static_cast<std::size_t>(batch) * n + column] += raw;
+                            }
                         }
                     }
                 }
@@ -3078,8 +3241,9 @@ struct FullExecutor::Impl {
         const int m = left.dims[static_cast<std::size_t>(left.rank - 2)];
         const int k = left.dims[static_cast<std::size_t>(left.rank - 1)];
         const int n = right.dims[static_cast<std::size_t>(right.rank - 1)];
-        const int k_tiles = k / 8;
-        const int n_blocks = n / kDenseN;
+        const int k_tiles = (k + 7) / 8;
+        const int padded_k = k_tiles * 8;
+        const int n_blocks = (n + kDenseN - 1) / kDenseN;
         const int batches = static_cast<int>(left.logical_elements / (static_cast<std::size_t>(m) * k));
         const int tiles_per_batch = (m + kDenseM - 1) / kDenseM;
         const int total_tiles = batches * tiles_per_batch;
@@ -3091,7 +3255,9 @@ struct FullExecutor::Impl {
         const std::int64_t left_correction = 128 - operation.left_zero_point;
         const std::int64_t right_correction = 128 - operation.right_zero_point;
         const std::int64_t constant_correction =
-            static_cast<std::int64_t>(k) * left_correction * right_correction;
+            static_cast<std::int64_t>(padded_k) * left_correction * right_correction;
+        const std::int8_t neutral_left =
+            int8_v1::signed_storage(static_cast<std::uint8_t>(operation.left_zero_point));
         stage51::VectorFixedPointState vector_state;
         if (!stage51::begin_q62_vector_rne(&vector_state)) {
             throw std::runtime_error("cannot establish MatMul Q62 vector state");
@@ -3106,24 +3272,34 @@ struct FullExecutor::Impl {
                     static_cast<std::size_t>(k_tile) * kDenseM * 8U;
                 for (int row = 0; row < kDenseM; ++row) {
                     if (row >= valid_rows) {
-                        std::fill(destination + row * 8, destination + (row + 1) * 8, 0);
+                        std::fill(destination + row * 8, destination + (row + 1) * 8,
+                                  neutral_left);
                         continue;
                     }
-                    const std::int8_t* source = left_data +
-                        (static_cast<std::size_t>(batch) * m + m_begin + row) * k + k_tile * 8;
-                    std::memcpy(destination + row * 8, source, 8);
                     for (int lane = 0; lane < 8; ++lane) {
-                        scratch.row_sums[static_cast<std::size_t>(row)] += source[lane];
+                        const int inner = k_tile * 8 + lane;
+                        const std::int8_t raw = inner < k
+                            ? left_data[(static_cast<std::size_t>(batch) * m + m_begin + row) * k + inner]
+                            : neutral_left;
+                        destination[row * 8 + lane] = raw;
+                        scratch.row_sums[static_cast<std::size_t>(row)] += raw;
                     }
                 }
             }
             for (int n_block = 0; n_block < n_blocks; ++n_block) {
                 const std::int8_t* packed = matmul_packed_right.data() +
                     (static_cast<std::size_t>(batch) * n_blocks + n_block) * k_tiles * kDenseN * 8U;
-                run_m12n16(scratch.a.data(), packed, k_tiles, scratch.c.data());
-                for (int output_group = 0; output_group < 4;) {
+                const int live_columns = std::min(kDenseN, n - n_block * kDenseN);
+                if (!stage61::run_m12n_tail(
+                        scratch.a.data(), packed, k_tiles, live_columns,
+                        attention_ntail_13_strategy, scratch.c.data(), scratch.c.size())) {
+                    throw std::runtime_error("invalid MatMul IME N-tail buffers");
+                }
+                const int output_groups = (live_columns + 3) / 4;
+                for (int output_group = 0; output_group < output_groups;) {
                     const int column_begin = n_block * kDenseN + output_group * 4;
-                    if (attention_matmul_c8_enabled && output_group + 1 < 4) {
+                    if (attention_matmul_c8_enabled && output_group + 1 < output_groups &&
+                        column_begin + 8 <= n) {
                         for (int row = 0; row < valid_rows; ++row) {
                             const int row_group = row / 4;
                             const int row_inner = row % 4;
@@ -3158,7 +3334,8 @@ struct FullExecutor::Impl {
                             (output_group * 3 + row_group) * 16 + row_inner * 4;
                         alignas(32) std::array<std::int64_t, 4> corrected {};
                         alignas(32) std::array<std::int64_t, 4> rounded {};
-                        for (int lane = 0; lane < 4; ++lane) {
+                        const int live_lanes = std::min(4, n - column_begin);
+                        for (int lane = 0; lane < live_lanes; ++lane) {
                             const int column = column_begin + lane;
                             corrected[static_cast<std::size_t>(lane)] =
                                 static_cast<std::int64_t>(raw[lane]) +
@@ -3168,7 +3345,7 @@ struct FullExecutor::Impl {
                         }
                         stage51::q62_vsmul_m63_i64x4(
                             corrected.data(), multipliers.data(), rounded.data());
-                        for (int lane = 0; lane < 4; ++lane) {
+                        for (int lane = 0; lane < live_lanes; ++lane) {
                             const int column = column_begin + lane;
                             const std::uint8_t quantized = static_cast<std::uint8_t>(
                                 std::clamp<std::int64_t>(rounded[static_cast<std::size_t>(lane)] +
@@ -3280,7 +3457,11 @@ struct FullExecutor::Impl {
                 }
                 const std::size_t matrix = row / static_cast<std::size_t>(rows_per_matrix);
                 const std::size_t row_in_matrix = row % static_cast<std::size_t>(rows_per_matrix);
-                std::int64_t packed_right_sum = 0;
+                const int padded_width = ((width + 7) / 8) * 8;
+                const std::int8_t neutral_right = int8_v1::signed_storage(
+                    static_cast<std::uint8_t>(operation.softmax_direct_right_zero_point));
+                std::int64_t packed_right_sum =
+                    static_cast<std::int64_t>(padded_width - width) * neutral_right;
                 for (int column = 0; column < width; ++column) {
                     const std::uint8_t difference = static_cast<std::uint8_t>(
                         maximum - int8_v1::semantic_code(source_row[column]));
@@ -3308,14 +3489,13 @@ struct FullExecutor::Impl {
                     const std::int8_t storage =
                         int8_v1::signed_storage(quantized_by_difference[difference]);
                     if (stage56_attention_direct_pack_enabled && !config.capture_boundaries &&
-                        operation.softmax_direct_matmul_pack && width % 8 == 0 &&
-                        rows_per_matrix % kDenseN == 0) {
+                        operation.softmax_direct_matmul_pack) {
                         const int k_tile = column / 8;
                         const int lane = column % 8;
                         const int n_block = static_cast<int>(row_in_matrix) / kDenseN;
                         const int output_channel = static_cast<int>(row_in_matrix) % kDenseN;
-                        const int k_tiles = width / 8;
-                        const int n_blocks = rows_per_matrix / kDenseN;
+                        const int k_tiles = (width + 7) / 8;
+                        const int n_blocks = (rows_per_matrix + kDenseN - 1) / kDenseN;
                         const std::size_t packed_index =
                             ((((matrix * static_cast<std::size_t>(n_blocks) + n_block) *
                                static_cast<std::size_t>(k_tiles) + k_tile) * kDenseN +
@@ -3377,6 +3557,21 @@ struct FullExecutor::Impl {
     void run_softmax(const Operation& operation) {
         const Tensor& input = tensor(operation.inputs[0]);
         const int width = input.dims[static_cast<std::size_t>(input.rank - 1)];
+        if (stage56_attention_direct_pack_enabled && !config.capture_boundaries &&
+            operation.softmax_direct_matmul_pack) {
+            const int rows_per_matrix = input.dims[2];
+            const int k_tiles = (width + 7) / 8;
+            const int n_blocks = (rows_per_matrix + kDenseN - 1) / kDenseN;
+            const std::size_t matrix_elements =
+                static_cast<std::size_t>(rows_per_matrix) * width;
+            const std::size_t matrices = input.logical_elements / matrix_elements;
+            const std::size_t packed_bytes = matrices * n_blocks * k_tiles *
+                kDenseN * 8U;
+            const std::int8_t neutral_right = int8_v1::signed_storage(
+                static_cast<std::uint8_t>(operation.softmax_direct_right_zero_point));
+            std::fill(matmul_packed_right.begin(),
+                      matmul_packed_right.begin() + packed_bytes, neutral_right);
+        }
         RangeJob job {this, &operation, nullptr, nullptr, nullptr, 0,
                       input.logical_elements / static_cast<std::size_t>(width),
                       0, RangeKind::softmax};
@@ -3986,6 +4181,22 @@ int FullExecutor::prepare(const std::filesystem::path& package_dir,
         prepared.rgb_copy_rvv_enabled =
             std::getenv("Y26_STAGE57_RGB_COPY_RVV") != nullptr;
 #endif
+        const char* attention_ntail_environment =
+            std::getenv("Y26_STAGE61_ATTENTION_NTAIL");
+        prepared.attention_ntail_enabled = attention_ntail_environment == nullptr ||
+            std::string_view(attention_ntail_environment) != "0";
+        if (const char* strategy = std::getenv("Y26_STAGE61_NTAIL_13_15");
+            strategy != nullptr) {
+            const std::string_view value(strategy);
+            if (value == "n16") {
+                prepared.attention_ntail_13_strategy =
+                    stage61::Ntail13Strategy::padded_n16;
+            } else if (value != "n8n8") {
+                throw std::runtime_error("invalid Y26_STAGE61_NTAIL_13_15");
+            }
+        }
+        prepared.attention_route_counts_enabled =
+            std::getenv("Y26_STAGE61_ROUTE_COUNTS") != nullptr;
         std::size_t arena_bytes = 0;
         for (const Row& row : read_tsv(prepared.package / "tensors.tsv")) {
             Tensor tensor;
@@ -4101,7 +4312,10 @@ int FullExecutor::prepare(const std::filesystem::path& package_dir,
                 const int n = right.dims[static_cast<std::size_t>(right.rank - 1)];
                 operation.matmul_ime_eligible = left.layout == Layout::linear &&
                     right.layout == Layout::linear && output.layout == Layout::linear &&
-                    k % 8 == 0 && n % kDenseN == 0 && operation.right_shift == 62 &&
+                    k > 0 && n > 0 &&
+                    (prepared.attention_ntail_enabled ||
+                     (k % 8 == 0 && n % kDenseN == 0)) &&
+                    operation.right_shift == 62 &&
                     operation.multiplier > 0 &&
                     operation.multiplier <= std::numeric_limits<std::int64_t>::max() / 2;
                 if (operation.matmul_ime_eligible) operation.multiplier_m63 = operation.multiplier * 2;
@@ -4154,11 +4368,11 @@ int FullExecutor::prepare(const std::filesystem::path& package_dir,
                 continue;
             }
             const Tensor& packed_tensor = prepared.tensor(softmax.output);
-            if (packed_tensor.rank != 4 || packed_tensor.layout != Layout::linear ||
-                packed_tensor.dims[2] % 8 != 0 || packed_tensor.dims[3] % kDenseN != 0) {
+            if (packed_tensor.rank != 4 || packed_tensor.layout != Layout::linear) {
                 continue;
             }
             softmax.softmax_direct_matmul_pack = true;
+            softmax.softmax_direct_right_zero_point = matmul.right_zero_point;
             matmul.matmul_right_prepacked = true;
         }
         for (std::size_t index = 0; index + 1 < prepared.operations.size(); ++index) {
@@ -4205,16 +4419,41 @@ int FullExecutor::prepare(const std::filesystem::path& package_dir,
             if (operation.matmul_ime_eligible) {
                 const Tensor& left = prepared.tensor(operation.inputs[0]);
                 const Tensor& right = prepared.tensor(operation.inputs[1]);
+                const int m = left.dims[static_cast<std::size_t>(left.rank - 2)];
                 const int k = left.dims[static_cast<std::size_t>(left.rank - 1)];
                 const int n = right.dims[static_cast<std::size_t>(right.rank - 1)];
                 const std::size_t matrices = right.logical_elements /
                     (static_cast<std::size_t>(k) * n);
+                const int k_tiles = (k + 7) / 8;
+                const int n_blocks = (n + kDenseN - 1) / kDenseN;
                 maximum_panel_bytes = std::max(maximum_panel_bytes,
-                    static_cast<std::size_t>(k / 8) * kDenseM * 8U);
+                    static_cast<std::size_t>(k_tiles) * kDenseM * 8U);
                 maximum_matmul_right_bytes = std::max(maximum_matmul_right_bytes,
-                    right.logical_elements);
+                    matrices * static_cast<std::size_t>(n_blocks) * k_tiles *
+                        kDenseN * 8U);
                 maximum_matmul_right_sums = std::max(maximum_matmul_right_sums,
                     matrices * static_cast<std::size_t>(n));
+
+                const int batches = static_cast<int>(
+                    left.logical_elements / (static_cast<std::size_t>(m) * k));
+                const int m_tiles = (m + kDenseM - 1) / kDenseM;
+                const int call_factor = batches * m_tiles;
+                prepared.attention_route_count.n16 +=
+                    call_factor * (n / kDenseN);
+                if (const int tail = n % kDenseN; tail != 0) {
+                    const auto tail_count = stage61::ntail_route_count(
+                        tail, prepared.attention_ntail_13_strategy);
+                    prepared.attention_route_count.n4 += call_factor * tail_count.n4;
+                    prepared.attention_route_count.n8 += call_factor * tail_count.n8;
+                    prepared.attention_route_count.n16 += call_factor * tail_count.n16;
+                    prepared.attention_route_count.padded_dead_columns +=
+                        call_factor * tail_count.padded_dead_columns;
+                }
+                prepared.attention_k_padding_lanes +=
+                    static_cast<std::uint64_t>(call_factor) *
+                    static_cast<std::uint64_t>(((k + 7) / 8) * 8 - k);
+            } else if (operation.kind == OpKind::matmul) {
+                ++prepared.attention_scalar_fallback_count;
             }
         }
         prepared.dense_scratch.resize(static_cast<std::size_t>(config.workers));
@@ -4645,6 +4884,18 @@ int FullExecutor::run_input_surface(const float* input, const std::uint8_t* rgb,
                 static_cast<unsigned long long>(
                     impl_->attention_profile->softmax_normalize_transpose_ns.load(
                         std::memory_order_relaxed)));
+        }
+        if (impl_->attention_route_counts_enabled) {
+            std::fprintf(stderr,
+                "stage61_attention_routes\tn4=%d\tn8=%d\tn16=%d\t"
+                "padded_dead_columns=%d\tk_padding_lanes=%llu\t"
+                "scalar_fallbacks=%llu\n",
+                impl_->attention_route_count.n4,
+                impl_->attention_route_count.n8,
+                impl_->attention_route_count.n16,
+                impl_->attention_route_count.padded_dead_columns,
+                static_cast<unsigned long long>(impl_->attention_k_padding_lanes),
+                static_cast<unsigned long long>(impl_->attention_scalar_fallback_count));
         }
         if (timing != nullptr) *timing = local;
         impl_->current_float_input = nullptr;
