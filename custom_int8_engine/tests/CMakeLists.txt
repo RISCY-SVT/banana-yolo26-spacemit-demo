@@ -55,3 +55,19 @@ y26_add_test(test_stage48_nchwc8)
 y26_add_test(test_stage49_package_integrity)
 y26_add_test(test_stage52_executor_api)
 y26_add_test(test_stage52_e2c2)
+
+# Compile the real internal WorkerPool in a standalone translation unit. Section
+# garbage collection keeps unrelated executor functions, and their dependencies,
+# out of this focused lifecycle test.
+add_executable(test_stage60m_worker_lifecycle test_stage60m_worker_lifecycle.cpp)
+target_include_directories(test_stage60m_worker_lifecycle PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}/../include")
+target_link_libraries(test_stage60m_worker_lifecycle PRIVATE Threads::Threads)
+target_compile_options(test_stage60m_worker_lifecycle PRIVATE
+    -Wall -Wextra -Wpedantic -Wno-subobject-linkage
+    -ffunction-sections -fdata-sections)
+if(NOT MSVC)
+    target_link_options(test_stage60m_worker_lifecycle PRIVATE -Wl,--gc-sections)
+endif()
+add_test(NAME test_stage60m_worker_lifecycle COMMAND test_stage60m_worker_lifecycle)
+set_tests_properties(test_stage60m_worker_lifecycle PROPERTIES TIMEOUT 60)
