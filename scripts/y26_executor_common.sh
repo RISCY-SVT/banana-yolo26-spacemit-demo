@@ -19,6 +19,9 @@ else
   y26_default_board_root=$Y26_BOARD_INSTALL_ROOT
 fi
 Y26_BOARD_RELEASE_ROOT=${Y26_BOARD_RELEASE_ROOT:-$y26_default_board_root}
+if [[ $(uname -m) == riscv64 && -d /data ]]; then
+  export LD_LIBRARY_PATH="$Y26_BOARD_RELEASE_ROOT/lib:$Y26_BOARD_RELEASE_ROOT/opencv/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+fi
 y26_is_board() {
   [[ $(uname -m) == riscv64 && -d /data ]]
 }

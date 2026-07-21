@@ -14,6 +14,7 @@ root=${1:-$Y26_BOARD_INSTALL_ROOT}
 input=${2:-"$root/fixtures/bus_640_nchw_f32.bin"}
 output=${3:-"$root/outputs/smoke.json"}
 readonly expected_manifest=$Y26_EXPECTED_MANIFEST_SHA256
+export LD_LIBRARY_PATH="$root/lib:$root/opencv/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 mkdir -p "$(dirname "$output")"
 "$root/bin/yolo26_k1x_int8" --version
 "$root/bin/y26_k1x_healthcheck" --build-info

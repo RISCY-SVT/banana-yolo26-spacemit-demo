@@ -15,6 +15,7 @@ input=${2:-"$root/fixtures/bus_640_nchw_f32.bin"}
 output=${3:-"$root/outputs/benchmark.json"}
 profile=${4:-compatibility}
 readonly expected_manifest=$Y26_EXPECTED_MANIFEST_SHA256
+export LD_LIBRARY_PATH="$root/lib:$root/opencv/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 case "$profile" in
   compatibility|low-latency|low-latency-dedicated) ;;
   *)
