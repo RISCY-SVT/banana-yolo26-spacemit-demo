@@ -15,6 +15,10 @@ option(Y26_DEMO_OFFICIAL_K1X_RELEASE
        "Build the embedded executor under the fail-closed K1X release contract" OFF)
 set(Y26_DEMO_EXECUTOR_DIR "" CACHE PATH "Installed y26K1xExecutor CMake package directory")
 
+if(Y26_DEMO_OFFICIAL_K1X_RELEASE)
+    set(CMAKE_SKIP_RPATH ON)
+endif()
+
 find_package(Threads REQUIRED)
 find_package(OpenCV 4 REQUIRED COMPONENTS core imgproc imgcodecs highgui videoio)
 

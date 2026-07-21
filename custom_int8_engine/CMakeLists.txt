@@ -26,6 +26,10 @@ option(Y26_K1X_OFFICIAL_RELEASE
 set(Y26_K1X_SOURCE_COMMIT "unknown" CACHE STRING "Source commit embedded in ABI1 build metadata")
 set(Y26_K1X_OPENCV_DIR "" CACHE PATH "Optional OpenCV package directory for the Stage52 COCO predictor")
 
+if(Y26_K1X_OFFICIAL_RELEASE)
+    set(CMAKE_SKIP_RPATH ON)
+endif()
+
 set(Y26_K1X_RELEASE_SOURCES
     kernels/stage48_nchwc8_model5.cpp
     kernels/stage49_persistent_slice.cpp
