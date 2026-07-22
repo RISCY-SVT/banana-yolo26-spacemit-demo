@@ -133,6 +133,7 @@ run_arm() {
   set +e
   "$profile" run -- "$demo" \
     --package "$stage_root/packages/r$resolution" \
+    --model-resolution "$resolution" \
     --labels "$labels" \
     --expected-manifest-sha256 "$manifest" \
     --source camera:auto \
