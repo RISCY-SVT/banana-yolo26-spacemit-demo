@@ -1,0 +1,13 @@
+key	value
+timestamp_utc	2026-07-22T02:55:09Z
+boot_id	0a0691d1-7502-44c3-903b-444dba83c1d9
+kernel	Linux 6.6.63 riscv64
+cpu_governors	performance
+workqueue_cpumask	ff
+cgroup_stage61_exists	0
+o2_state_dirs	0
+camera_profile_state_exists	0
+data_mount	/dev/nvme0n1p1 ext4 /data
+stage_process_count	0
+o2_profile	profile=y26-o2;snapshot=absent;cgroup=absent;workqueue_cpumask=ff
+camera_profile	action=xhci-hcd:usb2;irq=89;requested_affinity=0-7;effective_affinity=0;camera_cpu=5;state=inactive

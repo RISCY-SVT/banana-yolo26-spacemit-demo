@@ -4,10 +4,12 @@
 from __future__ import annotations
 
 import argparse
+import csv
 import statistics
 from pathlib import Path
 from typing import Any
 
+from stage60_camera_summary import summarize as summarize_camera
 from stage60_finalize_evidence import percentile, read_tsv, sha256, write_tsv
 from stage60_parse_pipeline import parse as parse_pipeline
 
@@ -170,6 +172,10 @@ def assemble_pipelines(raw_root: Path, output: Path) -> None:
         for kind in ("serial", "double_buffer"):
             path = source / f"r{resolution}_{kind}.tsv"
             rows, metadata = parse_pipeline(path, resolution, kind)
+            if int(metadata["cpu4_7_ime_count"]) != 0:
+                raise ValueError(f"CPU4-7 IME use in pipeline evidence: {path}")
+            if not metadata["output_hash"] or not metadata["package_manifest_sha256"]:
+                raise ValueError(f"missing pipeline identity: {path}")
             summaries.extend(rows)
             identities.append({
                 "resolution": resolution,
@@ -187,9 +193,183 @@ def assemble_pipelines(raw_root: Path, output: Path) -> None:
     write_tsv(output / "resolution_pipeline_identity_v2.tsv", identities)
 
 
+def v4l2_probe_summary(path: Path) -> dict[str, Any]:
+    lines = path.read_text(encoding="utf-8").splitlines()
+    if len(lines) < 3 or not lines[0].startswith("# device="):
+        raise ValueError(f"invalid V4L2 probe evidence: {path}")
+    rows = list(csv.DictReader(lines[1:], delimiter="\t"))
+    if len(rows) < 2:
+        raise ValueError(f"insufficient V4L2 probe samples: {path}")
+    start = int(rows[0]["dqbuf_return_monotonic_ns"])
+    end = int(rows[-1]["dqbuf_return_monotonic_ns"])
+    duration = (end - start) / 1.0e9
+    if duration < 179.0:
+        raise ValueError(f"V4L2 probe shorter than 180-second gate: {path}")
+    clocks = {row["timestamp_clock"] for row in rows}
+    sources = {row["timestamp_source"] for row in rows}
+    if len(clocks) != 1 or len(sources) != 1:
+        raise ValueError(f"mixed V4L2 timestamp contract: {path}")
+    return {
+        "probe_file": path.name,
+        "probe_header": lines[0][2:],
+        "device": lines[0][2:].split()[0].removeprefix("device="),
+        "samples": len(rows),
+        "measured_seconds": f"{duration:.6f}",
+        "dequeued_compressed_buffer_fps": f"{(len(rows) - 1) / duration:.9f}",
+        "sequence_gap_count": sum(int(row["sequence_gap"]) for row in rows),
+        "timestamp_clock": next(iter(clocks)),
+        "timestamp_source": next(iter(sources)),
+    }
+
+
+def aggregate_camera_rows(mode: str, rows: list[dict[str, Any]],
+                          probe: dict[str, Any]) -> dict[str, Any]:
+    if len(rows) != 3:
+        raise ValueError(f"expected three camera ABBA rows for {mode}, found {len(rows)}")
+    resolutions = {int(row["resolution"]) for row in rows}
+    if len(resolutions) != 1:
+        raise ValueError(f"mixed camera resolution rows for {mode}")
+    captured = sum(int(row["captured_decoded_frames"]) for row in rows)
+    replacements = sum(int(row["application_slot_replacements"]) for row in rows)
+    return {
+        "camera_mode": mode,
+        "resolution": next(iter(resolutions)),
+        "runs": len(rows),
+        "metric_schema_version": "2",
+        "camera_device": probe["device"],
+        "camera_effective_format": rows[0]["camera_effective_format"],
+        "backend_reported_fps": rows[0]["backend_reported_fps"],
+        "v4l2_timestamp_clock": probe["timestamp_clock"],
+        "v4l2_timestamp_source": probe["timestamp_source"],
+        "v4l2_sequence_gap_count": probe["sequence_gap_count"],
+        "raw_v4l2_dequeued_compressed_buffer_fps": probe["dequeued_compressed_buffer_fps"],
+        "opencv_decoded_frame_fps_mean": f"{statistics.fmean(float(row['opencv_decoded_frame_fps']) for row in rows):.9f}",
+        "processed_displayed_fps_mean": f"{statistics.fmean(float(row['processed_displayed_fps']) for row in rows):.9f}",
+        "application_slot_replacement_pct": f"{100.0 * replacements / captured:.9f}",
+        "executor_mean_ms": f"{statistics.fmean(float(row['inference_mean_ms']) for row in rows):.6f}",
+        "consumer_loop_mean_ms": f"{statistics.fmean(float(row['consumer_loop_mean_ms']) for row in rows):.6f}",
+        "consumer_loop_p95_ms": f"{statistics.fmean(float(row['consumer_loop_p95_ms']) for row in rows):.6f}",
+        "decoded_read_return_to_display_call_mean_ms": f"{statistics.fmean(float(row['read_return_to_display_call_mean_ms']) for row in rows):.6f}",
+        "mean_thermal_c": f"{statistics.fmean(float(row['mean_thermal_c']) for row in rows):.6f}",
+        "min_cpu0_4_khz": f"{min(float(row['min_cpu0_4_khz']) for row in rows):.0f}",
+        "surface_definition": "decoded-read-return-to-GUI-display-call; not sensor-to-screen",
+        "status": "pass",
+    }
+
+
+def validate_camera_arm(path: Path) -> None:
+    prefix = path.name.removesuffix(".metrics.tsv")
+    required = {
+        "exit": path.with_name(f"{prefix}.exit-status.txt"),
+        "identity": path.with_name(f"{prefix}.identities.txt"),
+        "frame": path.with_name(f"{prefix}.annotated.png"),
+        "rollback": path.with_name(f"{prefix}.profile-after.txt"),
+        "detections": path.with_name(f"{prefix}.detections.tsv"),
+    }
+    missing = [name for name, candidate in required.items() if not candidate.is_file()]
+    if missing:
+        raise ValueError(f"camera arm missing {missing}: {path}")
+    if required["exit"].read_text(encoding="utf-8").strip() != "0":
+        raise ValueError(f"camera arm failed: {path}")
+    if "state=inactive" not in required["rollback"].read_text(encoding="utf-8"):
+        raise ValueError(f"camera profile did not restore: {path}")
+    if any(required[name].stat().st_size == 0 for name in ("identity", "frame", "detections")):
+        raise ValueError(f"camera arm produced an empty evidence artifact: {path}")
+
+
+def assemble_camera(raw_root: Path, output: Path) -> None:
+    source = raw_root / "camera"
+    arm_rows: list[dict[str, Any]] = []
+    matrix_rows: list[dict[str, Any]] = []
+    probes: dict[str, dict[str, Any]] = {}
+    for mode in ("640x480", "1280x720"):
+        probe = v4l2_probe_summary(source / mode / "v4l2/dqbuf.tsv")
+        probes[mode] = probe
+        mode_rows: list[dict[str, Any]] = []
+        for path in sorted((source / mode / "compare").glob("r*.metrics.tsv")):
+            validate_camera_arm(path)
+            row = {"camera_mode": mode, **summarize_camera(
+                path, float(probe["dequeued_compressed_buffer_fps"])
+            )}
+            mode_rows.append(row)
+            arm_rows.append(row)
+        for resolution in (640, 768):
+            selected = [row for row in mode_rows if int(row["resolution"]) == resolution]
+            matrix_rows.append(aggregate_camera_rows(mode, selected, probe))
+    if len(arm_rows) != 12:
+        raise ValueError(f"expected twelve camera comparison arms, found {len(arm_rows)}")
+    soak_paths = sorted(source.glob("*/soak/r768-soak.metrics.tsv"))
+    if len(soak_paths) != 1:
+        raise ValueError(f"expected one R768 camera soak, found {len(soak_paths)}")
+    soak_path = soak_paths[0]
+    validate_camera_arm(soak_path)
+    soak_mode = soak_path.parents[1].name
+    soak_row = {"camera_mode": soak_mode, **summarize_camera(
+        soak_path, float(probes[soak_mode]["dequeued_compressed_buffer_fps"])
+    )}
+    if float(soak_row["measured_seconds"]) < 1800.0:
+        raise ValueError("R768 camera soak shorter than 30-minute gate")
+    write_tsv(output / "r768_camera_abba_raw.tsv", arm_rows)
+    write_tsv(output / "r768_camera_matrix.tsv", matrix_rows)
+    write_tsv(output / "r768_camera_soak.tsv", [soak_row])
+    report = [
+        "# R768 Camera Report",
+        "",
+        "Stage61 compares R640 and R768 with the same physical camera, GUI,",
+        "latest-frame flow, confidence threshold, CPU/IRQ profile, and recording",
+        "disabled. Each matrix row is the mean of three 180-second runs.",
+        f"The direct probe and OpenCV runs resolve camera `{matrix_rows[0]['camera_device']}`.",
+        "For the 640x480 source, R768 necessarily upsamples the decoded camera frame;",
+        "that arm is a latency/control surface, not evidence of added source detail.",
+        "",
+        "Direct V4L2 values are driver-dequeued compressed-buffer rates. OpenCV",
+        "values are decoded-frame rates. Processed/displayed values are application",
+        "rates. None is labeled raw sensor FPS, and the read-to-display-call value",
+        "is not sensor-to-screen latency.",
+        "",
+        "| Camera mode | Executor R | V4L2 buffers/s | OpenCV decoded/s | Processed/displayed FPS | Replaced slot % | Executor ms | Read-return-to-display-call ms |",
+        "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
+    ]
+    for row in matrix_rows:
+        report.append(
+            f"| {row['camera_mode']} MJPG | {row['resolution']} | "
+            f"{float(row['raw_v4l2_dequeued_compressed_buffer_fps']):.3f} | "
+            f"{float(row['opencv_decoded_frame_fps_mean']):.3f} | "
+            f"{float(row['processed_displayed_fps_mean']):.3f} | "
+            f"{float(row['application_slot_replacement_pct']):.3f} | "
+            f"{float(row['executor_mean_ms']):.3f} | "
+            f"{float(row['decoded_read_return_to_display_call_mean_ms']):.3f} |"
+        )
+    report.extend([
+        "",
+        f"The direct probes report {probes['640x480']['timestamp_clock']}/"
+        f"{probes['640x480']['timestamp_source']} (640x480) and "
+        f"{probes['1280x720']['timestamp_clock']}/"
+        f"{probes['1280x720']['timestamp_source']} (1280x720) V4L2 timestamps. "
+        "Sequence gaps are "
+        f"640x480={probes['640x480']['sequence_gap_count']} and "
+        f"1280x720={probes['1280x720']['sequence_gap_count']}; these driver-visible "
+        "gaps do not establish unknown upstream sensor or USB losses.",
+        "",
+        f"The selected R768 stability control uses {soak_mode} MJPG and ran for "
+        f"{float(soak_row['measured_seconds']):.1f} seconds at "
+        f"{float(soak_row['processed_displayed_fps']):.3f} processed/displayed FPS. "
+        "The camera result does not change the Q0 COCO selection gates or promote "
+        "R768 as a default profile.",
+        "",
+    ])
+    (output / "r768_camera_report.md").write_text("\n".join(report), encoding="utf-8")
+
+
 def assemble_exactness(raw_root: Path, output: Path) -> None:
     source = raw_root / "exactness/full-fixture-parity/summary.tsv"
-    rows = read_tsv(source)
+    rows = [
+        {
+            key: value.rstrip() if isinstance(value, str) else value
+            for key, value in row.items()
+        }
+        for row in read_tsv(source)
+    ]
     expected = {(resolution, fixture) for resolution in RESOLUTIONS for fixture in FIXTURES}
     observed = {(int(row["resolution"]), row["fixture"]) for row in rows}
     if observed != expected or len(rows) != len(expected):
@@ -326,13 +506,15 @@ def main() -> int:
     parser.add_argument("--stage60-root", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument(
-        "--sections", default="exactness,performance,soak,pipeline,coco,pareto",
-        help="comma-separated subset of exactness,performance,soak,pipeline,coco,pareto",
+        "--sections", default="exactness,performance,soak,pipeline,coco,pareto,camera",
+        help="comma-separated subset of exactness,performance,soak,pipeline,coco,pareto,camera",
     )
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=True)
     sections = set(args.sections.split(","))
-    unknown = sections - {"exactness", "performance", "soak", "pipeline", "coco", "pareto"}
+    unknown = sections - {
+        "exactness", "performance", "soak", "pipeline", "coco", "pareto", "camera"
+    }
     if unknown:
         raise ValueError(f"unknown sections: {sorted(unknown)}")
     if "performance" in sections:
@@ -347,6 +529,8 @@ def main() -> int:
         assemble_coco(args.raw_root, args.output)
     if "pareto" in sections:
         assemble_pareto(args.stage_root, args.stage60_root, args.output)
+    if "camera" in sections:
+        assemble_camera(args.raw_root, args.output)
     print(f"sections={','.join(sorted(sections))}")
     print(f"resolutions={len(RESOLUTIONS)}")
     return 0

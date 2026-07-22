@@ -67,6 +67,8 @@ for resolution in "$@"; do
     cp "$prefix.tsv" "$output/r${resolution}_${file_mode}.tsv"
     cp "$prefix.stderr" "$output/r${resolution}_${file_mode}.stderr"
     cp "$prefix.exit-status.txt" "$output/r${resolution}_${file_mode}.exit-status.txt"
+    sha256sum "${command[0]}" "$package/asset_hashes.tsv" "$image" \
+      >"$output/r${resolution}_${file_mode}.identities.txt"
     [[ $status -eq 0 ]] || {
       echo "Stage61 $mode pipeline failed for R$resolution" >&2
       exit "$status"

@@ -1,0 +1,2 @@
+range	start	end	commit_count	status
+stage61	43c02b7051ddde9921a5348e4b4e8986b941212d	FINAL_HEAD	4	end-only dual-remote publication; FINAL_HEAD resolves through git rev-parse HEAD and exact remote values are preserved in the final command ledger and result packet

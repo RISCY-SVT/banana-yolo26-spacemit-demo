@@ -143,6 +143,7 @@ run_arm() {
     --metrics-tsv "$prefix.metrics.tsv" \
     --detections-tsv "$prefix.detections.tsv" \
     --log-file "$prefix.application.log" \
+    --save-frame "$prefix.annotated.png" \
     --screenshot-dir "$stage_root/camera/screenshots" \
     >"$prefix.stdout.log" 2>"$prefix.stderr.log"
   status=$?
@@ -156,12 +157,13 @@ run_arm() {
   sha256sum "$demo" "$stage_root/packages/r$resolution/asset_hashes.tsv" \
     "$labels" "$profile" >"$prefix.identities.txt"
   for suffix in metrics.tsv detections.tsv application.log stdout.log stderr.log \
-                system.tsv exit-status.txt identities.txt; do
+                system.tsv exit-status.txt identities.txt annotated.png; do
     [[ -f $prefix.$suffix ]] && cp "$prefix.$suffix" "$final_prefix.$suffix"
   done
   [[ $status -eq 0 ]] || { echo "camera arm failed: $arm" >&2; return "$status"; }
-  [[ -s $final_prefix.metrics.tsv && -s $final_prefix.detections.tsv ]] || {
-    echo "camera arm did not produce complete metrics/detections: $arm" >&2
+  [[ -s $final_prefix.metrics.tsv && -s $final_prefix.detections.tsv &&
+     -s $final_prefix.annotated.png ]] || {
+    echo "camera arm did not produce complete metrics/detections/frame: $arm" >&2
     return 1
   }
   "$profile" status >"$final_prefix.profile-after.txt"

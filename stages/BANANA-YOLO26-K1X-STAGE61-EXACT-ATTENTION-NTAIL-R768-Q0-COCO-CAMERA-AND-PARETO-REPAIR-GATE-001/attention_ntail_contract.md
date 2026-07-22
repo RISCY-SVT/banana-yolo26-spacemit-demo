@@ -15,7 +15,7 @@ The live tail uses:
 | 1..4 | one N4 call |
 | 5..8 | one N8 call |
 | 9..12 | N8 plus N4 |
-| 13..15 | N8 plus N8 (selected candidate); padded N16 retained as tested alternative |
+| 13..15 | N8 plus N8 and padded N16 both exact; no live Stage61 profile selects either |
 | 16 | one N16 call |
 
 K is padded to eight lanes only inside the packed panel. Dead K lanes and dead
@@ -36,3 +36,9 @@ The independent arbitrary-precision property matrix covers N=1..31 and all
 required boundary values through 577, K/M tails, asymmetric zero points, INT8
 extremes, positive/negative accumulators, RNE ties, saturation, red zones,
 invalid sizes, alias rejection, and both N13 strategies.
+
+None of the nine Stage61 graphs has an attention remainder from 13 through 15,
+so a complete live-profile A/B does not exist for that subcase. The `n8+n8`
+value remains a dormant research default, not a promoted performance route.
+Selecting either strategy for a future live profile requires its own exact
+full-path A/B.

@@ -1,0 +1,37 @@
+scope	kind	file_count	apparent_bytes	sha256	storage	notes
+.	stage-root	22275	2233344977		NVMe_/data	all Stage61 project artifacts
+benchmarks	directory-summary	37	2028202		NVMe_/data	task-local evidence
+bin	directory-summary	14	5520720		NVMe_/data	task-local evidence
+cache	directory-summary	0	0		NVMe_/data	task-local evidence
+camera	directory-summary	136	11963949		NVMe_/data	task-local evidence
+coco	directory-summary	5000	814705164		NVMe_/data	task-local evidence
+dense	directory-summary	0	0		NVMe_/data	task-local evidence
+exactness	directory-summary	2584	245033538		NVMe_/data	task-local evidence
+fixtures	directory-summary	136	306724475		NVMe_/data	task-local evidence
+labels	directory-summary	1	622		NVMe_/data	task-local evidence
+lib	directory-summary	6	11910678		NVMe_/data	task-local evidence
+logs	directory-summary	2	1136		NVMe_/data	task-local evidence
+long-soak	directory-summary	42	13880438		NVMe_/data	task-local evidence
+models	directory-summary	0	0		NVMe_/data	task-local evidence
+oracles	directory-summary	170	1725062		NVMe_/data	task-local evidence
+packages	directory-summary	13984	113997685		NVMe_/data	task-local evidence
+performance	directory-summary	47	6391648		NVMe_/data	task-local evidence
+pipeline	directory-summary	72	798706		NVMe_/data	task-local evidence
+predictions	directory-summary	28	698595552		NVMe_/data	task-local evidence
+profiles	directory-summary	0	0		NVMe_/data	task-local evidence
+ram-buffer	directory-summary	0	0		NVMe_/data	task-local evidence
+reports	directory-summary	0	0		NVMe_/data	task-local evidence
+screenshots	directory-summary	0	0		NVMe_/data	task-local evidence
+system	directory-summary	2	282		NVMe_/data	task-local evidence
+tmp	directory-summary	0	0		NVMe_/data	task-local evidence
+tools	directory-summary	13	67062		NVMe_/data	task-local evidence
+bin/stage61_resolution_bench	critical-file	1	480392	fee8165ef3451832818f4e29db1c62b31e9fa8ce30378cb0a0323adbe4594a72	NVMe_/data	selected closure identity
+bin/y26_k1x_demo	critical-file	1	650984	b4493cdbcd7f6933a6998e0bb3b4f6ea1fb7ebb3365ad99e1a03315eda72df75	NVMe_/data	selected closure identity
+bin/y26_v4l2_probe	critical-file	1	29744	b44867d3b256c20e8296ccbfdccf9de7fb2ad25f8e42aee2f11270185dbc79f6	NVMe_/data	selected closure identity
+packages/r640/asset_hashes.tsv	critical-file	1	127577	fab4a72cf524ce0a205ceca0384144f2eee7bc79dff3f4db8b7208614e8407be	NVMe_/data	selected closure identity
+packages/r768/asset_hashes.tsv	critical-file	1	127469	3fd4d004e92c4238c69c2d07bc1eedcee92c1968984f17d2b796b7bf01b4e0be	NVMe_/data	selected closure identity
+camera/640x480/v4l2/dqbuf.tsv	critical-file	1	526220	31adfc78b65c4c32622b4754c2bb0678320aff61c5cc662ac3e44fcdf70e9a41	NVMe_/data	selected closure identity
+camera/1280x720/v4l2/dqbuf.tsv	critical-file	1	526516	17b28924f72a73b7083d9b7ac0d424dd06aecdb00d96afec1cb4f99358c2f809	NVMe_/data	selected closure identity
+camera/1280x720/soak/r768-soak.metrics.tsv	critical-file	1	1670533	faedc4a82d7bdd5eb8ea823fb96c947a94e5bf9b5d0cd69c7aff5ad9852a809e	NVMe_/data	selected closure identity
+long-soak/r640.raw.tsv	critical-file	1	2338049	0f5f982320fe70670f93a1c702559b1e859eb4a8db93bb5e2777e2881d2ed0f6	NVMe_/data	selected closure identity
+long-soak/r768.raw.tsv	critical-file	1	2355853	79b38a46ff441e5f1a1e24829bbfe95f4719740b781be8c27bdff9c4e26493c3	NVMe_/data	selected closure identity
