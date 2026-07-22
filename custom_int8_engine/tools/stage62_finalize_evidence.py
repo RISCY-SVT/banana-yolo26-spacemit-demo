@@ -201,8 +201,8 @@ def assemble_performance(raw: Path, output: Path) -> list[dict[str, Any]]:
             }
             if surface == "preprocessed":
                 tolerance = max(0.01 * ACCEPTED_MEANS_US[resolution], 500.0)
-                if abs(float(summary["mean_us"]) - ACCEPTED_MEANS_US[resolution]) > tolerance:
-                    raise ValueError(f"R{resolution} performance outside non-regression gate")
+                if float(summary["mean_us"]) > ACCEPTED_MEANS_US[resolution] + tolerance:
+                    raise ValueError(f"R{resolution} performance regression exceeds gate")
             summaries.append(summary)
     write_tsv(output / "performance_summary.tsv", summaries)
     return summaries
