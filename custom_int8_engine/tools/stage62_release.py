@@ -124,6 +124,8 @@ def overlay_project_material(repo: Path, root: Path, integrated: bool) -> None:
     copy_tree(repo / "docs", root / "docs")
     copy_tree(repo / "model", root / "model-evidence")
     if integrated:
+        remove_tree(root / "scripts")
+        copy_tree(repo / "scripts", root / "scripts")
         copy_file(repo / "config/release.env", root / "config/release.env")
 
 
