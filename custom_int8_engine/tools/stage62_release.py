@@ -360,6 +360,9 @@ def assemble(args: argparse.Namespace) -> None:
         source_root = root / "source" / "project"
         remove_tree(source_root)
         extract_git_source(args.repo, args.source_commit, source_root)
+        (source_root / "SOURCE_COMMIT").write_text(
+            args.source_commit + "\n", encoding="utf-8"
+        )
         if integrated:
             static_root = root / "model" / "static"
             for resolution in RESOLUTIONS:

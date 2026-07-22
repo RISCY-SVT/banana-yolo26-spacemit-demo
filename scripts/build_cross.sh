@@ -21,7 +21,16 @@ done
 
 source /data/build_scripts/01-env.sh
 "$repo/scripts/ensure_opencv.sh"
-source_commit=$(git -C "$repo" rev-parse HEAD)
+source_commit=${Y26_SOURCE_COMMIT:-}
+if [[ -z $source_commit ]] && git -C "$repo" rev-parse --git-dir >/dev/null 2>&1; then
+  source_commit=$(git -C "$repo" rev-parse HEAD)
+elif [[ -z $source_commit && -r $repo/SOURCE_COMMIT ]]; then
+  source_commit=$(<"$repo/SOURCE_COMMIT")
+fi
+[[ $source_commit =~ ^[0-9a-f]{40}$ ]] || {
+  echo "missing exact source commit; use a Git checkout, SOURCE_COMMIT, or Y26_SOURCE_COMMIT" >&2
+  exit 1
+}
 cmake -S "$repo" -B "$build_root" -GNinja \
   -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_TOOLCHAIN_FILE="$repo/cmake/toolchains/k1x-spacemit-cross.cmake" \
