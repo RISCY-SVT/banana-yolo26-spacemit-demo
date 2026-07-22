@@ -73,8 +73,8 @@ def main() -> int:
             "name": "manual_e2e_rep_conv_matmul_qdq.onnx",
             "hashes": [{"alg": "SHA-256", "content": args.model_sha256}],
             "properties": [
-                {"name": "distribution.scope", "value": "internal-rd-only"},
-                {"name": "external.redistribution", "value": "not-cleared"},
+                {"name": "validated.purpose", "value": "internal-rd"},
+                {"name": "external.legal-clearance", "value": "not-certified"},
             ],
         })
     sbom = {
@@ -118,7 +118,7 @@ def main() -> int:
     manifest = {
         "release_id": (
             f"banana-yolo26-k1x-int8-executor-{args.release_version}"
-            f"-stage59-final-{args.bundle_kind}"
+            f"-{args.bundle_kind}"
         ),
         "release_version": args.release_version,
         "bundle_kind": args.bundle_kind,
@@ -134,8 +134,10 @@ def main() -> int:
         "release_tree_manifest_sha256": tree_sha,
         "prepared_model_included": True,
         "source_onnx_included": expected_onnx,
-        "source_onnx_external_distribution": "not-cleared",
-        "project_license_status": "license-decision-pending",
+        "source_onnx_external_legal_clearance": "not-certified",
+        "project_license_status": (
+            "agpl-complete-source-route-selected-legal-clearance-not-certified"
+        ),
         "supported_platform": "BPI-F3 Bianbu 2.2.1 / Linux 6.6.63",
         "rootfs_independent": False,
         "offline_on_supported_platform": True,

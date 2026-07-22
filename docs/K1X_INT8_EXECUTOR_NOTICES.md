@@ -9,7 +9,7 @@ The camera demo dynamically links against the five OpenCV runtime libraries
 included under `opencv/lib`. Their license is preserved under `licenses/`.
 The core executor libraries do not depend on OpenCV.
 
-The source repository does not currently declare a top-level redistribution
-license. Treat this bundle as an internal engineering handoff until the project
-owner supplies release licensing. Model redistribution remains subject to the
-model source and training-data terms selected by the project owner.
+Stage62 adds the requested AGPL-3.0-or-later technical complete-source surface.
+`LEGAL_STATUS.md` records that no Enterprise agreement, ownership certification,
+or complete model-rights clearance was found, so legal clearance is not
+certified. This is not an extra restriction on AGPL rights.

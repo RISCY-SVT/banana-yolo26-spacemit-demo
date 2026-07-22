@@ -1,9 +1,11 @@
-# Internal R&D Only
+# Internal R&D Validation Status
 
-This bundle contains the exact source ONNX solely because the Stage59 user
-explicitly authorized internal research and development inclusion.
+This bundle contains the exact source ONNX under the user's authorization for
+the Stage62 technical complete-source build. It was prepared and validated for
+internal research and is not production-certified. This purpose statement does
+not restrict AGPL rights.
 
-Do not publish, redistribute externally, sublicense, or use this bundle as a
-claim of model-license clearance. Keep it inside the authorized organization
-and preserve `MODEL_PROVENANCE.md`, `MODEL_LICENSE_RECORD.md`, and
-`SOURCE_MODEL_SHA256` with the artifact.
+The artifact is not evidence of an Ultralytics Enterprise agreement or complete
+model-rights clearance. Preserve `MODEL_PROVENANCE.md`,
+`MODEL_LICENSE_RECORD.md`, `SOURCE_MODEL_SHA256`, and the root legal records so
+the responsible human can make any external-conveyance decision.

@@ -1,15 +1,12 @@
-# Internal Use Notice
+# Internal R&D Validation Notice
 
-No general public or open-source license grant for this repository has been
-approved or recorded. Until the responsible organization supplies an approved
-license and ownership statement, this source and its release artifacts are
-restricted to authorized internal research, evaluation, and engineering
-handoff use.
+This executor and its multiprofile bundle were prepared and validated for
+internal research and engineering evaluation. They are not production-certified.
+That statement describes the tested purpose; it does not restrict rights granted
+by the GNU Affero General Public License v3.0 or later.
 
-This notice does not assert copyright ownership and does not replace the
-licenses of third-party components. OpenCV, Ultralytics tooling, model assets,
-toolchains, and operating-system libraries remain subject to their respective
-terms. External redistribution, sublicensing, production deployment, and public
-release require separate legal and organizational approval.
-
-Status: `license-decision-pending`.
+The technical complete-source route selected for Stage62 is documented in
+`LEGAL_STATUS.md` and `SOURCE_ACCESS.md`. No Enterprise agreement, project
+ownership certification, or complete model-rights clearance was found in the
+retained evidence. External conveyance therefore requires a separate legal and
+ownership decision even though the technical AGPL source surface is present.
