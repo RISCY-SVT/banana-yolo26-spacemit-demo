@@ -104,6 +104,10 @@ def overlay_install(install: Path, root: Path) -> None:
         source = install / directory
         if source.exists():
             copy_tree(source, root / directory)
+    installed_examples = install / "share" / "y26-k1x-int8-executor" / "examples"
+    if installed_examples.is_dir():
+        remove_tree(root / "examples")
+        copy_tree(installed_examples, root / "examples")
 
 
 def overlay_project_material(repo: Path, root: Path, integrated: bool) -> None:
