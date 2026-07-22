@@ -1,0 +1,8 @@
+branch_or_tag	commit	status
+yolo26-custom-int8-engine	9f88644aef6a9eb304cae3e95b62da6a0aa22cc3	integrated-main; final evidence commit follows
+yolo26-custom-int8-engine-maintenance-0.9.3	d0e3611c8d99dfade049bd261cb557509222a456	immutable-stable
+yolo26-k1x-resolution-sweep	43c02b7051ddde9921a5348e4b4e8986b941212d	immutable-research
+yolo26-k1x-attention-ntail-r768-q0	fa668ccaf7938336bd10313455ab81557b33e020	immutable-research
+v0.9.3-r640	d0e3611c8d99dfade049bd261cb557509222a456	annotated-stable-tag
+stage61-q0-final	fa668ccaf7938336bd10313455ab81557b33e020	annotated-research-tag
+v0.10.0-internal-rd.1	final-publication-head	annotated-integrated-tag

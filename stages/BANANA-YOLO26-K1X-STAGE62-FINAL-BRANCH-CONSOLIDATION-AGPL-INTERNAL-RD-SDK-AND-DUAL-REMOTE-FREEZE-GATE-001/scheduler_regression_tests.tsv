@@ -1,0 +1,5 @@
+suite	repeats	transitions_each	status
+Stage60M threaded startup	20	n/a	pass
+Stage60M active-window lifecycle	20	2000	pass
+Stage61 threaded startup	20	n/a	pass
+Stage61 active-window lifecycle	20	2000	pass

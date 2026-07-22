@@ -1,0 +1,3 @@
+build	compiler	flags	elf_sha256	abi	soversion
+stable-0.9.3	SpacemiT GCC 14.3.0	-march=rv64gcv_zvfh -mabi=lp64d -mtune=spacemit-x60 -funroll-loops -O3 -DNDEBUG	e05138e86c64b3f30ec8164a709430ee971915566b016bfb9d7df90e374e394d	1	1
+integrated-0.10.0-internal-rd.1	SpacemiT GCC 14.3.0	-march=rv64gcv_zvfh -mabi=lp64d -mtune=spacemit-x60 -funroll-loops -O3 -DNDEBUG	8bcd6e185a2ed1d44b32933bcde02bae69081b7731c3d2aa5eae0a182338cdc5	1	1

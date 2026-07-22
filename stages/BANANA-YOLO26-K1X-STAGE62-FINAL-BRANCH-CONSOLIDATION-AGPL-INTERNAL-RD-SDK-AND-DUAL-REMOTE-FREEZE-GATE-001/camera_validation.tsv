@@ -1,0 +1,8 @@
+test	resolution	duration_s	measured_frames	effective_format	opencv_decoded_frame_fps	processed_displayed_fps	application_slot_replacement_pct	executor_mean_ms	consumer_loop_mean_ms	decoded_read_return_to_display_call_mean_ms	profile_restored	status	exit_status	expected_status
+R640-camera-duration	640	1800.004875	11923	640x480@60.000 MJPG	14.997737	6.623871	55.834198	136.256220	150.610380	184.095369	1	pass
+R768-camera-duration	768	180.100454	793	640x480@60.000 MJPG	15.002738	4.403098	70.651369	205.718207	226.757018	260.707276	1	pass
+int											1	pass	0	0
+term											1	pass	0	0
+hup											1	pass	0	0
+capture-failure											1	pass	2	nonzero
+recorder-failure											1	pass	0	0

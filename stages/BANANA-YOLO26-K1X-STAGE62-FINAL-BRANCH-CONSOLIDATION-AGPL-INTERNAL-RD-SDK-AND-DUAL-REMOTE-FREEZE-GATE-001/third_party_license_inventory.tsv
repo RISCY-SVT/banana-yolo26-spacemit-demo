@@ -1,0 +1,5 @@
+component	version	license	bundled	evidence
+y26-k1x-int8-executor	0.10.0-internal-rd.1	AGPL-3.0-or-later	yes	LICENSE
+Ultralytics lineage	8.4.82	AGPL-3.0 / Enterprise terms	model-data	MODEL_LICENSE_AND_PROVENANCE.md
+OpenCV	4.13.0	Apache-2.0	yes	LICENSES/Apache-2.0.txt
+GNU runtime	14.3.0	runtime/library exceptions	no	DT_NEEDED and supported sysroot

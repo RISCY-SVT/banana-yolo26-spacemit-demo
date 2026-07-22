@@ -1,0 +1,2 @@
+tool	availability	status	fallback
+ShellCheck	unavailable	unavailable-not-pass	bash -n passed for changed shell files

@@ -1,0 +1,62 @@
+* 9f88644 (HEAD -> yolo26-custom-int8-engine) fix: ship the installed release consumer example
+* 45d84a9 fix: verify bundled dependencies inside release roots
+* 021db66 fix: make integrated source rebuild multiprofile
+* a9f8de1 fix: overlay integrated release scripts from source
+* f6e1f0d fix: make complete-source rebuild independent of git metadata
+* ca4bc1c fix: make installed consumer span release minors
+* 5433790 fix: gate integrated performance on regressions
+* c477b2e test: close integrated camera and evidence lifecycle
+* e405549 release: add deterministic Stage62 bundle assembler
+* 43226f2 docs: add AGPL complete-source evidence route
+* 291c354 feat: consolidate explicit Q0 profile policy
+*   7a8138a Merge Stage61 exact attention N-tail and multiprofile Q0 research
+|\
+| * fa668cc (tag: stage61-q0-final, gitlab-rd/yolo26-k1x-attention-ntail-r768-q0, github/yolo26-k1x-attention-ntail-r768-q0, yolo26-k1x-attention-ntail-r768-q0) docs: close Stage61 evidence and publication records
+| * d073c52 test: complete Stage61 exactness and evidence tooling
+| * 9236727 feat: add static R768 Q0 and board gate tooling
+| * 0ae6fda feat: add exact attention IME N-tail dispatch
+| * 43c02b7 (gitlab-rd/yolo26-k1x-resolution-sweep, github/yolo26-k1x-resolution-sweep, yolo26-k1x-resolution-sweep) stage60: close evidence and publication records
+| * 391369d stage60: record resolution sweep and camera evidence
+| * f1e0124 stage60: freeze operator profile in camera harness
+| * 5000ac5 stage60: add exact static resolution research profiles
+* | d0e3611 (tag: v0.9.3-r640, gitlab-rd/yolo26-custom-int8-engine-maintenance-0.9.3, github/yolo26-custom-int8-engine-maintenance-0.9.3, yolo26-custom-int8-engine-maintenance-0.9.3) docs: close Stage60M maintenance evidence
+* | 2965f59 fix: resolve release libraries from extracted root
+* | c0c3f1a test: isolate threaded startup readiness
+* | 5aad9b2 build: remove release runtime search paths
+* | a8efca3 release: prepare 0.9.3 scheduler maintenance
+* | f845720 test: cover scheduler lifecycle regressions
+* | d832a94 fix: backport scheduler lifecycle repairs
+|/
+* 175c1d9 (gitlab-rd/yolo26-custom-int8-engine, github/yolo26-custom-int8-engine) stage59: publish final release reconciliation
+* 3a70725 stage59: fix extracted dependency verification
+* 64a4a82 stage59: freeze camera and handoff evidence
+* 2d98f15 stage59: close exact executor validation
+* bf1e27d stage59: close pure-model release regression
+* 5a08e0e stage59: select reversible camera IRQ profile
+* 8db172a stage59: repair release and camera telemetry
+* 5465b68 release: close Stage58 camera handoff
+* bf965e8 docs: add Stage58 camera handoff evidence
+* 8f49fc1 docs: finalize Stage58 measured handoff
+* bcedf86 Harden K1X video playback evidence
+* 2317aa5 release: finalize Stage58 camera evidence tooling
+* 64d1747 release: align Stage58 camera evidence and defaults
+* b8d8d7c release: harden Stage58 maintenance and camera UI
+* e05a424 release: add Stage58 YOLO26 camera handoff
+* 3e5579d test: freeze Stage57 handoff evidence
+* b98263c docs: correct final Stage57 statistical identities
+* cf2654a fix: enforce frozen package identity in release helpers
+* 28490e7 docs: finalize measured Stage57 handoff release
+* 104d2dc test: add Stage57 evidence and codesign seed
+* b19c0a7 build: restore release assembler executable mode
+* 7539002 docs: productize Stage57 executor handoff
+* c123942 feat: finalize exact Stage57 executor and release ABI
+* 4f5a7f2 Freeze the Stage56 current-graph ceiling
+* e685c7d Make the Stage56 release rollback self-contained
+* 2f4cf45 Close Stage56 timing and trace provenance
+* 56025cf Maximize the K1X executor under reversible isolation
+* c7dd62d Record Stage55 residual ceiling evidence
+* fc7d3e1 Close the residual K1X executor ceiling
+* 88b4e8c Record Stage54 final practical ceiling evidence
+* 233bd46 Record exact Stage54 long-soak evidence
+* e7f44c6 Prepare the Stage54 optimized executor handoff
+* e6949ef Specialize the K1X full executor hot paths

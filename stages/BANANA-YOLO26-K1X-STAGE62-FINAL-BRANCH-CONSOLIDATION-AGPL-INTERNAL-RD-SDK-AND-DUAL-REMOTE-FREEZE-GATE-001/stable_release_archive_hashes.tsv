@@ -1,0 +1,5 @@
+delivery	archive	bytes	sha256	independent_rebuild_sha256	reproducibility_status
+stable-r640-internal-rd	banana-yolo26-k1x-int8-executor-0.9.3-r640-internal-rd-riscv64.tar.gz	27872042	a5d8bdd507e116fd4f2c808a2bbf57bd7657740f7b6c63a3e3c1769be776c9e6	a5d8bdd507e116fd4f2c808a2bbf57bd7657740f7b6c63a3e3c1769be776c9e6	pass-byte-identical
+stable-r640-runtime	banana-yolo26-k1x-int8-executor-0.9.3-r640-runtime-riscv64.tar.gz	14482132	bd4f665595141ab77b52caad800c5afe515f8bcb0ba2732f1567c8f9f6ae14df	bd4f665595141ab77b52caad800c5afe515f8bcb0ba2732f1567c8f9f6ae14df	pass-byte-identical
+stable-r640-internal-rd	banana-yolo26-k1x-int8-executor-0.9.3-r640-internal-rd-riscv64.zip	30103537	67718eb6d97ff6794cacf7b73459b6e755f9a659a88f5d46b32e883104c8b02e	67718eb6d97ff6794cacf7b73459b6e755f9a659a88f5d46b32e883104c8b02e	pass-byte-identical
+stable-r640-runtime	banana-yolo26-k1x-int8-executor-0.9.3-r640-runtime-riscv64.zip	15007396	be136418a8cec4cd9fabfffaae4841c0d832aaf2c714740bdd0212c5224a4c11	be136418a8cec4cd9fabfffaae4841c0d832aaf2c714740bdd0212c5224a4c11	pass-byte-identical

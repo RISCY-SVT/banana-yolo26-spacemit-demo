@@ -1,0 +1,29 @@
+index	commit	parents	commit_time	subject
+1	5000ac5838225ff53ff296cdd066120410f40448	175c1d939cc93fba0e730dba3f1281704e8f25b9	2026-07-20T16:19:46+02:00	stage60: add exact static resolution research profiles
+2	f1e012498a7fa297b2098b725bb00d02b6ee766a	5000ac5838225ff53ff296cdd066120410f40448	2026-07-20T17:15:13+02:00	stage60: freeze operator profile in camera harness
+3	391369dd6d2e8fdc3e504119e4ac9772c42e5d11	f1e012498a7fa297b2098b725bb00d02b6ee766a	2026-07-20T18:14:59+02:00	stage60: record resolution sweep and camera evidence
+4	43c02b7051ddde9921a5348e4b4e8986b941212d	391369dd6d2e8fdc3e504119e4ac9772c42e5d11	2026-07-20T18:16:20+02:00	stage60: close evidence and publication records
+5	d832a940bf062f1970b1fa5cb15d8844d124ab42	175c1d939cc93fba0e730dba3f1281704e8f25b9	2026-07-21T11:46:50+02:00	fix: backport scheduler lifecycle repairs
+6	f8457208ea449d39c5d56361f2532a8ed62907f1	d832a940bf062f1970b1fa5cb15d8844d124ab42	2026-07-21T11:47:13+02:00	test: cover scheduler lifecycle regressions
+7	a8efca34c31f0bfbb4d13cda10e18ce0fddde2dd	f8457208ea449d39c5d56361f2532a8ed62907f1	2026-07-21T11:50:40+02:00	release: prepare 0.9.3 scheduler maintenance
+8	5aad9b2c99dcd3272b4297ad15b9866ef1c59d91	a8efca34c31f0bfbb4d13cda10e18ce0fddde2dd	2026-07-21T12:00:02+02:00	build: remove release runtime search paths
+9	c0c3f1a13662aec9ba168963c651e164541905ba	5aad9b2c99dcd3272b4297ad15b9866ef1c59d91	2026-07-21T12:24:41+02:00	test: isolate threaded startup readiness
+10	2965f590bae4c221a4412068b90c0d73860264c7	c0c3f1a13662aec9ba168963c651e164541905ba	2026-07-21T13:28:20+02:00	fix: resolve release libraries from extracted root
+11	d0e3611c8d99dfade049bd261cb557509222a456	2965f590bae4c221a4412068b90c0d73860264c7	2026-07-21T14:16:51+02:00	docs: close Stage60M maintenance evidence
+12	0ae6fda09bfd60db739d172165834c7ca2405114	43c02b7051ddde9921a5348e4b4e8986b941212d	2026-07-21T22:06:54+02:00	feat: add exact attention IME N-tail dispatch
+13	9236727de8ac3b66596c6a0134b9262511476b3b	0ae6fda09bfd60db739d172165834c7ca2405114	2026-07-21T22:20:02+02:00	feat: add static R768 Q0 and board gate tooling
+14	d073c52b2ac135c437d6e3bf4906c79fc7b75bd1	9236727de8ac3b66596c6a0134b9262511476b3b	2026-07-21T23:14:28+02:00	test: complete Stage61 exactness and evidence tooling
+15	fa668ccaf7938336bd10313455ab81557b33e020	d073c52b2ac135c437d6e3bf4906c79fc7b75bd1	2026-07-22T05:05:46+02:00	docs: close Stage61 evidence and publication records
+16	7a8138ac2ef78d26ff92f1f8cc40f6d0b3286d93	d0e3611c8d99dfade049bd261cb557509222a456 fa668ccaf7938336bd10313455ab81557b33e020	2026-07-22T10:54:20+02:00	Merge Stage61 exact attention N-tail and multiprofile Q0 research
+17	291c3546b55d6311b26f3fd16a94dc96b7a6e9d9	7a8138ac2ef78d26ff92f1f8cc40f6d0b3286d93	2026-07-22T11:14:39+02:00	feat: consolidate explicit Q0 profile policy
+18	43226f233f9cde622075136de885e9eb15cd15bd	291c3546b55d6311b26f3fd16a94dc96b7a6e9d9	2026-07-22T11:15:57+02:00	docs: add AGPL complete-source evidence route
+19	e405549a2ac83b320776b525b9f0c6a6e61e4876	43226f233f9cde622075136de885e9eb15cd15bd	2026-07-22T11:30:43+02:00	release: add deterministic Stage62 bundle assembler
+20	c477b2ea4190d671a07c3f25f382c1c7358421a0	e405549a2ac83b320776b525b9f0c6a6e61e4876	2026-07-22T17:10:29+02:00	test: close integrated camera and evidence lifecycle
+21	5433790fc19a1564c6e908ee26b534d3789533ae	c477b2ea4190d671a07c3f25f382c1c7358421a0	2026-07-22T17:16:17+02:00	fix: gate integrated performance on regressions
+22	ca4bc1cd7a1df7e35aa70b3e74f1806144a1d558	5433790fc19a1564c6e908ee26b534d3789533ae	2026-07-22T17:33:53+02:00	fix: make installed consumer span release minors
+23	f6e1f0d44d3f6d12a3b962894640cd5f8270c524	ca4bc1cd7a1df7e35aa70b3e74f1806144a1d558	2026-07-22T17:37:10+02:00	fix: make complete-source rebuild independent of git metadata
+24	a9f8de17dd1626157b009344ce1fe5ddb3ddb82f	f6e1f0d44d3f6d12a3b962894640cd5f8270c524	2026-07-22T17:37:48+02:00	fix: overlay integrated release scripts from source
+25	021db661d7cb02407c86397a9c7aa1a52fee69b4	a9f8de17dd1626157b009344ce1fe5ddb3ddb82f	2026-07-22T17:42:01+02:00	fix: make integrated source rebuild multiprofile
+26	45d84a98208c6c33c0f0e666a5707026414f5376	021db661d7cb02407c86397a9c7aa1a52fee69b4	2026-07-22T17:56:44+02:00	fix: verify bundled dependencies inside release roots
+27	9f88644aef6a9eb304cae3e95b62da6a0aa22cc3	45d84a98208c6c33c0f0e666a5707026414f5376	2026-07-22T18:31:48+02:00	fix: ship the installed release consumer example
+28	final-publication-commit-containing-this-inventory	9f88644aef6a9eb304cae3e95b62da6a0aa22cc3	publication-time	Stage62 final evidence, freeze, and publication traceability

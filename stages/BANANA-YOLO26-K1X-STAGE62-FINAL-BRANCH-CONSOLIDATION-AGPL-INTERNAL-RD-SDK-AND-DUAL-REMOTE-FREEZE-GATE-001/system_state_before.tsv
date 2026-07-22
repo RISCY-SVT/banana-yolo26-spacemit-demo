@@ -1,0 +1,9 @@
+key	before	status
+capture_time_utc	2026-07-22T08:49:39Z	captured
+board_boot_id	0a0691d1-7502-44c3-903b-444dba83c1d9	must-match
+camera_profile	inactive	must-restore
+o2_profile	inactive	must-restore
+cpu_governor	performance	must-restore
+cpu0_4_frequency_khz	1600000	must-restore
+project_storage	NVMe /data	must-match
+emmc_project_writes	0	must-remain-zero

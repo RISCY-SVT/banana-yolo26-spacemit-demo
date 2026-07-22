@@ -1,0 +1,12 @@
+key	value	status
+capture_time_utc	2026-07-22T16:54:04Z	captured
+board_boot_id	0a0691d1-7502-44c3-903b-444dba83c1d9	matches-before
+camera_profile	inactive; IRQ89 requested 0-7 effective 0	restored
+o2_profile	snapshot absent; cgroup absent; workqueue ff	restored
+cpu_governor	performance	matches-before
+cpu0_4_frequency_khz	1600000	matches-before
+project_storage	/dev/nvme0n1p1 ext4   rw,noatime	NVMe-only
+leftover_demo_or_benchmark_processes	0	pass
+board_stage_bytes	2979872788	NVMe
+board_stage_files	142620	NVMe
+emmc_project_writes	0	pass

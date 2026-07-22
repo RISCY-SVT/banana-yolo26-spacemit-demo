@@ -1,0 +1,5 @@
+delivery	archive	bytes	sha256	independent_rebuild_sha256	reproducibility_status
+integrated-complete-source	banana-yolo26-k1x-int8-executor-0.10.0-internal-rd.1-complete-source-riscv64.tar.gz	108604291	f112e140828c32aa1b4ca218df1869aeed72dc968dc4fcc3f6645c3fa340e27a	f112e140828c32aa1b4ca218df1869aeed72dc968dc4fcc3f6645c3fa340e27a	pass-byte-identical
+integrated-binary-sdk	banana-yolo26-k1x-int8-executor-0.10.0-internal-rd.1-sdk-riscv64.tar.gz	73433399	d2f9ae422020b0f12546914c7dc4971e4c8019b11381c01e2cbfcbbd29e70e8d	d2f9ae422020b0f12546914c7dc4971e4c8019b11381c01e2cbfcbbd29e70e8d	pass-byte-identical
+integrated-complete-source	banana-yolo26-k1x-int8-executor-0.10.0-internal-rd.1-complete-source-riscv64.zip	115735977	b3b4272e00231930065be7f38a4febb7bad3bf735c40e744aad89903daa5696c	b3b4272e00231930065be7f38a4febb7bad3bf735c40e744aad89903daa5696c	pass-byte-identical
+integrated-binary-sdk	banana-yolo26-k1x-int8-executor-0.10.0-internal-rd.1-sdk-riscv64.zip	78390626	961319b31d2ef05004a053aaab5190ee490296aecf1ce5557a7047ee061f91d8	961319b31d2ef05004a053aaab5190ee490296aecf1ce5557a7047ee061f91d8	pass-byte-identical

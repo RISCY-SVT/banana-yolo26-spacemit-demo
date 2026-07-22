@@ -1,0 +1,6 @@
+case	result
+zero sizes	pass
+adjacent ranges	pass
+partial overlap	pass
+full containment	pass
+high uintptr values	pass-overflow-safe-integer-helper

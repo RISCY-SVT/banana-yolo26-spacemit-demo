@@ -1,0 +1,6 @@
+check	stable	integrated	status
+public ABI symbols	16	16	pass-identical
+SONAME	liby26_k1x_int8_executor.so.1	liby26_k1x_int8_executor.so.1	pass
+RPATH/RUNPATH/TEXTREL	absent	absent	pass
+arithmetic object identity	control	stage48/stage51/vmadot objects byte-identical	pass
+IME routing	approved objects CPU0-3	approved objects CPU0-3	pass

@@ -1,0 +1,7 @@
+ref	commit	classification
+main-start	175c1d939cc93fba0e730dba3f1281704e8f25b9	frozen-r640-0.9.2
+maintenance-0.9.3	d0e3611c8d99dfade049bd261cb557509222a456	stable-r640
+stage60	43c02b7051ddde9921a5348e4b4e8986b941212d	resolution-q0-evidence
+stage61	fa668ccaf7938336bd10313455ab81557b33e020	attention-ntail-r768-q0
+stage62-merge	7a8138ac2ef78d26ff92f1f8cc40f6d0b3286d93	no-ff-history-merge
+integrated-release-source	9f88644aef6a9eb304cae3e95b62da6a0aa22cc3	0.10.0-internal-rd.1-source

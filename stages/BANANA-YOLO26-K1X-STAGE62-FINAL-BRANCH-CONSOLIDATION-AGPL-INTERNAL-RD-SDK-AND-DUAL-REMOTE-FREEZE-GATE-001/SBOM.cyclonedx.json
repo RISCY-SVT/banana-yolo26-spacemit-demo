@@ -1,0 +1,187 @@
+{
+  "bomFormat": "CycloneDX",
+  "components": [
+    {
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "OpenCV",
+      "type": "library",
+      "version": "4.13.0"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "30a94e4738606673b5e0a73499cbc977167f046f8fa8637d6040ce744f429c0c"
+        }
+      ],
+      "name": "K1X_INT8_V1_YOLO26N_640_FULL_GRAPH_001",
+      "properties": [
+        {
+          "name": "profile.status",
+          "value": "accepted-exact-default"
+        }
+      ],
+      "type": "machine-learning-model",
+      "version": "fab4a72cf524ce0a205ceca0384144f2eee7bc79dff3f4db8b7208614e8407be"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "7d4497181ac78b85ec124031332c21187ccd8265cba94e92fd9882f297f3169f"
+        }
+      ],
+      "name": "K1X_INT8_V1_YOLO26N_512_FULL_GRAPH_001",
+      "properties": [
+        {
+          "name": "profile.status",
+          "value": "experimental-q0-opt-in"
+        }
+      ],
+      "type": "machine-learning-model",
+      "version": "331a39bb5a756ed7a56044bedf5715f65f1ea56dd436aab3a08845acbb4025e3"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "c90cc44d33df53a447430d34a51fcb4b4e18124c876359b6207758cc05c7131a"
+        }
+      ],
+      "name": "K1X_INT8_V1_YOLO26N_448_FULL_GRAPH_001",
+      "properties": [
+        {
+          "name": "profile.status",
+          "value": "experimental-q0-opt-in"
+        }
+      ],
+      "type": "machine-learning-model",
+      "version": "3176a250046f4848d8b8cb04ce1f5c6db5ff8f41b77a08425a46926b63ab0d49"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "993b79c7918d893744c7e1b3a18aed7bb6c01efe32fda19729b789a4cd857c72"
+        }
+      ],
+      "name": "K1X_INT8_V1_YOLO26N_416_FULL_GRAPH_001",
+      "properties": [
+        {
+          "name": "profile.status",
+          "value": "experimental-q0-opt-in"
+        }
+      ],
+      "type": "machine-learning-model",
+      "version": "310c0a4172001ffd47e17f18368e7ea1a2002baccfa3fb375314675366418ee7"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "0bd42b5ef9b6a4c1001346d3c88dcbb3423664848e0f608ac111e055ae86895e"
+        }
+      ],
+      "name": "K1X_INT8_V1_YOLO26N_384_FULL_GRAPH_001",
+      "properties": [
+        {
+          "name": "profile.status",
+          "value": "experimental-q0-opt-in"
+        }
+      ],
+      "type": "machine-learning-model",
+      "version": "a278db8b4f5aa3046ea8e65808e2978af88e4a2d115275829d6dab0720e33c8a"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "72c7f56f87a545595cdd0dea909f498a6676a02b48d53a8258ca62891f051b23"
+        }
+      ],
+      "name": "K1X_INT8_V1_YOLO26N_352_FULL_GRAPH_001",
+      "properties": [
+        {
+          "name": "profile.status",
+          "value": "experimental-q0-opt-in"
+        }
+      ],
+      "type": "machine-learning-model",
+      "version": "91c073181b21e27ff702cd86ddcabaeb25903628520831ab2423ee8e2bfd2736"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "7f3859353b5db7f9f3b00d42465459d7702f4c63e88f8894aef1f60917b96c08"
+        }
+      ],
+      "name": "K1X_INT8_V1_YOLO26N_320_FULL_GRAPH_001",
+      "properties": [
+        {
+          "name": "profile.status",
+          "value": "experimental-q0-opt-in"
+        }
+      ],
+      "type": "machine-learning-model",
+      "version": "bf451c74850dd04d7863e117eb60377fa6956b904d9305292a1015eecd9cb974"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "f5ed20749bc3da62fc8660e9e07c7a3e72ab934d00fb32c9e40cef2d82c8ed67"
+        }
+      ],
+      "name": "K1X_INT8_V1_YOLO26N_256_FULL_GRAPH_001",
+      "properties": [
+        {
+          "name": "profile.status",
+          "value": "experimental-q0-opt-in"
+        }
+      ],
+      "type": "machine-learning-model",
+      "version": "661126eebff48e3ad074abdcd133aa54949e851390b1adb79964a403fe82ddba"
+    },
+    {
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "3bb1695a5506b9e0c15ce4c511c30d3006db212c7c0c4ff5fb2c289183edfc8b"
+        }
+      ],
+      "name": "K1X_INT8_V1_YOLO26N_768_FULL_GRAPH_001",
+      "properties": [
+        {
+          "name": "profile.status",
+          "value": "experimental-q0-opt-in"
+        }
+      ],
+      "type": "machine-learning-model",
+      "version": "3fd4d004e92c4238c69c2d07bc1eedcee92c1968984f17d2b796b7bf01b4e0be"
+    }
+  ],
+  "metadata": {
+    "component": {
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-or-later"
+          }
+        }
+      ],
+      "name": "banana-yolo26-k1x-int8-executor",
+      "type": "application",
+      "version": "0.10.0-internal-rd.1"
+    }
+  },
+  "serialNumber": "urn:uuid:8bec57d7451b3bb0b70e70c10f7fe349",
+  "specVersion": "1.5",
+  "version": 1
+}

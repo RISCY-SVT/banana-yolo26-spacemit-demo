@@ -1,0 +1,5 @@
+release	archive_formats_extracted	internal_checksums	tar_zip_tree_identity	cmake_shared	cmake_static	pkgconfig_shared	no_rpath	board_dependencies	board_healthcheck	board_image	board_video	board_camera	uninstall_isolation	status
+banana-yolo26-k1x-int8-executor-0.9.3-r640-runtime-riscv64	tar.gz,zip	pass	byte-identical	pass	pass	pass	pass	pass	pass	pass	pass	pass	pass	pass
+banana-yolo26-k1x-int8-executor-0.9.3-r640-internal-rd-riscv64	tar.gz,zip	pass	byte-identical	pass	pass	pass	pass	pass	pass	pass	pass	pass	pass	pass
+banana-yolo26-k1x-int8-executor-0.10.0-internal-rd.1-sdk-riscv64	tar.gz,zip	pass	byte-identical	pass	pass	pass	pass	pass	pass	pass	pass	pass	pass	pass
+banana-yolo26-k1x-int8-executor-0.10.0-internal-rd.1-complete-source-riscv64	tar.gz,zip	pass	byte-identical	pass	pass	pass	pass	pass	pass	pass	pass	pass	pass	pass

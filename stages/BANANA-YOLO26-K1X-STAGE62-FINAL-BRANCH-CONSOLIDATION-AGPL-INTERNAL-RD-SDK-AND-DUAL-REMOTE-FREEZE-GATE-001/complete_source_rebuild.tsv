@@ -1,0 +1,2 @@
+source_commit	source_root	build_root	install_root	multiprofile_q0	built_targets	library_sha256	canonical_library_sha256	identity_status	status
+9f88644aef6a9eb304cae3e95b62da6a0aa22cc3	/data/releases/banana-yolo26-k1x-int8-executor/0.10.0-internal-rd.1-stage62-complete-source/source/project	/data/build/stage62-complete-source-rebuild-9f88644	/data/build/stage62-complete-source-install-9f88644	ON	74	8bcd6e185a2ed1d44b32933bcde02bae69081b7731c3d2aa5eae0a182338cdc5	8bcd6e185a2ed1d44b32933bcde02bae69081b7731c3d2aa5eae0a182338cdc5	byte-identical	pass
