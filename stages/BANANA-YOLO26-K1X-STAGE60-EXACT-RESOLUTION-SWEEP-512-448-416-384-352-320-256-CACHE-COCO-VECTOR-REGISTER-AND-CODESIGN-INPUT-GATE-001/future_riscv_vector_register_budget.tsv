@@ -1,0 +1,26 @@
+configuration	kernel	VLEN_bits	ELEN_bits	architectural_registers	physical_registers	rename_policy	architectural_peak_register_names	physical_destination_demand_if_renamed	architectural_no_spill	physical_headroom	architectural_vrf_raw_bytes	physical_vrf_raw_bytes	minimum_dot_read_bytes_per_issue	minimum_dot_write_bytes_per_issue	assumed_banks	minimum_inflight_vector_operations	fractional_LMUL_required	strong_chaining_bypass_required	one_vector_load_store_pipeline_required	reason
+A	M8xN16_fused_requant_lut_store	256	64	32	32	no-rename	32	32	1	not-applicable	1024	1024	96	32	8	8	1	1	1	proven register-safe by existing destructive M8 scout
+A	M12xN16_fused_requant_lut_store	256	64	32	32	no-rename	40	48	0	not-applicable	1024	1024	96	32	8	8	1	1	1	24-register accumulator file leaves no complete C8 epilogue budget
+A	M12xN16_two_iteration_load_ahead	256	64	32	32	no-rename	38	46	0	not-applicable	1024	1024	96	32	8	8	1	1	1	24 accumulator registers plus two seven-register A/B sets exceed v0-v31
+A	attention_matmul_c8_epilogue	256	64	32	32	no-rename	38	46	0	not-applicable	1024	1024	96	32	8	8	1	1	1	full compute-to-C8 fusion exceeds the known VLEN256 budget
+A	lut2_indexed_route	256	64	32	32	no-rename	7	15	1	not-applicable	1024	1024	96	32	8	8	1	1	1	e8 data and legal e16,m2 index route use v0-v6
+B	M8xN16_fused_requant_lut_store	512	64	32	32	no-rename	24	32	1	not-applicable	2048	2048	192	64	16	8	1	1	1	eight LMUL1 accumulators leave a bounded destructive epilogue budget
+B	M12xN16_fused_requant_lut_store	512	64	32	32	no-rename	28	36	1	not-applicable	2048	2048	192	64	16	8	1	1	1	twelve LMUL1 accumulators plus destructive C8 epilogue fit
+B	M12xN16_two_iteration_load_ahead	512	64	32	32	no-rename	26	34	1	not-applicable	2048	2048	192	64	16	8	1	1	1	twelve LMUL1 accumulators plus two seven-register A/B sets fit
+B	attention_matmul_c8_epilogue	512	64	32	32	no-rename	26	34	1	not-applicable	2048	2048	192	64	16	8	1	1	1	destructive neighboring-C4 epilogue fits after input registers die
+B	lut2_indexed_route	512	64	32	32	no-rename	7	15	1	not-applicable	2048	2048	192	64	16	8	1	1	1	same architectural names; larger VLMAX only changes loop count
+C	M8xN16_fused_requant_lut_store	512	64	32	40	renamed	24	32	1	8	2048	2560	192	64	16	8	1	1	1	eight LMUL1 accumulators leave a bounded destructive epilogue budget
+C	M12xN16_fused_requant_lut_store	512	64	32	40	renamed	28	36	1	4	2048	2560	192	64	16	8	1	1	1	twelve LMUL1 accumulators plus destructive C8 epilogue fit
+C	M12xN16_two_iteration_load_ahead	512	64	32	40	renamed	26	34	1	6	2048	2560	192	64	16	8	1	1	1	twelve LMUL1 accumulators plus two seven-register A/B sets fit
+C	attention_matmul_c8_epilogue	512	64	32	40	renamed	26	34	1	6	2048	2560	192	64	16	8	1	1	1	destructive neighboring-C4 epilogue fits after input registers die
+C	lut2_indexed_route	512	64	32	40	renamed	7	15	1	25	2048	2560	192	64	16	8	1	1	1	same architectural names; larger VLMAX only changes loop count
+D	M8xN16_fused_requant_lut_store	512	64	32	48	renamed	24	32	1	16	2048	3072	192	64	16	8	1	1	1	eight LMUL1 accumulators leave a bounded destructive epilogue budget
+D	M12xN16_fused_requant_lut_store	512	64	32	48	renamed	28	36	1	12	2048	3072	192	64	16	8	1	1	1	twelve LMUL1 accumulators plus destructive C8 epilogue fit
+D	M12xN16_two_iteration_load_ahead	512	64	32	48	renamed	26	34	1	14	2048	3072	192	64	16	8	1	1	1	twelve LMUL1 accumulators plus two seven-register A/B sets fit
+D	attention_matmul_c8_epilogue	512	64	32	48	renamed	26	34	1	14	2048	3072	192	64	16	8	1	1	1	destructive neighboring-C4 epilogue fits after input registers die
+D	lut2_indexed_route	512	64	32	48	renamed	7	15	1	33	2048	3072	192	64	16	8	1	1	1	same architectural names; larger VLMAX only changes loop count
+E	M8xN16_fused_requant_lut_store	512	64	32	64	renamed	24	32	1	32	2048	4096	192	64	16	8	1	1	1	eight LMUL1 accumulators leave a bounded destructive epilogue budget
+E	M12xN16_fused_requant_lut_store	512	64	32	64	renamed	28	36	1	28	2048	4096	192	64	16	8	1	1	1	twelve LMUL1 accumulators plus destructive C8 epilogue fit
+E	M12xN16_two_iteration_load_ahead	512	64	32	64	renamed	26	34	1	30	2048	4096	192	64	16	8	1	1	1	twelve LMUL1 accumulators plus two seven-register A/B sets fit
+E	attention_matmul_c8_epilogue	512	64	32	64	renamed	26	34	1	30	2048	4096	192	64	16	8	1	1	1	destructive neighboring-C4 epilogue fits after input registers die
+E	lut2_indexed_route	512	64	32	64	renamed	7	15	1	49	2048	4096	192	64	16	8	1	1	1	same architectural names; larger VLMAX only changes loop count

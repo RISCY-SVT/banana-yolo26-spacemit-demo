@@ -1,0 +1,10 @@
+key	value
+timestamp_utc	2026-07-21T21:22:23Z
+boot_id	0a0691d1-7502-44c3-903b-444dba83c1d9
+kernel	Linux 6.6.63 riscv64 GNU/Linux
+cpu_governors	performance
+workqueue_cpumask	ff
+cgroup_stage61_exists	0
+o2_state_dirs	1
+camera_profile_state_exists	0
+data_mount	/dev/nvme0n1p1 ext4 /data

@@ -663,6 +663,12 @@ if(Y26_K1X_BUILD_RESEARCH AND Y26_K1X_BUILD_TOOLS)
     target_link_libraries(stage55_shape_lattice PRIVATE y26_k1x_custom_int8_engine Threads::Threads)
     target_compile_options(stage55_shape_lattice PRIVATE -Wall -Wextra -Wpedantic)
 
+    add_executable(stage60_shape_matrix
+        tools/stage60_shape_matrix.cpp
+    )
+    target_link_libraries(stage60_shape_matrix PRIVATE y26_k1x_custom_int8_engine Threads::Threads)
+    target_compile_options(stage60_shape_matrix PRIVATE -Wall -Wextra -Wpedantic)
+
     add_executable(yolo26_k1x_int8_research
         tools/yolo26_k1x_int8.cpp
     )
@@ -753,6 +759,12 @@ if(Y26_K1X_BUILD_RESEARCH AND Y26_K1X_BUILD_TOOLS)
     )
     target_link_libraries(stage52_boundary_dump PRIVATE y26_k1x_custom_int8_engine Threads::Threads)
     target_compile_options(stage52_boundary_dump PRIVATE -Wall -Wextra -Wpedantic)
+
+    add_executable(stage60_resolution_bench
+        tools/stage60_resolution_bench.cpp
+    )
+    target_link_libraries(stage60_resolution_bench PRIVATE y26_k1x_custom_int8_engine Threads::Threads)
+    target_compile_options(stage60_resolution_bench PRIVATE -Wall -Wextra -Wpedantic)
 
     add_executable(stage52_core_bridge_dump
         tools/stage52_core_bridge_dump.cpp

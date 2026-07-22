@@ -158,11 +158,13 @@ Sample run_once(const std::vector<std::uint8_t>& encoded,
     const auto decode_end = Clock::now();
     if (bgr.empty()) throw std::runtime_error("OpenCV failed to decode the preloaded image bytes");
 
-    const double ratio = std::min(640.0 / bgr.cols, 640.0 / bgr.rows);
+    const int resolution = executor.input_width();
+    const double ratio = std::min(static_cast<double>(resolution) / bgr.cols,
+                                  static_cast<double>(resolution) / bgr.rows);
     const int resized_width = static_cast<int>(std::nearbyint(bgr.cols * ratio));
     const int resized_height = static_cast<int>(std::nearbyint(bgr.rows * ratio));
-    const double pad_x = (640.0 - resized_width) / 2.0;
-    const double pad_y = (640.0 - resized_height) / 2.0;
+    const double pad_x = (static_cast<double>(resolution) - resized_width) / 2.0;
+    const double pad_y = (static_cast<double>(resolution) - resized_height) / 2.0;
     const int x0 = static_cast<int>(std::nearbyint(pad_x - 0.1));
     const int y0 = static_cast<int>(std::nearbyint(pad_y - 0.1));
     const auto resize_begin = decode_end;
@@ -175,9 +177,12 @@ Sample run_once(const std::vector<std::uint8_t>& encoded,
     const auto color_end = Clock::now();
 
     y26::stage52::RunTiming timing;
-    if (executor.run_rgb(rgb.data, 640, 640, static_cast<int>(rgb.step), output.data(),
+    if (executor.run_rgb(rgb.data, resolution, resolution, static_cast<int>(rgb.step), output.data(),
                          output.size(), &timing) != 0) {
         throw std::runtime_error("execution failed: " + executor.last_error());
+    }
+    if (timing.affinity_ok != 1 || timing.cpu4_7_ime_count != 0) {
+        throw std::runtime_error("pipeline CPU affinity or IME ownership contract failed");
     }
     const auto executor_end = Clock::now();
 
@@ -226,7 +231,9 @@ int main(int argc, char** argv) {
         config.worker_cpu_begin = 0;
         config.controller_cpu = 4;
         config.scheduler = y26::stage52::SchedulerMode::safe;
+        config.wake_policy = y26::stage52::WakePolicy::frame_gated_spin;
         config.compute = y26::stage52::ComputeMode::optimized;
+        config.allow_stage60_static_profiles = true;
         y26::stage52::FullExecutor executor;
         const std::string manifest =
             y26::int8_v1::sha256_file(options.package / "asset_hashes.tsv");
@@ -235,8 +242,8 @@ int main(int argc, char** argv) {
         }
 
         cv::Mat resized;
-        cv::Mat canvas(640, 640, CV_8UC3);
-        cv::Mat rgb(640, 640, CV_8UC3);
+        cv::Mat canvas(executor.input_height(), executor.input_width(), CV_8UC3);
+        cv::Mat rgb(executor.input_height(), executor.input_width(), CV_8UC3);
         std::array<float, 1800> output {};
         for (int index = 0; index < options.warmup; ++index) {
             (void)run_once(encoded, executor, output, resized, canvas, rgb);
@@ -286,8 +293,10 @@ int main(int argc, char** argv) {
             print_summary(names[index], values[index]);
         }
         std::cout << "metadata\tencoded_bytes\t" << encoded.size() << '\n'
+                  << "metadata\tresolution\t" << executor.input_width() << '\n'
                   << "metadata\toutput_hash\t0x" << std::hex << expected_hash << std::dec << '\n'
                   << "metadata\tdetections\t" << expected_detections << '\n'
+                  << "metadata\tcpu4_7_ime_count\t0\n"
                   << "metadata\tpackage_manifest_sha256\t" << executor.package_manifest_sha256()
                   << '\n';
         return 0;

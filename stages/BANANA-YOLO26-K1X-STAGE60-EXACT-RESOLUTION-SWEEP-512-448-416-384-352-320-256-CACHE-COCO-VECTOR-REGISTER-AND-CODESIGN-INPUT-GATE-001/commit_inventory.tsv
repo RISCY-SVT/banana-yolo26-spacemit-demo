@@ -1,0 +1,5 @@
+sequence	commit	parent	author_time	subject	scope
+1	5000ac5838225ff53ff296cdd066120410f40448	175c1d939cc93fba0e730dba3f1281704e8f25b9	2026-07-20T16:19:46+02:00	stage60: add exact static resolution research profiles	static profiles, exact tools, package/runtime support, lifecycle repair
+2	f1e012498a7fa297b2098b725bb00d02b6ee766a	5000ac5838225ff53ff296cdd066120410f40448	2026-07-20T17:15:13+02:00	stage60: freeze operator profile in camera harness	camera harness operator-profile identity and audit fields
+3	391369dd6d2e8fdc3e504119e4ac9772c42e5d11	f1e012498a7fa297b2098b725bb00d02b6ee766a	2026-07-20T18:14:59+02:00	stage60: record resolution sweep and camera evidence	full exactness, performance, COCO, soak, camera, decision, and hygiene evidence
+4	FINAL_HEAD	391369dd6d2e8fdc3e504119e4ac9772c42e5d11	resolved_by_git_show	stage60: close evidence and publication records	this inventory and final remote-parity contract; resolve FINAL_HEAD with git rev-parse HEAD

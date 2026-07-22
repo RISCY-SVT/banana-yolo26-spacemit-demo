@@ -1,0 +1,9 @@
+resolution	python_integer_oracle	portable_host_scalar	board_scalar	board_optimized	fixtures	integer_boundaries_per_fixture	frm_vector_csr_restore	affinity	cpu4_7_ime_count	fixed_f0_output_hash	status
+640	pass	pass	pass	pass	10	215	pass	pass	0	0xd43f5e018b415631	exact
+512	pass	pass	pass	pass	10	215	pass	pass	0	0x41e92be60b116000	exact
+448	pass	pass	pass	pass	10	215	pass	pass	0	0x5e2174a2f1986692	exact
+416	pass	pass	pass	pass	10	215	pass	pass	0	0x4920a55891e03360	exact
+384	pass	pass	pass	pass	10	215	pass	pass	0	0x92e50a18b4333ef6	exact
+352	pass	pass	pass	pass	10	215	pass	pass	0	0x55df0621e45efffd	exact
+320	pass	pass	pass	pass	10	215	pass	pass	0	0xe4428b424e5583f9	exact
+256	pass	pass	pass	pass	10	215	pass	pass	0	0x612dacf0a107e285	exact

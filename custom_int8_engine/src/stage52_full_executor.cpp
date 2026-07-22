@@ -4,6 +4,7 @@
 #include "y26_k1x_package.h"
 #include "y26_k1x_stage49_slice.h"
 #include "y26_k1x_stage51_q62.h"
+#include "y26_k1x_stage61_attention_ntail.h"
 
 #include <algorithm>
 #include <array>
@@ -67,6 +68,153 @@ extern "C" void y26_stage49_load_contiguous_c8x4(const std::int8_t*, std::int8_t
 #include <sched.h>
 #endif
 
+namespace y26::stage61 {
+namespace {
+
+constexpr int kM12Rows = 12;
+constexpr int kN16Columns = 16;
+constexpr int kDotLanes = 8;
+constexpr int kAccumulatorGroupElements = 3 * 16;
+
+bool ranges_overlap(const void* first, std::size_t first_bytes,
+                    const void* second, std::size_t second_bytes) noexcept {
+    const auto first_begin = reinterpret_cast<std::uintptr_t>(first);
+    const auto second_begin = reinterpret_cast<std::uintptr_t>(second);
+    return first_begin < second_begin + second_bytes &&
+           second_begin < first_begin + first_bytes;
+}
+
+#if !defined(Y26_K1X_ENABLE_IME_ASM) || !defined(__riscv)
+void scalar_m12n_groups(const std::int8_t* a, const std::int8_t* b,
+                        int k_tiles, int output_groups,
+                        std::int32_t* c) noexcept {
+    std::fill(c, c + static_cast<std::size_t>(output_groups) *
+                       kAccumulatorGroupElements, 0);
+    for (int tile = 0; tile < k_tiles; ++tile) {
+        const auto* at = a + static_cast<std::size_t>(tile) * kM12Rows * kDotLanes;
+        const auto* bt = b + static_cast<std::size_t>(tile) * kN16Columns * kDotLanes;
+        for (int output_group = 0; output_group < output_groups; ++output_group) {
+            for (int row_group = 0; row_group < 3; ++row_group) {
+                auto* result = c +
+                    static_cast<std::size_t>(output_group * 3 + row_group) * 16;
+                for (int row = 0; row < 4; ++row) {
+                    for (int output_column = 0; output_column < 4; ++output_column) {
+                        std::int32_t sum = result[row * 4 + output_column];
+                        for (int lane = 0; lane < kDotLanes; ++lane) {
+                            sum += static_cast<std::int32_t>(
+                                       at[(row_group * 4 + row) * kDotLanes + lane]) *
+                                   static_cast<std::int32_t>(
+                                       bt[(output_group * 4 + output_column) *
+                                          kDotLanes + lane]);
+                        }
+                        result[row * 4 + output_column] = sum;
+                    }
+                }
+            }
+        }
+    }
+}
+#endif
+
+void run_n4(const std::int8_t* a, const std::int8_t* b,
+            int k_tiles, std::int32_t* c) noexcept {
+#if defined(Y26_K1X_ENABLE_IME_ASM) && defined(__riscv)
+    y26_stage53_kernel_m12n4(a, b, k_tiles, c);
+#else
+    scalar_m12n_groups(a, b, k_tiles, 1, c);
+#endif
+}
+
+void run_n8(const std::int8_t* a, const std::int8_t* b,
+            int k_tiles, std::int32_t* c) noexcept {
+#if defined(Y26_K1X_ENABLE_IME_ASM) && defined(__riscv)
+    y26_stage53_kernel_m12n8(a, b, k_tiles, c);
+#else
+    scalar_m12n_groups(a, b, k_tiles, 2, c);
+#endif
+}
+
+void run_n16(const std::int8_t* a, const std::int8_t* b,
+             int k_tiles, std::int32_t* c) noexcept {
+#if defined(Y26_K1X_ENABLE_IME_ASM) && defined(__riscv)
+    y26_stage48_kernel_m12n16(a, b, k_tiles, c);
+#else
+    scalar_m12n_groups(a, b, k_tiles, 4, c);
+#endif
+}
+
+}  // namespace
+
+NtailRouteCount ntail_route_count(int live_columns,
+                                  Ntail13Strategy strategy) noexcept {
+    NtailRouteCount count;
+    if (live_columns < 1 || live_columns > 16) return count;
+    if (live_columns <= 4) {
+        count.n4 = 1;
+        count.padded_dead_columns = 4 - live_columns;
+    } else if (live_columns <= 8) {
+        count.n8 = 1;
+        count.padded_dead_columns = 8 - live_columns;
+    } else if (live_columns <= 12) {
+        count.n8 = 1;
+        count.n4 = 1;
+        count.padded_dead_columns = 12 - live_columns;
+    } else if (live_columns < 16 && strategy == Ntail13Strategy::n8_n8) {
+        count.n8 = 2;
+        count.padded_dead_columns = 16 - live_columns;
+    } else {
+        count.n16 = 1;
+        count.padded_dead_columns = 16 - live_columns;
+    }
+    return count;
+}
+
+bool run_m12n_tail(const std::int8_t* packed_a,
+                   const std::int8_t* packed_b,
+                   int k_tiles,
+                   int live_columns,
+                   Ntail13Strategy strategy,
+                   std::int32_t* output,
+                   std::size_t output_elements) noexcept {
+    if (packed_a == nullptr || packed_b == nullptr || output == nullptr ||
+        k_tiles <= 0 || live_columns < 1 || live_columns > 16) {
+        return false;
+    }
+    const std::size_t output_groups =
+        static_cast<std::size_t>((live_columns + 3) / 4);
+    const std::size_t required_output_elements =
+        output_groups * kAccumulatorGroupElements;
+    const std::size_t a_bytes =
+        static_cast<std::size_t>(k_tiles) * kM12Rows * kDotLanes;
+    const std::size_t b_bytes =
+        static_cast<std::size_t>(k_tiles) * kN16Columns * kDotLanes;
+    const std::size_t output_bytes = required_output_elements * sizeof(*output);
+    if (output_elements < required_output_elements ||
+        ranges_overlap(output, output_bytes, packed_a, a_bytes) ||
+        ranges_overlap(output, output_bytes, packed_b, b_bytes)) {
+        return false;
+    }
+
+    if (live_columns <= 4) {
+        run_n4(packed_a, packed_b, k_tiles, output);
+    } else if (live_columns <= 8) {
+        run_n8(packed_a, packed_b, k_tiles, output);
+    } else if (live_columns <= 12) {
+        run_n8(packed_a, packed_b, k_tiles, output);
+        run_n4(packed_a, packed_b + 8 * kDotLanes, k_tiles,
+               output + 2 * kAccumulatorGroupElements);
+    } else if (live_columns < 16 && strategy == Ntail13Strategy::n8_n8) {
+        run_n8(packed_a, packed_b, k_tiles, output);
+        run_n8(packed_a, packed_b + 8 * kDotLanes, k_tiles,
+               output + 2 * kAccumulatorGroupElements);
+    } else {
+        run_n16(packed_a, packed_b, k_tiles, output);
+    }
+    return true;
+}
+
+}  // namespace y26::stage61
+
 namespace y26::stage52 {
 namespace {
 
@@ -77,6 +225,44 @@ constexpr int kDenseM = 12;
 constexpr int kDenseN = 16;
 constexpr const char* kFullGraphModelSha256 =
     "30a94e4738606673b5e0a73499cbc977167f046f8fa8637d6040ce744f429c0c";
+
+bool valid_full_graph_identity(const int8_v1::PackageVerification& package) {
+    if (package.input_height != package.input_width) return false;
+    const int resolution = package.input_height;
+    struct StaticProfileIdentity {
+        int resolution;
+        const char* model_sha256;
+    };
+    constexpr std::array<StaticProfileIdentity, 9> kStage60Profiles {{
+        {768, "3bb1695a5506b9e0c15ce4c511c30d3006db212c7c0c4ff5fb2c289183edfc8b"},
+        {640, kFullGraphModelSha256},
+        {512, "7d4497181ac78b85ec124031332c21187ccd8265cba94e92fd9882f297f3169f"},
+        {448, "c90cc44d33df53a447430d34a51fcb4b4e18124c876359b6207758cc05c7131a"},
+        {416, "993b79c7918d893744c7e1b3a18aed7bb6c01efe32fda19729b789a4cd857c72"},
+        {384, "0bd42b5ef9b6a4c1001346d3c88dcbb3423664848e0f608ac111e055ae86895e"},
+        {352, "72c7f56f87a545595cdd0dea909f498a6676a02b48d53a8258ca62891f051b23"},
+        {320, "7f3859353b5db7f9f3b00d42465459d7702f4c63e88f8894aef1f60917b96c08"},
+        {256, "f5ed20749bc3da62fc8660e9e07c7a3e72ab934d00fb32c9e40cef2d82c8ed67"},
+    }};
+    const auto identity = std::find_if(
+        kStage60Profiles.begin(), kStage60Profiles.end(),
+        [resolution](const StaticProfileIdentity& candidate) {
+            return candidate.resolution == resolution;
+        });
+    if (identity == kStage60Profiles.end() || package.model_sha256 != identity->model_sha256) {
+        return false;
+    }
+    const std::string expected_profile =
+        "K1X_INT8_V1_YOLO26N_" + std::to_string(resolution) + "_FULL_GRAPH_001";
+    if (package.profile_id != expected_profile) return false;
+    if (resolution == 640) {
+        return package.source_lineage_id ==
+                std::string("accepted-yolo26-qdq:") + kFullGraphModelSha256 + ":stage52-full";
+    }
+    return package.source_lineage_id ==
+            std::string("accepted-yolo26-qdq:") + kFullGraphModelSha256 +
+            ":stage60-static-r" + std::to_string(resolution);
+}
 
 #if !defined(Y26_K1X_ENABLE_IME_ASM) || !defined(__riscv)
 void scalar_m12n16(const std::int8_t* a, const std::int8_t* b,
@@ -332,6 +518,20 @@ std::int8_t quantize_input_f32(float value) noexcept {
     return int8_v1::signed_storage(static_cast<std::uint8_t>(
         std::clamp<std::int64_t>(rounded, 0, 255)));
 }
+
+#if !defined(__riscv_vector)
+std::uint8_t quantize_input_u8_rvv_contract(float value) noexcept {
+    // RVV multiplies in f32 before the explicit RNE conversion. Keep the
+    // portable oracle at that same precision instead of widening first.
+    const float scaled_f32 = value * 255.0F;
+    const double scaled = static_cast<double>(scaled_f32);
+    const double floor_value = std::floor(scaled);
+    const double fraction = scaled - floor_value;
+    std::int64_t rounded = static_cast<std::int64_t>(floor_value);
+    if (fraction > 0.5 || (fraction == 0.5 && (rounded & 1))) ++rounded;
+    return static_cast<std::uint8_t>(std::clamp<std::int64_t>(rounded, 0, 255));
+}
+#endif
 
 std::vector<std::string> split(std::string_view text, char delimiter) {
     std::vector<std::string> result;
@@ -636,6 +836,7 @@ struct Operation {
     std::array<std::int64_t, 256> lut2_left_terms {};
     std::array<std::int64_t, 256> lut2_right_terms {};
     bool softmax_direct_matmul_pack = false;
+    int softmax_direct_right_zero_point = 0;
     bool matmul_right_prepacked = false;
     int head_scale_index = -1;
 };
@@ -934,11 +1135,11 @@ struct FullExecutor::Impl {
     };
     std::array<CoreBridge, 6> core_bridges;
     std::array<HeadScale, 3> head;
-    std::array<std::uint32_t, 8400> head_best_score_q24 {};
-    std::array<std::uint8_t, 8400> head_best_class {};
-    std::array<Point, 8400> head_points {};
+    std::vector<std::uint32_t> head_best_score_q24;
+    std::vector<std::uint8_t> head_best_class;
+    std::vector<Point> head_points;
     std::array<Point, 300> head_top_points {};
-    std::array<int, 8400> head_point_order {};
+    std::vector<int> head_point_order;
     std::array<int, 300 * 80> head_candidate_order {};
     std::array<Candidate, 300> head_selected_candidates {};
     std::vector<std::uint32_t> head_score_levels;
@@ -995,12 +1196,22 @@ struct FullExecutor::Impl {
     bool e2c5_enabled = false;
     bool attention_matmul_c8_enabled = false;
     bool attention_softmax_cache_enabled = false;
+    bool attention_ntail_enabled = true;
+    stage61::Ntail13Strategy attention_ntail_13_strategy =
+        stage61::Ntail13Strategy::n8_n8;
+    bool attention_route_counts_enabled = false;
+    stage61::NtailRouteCount attention_route_count;
+    std::uint64_t attention_k_padding_lanes = 0;
+    std::uint64_t attention_scalar_fallback_count = 0;
     bool head_bucket_enabled = false;
     bool rgb_copy_rvv_enabled = false;
     bool dense_pack_rvv_enabled = false;
     bool static_schedule_enabled = false;
     std::vector<int> static_batch_end;
     bool ready = false;
+    int input_height = 0;
+    int input_width = 0;
+    std::size_t input_elements = 0;
     std::uint64_t profile_run_sequence = 0;
     std::uint64_t attention_profile_run_sequence = 0;
     std::shared_ptr<AttentionProfile> attention_profile = std::make_shared<AttentionProfile>();
@@ -3003,11 +3214,13 @@ struct FullExecutor::Impl {
         const Tensor& right = tensor(operation.inputs[1]);
         const int k = right.dims[static_cast<std::size_t>(right.rank - 2)];
         const int n = right.dims[static_cast<std::size_t>(right.rank - 1)];
-        const int k_tiles = k / 8;
-        const int n_blocks = n / kDenseN;
+        const int k_tiles = (k + 7) / 8;
+        const int n_blocks = (n + kDenseN - 1) / kDenseN;
         const std::size_t matrix_elements = static_cast<std::size_t>(k) * n;
         const int batches = static_cast<int>(right.logical_elements / matrix_elements);
         const auto* source = arena.data() + right.offset;
+        const std::int8_t neutral_right =
+            int8_v1::signed_storage(static_cast<std::uint8_t>(operation.right_zero_point));
         std::fill(matmul_right_sums.begin(),
                   matmul_right_sums.begin() + static_cast<std::size_t>(batches) * n, 0);
         for (int batch = 0; batch < batches; ++batch) {
@@ -3020,10 +3233,14 @@ struct FullExecutor::Impl {
                                kDenseN + output) * 8U);
                         for (int lane = 0; lane < 8; ++lane) {
                             const int inner = k_tile * 8 + lane;
-                            const std::int8_t raw = source[
-                                (static_cast<std::size_t>(batch) * k + inner) * n + column];
+                            const bool live = inner < k && column < n;
+                            const std::int8_t raw = live
+                                ? source[(static_cast<std::size_t>(batch) * k + inner) * n + column]
+                                : neutral_right;
                             destination[lane] = raw;
-                            matmul_right_sums[static_cast<std::size_t>(batch) * n + column] += raw;
+                            if (column < n) {
+                                matmul_right_sums[static_cast<std::size_t>(batch) * n + column] += raw;
+                            }
                         }
                     }
                 }
@@ -3038,8 +3255,9 @@ struct FullExecutor::Impl {
         const int m = left.dims[static_cast<std::size_t>(left.rank - 2)];
         const int k = left.dims[static_cast<std::size_t>(left.rank - 1)];
         const int n = right.dims[static_cast<std::size_t>(right.rank - 1)];
-        const int k_tiles = k / 8;
-        const int n_blocks = n / kDenseN;
+        const int k_tiles = (k + 7) / 8;
+        const int padded_k = k_tiles * 8;
+        const int n_blocks = (n + kDenseN - 1) / kDenseN;
         const int batches = static_cast<int>(left.logical_elements / (static_cast<std::size_t>(m) * k));
         const int tiles_per_batch = (m + kDenseM - 1) / kDenseM;
         const int total_tiles = batches * tiles_per_batch;
@@ -3051,7 +3269,9 @@ struct FullExecutor::Impl {
         const std::int64_t left_correction = 128 - operation.left_zero_point;
         const std::int64_t right_correction = 128 - operation.right_zero_point;
         const std::int64_t constant_correction =
-            static_cast<std::int64_t>(k) * left_correction * right_correction;
+            static_cast<std::int64_t>(padded_k) * left_correction * right_correction;
+        const std::int8_t neutral_left =
+            int8_v1::signed_storage(static_cast<std::uint8_t>(operation.left_zero_point));
         stage51::VectorFixedPointState vector_state;
         if (!stage51::begin_q62_vector_rne(&vector_state)) {
             throw std::runtime_error("cannot establish MatMul Q62 vector state");
@@ -3066,24 +3286,34 @@ struct FullExecutor::Impl {
                     static_cast<std::size_t>(k_tile) * kDenseM * 8U;
                 for (int row = 0; row < kDenseM; ++row) {
                     if (row >= valid_rows) {
-                        std::fill(destination + row * 8, destination + (row + 1) * 8, 0);
+                        std::fill(destination + row * 8, destination + (row + 1) * 8,
+                                  neutral_left);
                         continue;
                     }
-                    const std::int8_t* source = left_data +
-                        (static_cast<std::size_t>(batch) * m + m_begin + row) * k + k_tile * 8;
-                    std::memcpy(destination + row * 8, source, 8);
                     for (int lane = 0; lane < 8; ++lane) {
-                        scratch.row_sums[static_cast<std::size_t>(row)] += source[lane];
+                        const int inner = k_tile * 8 + lane;
+                        const std::int8_t raw = inner < k
+                            ? left_data[(static_cast<std::size_t>(batch) * m + m_begin + row) * k + inner]
+                            : neutral_left;
+                        destination[row * 8 + lane] = raw;
+                        scratch.row_sums[static_cast<std::size_t>(row)] += raw;
                     }
                 }
             }
             for (int n_block = 0; n_block < n_blocks; ++n_block) {
                 const std::int8_t* packed = matmul_packed_right.data() +
                     (static_cast<std::size_t>(batch) * n_blocks + n_block) * k_tiles * kDenseN * 8U;
-                run_m12n16(scratch.a.data(), packed, k_tiles, scratch.c.data());
-                for (int output_group = 0; output_group < 4;) {
+                const int live_columns = std::min(kDenseN, n - n_block * kDenseN);
+                if (!stage61::run_m12n_tail(
+                        scratch.a.data(), packed, k_tiles, live_columns,
+                        attention_ntail_13_strategy, scratch.c.data(), scratch.c.size())) {
+                    throw std::runtime_error("invalid MatMul IME N-tail buffers");
+                }
+                const int output_groups = (live_columns + 3) / 4;
+                for (int output_group = 0; output_group < output_groups;) {
                     const int column_begin = n_block * kDenseN + output_group * 4;
-                    if (attention_matmul_c8_enabled && output_group + 1 < 4) {
+                    if (attention_matmul_c8_enabled && output_group + 1 < output_groups &&
+                        column_begin + 8 <= n) {
                         for (int row = 0; row < valid_rows; ++row) {
                             const int row_group = row / 4;
                             const int row_inner = row % 4;
@@ -3118,7 +3348,8 @@ struct FullExecutor::Impl {
                             (output_group * 3 + row_group) * 16 + row_inner * 4;
                         alignas(32) std::array<std::int64_t, 4> corrected {};
                         alignas(32) std::array<std::int64_t, 4> rounded {};
-                        for (int lane = 0; lane < 4; ++lane) {
+                        const int live_lanes = std::min(4, n - column_begin);
+                        for (int lane = 0; lane < live_lanes; ++lane) {
                             const int column = column_begin + lane;
                             corrected[static_cast<std::size_t>(lane)] =
                                 static_cast<std::int64_t>(raw[lane]) +
@@ -3128,7 +3359,7 @@ struct FullExecutor::Impl {
                         }
                         stage51::q62_vsmul_m63_i64x4(
                             corrected.data(), multipliers.data(), rounded.data());
-                        for (int lane = 0; lane < 4; ++lane) {
+                        for (int lane = 0; lane < live_lanes; ++lane) {
                             const int column = column_begin + lane;
                             const std::uint8_t quantized = static_cast<std::uint8_t>(
                                 std::clamp<std::int64_t>(rounded[static_cast<std::size_t>(lane)] +
@@ -3240,7 +3471,11 @@ struct FullExecutor::Impl {
                 }
                 const std::size_t matrix = row / static_cast<std::size_t>(rows_per_matrix);
                 const std::size_t row_in_matrix = row % static_cast<std::size_t>(rows_per_matrix);
-                std::int64_t packed_right_sum = 0;
+                const int padded_width = ((width + 7) / 8) * 8;
+                const std::int8_t neutral_right = int8_v1::signed_storage(
+                    static_cast<std::uint8_t>(operation.softmax_direct_right_zero_point));
+                std::int64_t packed_right_sum =
+                    static_cast<std::int64_t>(padded_width - width) * neutral_right;
                 for (int column = 0; column < width; ++column) {
                     const std::uint8_t difference = static_cast<std::uint8_t>(
                         maximum - int8_v1::semantic_code(source_row[column]));
@@ -3268,14 +3503,13 @@ struct FullExecutor::Impl {
                     const std::int8_t storage =
                         int8_v1::signed_storage(quantized_by_difference[difference]);
                     if (stage56_attention_direct_pack_enabled && !config.capture_boundaries &&
-                        operation.softmax_direct_matmul_pack && width % 8 == 0 &&
-                        rows_per_matrix % kDenseN == 0) {
+                        operation.softmax_direct_matmul_pack) {
                         const int k_tile = column / 8;
                         const int lane = column % 8;
                         const int n_block = static_cast<int>(row_in_matrix) / kDenseN;
                         const int output_channel = static_cast<int>(row_in_matrix) % kDenseN;
-                        const int k_tiles = width / 8;
-                        const int n_blocks = rows_per_matrix / kDenseN;
+                        const int k_tiles = (width + 7) / 8;
+                        const int n_blocks = (rows_per_matrix + kDenseN - 1) / kDenseN;
                         const std::size_t packed_index =
                             ((((matrix * static_cast<std::size_t>(n_blocks) + n_block) *
                                static_cast<std::size_t>(k_tiles) + k_tile) * kDenseN +
@@ -3337,6 +3571,21 @@ struct FullExecutor::Impl {
     void run_softmax(const Operation& operation) {
         const Tensor& input = tensor(operation.inputs[0]);
         const int width = input.dims[static_cast<std::size_t>(input.rank - 1)];
+        if (stage56_attention_direct_pack_enabled && !config.capture_boundaries &&
+            operation.softmax_direct_matmul_pack) {
+            const int rows_per_matrix = input.dims[2];
+            const int k_tiles = (width + 7) / 8;
+            const int n_blocks = (rows_per_matrix + kDenseN - 1) / kDenseN;
+            const std::size_t matrix_elements =
+                static_cast<std::size_t>(rows_per_matrix) * width;
+            const std::size_t matrices = input.logical_elements / matrix_elements;
+            const std::size_t packed_bytes = matrices * n_blocks * k_tiles *
+                kDenseN * 8U;
+            const std::int8_t neutral_right = int8_v1::signed_storage(
+                static_cast<std::uint8_t>(operation.softmax_direct_right_zero_point));
+            std::fill(matmul_packed_right.begin(),
+                      matmul_packed_right.begin() + packed_bytes, neutral_right);
+        }
         RangeJob job {this, &operation, nullptr, nullptr, nullptr, 0,
                       input.logical_elements / static_cast<std::size_t>(width),
                       0, RangeKind::softmax};
@@ -3407,15 +3656,9 @@ struct FullExecutor::Impl {
 #else
             for (std::size_t spatial = begin; spatial < end; ++spatial) {
                 for (int channel = 0; channel < output.dims[1]; ++channel) {
-                    const double scaled = static_cast<double>(
-                        input[static_cast<std::size_t>(channel) * plane + spatial]) * 255.0;
-                    const double floor_value = std::floor(scaled);
-                    const double fraction = scaled - floor_value;
-                    std::int64_t rounded = static_cast<std::int64_t>(floor_value);
-                    if (fraction > 0.5 || (fraction == 0.5 && (rounded & 1))) ++rounded;
                     destination[spatial * pixel_stride + static_cast<std::size_t>(channel)] =
-                        int8_v1::signed_storage(static_cast<std::uint8_t>(
-                            std::clamp<std::int64_t>(rounded, 0, 255)));
+                        int8_v1::signed_storage(quantize_input_u8_rvv_contract(
+                            input[static_cast<std::size_t>(channel) * plane + spatial]));
                 }
                 if (!compact_c3) {
                     std::fill(destination + spatial * pixel_stride + output.dims[1],
@@ -3427,6 +3670,7 @@ struct FullExecutor::Impl {
             return;
         }
         for (std::size_t flat = begin; flat < end; ++flat) {
+#if defined(__riscv_vector)
             const double scaled = static_cast<double>(input[flat]) * 255.0;
             const double floor_value = std::floor(scaled);
             const double fraction = scaled - floor_value;
@@ -3434,6 +3678,9 @@ struct FullExecutor::Impl {
             if (fraction > 0.5 || (fraction == 0.5 && (rounded & 1))) ++rounded;
             set_code(operation.output, flat,
                      static_cast<std::uint8_t>(std::clamp<std::int64_t>(rounded, 0, 255)));
+#else
+            set_code(operation.output, flat, quantize_input_u8_rvv_contract(input[flat]));
+#endif
         }
     }
 
@@ -3490,12 +3737,14 @@ struct FullExecutor::Impl {
             }
             return;
         }
-        constexpr std::size_t kPlane = 640U * 640U;
+        const std::size_t height = static_cast<std::size_t>(output.dims[2]);
+        const std::size_t width = static_cast<std::size_t>(output.dims[3]);
+        const std::size_t plane = height * width;
         for (std::size_t flat = begin; flat < end; ++flat) {
-            const std::size_t channel = flat / kPlane;
-            const std::size_t spatial = flat % kPlane;
-            const std::size_t y = spatial / 640U;
-            const std::size_t x = spatial % 640U;
+            const std::size_t channel = flat / plane;
+            const std::size_t spatial = flat % plane;
+            const std::size_t y = spatial / width;
+            const std::size_t x = spatial % width;
             set_code(operation.output, flat,
                      rgb[y * static_cast<std::size_t>(stride) + x * 3U + channel]);
         }
@@ -3577,8 +3826,9 @@ struct FullExecutor::Impl {
     }
 
     void decode_head(float* output) {
-        std::array<Point, 8400> local_points {};
-        auto& points = head_bucket_enabled ? head_points : local_points;
+        // The static profile determines this size at prepare time. Reuse the
+        // executor-owned workspace so resolution sweeps do not allocate per run.
+        auto& points = head_points;
         int global = 0;
         for (int scale_index = 0; scale_index < 3; ++scale_index) {
             const HeadScale& scale = head[static_cast<std::size_t>(scale_index)];
@@ -3801,13 +4051,22 @@ int FullExecutor::prepare(const std::filesystem::path& package_dir,
     try {
         const auto verified = int8_v1::verify_package(
             package_dir, trusted_manifest_sha256, int8_v1::kContractId,
-            kFullGraphProfileId, int8_v1::kNchwc8LayoutId, 2,
-            kFullGraphModelSha256);
+            {}, int8_v1::kNchwc8LayoutId, 2, {});
         if (!verified.ok) throw std::runtime_error("package verification failed: " + verified.error);
+        if (!valid_full_graph_identity(verified)) {
+            throw std::runtime_error("unsupported full-graph profile, model, or static-resolution lineage");
+        }
+        if (verified.input_width != 640 && !config.allow_stage60_static_profiles) {
+            throw std::runtime_error("non-640 static profiles are research-only in Stage60");
+        }
         Impl prepared;
         prepared.package = std::filesystem::canonical(package_dir);
         prepared.manifest = verified.manifest_sha256;
         prepared.config = config;
+        prepared.input_height = verified.input_height;
+        prepared.input_width = verified.input_width;
+        prepared.input_elements = 3U * static_cast<std::size_t>(verified.input_height) *
+            static_cast<std::size_t>(verified.input_width);
         prepared.controller_affinity_ok = pin_thread(config.controller_cpu);
 #if defined(Y26_K1X_FROZEN_RELEASE_PROFILE)
         prepared.e2c2_enabled = true;
@@ -3934,6 +4193,22 @@ int FullExecutor::prepare(const std::filesystem::path& package_dir,
         prepared.rgb_copy_rvv_enabled =
             std::getenv("Y26_STAGE57_RGB_COPY_RVV") != nullptr;
 #endif
+        const char* attention_ntail_environment =
+            std::getenv("Y26_STAGE61_ATTENTION_NTAIL");
+        prepared.attention_ntail_enabled = attention_ntail_environment == nullptr ||
+            std::string_view(attention_ntail_environment) != "0";
+        if (const char* strategy = std::getenv("Y26_STAGE61_NTAIL_13_15");
+            strategy != nullptr) {
+            const std::string_view value(strategy);
+            if (value == "n16") {
+                prepared.attention_ntail_13_strategy =
+                    stage61::Ntail13Strategy::padded_n16;
+            } else if (value != "n8n8") {
+                throw std::runtime_error("invalid Y26_STAGE61_NTAIL_13_15");
+            }
+        }
+        prepared.attention_route_counts_enabled =
+            std::getenv("Y26_STAGE61_ROUTE_COUNTS") != nullptr;
         std::size_t arena_bytes = 0;
         for (const Row& row : read_tsv(prepared.package / "tensors.tsv")) {
             Tensor tensor;
@@ -4049,7 +4324,10 @@ int FullExecutor::prepare(const std::filesystem::path& package_dir,
                 const int n = right.dims[static_cast<std::size_t>(right.rank - 1)];
                 operation.matmul_ime_eligible = left.layout == Layout::linear &&
                     right.layout == Layout::linear && output.layout == Layout::linear &&
-                    k % 8 == 0 && n % kDenseN == 0 && operation.right_shift == 62 &&
+                    k > 0 && n > 0 &&
+                    (prepared.attention_ntail_enabled ||
+                     (k % 8 == 0 && n % kDenseN == 0)) &&
+                    operation.right_shift == 62 &&
                     operation.multiplier > 0 &&
                     operation.multiplier <= std::numeric_limits<std::int64_t>::max() / 2;
                 if (operation.matmul_ime_eligible) operation.multiplier_m63 = operation.multiplier * 2;
@@ -4102,11 +4380,11 @@ int FullExecutor::prepare(const std::filesystem::path& package_dir,
                 continue;
             }
             const Tensor& packed_tensor = prepared.tensor(softmax.output);
-            if (packed_tensor.rank != 4 || packed_tensor.layout != Layout::linear ||
-                packed_tensor.dims[2] % 8 != 0 || packed_tensor.dims[3] % kDenseN != 0) {
+            if (packed_tensor.rank != 4 || packed_tensor.layout != Layout::linear) {
                 continue;
             }
             softmax.softmax_direct_matmul_pack = true;
+            softmax.softmax_direct_right_zero_point = matmul.right_zero_point;
             matmul.matmul_right_prepacked = true;
         }
         for (std::size_t index = 0; index + 1 < prepared.operations.size(); ++index) {
@@ -4153,16 +4431,41 @@ int FullExecutor::prepare(const std::filesystem::path& package_dir,
             if (operation.matmul_ime_eligible) {
                 const Tensor& left = prepared.tensor(operation.inputs[0]);
                 const Tensor& right = prepared.tensor(operation.inputs[1]);
+                const int m = left.dims[static_cast<std::size_t>(left.rank - 2)];
                 const int k = left.dims[static_cast<std::size_t>(left.rank - 1)];
                 const int n = right.dims[static_cast<std::size_t>(right.rank - 1)];
                 const std::size_t matrices = right.logical_elements /
                     (static_cast<std::size_t>(k) * n);
+                const int k_tiles = (k + 7) / 8;
+                const int n_blocks = (n + kDenseN - 1) / kDenseN;
                 maximum_panel_bytes = std::max(maximum_panel_bytes,
-                    static_cast<std::size_t>(k / 8) * kDenseM * 8U);
+                    static_cast<std::size_t>(k_tiles) * kDenseM * 8U);
                 maximum_matmul_right_bytes = std::max(maximum_matmul_right_bytes,
-                    right.logical_elements);
+                    matrices * static_cast<std::size_t>(n_blocks) * k_tiles *
+                        kDenseN * 8U);
                 maximum_matmul_right_sums = std::max(maximum_matmul_right_sums,
                     matrices * static_cast<std::size_t>(n));
+
+                const int batches = static_cast<int>(
+                    left.logical_elements / (static_cast<std::size_t>(m) * k));
+                const int m_tiles = (m + kDenseM - 1) / kDenseM;
+                const int call_factor = batches * m_tiles;
+                prepared.attention_route_count.n16 +=
+                    call_factor * (n / kDenseN);
+                if (const int tail = n % kDenseN; tail != 0) {
+                    const auto tail_count = stage61::ntail_route_count(
+                        tail, prepared.attention_ntail_13_strategy);
+                    prepared.attention_route_count.n4 += call_factor * tail_count.n4;
+                    prepared.attention_route_count.n8 += call_factor * tail_count.n8;
+                    prepared.attention_route_count.n16 += call_factor * tail_count.n16;
+                    prepared.attention_route_count.padded_dead_columns +=
+                        call_factor * tail_count.padded_dead_columns;
+                }
+                prepared.attention_k_padding_lanes +=
+                    static_cast<std::uint64_t>(call_factor) *
+                    static_cast<std::uint64_t>(((k + 7) / 8) * 8 - k);
+            } else if (operation.kind == OpKind::matmul) {
+                ++prepared.attention_scalar_fallback_count;
             }
         }
         prepared.dense_scratch.resize(static_cast<std::size_t>(config.workers));
@@ -4182,6 +4485,22 @@ int FullExecutor::prepare(const std::filesystem::path& package_dir,
             scale.reg_q16 = read_binary<std::int32_t>(prepared.package / value(row, "reg_lut_file"), 4U * 256U);
             scale.cls_q24 = read_binary<std::uint32_t>(prepared.package / value(row, "cls_lut_file"), 256);
         }
+        std::size_t head_point_count = 0;
+        for (const HeadScale& scale : prepared.head) {
+            if (scale.resolution <= 0 || scale.stride <= 0 || scale.reg_tensor < 0 ||
+                scale.cls_tensor < 0) {
+                throw std::runtime_error("incomplete head scale descriptors");
+            }
+            head_point_count += static_cast<std::size_t>(scale.resolution) *
+                static_cast<std::size_t>(scale.resolution);
+        }
+        if (head_point_count < 300U) {
+            throw std::runtime_error("head point lattice is smaller than the fixed top-300 output");
+        }
+        prepared.head_best_score_q24.resize(head_point_count);
+        prepared.head_best_class.resize(head_point_count);
+        prepared.head_points.resize(head_point_count);
+        prepared.head_point_order.resize(head_point_count);
         if (prepared.head_bucket_enabled) {
             prepared.head_score_levels.reserve(3U * 256U);
             for (const HeadScale& scale : prepared.head) {
@@ -4371,7 +4690,7 @@ int FullExecutor::prepare(const std::filesystem::path& package_dir,
 int FullExecutor::run_preprocessed(const float* input, std::size_t input_count,
                                    float* output, std::size_t output_count,
                                    RunTiming* timing) {
-    if (input == nullptr || input_count != 3U * 640U * 640U) return 1;
+    if (!impl_ || input == nullptr || input_count != impl_->input_elements) return 1;
     return run_input_surface(input, nullptr, 0, output, output_count, timing);
 }
 
@@ -4578,6 +4897,18 @@ int FullExecutor::run_input_surface(const float* input, const std::uint8_t* rgb,
                     impl_->attention_profile->softmax_normalize_transpose_ns.load(
                         std::memory_order_relaxed)));
         }
+        if (impl_->attention_route_counts_enabled) {
+            std::fprintf(stderr,
+                "stage61_attention_routes\tn4=%d\tn8=%d\tn16=%d\t"
+                "padded_dead_columns=%d\tk_padding_lanes=%llu\t"
+                "scalar_fallbacks=%llu\n",
+                impl_->attention_route_count.n4,
+                impl_->attention_route_count.n8,
+                impl_->attention_route_count.n16,
+                impl_->attention_route_count.padded_dead_columns,
+                static_cast<unsigned long long>(impl_->attention_k_padding_lanes),
+                static_cast<unsigned long long>(impl_->attention_scalar_fallback_count));
+        }
         if (timing != nullptr) *timing = local;
         impl_->current_float_input = nullptr;
         return 0;
@@ -4591,10 +4922,8 @@ int FullExecutor::run_input_surface(const float* input, const std::uint8_t* rgb,
 int FullExecutor::run_rgb(const std::uint8_t* rgb, int width, int height, int stride,
                           float* output, std::size_t output_count, RunTiming* timing) {
     if (!impl_ || rgb == nullptr || width <= 0 || height <= 0 || stride < width * 3) return 1;
-    // This bounded API route intentionally accepts only the already-letterboxed
-    // 640x640 RGB surface.  The CLI performs file decode and letterbox explicitly.
-    if (width != 640 || height != 640) {
-        impl_->error = "run_rgb requires a 640x640 letterboxed RGB image";
+    if (width != impl_->input_width || height != impl_->input_height) {
+        impl_->error = "run_rgb geometry does not match the prepared static profile";
         return 4;
     }
     return run_input_surface(nullptr, rgb, stride, output, output_count, timing);
@@ -4784,6 +5113,7 @@ int FullExecutor::diagnostic_benchmark_conv_shape(
             static_cast<double>(samples.size());
         result->median_us = percentile(0.5);
         result->p95_us = percentile(0.95);
+        result->p99_us = percentile(0.99);
         result->maximum_us = ordered.back();
         result->output_hash = expected_hash;
         result->deterministic = deterministic;
@@ -4870,6 +5200,9 @@ std::size_t FullExecutor::tensor_bytes(int tensor_id) const noexcept {
 
 int FullExecutor::operation_count() const noexcept { return impl_ ? static_cast<int>(impl_->operations.size()) : 0; }
 int FullExecutor::tensor_count() const noexcept { return impl_ ? static_cast<int>(impl_->tensors.size()) : 0; }
+int FullExecutor::input_height() const noexcept { return impl_ ? impl_->input_height : 0; }
+int FullExecutor::input_width() const noexcept { return impl_ ? impl_->input_width : 0; }
+std::size_t FullExecutor::input_elements() const noexcept { return impl_ ? impl_->input_elements : 0; }
 std::size_t FullExecutor::arena_bytes() const noexcept { return impl_ ? impl_->arena.size() : 0; }
 std::size_t FullExecutor::packed_weight_bytes() const noexcept { return impl_ ? impl_->total_weight_bytes : 0; }
 const std::string& FullExecutor::package_manifest_sha256() const noexcept { return impl_->manifest; }

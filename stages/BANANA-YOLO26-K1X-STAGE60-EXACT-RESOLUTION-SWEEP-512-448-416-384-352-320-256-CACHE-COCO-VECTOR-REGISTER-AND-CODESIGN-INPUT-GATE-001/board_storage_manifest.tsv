@@ -1,0 +1,53 @@
+scope	kind	file_count	apparent_bytes	sha256	storage	notes
+.	stage-root	72848	6569185516		NVMe_/data	all Stage60 project artifacts
+benchmarks	directory-summary	35	2306172		NVMe_/data	individual identities retained in raw evidence
+benchmarks-prealloc-scout	directory-summary	33	1804802		NVMe_/data	individual identities retained in raw evidence
+bin	directory-summary	11	4047304		NVMe_/data	individual identities retained in raw evidence
+cache	directory-summary	0	0		NVMe_/data	individual identities retained in raw evidence
+cache-analysis	directory-summary	0	0		NVMe_/data	individual identities retained in raw evidence
+camera	directory-summary	136	45716189		NVMe_/data	individual identities retained in raw evidence
+coco	directory-summary	5000	814705164		NVMe_/data	individual identities retained in raw evidence
+dense	directory-summary	108	381387		NVMe_/data	individual identities retained in raw evidence
+fixtures	directory-summary	122	223559291		NVMe_/data	individual identities retained in raw evidence
+include	directory-summary	1	5366		NVMe_/data	individual identities retained in raw evidence
+labels	directory-summary	1	622		NVMe_/data	individual identities retained in raw evidence
+lib	directory-summary	12	14222936		NVMe_/data	individual identities retained in raw evidence
+logs	directory-summary	0	0		NVMe_/data	individual identities retained in raw evidence
+long-soak	directory-summary	21	5086415		NVMe_/data	individual identities retained in raw evidence
+m8-m12	directory-summary	0	0		NVMe_/data	individual identities retained in raw evidence
+models	directory-summary	0	0		NVMe_/data	individual identities retained in raw evidence
+objdump	directory-summary	0	0		NVMe_/data	individual identities retained in raw evidence
+oracles	directory-summary	54460	4739242940		NVMe_/data	individual identities retained in raw evidence
+packages	directory-summary	12819	104532067		NVMe_/data	individual identities retained in raw evidence
+performance	directory-summary	0	0		NVMe_/data	individual identities retained in raw evidence
+pipeline	directory-summary	48	703658		NVMe_/data	individual identities retained in raw evidence
+pmu	directory-summary	0	0		NVMe_/data	individual identities retained in raw evidence
+predictions	directory-summary	24	612793412		NVMe_/data	individual identities retained in raw evidence
+profiles	directory-summary	6	38625		NVMe_/data	individual identities retained in raw evidence
+ram-buffer	directory-summary	0	0		NVMe_/data	individual identities retained in raw evidence
+reports	directory-summary	0	0		NVMe_/data	individual identities retained in raw evidence
+share	directory-summary	2	2736		NVMe_/data	individual identities retained in raw evidence
+system	directory-summary	1	0		NVMe_/data	individual identities retained in raw evidence
+tmp	directory-summary	0	0		NVMe_/data	individual identities retained in raw evidence
+tools	directory-summary	8	36430		NVMe_/data	individual identities retained in raw evidence
+bin/stage60_resolution_bench	critical-file	1	472024	b5432c2226a777b372fae14f2cc0a4fbc48a5b86927efd120901239b3a78f08e	NVMe_/data	selected closure identity
+bin/stage52_boundary_dump	critical-file	1	467488	beee860a95a09c9104e12c61df72259984b3bf0f5f8a6a66847ea2dc2ba19abc	NVMe_/data	selected closure identity
+bin/y26_k1x_demo	critical-file	1	646720	21abb41bda65d3533f3b8a1bee6836f60963caf6267b239bfd743dbb697eed14	NVMe_/data	selected closure identity
+bin/y26_v4l2_probe	critical-file	1	29744	b44867d3b256c20e8296ccbfdccf9de7fb2ad25f8e42aee2f11270185dbc79f6	NVMe_/data	selected closure identity
+tools/stage60_board_sweep.sh	critical-file	1	4649	88f787614c126ba71a19d47fefd31dc5c3aa849d1de64b5bdf9b9c3a3b977a9a	NVMe_/data	selected closure identity
+tools/stage60_board_soak.sh	critical-file	1	3813	0d6d710d149435501f1c4600238148cfdbd662cab9b233d665ff3fc4111e440e	NVMe_/data	selected closure identity
+tools/stage60_board_camera.sh	critical-file	1	5693	0bebb174038cb3d0be2bbcc037e16af1b86f569cfa9117d8daa50107fd58c1aa	NVMe_/data	selected closure identity
+camera/v4l2/r640x480-mjpg.tsv	critical-file	1	526440	b2d6499ffee76454198d75618bbcb9f520e4b3192472a656318d77c1bf4e52c1	NVMe_/data	selected closure identity
+camera/soak/r384-soak.metrics.tsv	critical-file	1	5588222	3efbae9767686cbb84e61552614fa84b20d50903af9c867d17849b732c081b5f	NVMe_/data	selected closure identity
+camera/soak/r384-soak.detections.tsv	critical-file	1	16554841	646d806e704749c70a1d0f6ba85b21fbcd30ad10308e630ac801578a9137a626	NVMe_/data	selected closure identity
+long-soak/r512.raw.tsv	critical-file	1	2327030	75c435adf2bf976a6ed68bc04cde9ebc0e3ee52c8612772c0900f6fffded4a98	NVMe_/data	selected closure identity
+long-soak/r384.raw.tsv	critical-file	1	2277687	1681fca6ea8b453e287218c3e17f782f0d94fb950377d69b5ac4e7bdf2dca9d6	NVMe_/data	selected closure identity
+oracles/fixture-parity.post-lifecycle.tsv	critical-file	1	6463	3a897a1064758c1df06e74c344bada5e5ddf1e280db31f55397475a934a438ba	NVMe_/data	selected closure identity
+packages/r640/asset_hashes.tsv	package-manifest	1	127577	fab4a72cf524ce0a205ceca0384144f2eee7bc79dff3f4db8b7208614e8407be	NVMe_/data	Q0 immutable profile
+packages/r512/asset_hashes.tsv	package-manifest	1	127469	331a39bb5a756ed7a56044bedf5715f65f1ea56dd436aab3a08845acbb4025e3	NVMe_/data	Q0 immutable profile
+packages/r448/asset_hashes.tsv	package-manifest	1	127469	3176a250046f4848d8b8cb04ce1f5c6db5ff8f41b77a08425a46926b63ab0d49	NVMe_/data	Q0 immutable profile
+packages/r416/asset_hashes.tsv	package-manifest	1	127469	310c0a4172001ffd47e17f18368e7ea1a2002baccfa3fb375314675366418ee7	NVMe_/data	Q0 immutable profile
+packages/r384/asset_hashes.tsv	package-manifest	1	127469	a278db8b4f5aa3046ea8e65808e2978af88e4a2d115275829d6dab0720e33c8a	NVMe_/data	Q0 immutable profile
+packages/r352/asset_hashes.tsv	package-manifest	1	127469	91c073181b21e27ff702cd86ddcabaeb25903628520831ab2423ee8e2bfd2736	NVMe_/data	Q0 immutable profile
+packages/r320/asset_hashes.tsv	package-manifest	1	127469	bf451c74850dd04d7863e117eb60377fa6956b904d9305292a1015eecd9cb974	NVMe_/data	Q0 immutable profile
+packages/r256/asset_hashes.tsv	package-manifest	1	127469	661126eebff48e3ad074abdcd133aa54949e851390b1adb79964a403fe82ddba	NVMe_/data	Q0 immutable profile

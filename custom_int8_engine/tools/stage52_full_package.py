@@ -198,7 +198,7 @@ class Graph:
 def is_attention_linear(name: str, source: onnx.NodeProto, shape: tuple[int, ...]) -> bool:
     if len(shape) != 4 or "/attn/" not in name:
         return False
-    if source.op_type in ("Conv", "Add") and shape[1] >= 8 and shape[-1] in (20, 40):
+    if source.op_type in ("Conv", "Add") and shape[1] >= 8:
         return False
     return source.op_type in ("Split", "Transpose", "Reshape", "MatMul") or "Transpose_1" in name
 
@@ -742,13 +742,19 @@ class PackageBuilder:
         return arena_end
 
 
-def generate_head_assets(graph: Graph, builder: PackageBuilder) -> dict[str, Any]:
+def generate_head_assets(graph: Graph, builder: PackageBuilder,
+                         input_resolution: int) -> dict[str, Any]:
     rows: list[dict[str, Any]] = []
-    for scale_index, resolution in enumerate((80, 40, 20)):
+    for scale_index in range(3):
         reg_suffix = f"/model.23/one2one_cv2.{scale_index}/one2one_cv2.{scale_index}.2/Conv_output_0_QuantizeLinear_Output"
         cls_suffix = f"/model.23/one2one_cv3.{scale_index}/one2one_cv3.{scale_index}.2/Conv_output_0_QuantizeLinear_Output"
         reg = graph.qspec(reg_suffix)
         cls = graph.qspec(cls_suffix)
+        if len(reg.shape) != 4 or reg.shape[-2] != reg.shape[-1] or cls.shape[-2:] != reg.shape[-2:]:
+            raise ValueError(f"unexpected head tensor geometry at scale {scale_index}")
+        resolution = reg.shape[-1]
+        if input_resolution % resolution != 0:
+            raise ValueError(f"non-integral head stride at scale {scale_index}")
         reg_lut = np.empty((4, 256), dtype="<i4")
         for channel in range(4):
             for code in range(256):
@@ -767,7 +773,8 @@ def generate_head_assets(graph: Graph, builder: PackageBuilder) -> dict[str, Any
         reg_lut.tofile(reg_path)
         cls_lut.tofile(cls_path)
         rows.append({
-            "scale_index": scale_index, "resolution": resolution, "stride": 640 // resolution,
+            "scale_index": scale_index, "resolution": resolution,
+            "stride": input_resolution // resolution,
             "reg_tensor": builder.tid(reg_suffix), "cls_tensor": builder.tid(cls_suffix),
             "reg_lut_file": str(reg_path.relative_to(builder.output)),
             "cls_lut_file": str(cls_path.relative_to(builder.output)),
@@ -778,13 +785,41 @@ def generate_head_assets(graph: Graph, builder: PackageBuilder) -> dict[str, Any
 
 def generate(args: argparse.Namespace) -> None:
     model_path = args.model.resolve()
-    if sha256_file(model_path) != EXPECTED_MODEL_SHA256:
-        raise ValueError("accepted model SHA-256 mismatch")
+    model_sha256 = sha256_file(model_path)
+    source_model_sha256 = EXPECTED_MODEL_SHA256
+    model = onnx.load(model_path, load_external_data=True)
+    metadata = {item.key: item.value for item in model.metadata_props}
+    graph_input = model.graph.input[0].type.tensor_type.shape.dim
+    if len(graph_input) != 4 or any(not dim.HasField("dim_value") for dim in graph_input):
+        raise ValueError("full package requires a fully static 1x3xRxR input")
+    input_shape = tuple(int(dim.dim_value) for dim in graph_input)
+    if input_shape[0] != 1 or input_shape[1] != 3 or input_shape[2] != input_shape[3]:
+        raise ValueError(f"unsupported full-graph input shape: {input_shape}")
+    input_resolution = input_shape[2]
+    if model_sha256 == EXPECTED_MODEL_SHA256:
+        if input_resolution != 640:
+            raise ValueError("accepted source model must retain its 640x640 input")
+    else:
+        if not args.allow_stage60_static_derivative:
+            raise ValueError("accepted model SHA-256 mismatch")
+        if metadata.get("y26_stage60_parent_model_sha256") != EXPECTED_MODEL_SHA256:
+            raise ValueError("Stage60 derivative parent-model identity mismatch")
+        if metadata.get("y26_stage60_resolution") != str(input_resolution):
+            raise ValueError("Stage60 derivative resolution metadata mismatch")
+        if metadata.get("y26_stage60_transform") != "static-input-attention-and-head-geometry-v1":
+            raise ValueError("unsupported Stage60 static transform")
+    profile_id = args.profile_id or (
+        PROFILE_ID if input_resolution == 640
+        else f"K1X_INT8_V1_YOLO26N_{input_resolution}_FULL_GRAPH_001"
+    )
+    expected_profile = f"K1X_INT8_V1_YOLO26N_{input_resolution}_FULL_GRAPH_001"
+    if profile_id != expected_profile:
+        raise ValueError(f"profile ID does not match static input: {profile_id}")
     output = args.out_dir.resolve()
     if output.exists():
         shutil.rmtree(output)
     output.mkdir(parents=True)
-    graph = Graph(onnx.load(model_path, load_external_data=True))
+    graph = Graph(model)
     builder = PackageBuilder(graph, output)
     # Softmax transpose must be classified before generic transpose.
     original_add_transform = builder.add_transform
@@ -797,7 +832,7 @@ def generate(args: argparse.Namespace) -> None:
     builder.add_transform = guarded_transform  # type: ignore[method-assign]
     builder.build_operations()
     arena_bytes = builder.finalize_arena()
-    head = generate_head_assets(graph, builder)
+    head = generate_head_assets(graph, builder, input_resolution)
     optimized_core_manifest = ""
     if args.optimized_core_package is not None:
         optimized_core_manifest = copy_runtime_package(
@@ -807,9 +842,13 @@ def generate(args: argparse.Namespace) -> None:
     package = {
         "schema_version": SCHEMA_VERSION,
         "contract_id": CONTRACT_ID,
-        "profile_id": PROFILE_ID,
-        "model_sha256": EXPECTED_MODEL_SHA256,
-        "source_lineage_id": f"accepted-yolo26-qdq:{EXPECTED_MODEL_SHA256}:stage52-full",
+        "profile_id": profile_id,
+        "model_sha256": model_sha256,
+        "source_lineage_id": (
+            f"accepted-yolo26-qdq:{source_model_sha256}:stage52-full"
+            if model_sha256 == source_model_sha256 else
+            f"accepted-yolo26-qdq:{source_model_sha256}:stage60-static-r{input_resolution}"
+        ),
         "byte_order": "little-endian",
         "layout_id": LAYOUT_FEATURE,
         "feature_layout": LAYOUT_FEATURE,
@@ -817,8 +856,8 @@ def generate(args: argparse.Namespace) -> None:
         "input_name": "images",
         "input_dim0": 1,
         "input_dim1": 3,
-        "input_dim2": 640,
-        "input_dim3": 640,
+        "input_dim2": input_resolution,
+        "input_dim3": input_resolution,
         "input_tensor_id": builder.tid("images_QuantizeLinear_Output"),
         "output_name": "output0",
         "output_dim0": 1,
@@ -833,6 +872,9 @@ def generate(args: argparse.Namespace) -> None:
         "runtime_graph_dispatch": "numeric-static-operation-ids",
         "optimized_core_manifest_sha256": optimized_core_manifest,
     }
+    if model_sha256 != source_model_sha256:
+        package["source_model_sha256"] = source_model_sha256
+        package["static_input_resolution"] = input_resolution
     (output / "package.json").write_text(json.dumps(package, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     root_manifest = output / "asset_hashes.tsv"
     files = [path for path in sorted(output.rglob("*")) if path.is_file() and path != root_manifest]
@@ -841,7 +883,9 @@ def generate(args: argparse.Namespace) -> None:
     write_tsv(output / "asset_hashes.tsv", hashes, ["path", "bytes", "sha256"])
     print(json.dumps({
         "package": str(output), "manifest_sha256": sha256_file(output / "asset_hashes.tsv"),
-        "model_sha256": EXPECTED_MODEL_SHA256, "tensors": len(builder.tensors),
+        "model_sha256": model_sha256, "source_model_sha256": source_model_sha256,
+        "profile_id": profile_id, "resolution": input_resolution,
+        "tensors": len(builder.tensors),
         "operations": len(builder.operations), "arena_bytes": arena_bytes,
     }, sort_keys=True))
 
@@ -851,6 +895,8 @@ def main() -> int:
     parser.add_argument("--model", type=Path, required=True)
     parser.add_argument("--out-dir", type=Path, required=True)
     parser.add_argument("--optimized-core-package", type=Path)
+    parser.add_argument("--profile-id")
+    parser.add_argument("--allow-stage60-static-derivative", action="store_true")
     generate(parser.parse_args())
     return 0
 

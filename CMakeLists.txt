@@ -13,6 +13,8 @@ option(Y26_DEMO_ENABLE_ASAN "Enable AddressSanitizer for the demo" OFF)
 option(Y26_DEMO_BUILD_TESTS "Build demo geometry tests" ON)
 option(Y26_DEMO_OFFICIAL_K1X_RELEASE
        "Build the embedded executor under the fail-closed K1X release contract" OFF)
+option(Y26_DEMO_STAGE60_STATIC_PROFILE
+       "Enable the research-only Stage60 static-resolution demo backend" OFF)
 set(Y26_DEMO_EXECUTOR_DIR "" CACHE PATH "Installed y26K1xExecutor CMake package directory")
 
 if(Y26_DEMO_OFFICIAL_K1X_RELEASE)
@@ -30,7 +32,7 @@ if(Y26_DEMO_USE_INSTALLED_EXECUTOR)
 else()
     set(Y26_K1X_BUILD_RELEASE ON CACHE BOOL "" FORCE)
     set(Y26_K1X_BUILD_RELEASE_TOOLS ON CACHE BOOL "" FORCE)
-    set(Y26_K1X_BUILD_RESEARCH OFF CACHE BOOL "" FORCE)
+    set(Y26_K1X_BUILD_RESEARCH ${Y26_DEMO_STAGE60_STATIC_PROFILE} CACHE BOOL "" FORCE)
     set(Y26_K1X_BUILD_TOOLS OFF CACHE BOOL "" FORCE)
     set(Y26_K1X_INSTALL_DEVELOPMENT_HEADERS OFF CACHE BOOL "" FORCE)
     set(Y26_K1X_OFFICIAL_RELEASE ${Y26_DEMO_OFFICIAL_K1X_RELEASE} CACHE BOOL "" FORCE)
@@ -57,6 +59,14 @@ target_link_libraries(y26_demo_core
         opencv_videoio
 )
 target_compile_options(y26_demo_core PRIVATE -Wall -Wextra -Wpedantic)
+
+if(Y26_DEMO_STAGE60_STATIC_PROFILE)
+    if(Y26_DEMO_USE_INSTALLED_EXECUTOR)
+        message(FATAL_ERROR "Stage60 static profiles require the in-tree research executor")
+    endif()
+    target_compile_definitions(y26_demo_core PUBLIC Y26_DEMO_STAGE60_STATIC_PROFILE=1)
+    target_link_libraries(y26_demo_core PRIVATE y26_k1x_custom_int8_engine)
+endif()
 
 if(Y26_DEMO_ENABLE_ASAN)
     target_compile_options(y26_demo_core PRIVATE -fsanitize=address,undefined)

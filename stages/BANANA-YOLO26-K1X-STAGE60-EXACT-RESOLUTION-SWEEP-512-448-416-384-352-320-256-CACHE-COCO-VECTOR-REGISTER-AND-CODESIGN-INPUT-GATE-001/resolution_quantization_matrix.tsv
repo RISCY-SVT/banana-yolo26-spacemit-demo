@@ -1,0 +1,17 @@
+resolution	arm	policy	tensor_contract_count	changed_scale_or_zero_point_count	status
+640	Q0	frozen-640-qspec-shape-derived-assets-only	215	0	exact-control
+640	Q1	not-executed-fixed-qdq-source-has-no-auditable-calibration-recipe	215		unavailable-without-new-ptq-research
+512	Q0	frozen-640-qspec-shape-derived-assets-only	215	0	exact-control
+512	Q1	not-executed-fixed-qdq-source-has-no-auditable-calibration-recipe	215		unavailable-without-new-ptq-research
+448	Q0	frozen-640-qspec-shape-derived-assets-only	215	0	exact-control
+448	Q1	not-executed-fixed-qdq-source-has-no-auditable-calibration-recipe	215		unavailable-without-new-ptq-research
+416	Q0	frozen-640-qspec-shape-derived-assets-only	215	0	exact-control
+416	Q1	not-executed-fixed-qdq-source-has-no-auditable-calibration-recipe	215		unavailable-without-new-ptq-research
+384	Q0	frozen-640-qspec-shape-derived-assets-only	215	0	exact-control
+384	Q1	not-executed-fixed-qdq-source-has-no-auditable-calibration-recipe	215		unavailable-without-new-ptq-research
+352	Q0	frozen-640-qspec-shape-derived-assets-only	215	0	exact-control
+352	Q1	not-executed-fixed-qdq-source-has-no-auditable-calibration-recipe	215		unavailable-without-new-ptq-research
+320	Q0	frozen-640-qspec-shape-derived-assets-only	215	0	exact-control
+320	Q1	not-executed-fixed-qdq-source-has-no-auditable-calibration-recipe	215		unavailable-without-new-ptq-research
+256	Q0	frozen-640-qspec-shape-derived-assets-only	215	0	exact-control
+256	Q1	not-executed-fixed-qdq-source-has-no-auditable-calibration-recipe	215		unavailable-without-new-ptq-research

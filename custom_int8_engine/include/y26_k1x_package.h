@@ -12,6 +12,11 @@ struct PackageVerification {
     bool ok = false;
     std::string manifest_sha256;
     std::size_t files_verified = 0;
+    std::string profile_id;
+    std::string model_sha256;
+    std::string source_lineage_id;
+    int input_height = 0;
+    int input_width = 0;
     std::string error;
 };
 

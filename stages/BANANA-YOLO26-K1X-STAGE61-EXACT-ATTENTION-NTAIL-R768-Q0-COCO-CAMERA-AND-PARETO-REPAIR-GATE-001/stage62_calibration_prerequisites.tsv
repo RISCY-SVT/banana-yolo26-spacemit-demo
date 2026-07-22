@@ -1,0 +1,9 @@
+prerequisite	status	stage61_evidence	why_required
+auditable_calibration_corpus	missing	Q0-only static profiles	PTQ scales cannot be reproduced without an approved corpus
+immutable_image_list	missing	no Stage61 calibration list	prevents silent sample drift
+calibration_seed	missing	no Stage61 calibration seed	required for deterministic sampling
+approved_calibration_algorithm	missing	PTQ not authorized in Stage61	defines histogram/range and rounding behavior
+per-resolution_scale_delta_review	missing	all Stage61 qspecs inherit R640 Q0	needed to separate resolution and recalibration effects
+accuracy_acceptance_policy	available	fixed Stage60 thresholds	must remain fixed before observing Q1 results
+direct_board_measurement	available	Stage61 Q0 shape/performance rows	novel calibrated packages still require exact board measurement
+training_or_codesign_authorization	missing	forbidden in Stage61	requires a separate human-authorized project

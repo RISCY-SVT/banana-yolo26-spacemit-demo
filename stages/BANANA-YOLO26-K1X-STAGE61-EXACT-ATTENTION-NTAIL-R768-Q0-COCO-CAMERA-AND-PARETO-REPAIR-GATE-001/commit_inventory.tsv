@@ -1,0 +1,5 @@
+sequence	commit	parent	author_time	subject	scope
+1	0ae6fda09bfd60db739d172165834c7ca2405114	43c02b7051ddde9921a5348e4b4e8986b941212d	2026-07-21T22:06:54+02:00	feat: add exact attention IME N-tail dispatch	exact N4/N8/N16 live-tail dispatch, route counters, property tests, disassembly evidence
+2	9236727de8ac3b66596c6a0134b9262511476b3b	0ae6fda09bfd60db739d172165834c7ca2405114	2026-07-21T22:20:02+02:00	feat: add static R768 Q0 and board gate tooling	static R768 Q0 graph/package generation, profile metadata, board gate tooling
+3	d073c52b2ac135c437d6e3bf4906c79fc7b75bd1	9236727de8ac3b66596c6a0134b9262511476b3b	2026-07-21T23:14:28+02:00	test: complete Stage61 exactness and evidence tooling	strict evidence finalization, exactness, performance, COCO, pipeline, and scheduler validation
+4	FINAL_HEAD	d073c52b2ac135c437d6e3bf4906c79fc7b75bd1	resolved_by_git_show	docs: close Stage61 evidence and publication records	long-soak, camera, Pareto, rollback, hygiene, report, and publication traceability; resolve FINAL_HEAD with git rev-parse HEAD
