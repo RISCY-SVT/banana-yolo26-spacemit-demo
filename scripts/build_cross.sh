@@ -4,6 +4,8 @@ set -euo pipefail
 repo=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 # shellcheck source=../config/release.env
 source "$repo/config/release.env"
+library_version=${Y26_LIBRARY_VERSION:-$Y26_RELEASE_VERSION}
+multiprofile_q0=${Y26_DEMO_MULTIPROFILE_Q0:-OFF}
 build_root=${Y26_BUILD_ROOT:-/data/build/banana-yolo26-k1x-demo-$Y26_RELEASE_VERSION}
 install_root=${Y26_INSTALL_ROOT:-/data/install/banana-yolo26-k1x-demo-$Y26_RELEASE_VERSION}
 
@@ -27,11 +29,13 @@ cmake -S "$repo" -B "$build_root" -GNinja \
   -DOpenCV_DIR=/data/opencv/install-k1x-gtk3/lib/cmake/opencv4 \
   -DY26_K1X_ENABLE_IME=ON \
   -DY26_DEMO_OFFICIAL_K1X_RELEASE=ON \
+  -DY26_DEMO_MULTIPROFILE_Q0="$multiprofile_q0" \
+  -DY26_K1X_RELEASE_LABEL="$Y26_RELEASE_VERSION" \
   -DY26_K1X_SOURCE_COMMIT="$source_commit"
 cmake --build "$build_root" -j"${JOBS:-$(nproc)}"
 cmake --install "$build_root"
 
-so=$install_root/lib/liby26_k1x_int8_executor.so.$Y26_RELEASE_VERSION
+so=$install_root/lib/liby26_k1x_int8_executor.so.$library_version
 capability_marker="$Y26_RELEASE_VERSION/$Y26_FULL_GRAPH_PROFILE_ID/abi$Y26_ABI_VERSION/ime1/rvv1/frozen1"
 grep -aFq "$capability_marker" "$so" || {
   echo "official release build lacks IME/RVV/frozen-profile capabilities" >&2
