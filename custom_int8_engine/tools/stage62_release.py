@@ -123,6 +123,11 @@ def overlay_project_material(repo: Path, root: Path, integrated: bool) -> None:
     copy_tree(repo / "LICENSES", root / "LICENSES")
     copy_tree(repo / "docs", root / "docs")
     copy_tree(repo / "model", root / "model-evidence")
+    copy_file(
+        repo / "scripts/verify-system-dependencies.sh",
+        root / "scripts/verify-system-dependencies.sh",
+        executable=True,
+    )
     if integrated:
         remove_tree(root / "scripts")
         copy_tree(repo / "scripts", root / "scripts")

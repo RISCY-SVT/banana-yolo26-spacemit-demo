@@ -14,6 +14,17 @@ missing=0
 while IFS=$'\t' read -r soname role; do
   [[ $soname == soname ]] && continue
   [[ -n $soname ]] || continue
+  if [[ $role == bundled ]]; then
+    found=$(find "$root" \( -type f -o -type l \) -name "$soname" \
+      -print -quit 2>/dev/null || true)
+    if [[ -n $found ]]; then
+      printf 'found\t%s\t%s\t%s\n' "$soname" "$role" "$found"
+    else
+      printf 'missing\t%s\t%s\n' "$soname" "$role" >&2
+      missing=$((missing + 1))
+    fi
+    continue
+  fi
   if ldconfig -p 2>/dev/null | grep -F " $soname " >/dev/null; then
     printf 'found\t%s\t%s\n' "$soname" "$role"
     continue
