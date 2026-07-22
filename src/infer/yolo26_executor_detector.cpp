@@ -7,6 +7,7 @@
 #include <cmath>
 #include <fstream>
 #include <iomanip>
+#include <iterator>
 #include <sstream>
 #include <stdexcept>
 
@@ -22,6 +23,31 @@ using Clock = std::chrono::steady_clock;
 
 double ElapsedMs(Clock::time_point begin, Clock::time_point end) {
     return std::chrono::duration<double, std::milli>(end - begin).count();
+}
+
+struct ProfileReference {
+    int resolution;
+    double pure_fps;
+    double map50_95;
+};
+
+const ProfileReference* FindProfileReference(int resolution) {
+    static constexpr ProfileReference kProfiles[] = {
+        {256, 41.067, 0.23126191979672112},
+        {320, 29.232, 0.27626866258857724},
+        {352, 24.511, 0.28970943521559520},
+        {384, 21.106, 0.30653706800300873},
+        {416, 17.919, 0.31778854432187990},
+        {448, 15.560, 0.33262683742847440},
+        {512, 10.625, 0.34762991514417930},
+        {640, 7.624, 0.37074089443919190},
+        {768, 5.062, 0.37354959453260156},
+    };
+    const auto found = std::find_if(std::begin(kProfiles), std::end(kProfiles),
+                                    [resolution](const ProfileReference& profile) {
+                                        return profile.resolution == resolution;
+                                    });
+    return found == std::end(kProfiles) ? nullptr : found;
 }
 
 #if !defined(Y26_DEMO_STAGE60_STATIC_PROFILE)
@@ -185,6 +211,13 @@ void Yolo26ExecutorDetector::Prepare(const AppOptions& options) {
             "Stage60 prepare failed: " + research_executor_->executor.last_error());
     }
     input_resolution_ = research_executor_->executor.input_width();
+    if (input_resolution_ != options.model_resolution) {
+        std::ostringstream error;
+        error << "package resolution R" << input_resolution_
+              << " does not match explicit/default --model-resolution R"
+              << options.model_resolution;
+        throw std::runtime_error(error.str());
+    }
 #else
     executor_ = y26_executor_create();
     if (executor_ == nullptr) throw std::runtime_error("executor allocation failed");
@@ -302,8 +335,16 @@ std::string Yolo26ExecutorDetector::BuildInfoSummary() const {
         << " capabilities=0x" << std::hex << build_info_.capability_flags << std::dec
         << " expected_manifest=" << build_info_.expected_package_manifest_sha256;
 #if defined(Y26_DEMO_STAGE60_STATIC_PROFILE)
-    out << " stage60_static_profile=1 input_resolution=" << input_resolution_
+    out << " multiprofile_q0=1 input_resolution=" << input_resolution_
         << " package_manifest=" << research_executor_->executor.package_manifest_sha256();
+    if (const auto* reference = FindProfileReference(input_resolution_);
+        reference != nullptr && input_resolution_ != 640) {
+        out << " classification=experimental-q0"
+            << " deployment_promoted=0"
+            << " measured_pure_fps=" << std::fixed << std::setprecision(3)
+            << reference->pure_fps
+            << " measured_map50_95=" << std::setprecision(9) << reference->map50_95;
+    }
 #endif
     return out.str();
 }

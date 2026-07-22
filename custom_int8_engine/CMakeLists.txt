@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(y26_k1x_custom_int8_engine VERSION 0.9.3 LANGUAGES C CXX)
+project(y26_k1x_custom_int8_engine VERSION 0.10.0 LANGUAGES C CXX)
 
 find_package(Threads REQUIRED)
 include(GNUInstallDirs)
@@ -24,6 +24,8 @@ option(Y26_K1X_INSTALL_DEVELOPMENT_HEADERS "Install internal C++ development hea
 option(Y26_K1X_OFFICIAL_RELEASE
        "Require the exact K1X IME release compiler and frozen-profile contract" OFF)
 set(Y26_K1X_SOURCE_COMMIT "unknown" CACHE STRING "Source commit embedded in ABI1 build metadata")
+set(Y26_K1X_RELEASE_LABEL "${PROJECT_VERSION}" CACHE STRING
+    "Release label embedded in ABI1 build metadata")
 set(Y26_K1X_OPENCV_DIR "" CACHE PATH "Optional OpenCV package directory for the Stage52 COCO predictor")
 
 if(Y26_K1X_OFFICIAL_RELEASE)
@@ -73,9 +75,9 @@ if(Y26_K1X_BUILD_RELEASE)
         Y26_K1X_BUILDING_LIBRARY=1
         Y26_K1X_FROZEN_RELEASE_PROFILE=1
         Y26_K1X_BUILD_FROZEN_PROFILE=1
-        Y26_K1X_RELEASE_VERSION="${PROJECT_VERSION}"
+        Y26_K1X_RELEASE_VERSION="${Y26_K1X_RELEASE_LABEL}"
         Y26_K1X_SOURCE_COMMIT="${Y26_K1X_SOURCE_COMMIT}"
-        Y26_K1X_VERSION_STRING="${PROJECT_VERSION}/K1X_INT8_V1_YOLO26N_640_FULL_GRAPH_001/abi1/ime$<BOOL:${Y26_K1X_ENABLE_IME}>/rvv$<BOOL:${Y26_K1X_ENABLE_IME}>/frozen1"
+        Y26_K1X_VERSION_STRING="${Y26_K1X_RELEASE_LABEL}/K1X_INT8_V1_YOLO26N_640_FULL_GRAPH_001/abi1/ime$<BOOL:${Y26_K1X_ENABLE_IME}>/rvv$<BOOL:${Y26_K1X_ENABLE_IME}>/frozen1"
     )
     set_target_properties(y26_k1x_release_objects PROPERTIES
         POSITION_INDEPENDENT_CODE ON
@@ -188,6 +190,8 @@ if(Y26_K1X_BUILD_RELEASE)
         add_executable(stage58_capability_api tools/stage58_capability_api.c)
         target_link_libraries(stage58_capability_api PRIVATE y26_k1x_executor_shared Threads::Threads)
         target_compile_options(stage58_capability_api PRIVATE -Wall -Wextra -Wpedantic)
+        target_compile_definitions(stage58_capability_api PRIVATE
+            Y26_EXPECTED_RELEASE_LABEL="${Y26_K1X_RELEASE_LABEL}")
         set_target_properties(stage58_capability_api PROPERTIES LINKER_LANGUAGE CXX)
         add_executable(stage59_abi_race tools/stage59_abi_race.c)
         target_link_libraries(stage59_abi_race PRIVATE y26_k1x_executor_shared Threads::Threads)

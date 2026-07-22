@@ -11,6 +11,8 @@ public:
 
 private:
     int PrintBuildInfo() const;
+    int PrintLicense() const;
+    int PrintSourceInfo() const;
     int RunImage();
     int RunStream();
 

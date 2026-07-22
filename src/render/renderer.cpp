@@ -112,7 +112,7 @@ void Renderer::DrawOverlay(cv::Mat& out, const FrameMetrics& metrics,
                            const std::string& camera_format) const
 {
     std::vector<std::string> lines;
-    lines.reserve(6);
+    lines.reserve(7);
     {
         std::ostringstream text;
         text.setf(std::ios::fixed);
@@ -151,6 +151,7 @@ void Renderer::DrawOverlay(cv::Mat& out, const FrameMetrics& metrics,
                     std::to_string(metrics.input_resolution) + "x" +
                     std::to_string(metrics.input_resolution));
     lines.push_back("camera=" + camera_format);
+    lines.push_back("AGPL-3.0-or-later | source: --source-info | not production-certified");
 
     double font_scale = 0.50;
     const int available_width = std::max(1, out.cols - 36);

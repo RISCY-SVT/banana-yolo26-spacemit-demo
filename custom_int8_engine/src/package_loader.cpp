@@ -385,11 +385,16 @@ PackageVerification verify_package(const std::filesystem::path& package_dir,
 bool ranges_overlap(const void* lhs, std::size_t lhs_bytes,
                     const void* rhs, std::size_t rhs_bytes) noexcept {
     if (lhs == nullptr || rhs == nullptr || lhs_bytes == 0 || rhs_bytes == 0) return false;
-    const auto left = reinterpret_cast<std::uintptr_t>(lhs);
-    const auto right = reinterpret_cast<std::uintptr_t>(rhs);
-    if (left > std::numeric_limits<std::uintptr_t>::max() - lhs_bytes ||
-        right > std::numeric_limits<std::uintptr_t>::max() - rhs_bytes) return true;
-    return left < right + rhs_bytes && right < left + lhs_bytes;
+    return integer_ranges_overlap(reinterpret_cast<std::uintptr_t>(lhs), lhs_bytes,
+                                  reinterpret_cast<std::uintptr_t>(rhs), rhs_bytes);
+}
+
+bool integer_ranges_overlap(std::uintptr_t lhs, std::size_t lhs_bytes,
+                            std::uintptr_t rhs, std::size_t rhs_bytes) noexcept {
+    if (lhs_bytes == 0 || rhs_bytes == 0) return false;
+    constexpr auto kMax = std::numeric_limits<std::uintptr_t>::max();
+    if (lhs > kMax - lhs_bytes || rhs > kMax - rhs_bytes) return true;
+    return lhs <= rhs ? rhs - lhs < lhs_bytes : lhs - rhs < rhs_bytes;
 }
 
 }  // namespace y26::int8_v1

@@ -15,6 +15,7 @@ source_model=$(realpath "$5")
 source_commit=$6
 # shellcheck source=../../config/release.env
 source "$repo/config/release.env"
+library_version=${Y26_LIBRARY_VERSION:-$Y26_RELEASE_VERSION}
 
 readonly runtime_root=$Y26_RUNTIME_RELEASE_ROOT
 readonly internal_root=$Y26_INTERNAL_RD_RELEASE_ROOT
@@ -39,7 +40,7 @@ manifest_sha=$(sha256sum "$package/asset_hashes.tsv" | awk '{print $1}')
   echo "package-manifest SHA-256 mismatch" >&2; exit 1;
 }
 
-install_so=$install_root/lib/liby26_k1x_int8_executor.so.$Y26_RELEASE_VERSION
+install_so=$install_root/lib/liby26_k1x_int8_executor.so.$library_version
 for path in \
   "$install_so" \
   "$install_root/lib/liby26_k1x_int8_executor.a" \
@@ -62,7 +63,7 @@ done
 install -m 0644 "$install_root/lib/liby26_k1x_int8_executor.a" "$runtime_root/lib/"
 for name in liby26_k1x_int8_executor.so \
             liby26_k1x_int8_executor.so.$Y26_SOVERSION \
-            liby26_k1x_int8_executor.so.$Y26_RELEASE_VERSION; do
+            liby26_k1x_int8_executor.so.$library_version; do
   install -m 0644 -T "$install_so" "$runtime_root/lib/$name"
 done
 cp -aL "$install_root/lib/cmake/." "$runtime_root/lib/cmake/"

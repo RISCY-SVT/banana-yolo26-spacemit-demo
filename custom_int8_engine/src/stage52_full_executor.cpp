@@ -78,10 +78,7 @@ constexpr int kAccumulatorGroupElements = 3 * 16;
 
 bool ranges_overlap(const void* first, std::size_t first_bytes,
                     const void* second, std::size_t second_bytes) noexcept {
-    const auto first_begin = reinterpret_cast<std::uintptr_t>(first);
-    const auto second_begin = reinterpret_cast<std::uintptr_t>(second);
-    return first_begin < second_begin + second_bytes &&
-           second_begin < first_begin + first_bytes;
+    return y26::int8_v1::ranges_overlap(first, first_bytes, second, second_bytes);
 }
 
 #if !defined(Y26_K1X_ENABLE_IME_ASM) || !defined(__riscv)
@@ -2996,10 +2993,8 @@ struct FullExecutor::Impl {
                 const auto* source_data = arena.data() + source_base + begin;
                 auto* destination_data = arena.data() + destination_base + begin;
                 const std::size_t bytes = end - begin;
-                const auto source_address = reinterpret_cast<std::uintptr_t>(source_data);
-                const auto destination_address = reinterpret_cast<std::uintptr_t>(destination_data);
-                const bool overlaps = source_address < destination_address + bytes &&
-                    destination_address < source_address + bytes;
+                const bool overlaps = y26::int8_v1::ranges_overlap(
+                    source_data, bytes, destination_data, bytes);
                 if (!overlaps || source_data == destination_data) {
                     if (branch.lut.empty()) {
                         std::memmove(destination_data, source_data, bytes);

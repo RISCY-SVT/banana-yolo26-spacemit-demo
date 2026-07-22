@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(banana_yolo26_k1x_demo VERSION 0.9.3 LANGUAGES C CXX)
+project(banana_yolo26_k1x_demo VERSION 0.10.0 LANGUAGES C CXX)
 
 include(GNUInstallDirs)
 
@@ -15,6 +15,13 @@ option(Y26_DEMO_OFFICIAL_K1X_RELEASE
        "Build the embedded executor under the fail-closed K1X release contract" OFF)
 option(Y26_DEMO_STAGE60_STATIC_PROFILE
        "Enable the research-only Stage60 static-resolution demo backend" OFF)
+option(Y26_DEMO_MULTIPROFILE_Q0
+       "Enable explicit experimental Q0 profiles while keeping R640 as default" OFF)
+if(Y26_DEMO_STAGE60_STATIC_PROFILE)
+    set(Y26_DEMO_MULTIPROFILE_Q0 ON)
+endif()
+set(Y26_K1X_RELEASE_LABEL "0.10.0-internal-rd.1" CACHE STRING
+    "Release label embedded in executor build metadata")
 set(Y26_DEMO_EXECUTOR_DIR "" CACHE PATH "Installed y26K1xExecutor CMake package directory")
 
 if(Y26_DEMO_OFFICIAL_K1X_RELEASE)
@@ -28,11 +35,11 @@ if(Y26_DEMO_USE_INSTALLED_EXECUTOR)
     if(Y26_DEMO_EXECUTOR_DIR)
         set(y26K1xExecutor_DIR "${Y26_DEMO_EXECUTOR_DIR}")
     endif()
-    find_package(y26K1xExecutor 0.9.3 CONFIG REQUIRED)
+    find_package(y26K1xExecutor 0.10.0 CONFIG REQUIRED)
 else()
     set(Y26_K1X_BUILD_RELEASE ON CACHE BOOL "" FORCE)
     set(Y26_K1X_BUILD_RELEASE_TOOLS ON CACHE BOOL "" FORCE)
-    set(Y26_K1X_BUILD_RESEARCH ${Y26_DEMO_STAGE60_STATIC_PROFILE} CACHE BOOL "" FORCE)
+    set(Y26_K1X_BUILD_RESEARCH ${Y26_DEMO_MULTIPROFILE_Q0} CACHE BOOL "" FORCE)
     set(Y26_K1X_BUILD_TOOLS OFF CACHE BOOL "" FORCE)
     set(Y26_K1X_INSTALL_DEVELOPMENT_HEADERS OFF CACHE BOOL "" FORCE)
     set(Y26_K1X_OFFICIAL_RELEASE ${Y26_DEMO_OFFICIAL_K1X_RELEASE} CACHE BOOL "" FORCE)
@@ -60,7 +67,7 @@ target_link_libraries(y26_demo_core
 )
 target_compile_options(y26_demo_core PRIVATE -Wall -Wextra -Wpedantic)
 
-if(Y26_DEMO_STAGE60_STATIC_PROFILE)
+if(Y26_DEMO_MULTIPROFILE_Q0)
     if(Y26_DEMO_USE_INSTALLED_EXECUTOR)
         message(FATAL_ERROR "Stage60 static profiles require the in-tree research executor")
     endif()

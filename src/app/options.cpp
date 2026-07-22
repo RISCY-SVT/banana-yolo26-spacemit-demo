@@ -51,6 +51,23 @@ bool ParseBool(const char* text, bool& value) {
     return false;
 }
 
+bool SupportedModelResolution(int resolution) {
+    switch (resolution) {
+        case 256:
+        case 320:
+        case 352:
+        case 384:
+        case 416:
+        case 448:
+        case 512:
+        case 640:
+        case 768:
+            return true;
+        default:
+            return false;
+    }
+}
+
 }  // namespace
 
 ParseResult ParseAppOptions(int argc, char** argv, AppOptions& options, std::string& error) {
@@ -63,6 +80,10 @@ ParseResult ParseAppOptions(int argc, char** argv, AppOptions& options, std::str
         else if (arg == "--labels" && NeedValue(i, argc)) options.labels = argv[++i];
         else if (arg == "--source" && NeedValue(i, argc)) options.source = argv[++i];
         else if (arg == "--profile" && NeedValue(i, argc)) options.profile = argv[++i];
+        else if (arg == "--model-resolution" && NeedValue(i, argc) &&
+                 ParseInt(argv[++i], options.model_resolution)) {
+            options.model_resolution_explicit = true;
+        }
         else if (arg == "--flow" && NeedValue(i, argc)) options.flow = argv[++i];
         else if (arg == "--conf" && NeedValue(i, argc) && ParseFloat(argv[++i], options.confidence_threshold)) {}
         else if (arg == "--display" && NeedValue(i, argc) && ParseBool(argv[++i], options.display)) {}
@@ -87,13 +108,16 @@ ParseResult ParseAppOptions(int argc, char** argv, AppOptions& options, std::str
         else if (arg == "--detections-tsv" && NeedValue(i, argc)) options.detections_tsv = argv[++i];
         else if (arg == "--log-file" && NeedValue(i, argc)) options.log_file = argv[++i];
         else if (arg == "--build-info") options.print_build_info = true;
+        else if (arg == "--license") options.print_license = true;
+        else if (arg == "--source-info") options.print_source_info = true;
         else {
             error = "unknown or invalid argument: " + arg;
             return ParseResult::kError;
         }
     }
 
-    if (options.print_build_info) return ParseResult::kRun;
+    if (options.print_build_info || options.print_license || options.print_source_info)
+        return ParseResult::kRun;
     if (options.package.empty()) error = "--package is required";
     else if (options.source.rfind("camera:", 0) != 0 &&
              options.source.rfind("image:", 0) != 0 &&
@@ -102,6 +126,18 @@ ParseResult ParseAppOptions(int argc, char** argv, AppOptions& options, std::str
     else if (options.profile != "compatibility" && options.profile != "low-latency" &&
              options.profile != "low-latency-dedicated")
         error = "--profile must be compatibility|low-latency|low-latency-dedicated";
+    else if (!SupportedModelResolution(options.model_resolution))
+        error = "--model-resolution must be one of 256,320,352,384,416,448,512,640,768";
+#if !defined(Y26_DEMO_STAGE60_STATIC_PROFILE)
+    else if (options.model_resolution != 640)
+        error = "non-R640 profiles require the integrated multiprofile research build";
+#endif
+    else if (options.model_resolution != 640 && !options.model_resolution_explicit)
+        error = "non-R640 profiles require explicit --model-resolution";
+    else if (options.model_resolution != 640 &&
+             options.expected_manifest_sha256 ==
+                 "fab4a72cf524ce0a205ceca0384144f2eee7bc79dff3f4db8b7208614e8407be")
+        error = "non-R640 profiles require their explicit --expected-manifest-sha256";
     else if (options.flow != "sequential" && options.flow != "latest-frame")
         error = "--flow must be sequential|latest-frame";
     else if (options.record_mode != "sync" && options.record_mode != "async")
@@ -129,8 +165,9 @@ std::string BuildUsage(const char* program) {
         << "  --flow sequential|latest-frame\n\n"
         << "Executor:\n"
         << "  --profile compatibility|low-latency|low-latency-dedicated\n"
+        << "  --model-resolution 640 (other accepted Q0 profiles require research build and explicit opt-in)\n"
         << "  --expected-manifest-sha256 HEX --labels FILE --conf FLOAT\n"
-        << "  --build-info\n\n"
+        << "  --build-info --license --source-info\n\n"
         << "Output and measurement:\n"
         << "  --display 0|1 --headless --record FILE --record-mode sync|async\n"
         << "  --save-frame FILE\n"
@@ -140,7 +177,7 @@ std::string BuildUsage(const char* program) {
         << "  --reuse-buffers 0|1 --quiet\n\n"
         << "GUI keys: q/Esc exit, s save PNG, r toggle recording, space pause.\n";
 #if defined(Y26_DEMO_STAGE60_STATIC_PROFILE)
-    out << "Stage60 research mode uses the prepared static package resolution; no second NMS is run.\n";
+    out << "Multiprofile research mode requires an explicit non-R640 resolution and matching package hash; no second NMS is run.\n";
 #else
     out << "The model input is always exact 640x640 RGB8 letterbox; no second NMS is run.\n";
 #endif

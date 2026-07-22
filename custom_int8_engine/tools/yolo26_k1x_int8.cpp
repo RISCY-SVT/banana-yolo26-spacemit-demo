@@ -44,6 +44,8 @@ struct Options {
     bool verify_known_fixture = false;
     bool help = false;
     bool version = false;
+    bool license = false;
+    bool source_info = false;
     bool dump_live_boundary = false;
     std::string dump_boundary;
     std::string expected_manifest_sha256 =
@@ -103,6 +105,8 @@ Options parse(int argc, char** argv) {
             options.verify_known_fixture = true;
         }
         else if (argument == "--version") options.version = true;
+        else if (argument == "--license") options.license = true;
+        else if (argument == "--source-info") options.source_info = true;
         else if (argument == "--dump-boundary") {
             options.dump_boundary = next();
         } else if (argument == "--dump-boundary-live") {
@@ -133,7 +137,7 @@ void print_usage(const char* program) {
         << "  --expected-manifest-sha256 HEX\n"
         << "  --verify-determinism (legacy alias: --verify)\n"
         << "  --verify-known-fixture --expected-output-hash HEX\n"
-        << "  --version  --help\n";
+        << "  --version  --license  --source-info  --help\n";
 }
 
 std::vector<float> read_f32(const std::filesystem::path& path) {
@@ -240,6 +244,19 @@ int main(int argc, char** argv) {
         }
         if (options.version) {
             std::cout << y26_executor_version() << '\n';
+            return 0;
+        }
+        if (options.license) {
+            std::cout
+                << "Project license: GNU Affero General Public License v3.0 or later\n"
+                << "See LICENSE, LICENSES/AGPL-3.0.txt, THIRD_PARTY_NOTICES.md, and NO_WARRANTY.md.\n";
+            return 0;
+        }
+        if (options.source_info) {
+            std::cout
+                << "Preferred source form and reproducible build instructions: SOURCE_ACCESS.md\n"
+                << "Model evidence: MODEL_LICENSE_AND_PROVENANCE.md\n"
+                << "Default profile: K1X_INT8_V1_YOLO26N_640_FULL_GRAPH_001\n";
             return 0;
         }
         if (options.package.empty() || options.image.empty()) {

@@ -4,6 +4,8 @@
 #include <cmath>
 #include <iostream>
 #include <limits>
+#include <string>
+#include <vector>
 
 namespace {
 int failures = 0;
@@ -16,9 +18,55 @@ void Check(bool value, const char* name) {
 bool Near(double left, double right, double tolerance = 1.0e-6) {
     return std::fabs(left - right) <= tolerance;
 }
+
+banana_demo::ParseResult Parse(std::vector<std::string> arguments,
+                               banana_demo::AppOptions& options,
+                               std::string& error) {
+    std::vector<char*> argv;
+    argv.reserve(arguments.size());
+    for (auto& argument : arguments) argv.push_back(argument.data());
+    return banana_demo::ParseAppOptions(static_cast<int>(argv.size()), argv.data(),
+                                        options, error);
+}
 }  // namespace
 
 int main() {
+    {
+        banana_demo::AppOptions options;
+        std::string error;
+        Check(Parse({"demo", "--license"}, options, error) ==
+                  banana_demo::ParseResult::kRun && error.empty(),
+              "license_without_runtime_arguments");
+    }
+    {
+        banana_demo::AppOptions options;
+        std::string error;
+        Check(Parse({"demo", "--package", "/tmp/package", "--source", "image:x"},
+                    options, error) == banana_demo::ParseResult::kRun &&
+                  options.model_resolution == 640 && !options.model_resolution_explicit,
+              "r640_is_default");
+    }
+#if defined(Y26_DEMO_STAGE60_STATIC_PROFILE)
+    {
+        banana_demo::AppOptions options;
+        std::string error;
+        Check(Parse({"demo", "--package", "/tmp/package", "--source", "image:x",
+                     "--model-resolution", "384", "--expected-manifest-sha256",
+                     "a278db8b4f5aa3046ea8e65808e2978af88e4a2d115275829d6dab0720e33c8a"},
+                    options, error) == banana_demo::ParseResult::kRun &&
+                  options.model_resolution == 384 && options.model_resolution_explicit,
+              "experimental_profile_explicit");
+    }
+    {
+        banana_demo::AppOptions options;
+        std::string error;
+        Check(Parse({"demo", "--package", "/tmp/package", "--source", "image:x",
+                     "--model-resolution", "384"}, options, error) ==
+                  banana_demo::ParseResult::kError,
+              "experimental_profile_requires_manifest");
+    }
+#endif
+
     const auto hd = banana_demo::ComputeLetterbox(1280, 720);
     Check(Near(hd.ratio, 0.5) && hd.resized_width == 640 && hd.resized_height == 360 &&
           Near(hd.pad_x, 0.0) && Near(hd.pad_y, 140.0) && hd.paste_x == 0 && hd.paste_y == 140,

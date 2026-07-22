@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstddef>
+#include <cstdint>
 #include <filesystem>
 #include <string>
 
@@ -32,5 +33,8 @@ PackageVerification verify_package(const std::filesystem::path& package_dir,
 
 bool ranges_overlap(const void* lhs, std::size_t lhs_bytes,
                     const void* rhs, std::size_t rhs_bytes) noexcept;
+
+bool integer_ranges_overlap(std::uintptr_t lhs, std::size_t lhs_bytes,
+                            std::uintptr_t rhs, std::size_t rhs_bytes) noexcept;
 
 }  // namespace y26::int8_v1

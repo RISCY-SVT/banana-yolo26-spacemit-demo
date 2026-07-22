@@ -4,6 +4,10 @@
 #include <stdio.h>
 #include <string.h>
 
+#ifndef Y26_EXPECTED_RELEASE_LABEL
+#define Y26_EXPECTED_RELEASE_LABEL "0.9.3"
+#endif
+
 static int failures = 0;
 
 static void check(int condition, const char* name) {
@@ -26,7 +30,7 @@ int main(void) {
           "build_info_query");
     check(info.abi_version == Y26_K1X_EXECUTOR_ABI_VERSION,
           "abi_version");
-    check(strcmp(info.release_version, "0.9.3") == 0,
+    check(strcmp(info.release_version, Y26_EXPECTED_RELEASE_LABEL) == 0,
           "release_version");
     check(strcmp(info.integer_contract_id, "K1X_INT8_V1") == 0,
           "integer_contract");

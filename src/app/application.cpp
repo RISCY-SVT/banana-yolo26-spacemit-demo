@@ -630,9 +630,31 @@ int Application::Run() {
         std::cerr << "failed to install SIGINT/SIGTERM/SIGHUP handlers\n";
         return 2;
     }
+    if (options_.print_license) return PrintLicense();
+    if (options_.print_source_info) return PrintSourceInfo();
     if (options_.print_build_info) return PrintBuildInfo();
     cv::setNumThreads(options_.opencv_threads);
     return options_.source.rfind("image:", 0) == 0 ? RunImage() : RunStream();
+}
+
+int Application::PrintLicense() const {
+    std::cout
+        << "Project license: GNU Affero General Public License v3.0 or later\n"
+        << "License text: LICENSE and LICENSES/AGPL-3.0.txt\n"
+        << "Third-party terms: THIRD_PARTY_NOTICES.md\n"
+        << "No warranty: NO_WARRANTY.md\n";
+    return 0;
+}
+
+int Application::PrintSourceInfo() const {
+    std::cout
+        << "Preferred source form and build instructions: SOURCE_ACCESS.md\n"
+        << "Model provenance and license evidence: MODEL_LICENSE_AND_PROVENANCE.md\n"
+        << "Stable R640 reference: d0e3611c8d99dfade049bd261cb557509222a456\n"
+        << "Stage61 Q0 reference: fa668ccaf7938336bd10313455ab81557b33e020\n"
+        << "Default profile: K1X_INT8_V1_YOLO26N_640_FULL_GRAPH_001\n"
+        << "Non-R640 Q0 profiles are experimental and require explicit selection.\n";
+    return 0;
 }
 
 int Application::PrintBuildInfo() const {

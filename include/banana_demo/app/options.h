@@ -11,6 +11,8 @@ struct AppOptions {
     std::string labels = "assets/coco80.txt";
     std::string source = "camera:auto";
     std::string profile = "low-latency";
+    int model_resolution = 640;
+    bool model_resolution_explicit = false;
     std::string flow = "latest-frame";
     float confidence_threshold = 0.25f;
     bool display = true;
@@ -35,6 +37,8 @@ struct AppOptions {
     std::string detections_tsv;
     std::string log_file;
     bool print_build_info = false;
+    bool print_license = false;
+    bool print_source_info = false;
 };
 
 enum class ParseResult {

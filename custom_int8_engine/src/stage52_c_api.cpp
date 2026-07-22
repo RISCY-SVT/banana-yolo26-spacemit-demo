@@ -1,6 +1,7 @@
 #include "y26_k1x_executor.h"
 
 #include "y26_k1x_full_executor.h"
+#include "y26_k1x_package.h"
 
 #include <atomic>
 #include <cstddef>
@@ -143,11 +144,7 @@ bool valid_manifest(const char* value) noexcept {
 
 bool ranges_overlap(const void* left, std::size_t left_bytes,
                     const void* right, std::size_t right_bytes) noexcept {
-    if (left == nullptr || right == nullptr || left_bytes == 0 || right_bytes == 0) return false;
-    const auto left_begin = reinterpret_cast<std::uintptr_t>(left);
-    const auto right_begin = reinterpret_cast<std::uintptr_t>(right);
-    if (left_begin > UINTPTR_MAX - left_bytes || right_begin > UINTPTR_MAX - right_bytes) return true;
-    return left_begin < right_begin + right_bytes && right_begin < left_begin + left_bytes;
+    return y26::int8_v1::ranges_overlap(left, left_bytes, right, right_bytes);
 }
 
 y26_status reject(y26_executor* executor, y26_status status, std::string_view detail) noexcept {

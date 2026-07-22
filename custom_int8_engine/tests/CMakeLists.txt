@@ -56,6 +56,7 @@ y26_add_test(test_stage49_package_integrity)
 y26_add_test(test_stage52_executor_api)
 y26_add_test(test_stage52_e2c2)
 y26_add_test(test_stage61_attention_ntail)
+y26_add_test(test_stage62_overlap)
 
 # Compile the real internal WorkerPool in a standalone translation unit. Section
 # garbage collection keeps unrelated executor functions, and their dependencies,
