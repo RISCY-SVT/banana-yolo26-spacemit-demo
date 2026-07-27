@@ -1,0 +1,3 @@
+binary	defined_added	defined_removed	undefined_added	undefined_removed	interpretation
+libonnxruntime.so.1.24.2+spacemit.a1	0	0	0	0	byte-identical core
+libspacemit_ep.so.2	169	7	1	0	provider export surface changed; public plugin implementation methods added

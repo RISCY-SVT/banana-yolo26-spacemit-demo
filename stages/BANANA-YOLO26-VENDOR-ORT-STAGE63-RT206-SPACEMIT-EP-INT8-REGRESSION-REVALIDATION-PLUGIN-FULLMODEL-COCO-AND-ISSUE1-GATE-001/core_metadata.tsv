@@ -1,0 +1,3 @@
+failure_id	core_file	status	reason
+A1_abort	none	not-captured	gdb batch backtrace captured; process-local core file not required
+B_sigill	none	not-captured	gdb batch register, PC, and opcode evidence captured; process-local core file not required

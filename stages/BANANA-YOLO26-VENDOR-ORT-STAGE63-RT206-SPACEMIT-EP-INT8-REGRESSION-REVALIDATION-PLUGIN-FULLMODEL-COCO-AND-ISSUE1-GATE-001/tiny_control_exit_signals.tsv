@@ -1,0 +1,25 @@
+runtime	provider	test_id	exit_code	signal	timed_out	session_created	result_marker	error_class
+rt204	cpu	A0	0	0	0	1	pass	wrong_output
+rt204	cpu	A1	0	0	0	1	pass	none
+rt204	cpu	B	0	0	0	1	pass	none
+rt204	cpu	C	0	0	0	1	pass	none
+rt204	spacemit	A0	0	0	0	1	pass	wrong_output
+rt204	spacemit	A1	10	0	0	1	ort_exception code=6 message=Non-zero status code returned while running SpineSubgraph_8403288571955505283_1 node. Name:'SpaceMITExecutionProvider_SpineSubgraph_8403288571955505283_1_0' Status Message: operator compile failed at node (synthetic/conv/Conv_token_1)[Conv], spine graph SpaceMITExecutionProvider_SpineSubgraph_8403288571955505283_1_0 error message: output_type not implemented for clip minmax	clip_minmax_compile_error
+rt204	spacemit	B	0	0	0	1	pass	none
+rt204	spacemit	C	0	0	0	1	pass	none
+rt205	cpu	A0	0	0	0	1	pass	wrong_output
+rt205	cpu	A1	0	0	0	1	pass	none
+rt205	cpu	B	0	0	0	1	pass	none
+rt205	cpu	C	0	0	0	1	pass	none
+rt205	spacemit	A0	0	0	0	1	pass	wrong_output
+rt205	spacemit	A1	134	6	0	0	absent	abort
+rt205	spacemit	B	132	4	0	0	absent	illegal_instruction
+rt205	spacemit	C	132	4	0	0	absent	illegal_instruction
+rt206	cpu	A0	0	0	0	1	pass	wrong_output
+rt206	cpu	A1	0	0	0	1	pass	none
+rt206	cpu	B	0	0	0	1	pass	none
+rt206	cpu	C	0	0	0	1	pass	none
+rt206	spacemit	A0	0	0	0	1	pass	wrong_output
+rt206	spacemit	A1	134	6	0	0	absent	abort
+rt206	spacemit	B	132	4	0	0	absent	illegal_instruction
+rt206	spacemit	C	132	4	0	0	absent	illegal_instruction

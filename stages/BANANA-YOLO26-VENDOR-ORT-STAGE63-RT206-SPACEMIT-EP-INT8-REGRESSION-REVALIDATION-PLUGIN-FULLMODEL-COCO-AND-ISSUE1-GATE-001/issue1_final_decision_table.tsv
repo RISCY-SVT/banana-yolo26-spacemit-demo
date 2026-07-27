@@ -1,0 +1,8 @@
+issue_item	rt204	rt205	rt206	rt206_classification	basis
+Q/DQ Conv no kernel_shape	EP assigned; exact	EP assigned; exact	EP assigned; exact	unchanged	positive control remains assigned and exact against independent Q/DQ Conv oracle in all three versions
+Q/DQ Conv kernel_shape=[3,3]	catchable clip-minmax compile error	clip-minmax error then abort	clip-minmax error then abort	unchanged	2.0.6 emits the same clip-minmax compiler message and aborts
+QLinearConv	EP assigned; exact	SIGILL / exit 132	SIGILL / exit 132	unchanged	2.0.6 still terminates with SIGILL before output
+QLinearMatMul	EP assigned; exact	SIGILL / exit 132	SIGILL / exit 132	unchanged	2.0.6 still terminates with SIGILL before output
+Official plugin sample link/load	not packaged	builds; unresolved public plugin API methods	builds; ldd -r and dlopen pass; ABI query/init pass	fixed	provider now exports the previously unresolved public methods
+Independent plugin execution	not packaged	loader failure; execution not reached	assigned; exact; 1011 dispatches	fixed	custom uint8 graph executes exact; official Track2 output remains non-exact (88b823caae36dc597fb5283c3a99ec3423c8860f9c4de62b4b79f6c65c8826aa)
+Full YOLO26 INT8 EP	clip-minmax compile error / no complete EP run	clip-minmax error then abort	abort / exit 134 / no executed provider placement	unchanged	session creation aborts at the first quantized Conv

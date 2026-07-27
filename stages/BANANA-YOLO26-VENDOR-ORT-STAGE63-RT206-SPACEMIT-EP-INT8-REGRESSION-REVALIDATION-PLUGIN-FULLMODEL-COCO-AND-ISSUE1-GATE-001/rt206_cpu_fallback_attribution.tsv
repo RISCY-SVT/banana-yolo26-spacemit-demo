@@ -1,0 +1,4 @@
+surface	optimization	source_nodes	dumped_ep_graph_nodes	source_residual_estimate	source_residual_fraction	profile_cpu_event_count	profile_cpu_time_fraction	profile_ep_event_count	profile_ep_time_fraction	status	caveat
+FP32	all	453	380	73	0.161147903	34	0.006646147	2	0.993353853	pass	dumped graph is transformed; residual is an approximation, not exact source-node mapping
+FP16	all	535	428	107	0.200000000	38	0.008183148	2	0.991816852	pass	dumped graph is transformed; residual is an approximation, not exact source-node mapping
+INT8	all	1069	1076	not-applicable	not-applicable	0	not-applicable	0	not-applicable	not-runnable	compile abort means no executed placement or fallback fraction

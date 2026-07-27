@@ -1,0 +1,206 @@
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/lib/riscv64-linux-gnu/libthread_db.so.1".
+[0;93m2026-07-27 14:56:15.397067341 [W:onnxruntime:stage46_runtime, config_options.cc:45 AddConfigEntry] Config with key [session.inter_op.allow_spinning] already exists with value [0]. It will be overwritten[m
+[0;93m2026-07-27 14:56:15.397234051 [W:onnxruntime:stage46_runtime, config_options.cc:45 AddConfigEntry] Config with key [session.intra_op.allow_spinning] already exists with value [0]. It will be overwritten[m
+[New Thread 0x3ff5ffed60 (LWP 619059)]
+terminate called after throwing an instance of 'std::runtime_error'
+  what():  operator compile failed at node (synthetic/conv/Conv_token_1)[Conv], spine graph SpaceMITExecutionProvider_SpineSubgraph_8403288571955505283_1_0 error message: output_type not implemented for clip minmax
+
+Thread 2 "runner_rt206" received signal SIGABRT, Aborted.
+[Switching to Thread 0x3ff5ffed60 (LWP 619059)]
+0x0000003ff62f3b14 in __pthread_kill_implementation (threadid=<optimized out>, signo=signo@entry=6, no_tid=no_tid@entry=0) at ./nptl/pthread_kill.c:43
+warning: 43	./nptl/pthread_kill.c: No such file or directory
+  Id   Target Id                                       Frame 
+  1    Thread 0x3ff7f89760 (LWP 619057) "runner_rt206" 0x0000003ff66e91fe in onnxruntime::spacemit::SpineThreadPool::enqueueInternal(std::pair<std::function<void (long)>, int>&&, int) () from /data/k1x-stage-runs/BANANA-YOLO26-VENDOR-ORT-STAGE63-RT206-SPACEMIT-EP-INT8-REGRESSION-REVALIDATION-PLUGIN-FULLMODEL-COCO-AND-ISSUE1-GATE-001/runtimes/rt206/lib/libspacemit_ep.so.2
+* 2    Thread 0x3ff5ffed60 (LWP 619059) "runner_rt206" 0x0000003ff62f3b14 in __pthread_kill_implementation (threadid=<optimized out>, signo=signo@entry=6, no_tid=no_tid@entry=0) at ./nptl/pthread_kill.c:43
+
+Thread 2 (Thread 0x3ff5ffed60 (LWP 619059) "runner_rt206"):
+#0  0x0000003ff62f3b14 in __pthread_kill_implementation (threadid=<optimized out>, signo=signo@entry=6, no_tid=no_tid@entry=0) at ./nptl/pthread_kill.c:43
+        __a7 = 131
+        __a0 = 0
+        __a1 = 619059
+        __a2 = 6
+        _sys_result = <optimized out>
+        _arg0 = <optimized out>
+        _arg1 = 619059
+        _arg2 = 6
+        tid = 619059
+        ret = <optimized out>
+        pd = <optimized out>
+        old_mask = {__val = {5647360}}
+        ret = <optimized out>
+#1  0x0000003ff62f3b68 in __pthread_kill_internal (signo=6, threadid=<optimized out>) at ./nptl/pthread_kill.c:78
+No locals.
+#2  0x0000003ff62b9e74 in __GI_raise (sig=sig@entry=6) at ../sysdeps/posix/raise.c:26
+        ret = <optimized out>
+#3  0x0000003ff62a9372 in __GI_abort () at ./stdlib/abort.c:79
+        save_stage = 1
+        act = {__sigaction_handler = {sa_handler = 0x20, sa_sigaction = 0x20}, sa_mask = {__val = {274720294168, 274743680264, 274609623568, 274714277088, 274609621480, 274710126448, 274743586434, 10, 274609615632, 18446744072582649088, 1, 18446744073709551615, 18446744073709549568, 1, 274710130280, 64}}, sa_flags = -167073270, sa_restorer = 0x402a000000000000}
+#4  0x0000003ff60aaa0a in __gnu_cxx::__verbose_terminate_handler() () from /lib/riscv64-linux-gnu/libstdc++.so.6
+No symbol table info available.
+#5  0x0000003ff60a887e in ?? () from /lib/riscv64-linux-gnu/libstdc++.so.6
+No symbol table info available.
+#6  0x0000003ff60a14e8 in std::terminate() () from /lib/riscv64-linux-gnu/libstdc++.so.6
+No symbol table info available.
+#7  0x0000003ff60a8b32 in __cxa_throw () from /lib/riscv64-linux-gnu/libstdc++.so.6
+No symbol table info available.
+#8  0x0000003ff66cfbf8 in onnxruntime::spacemit::SpineGraphExecutor::AddKernels() () from /data/k1x-stage-runs/BANANA-YOLO26-VENDOR-ORT-STAGE63-RT206-SPACEMIT-EP-INT8-REGRESSION-REVALIDATION-PLUGIN-FULLMODEL-COCO-AND-ISSUE1-GATE-001/runtimes/rt206/lib/libspacemit_ep.so.2
+No symbol table info available.
+#9  0x0000003ff66e6e5e in ?? () from /data/k1x-stage-runs/BANANA-YOLO26-VENDOR-ORT-STAGE63-RT206-SPACEMIT-EP-INT8-REGRESSION-REVALIDATION-PLUGIN-FULLMODEL-COCO-AND-ISSUE1-GATE-001/runtimes/rt206/lib/libspacemit_ep.so.2
+No symbol table info available.
+#10 0x0000003ff60d1ce0 in ?? () from /lib/riscv64-linux-gnu/libstdc++.so.6
+No symbol table info available.
+#11 0x0000003ff62f219c in start_thread (arg=<optimized out>) at ./nptl/pthread_create.c:447
+        ret = <optimized out>
+        start = <optimized out>
+        pd = <optimized out>
+        out = <optimized out>
+        unwind_buf = {cancel_jmp_buf = {{jmp_buf = {{__pc = 274713223494, __regs = {274710128160, 274701746176, 8388608, 274710128024, 274713223254, 0, 274743680264, 0, 5647360, 274743680264, 274701742080, 274710130016}, __sp = 274710127760, __fpregs = {0 <repeats 12 times>}}}, mask_was_saved = 0}}, priv = {pad = {0x0, 0x0, 0x0, 0x0}, data = {prev = 0x0, cleanup = 0x0, canceltype = 0}}}
+        not_first_call = <optimized out>
+        robust = <optimized out>
+#12 0x0000003ff63442ac in __thread_start_clone3 () at ../sysdeps/unix/sysv/linux/riscv/clone3.S:71
+No locals.
+
+Thread 1 (Thread 0x3ff7f89760 (LWP 619057) "runner_rt206"):
+#0  0x0000003ff66e91fe in onnxruntime::spacemit::SpineThreadPool::enqueueInternal(std::pair<std::function<void (long)>, int>&&, int) () from /data/k1x-stage-runs/BANANA-YOLO26-VENDOR-ORT-STAGE63-RT206-SPACEMIT-EP-INT8-REGRESSION-REVALIDATION-PLUGIN-FULLMODEL-COCO-AND-ISSUE1-GATE-001/runtimes/rt206/lib/libspacemit_ep.so.2
+No symbol table info available.
+#1  0x0000003ff66d4b96 in onnxruntime::spacemit::SpineGraphExecutor::Compile(std::unordered_map<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, onnxruntime::spacemit::OnnxTensorData, std::hash<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::equal_to<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, onnxruntime::spacemit::OnnxTensorData> > > const&) () from /data/k1x-stage-runs/BANANA-YOLO26-VENDOR-ORT-STAGE63-RT206-SPACEMIT-EP-INT8-REGRESSION-REVALIDATION-PLUGIN-FULLMODEL-COCO-AND-ISSUE1-GATE-001/runtimes/rt206/lib/libspacemit_ep.so.2
+No symbol table info available.
+#2  0x0000003ff6524962 in ?? () from /data/k1x-stage-runs/BANANA-YOLO26-VENDOR-ORT-STAGE63-RT206-SPACEMIT-EP-INT8-REGRESSION-REVALIDATION-PLUGIN-FULLMODEL-COCO-AND-ISSUE1-GATE-001/runtimes/rt206/lib/libspacemit_ep.so.2
+No symbol table info available.
+#3  0x0000003ff6525f14 in ?? () from /data/k1x-stage-runs/BANANA-YOLO26-VENDOR-ORT-STAGE63-RT206-SPACEMIT-EP-INT8-REGRESSION-REVALIDATION-PLUGIN-FULLMODEL-COCO-AND-ISSUE1-GATE-001/runtimes/rt206/lib/libspacemit_ep.so.2
+No symbol table info available.
+#4  0x0000003ff773324e in onnxruntime::FunctionKernel::Compute(onnxruntime::OpKernelContext*) const () from /data/k1x-stage-runs/BANANA-YOLO26-VENDOR-ORT-STAGE63-RT206-SPACEMIT-EP-INT8-REGRESSION-REVALIDATION-PLUGIN-FULLMODEL-COCO-AND-ISSUE1-GATE-001/runtimes/rt206/lib/libonnxruntime.so.1
+No symbol table info available.
+#5  0x0000003ff77f14a2 in ?? () from /data/k1x-stage-runs/BANANA-YOLO26-VENDOR-ORT-STAGE63-RT206-SPACEMIT-EP-INT8-REGRESSION-REVALIDATION-PLUGIN-FULLMODEL-COCO-AND-ISSUE1-GATE-001/runtimes/rt206/lib/libonnxruntime.so.1
+No symbol table info available.
+#6  0x0000003ff77e8ef0 in ?? () from /data/k1x-stage-runs/BANANA-YOLO26-VENDOR-ORT-STAGE63-RT206-SPACEMIT-EP-INT8-REGRESSION-REVALIDATION-PLUGIN-FULLMODEL-COCO-AND-ISSUE1-GATE-001/runtimes/rt206/lib/libonnxruntime.so.1
+No symbol table info available.
+#7  0x0000003ff77f39b0 in ?? () from /data/k1x-stage-runs/BANANA-YOLO26-VENDOR-ORT-STAGE63-RT206-SPACEMIT-EP-INT8-REGRESSION-REVALIDATION-PLUGIN-FULLMODEL-COCO-AND-ISSUE1-GATE-001/runtimes/rt206/lib/libonnxruntime.so.1
+No symbol table info available.
+#8  0x0000003ff77ef3ac in onnxruntime::ExecuteThePlan(onnxruntime::SessionState const&, gsl::span<int const, 18446744073709551615ul>, gsl::span<OrtValue const, 18446744073709551615ul>, gsl::span<int const, 18446744073709551615ul>, std::vector<OrtValue, std::allocator<OrtValue> >&, std::unordered_map<unsigned long, std::function<onnxruntime::common::Status (onnxruntime::TensorShape const&, OrtDevice const&, OrtValue&, bool&)>, std::hash<unsigned long>, std::equal_to<unsigned long>, std::allocator<std::pair<unsigned long const, std::function<onnxruntime::common::Status (onnxruntime::TensorShape const&, OrtDevice const&, OrtValue&, bool&)> > > > const&, onnxruntime::logging::Logger const&, onnxruntime::DeviceStreamCollection const*, bool const&, bool, bool) () from /data/k1x-stage-runs/BANANA-YOLO26-VENDOR-ORT-STAGE63-RT206-SPACEMIT-EP-INT8-REGRESSION-REVALIDATION-PLUGIN-FULLMODEL-COCO-AND-ISSUE1-GATE-001/runtimes/rt206/lib/libonnxruntime.so.1
+No symbol table info available.
+#9  0x0000003ff77c126c in ?? () from /data/k1x-stage-runs/BANANA-YOLO26-VENDOR-ORT-STAGE63-RT206-SPACEMIT-EP-INT8-REGRESSION-REVALIDATION-PLUGIN-FULLMODEL-COCO-AND-ISSUE1-GATE-001/runtimes/rt206/lib/libonnxruntime.so.1
+No symbol table info available.
+#10 0x0000003ff77c2d6a in onnxruntime::utils::ExecuteGraph(onnxruntime::SessionState const&, onnxruntime::FeedsFetchesManager&, gsl::span<OrtValue const, 18446744073709551615ul>, std::vector<OrtValue, std::allocator<OrtValue> >&, ExecutionMode, bool const&, onnxruntime::logging::Logger const&, onnxruntime::DeviceStreamCollectionHolder&, bool, onnxruntime::Stream*) () from /data/k1x-stage-runs/BANANA-YOLO26-VENDOR-ORT-STAGE63-RT206-SPACEMIT-EP-INT8-REGRESSION-REVALIDATION-PLUGIN-FULLMODEL-COCO-AND-ISSUE1-GATE-001/runtimes/rt206/lib/libonnxruntime.so.1
+No symbol table info available.
+#11 0x0000003ff77c322a in onnxruntime::utils::ExecuteGraph(onnxruntime::SessionState const&, onnxruntime::FeedsFetchesManager&, gsl::span<OrtValue const, 18446744073709551615ul>, std::vector<OrtValue, std::allocator<OrtValue> >&, ExecutionMode, OrtRunOptions const&, onnxruntime::DeviceStreamCollectionHolder&, onnxruntime::logging::Logger const&) () from /data/k1x-stage-runs/BANANA-YOLO26-VENDOR-ORT-STAGE63-RT206-SPACEMIT-EP-INT8-REGRESSION-REVALIDATION-PLUGIN-FULLMODEL-COCO-AND-ISSUE1-GATE-001/runtimes/rt206/lib/libonnxruntime.so.1
+No symbol table info available.
+#12 0x0000003ff6ffc3fe in onnxruntime::InferenceSession::Run(OrtRunOptions const&, gsl::span<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, 18446744073709551615ul>, gsl::span<OrtValue const, 18446744073709551615ul>, gsl::span<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, 18446744073709551615ul>, std::vector<OrtValue, std::allocator<OrtValue> >*, std::vector<OrtDevice, std::allocator<OrtDevice> > const*) () from /data/k1x-stage-runs/BANANA-YOLO26-VENDOR-ORT-STAGE63-RT206-SPACEMIT-EP-INT8-REGRESSION-REVALIDATION-PLUGIN-FULLMODEL-COCO-AND-ISSUE1-GATE-001/runtimes/rt206/lib/libonnxruntime.so.1
+No symbol table info available.
+#13 0x0000003ff6ffd1c0 in onnxruntime::InferenceSession::Run(OrtRunOptions const&, gsl::span<char const* const, 18446744073709551615ul>, gsl::span<OrtValue const* const, 18446744073709551615ul>, gsl::span<char const* const, 18446744073709551615ul>, gsl::span<OrtValue*, 18446744073709551615ul>) () from /data/k1x-stage-runs/BANANA-YOLO26-VENDOR-ORT-STAGE63-RT206-SPACEMIT-EP-INT8-REGRESSION-REVALIDATION-PLUGIN-FULLMODEL-COCO-AND-ISSUE1-GATE-001/runtimes/rt206/lib/libonnxruntime.so.1
+No symbol table info available.
+#14 0x0000003ff6f6c078 in OrtApis::Run(OrtSession*, OrtRunOptions const*, char const* const*, OrtValue const* const*, unsigned long, char const* const*, unsigned long, OrtValue**) () from /data/k1x-stage-runs/BANANA-YOLO26-VENDOR-ORT-STAGE63-RT206-SPACEMIT-EP-INT8-REGRESSION-REVALIDATION-PLUGIN-FULLMODEL-COCO-AND-ISSUE1-GATE-001/runtimes/rt206/lib/libonnxruntime.so.1
+No symbol table info available.
+#15 0x0000000000016a3a in main::{lambda()#1}::operator()() const ()
+No symbol table info available.
+#16 0x0000000000013f56 in main ()
+No symbol table info available.
+ra             0x3ff62f3b06	0x3ff62f3b06 <__pthread_kill_implementation+222>
+sp             0x3ff5ffddf0	0x3ff5ffddf0
+gp             0x1fa10	0x1fa10
+tp             0x3ff5fff4c0	0x3ff5fff4c0
+t0             0x9	9
+t1             0x3ff62a92bc	274712924860
+t2             0x3ff623fd10	274712493328
+fp             0x3ff5ffde40	0x3ff5ffde40
+s1             0x97233	619059
+a0             0x0	0
+a1             0x97233	619059
+a2             0x6	6
+a3             0x3ff63f334e	274714276686
+a4             0x1	1
+a5             0x3ff5ffed60	274710130016
+a6             0x3ff5ffee68	274710130280
+a7             0x83	131
+s2             0x3ff63f38f0	274714278128
+s3             0x3ff5ffed60	274710130016
+s4             0x6	6
+s5             0x3ff7ffdd08	274743680264
+s6             0x3ff7ffdd08	274743680264
+s7             0x3ff5ffe108	274710126856
+s8             0x562c00	5647360
+s9             0x3ff7ffdd08	274743680264
+s10            0x3ff5ffe140	274710126912
+s11            0x3ff5ffed60	274710130016
+t3             0x3ff7fd4d80	274743512448
+t4             0x3ff6009800	274710173696
+t5             0x6	6
+t6             0x3c47b5	3950517
+pc             0x3ff62f3b14	0x3ff62f3b14 <__pthread_kill_implementation+236>
+From                To                  Syms Read   Shared Object Library
+0x0000003ff7fdace0  0x0000003ff7ff0d4e  Yes         /lib/ld-linux-riscv64-lp64d.so.1
+0x0000003ff6f4e5e0  0x0000003ff7b8cb32  Yes (*)     /data/k1x-stage-runs/BANANA-YOLO26-VENDOR-ORT-STAGE63-RT206-SPACEMIT-EP-INT8-REGRESSION-REVALIDATION-PLUGIN-FULLMODEL-COCO-AND-ISSUE1-GATE-001/runtimes/rt206/lib/libonnxruntime.so.1
+0x0000003ff651c960  0x0000003ff68d55f4  Yes (*)     /data/k1x-stage-runs/BANANA-YOLO26-VENDOR-ORT-STAGE63-RT206-SPACEMIT-EP-INT8-REGRESSION-REVALIDATION-PLUGIN-FULLMODEL-COCO-AND-ISSUE1-GATE-001/runtimes/rt206/lib/libspacemit_ep.so.2
+0x0000003ff60a1360  0x0000003ff61954a2  Yes (*)     /lib/riscv64-linux-gnu/libstdc++.so.6
+0x0000003ff6b8e540  0x0000003ff6bcbc10  Yes         /lib/riscv64-linux-gnu/libm.so.6
+0x0000003ff7f99600  0x0000003ff7fad1d0  Yes (*)     /lib/riscv64-linux-gnu/libgcc_s.so.1
+0x0000003ff62a92b0  0x0000003ff6389388  Yes         /lib/riscv64-linux-gnu/libc.so.6
+0x0000003ff7f8cd00  0x0000003ff7f8ee52  Yes (*)     /lib/riscv64-linux-gnu/libatomic.so.1
+(*): Shared library is missing debugging information.
+process 619057
+Mapped address spaces:
+
+          Start Addr           End Addr       Size     Offset  Perms  objfile
+             0x10000            0x1e000     0xe000        0x0  r-xp   /data/k1x-stage-runs/BANANA-YOLO26-VENDOR-ORT-STAGE63-RT206-SPACEMIT-EP-INT8-REGRESSION-REVALIDATION-PLUGIN-FULLMODEL-COCO-AND-ISSUE1-GATE-001/runners/runner_rt206
+             0x1e000            0x1f000     0x1000     0xd000  r--p   /data/k1x-stage-runs/BANANA-YOLO26-VENDOR-ORT-STAGE63-RT206-SPACEMIT-EP-INT8-REGRESSION-REVALIDATION-PLUGIN-FULLMODEL-COCO-AND-ISSUE1-GATE-001/runners/runner_rt206
+             0x1f000            0x20000     0x1000     0xe000  rw-p   /data/k1x-stage-runs/BANANA-YOLO26-VENDOR-ORT-STAGE63-RT206-SPACEMIT-EP-INT8-REGRESSION-REVALIDATION-PLUGIN-FULLMODEL-COCO-AND-ISSUE1-GATE-001/runners/runner_rt206
+             0x20000           0x6b4000   0x694000        0x0  rw-p   [heap]
+        0x3fec000000       0x3fec100000   0x100000        0x0  rw-p   
+        0x3fec100000       0x3fee000000  0x1f00000        0x0  ---p   
+        0x3fee000000       0x3ff0000000  0x2000000        0x0  rw-p   
+        0x3ff0000000       0x3ff0030000    0x30000        0x0  rw-p   
+        0x3ff0030000       0x3ff4000000  0x3fd0000        0x0  ---p   
+        0x3ff57ff000       0x3ff5800000     0x1000        0x0  ---p   
+        0x3ff5800000       0x3ff6000000   0x800000        0x0  rw-p   
+        0x3ff6000000       0x3ff6234000   0x234000        0x0  r-xp   /usr/lib/riscv64-linux-gnu/libstdc++.so.6.0.33
+        0x3ff6234000       0x3ff6240000     0xc000   0x234000  r--p   /usr/lib/riscv64-linux-gnu/libstdc++.so.6.0.33
+        0x3ff6240000       0x3ff6242000     0x2000   0x240000  rw-p   /usr/lib/riscv64-linux-gnu/libstdc++.so.6.0.33
+        0x3ff6242000       0x3ff6246000     0x4000        0x0  rw-p   
+        0x3ff6282000       0x3ff63ef000   0x16d000        0x0  r-xp   /usr/lib/riscv64-linux-gnu/libc.so.6
+        0x3ff63ef000       0x3ff63f2000     0x3000   0x16d000  r--p   /usr/lib/riscv64-linux-gnu/libc.so.6
+        0x3ff63f2000       0x3ff63f4000     0x2000   0x170000  rw-p   /usr/lib/riscv64-linux-gnu/libc.so.6
+        0x3ff63f4000       0x3ff6400000     0xc000        0x0  rw-p   
+        0x3ff6400000       0x3ff699c000   0x59c000        0x0  r-xp   /data/k1x-stage-runs/BANANA-YOLO26-VENDOR-ORT-STAGE63-RT206-SPACEMIT-EP-INT8-REGRESSION-REVALIDATION-PLUGIN-FULLMODEL-COCO-AND-ISSUE1-GATE-001/runtimes/rt206/lib/libspacemit_ep.so.2.0.6
+        0x3ff699c000       0x3ff69aa000     0xe000   0x59b000  r--p   /data/k1x-stage-runs/BANANA-YOLO26-VENDOR-ORT-STAGE63-RT206-SPACEMIT-EP-INT8-REGRESSION-REVALIDATION-PLUGIN-FULLMODEL-COCO-AND-ISSUE1-GATE-001/runtimes/rt206/lib/libspacemit_ep.so.2.0.6
+        0x3ff69aa000       0x3ff69b1000     0x7000   0x5a9000  rw-p   /data/k1x-stage-runs/BANANA-YOLO26-VENDOR-ORT-STAGE63-RT206-SPACEMIT-EP-INT8-REGRESSION-REVALIDATION-PLUGIN-FULLMODEL-COCO-AND-ISSUE1-GATE-001/runtimes/rt206/lib/libspacemit_ep.so.2.0.6
+        0x3ff69b1000       0x3ff6a0e000    0x5d000        0x0  rw-p   
+        0x3ff6b61000       0x3ff6b82000    0x21000        0x0  rw-p   
+        0x3ff6b82000       0x3ff6bfe000    0x7c000        0x0  r-xp   /usr/lib/riscv64-linux-gnu/libm.so.6
+        0x3ff6bfe000       0x3ff6bff000     0x1000    0x7b000  r--p   /usr/lib/riscv64-linux-gnu/libm.so.6
+        0x3ff6bff000       0x3ff6c00000     0x1000    0x7c000  rw-p   /usr/lib/riscv64-linux-gnu/libm.so.6
+        0x3ff6c00000       0x3ff7f20000  0x1320000        0x0  r-xp   /data/k1x-stage-runs/BANANA-YOLO26-VENDOR-ORT-STAGE63-RT206-SPACEMIT-EP-INT8-REGRESSION-REVALIDATION-PLUGIN-FULLMODEL-COCO-AND-ISSUE1-GATE-001/runtimes/rt206/lib/libonnxruntime.so.1.24.2+spacemit.a1
+        0x3ff7f20000       0x3ff7f6a000    0x4a000  0x1320000  r--p   /data/k1x-stage-runs/BANANA-YOLO26-VENDOR-ORT-STAGE63-RT206-SPACEMIT-EP-INT8-REGRESSION-REVALIDATION-PLUGIN-FULLMODEL-COCO-AND-ISSUE1-GATE-001/runtimes/rt206/lib/libonnxruntime.so.1.24.2+spacemit.a1
+        0x3ff7f6a000       0x3ff7f70000     0x6000  0x136a000  rw-p   /data/k1x-stage-runs/BANANA-YOLO26-VENDOR-ORT-STAGE63-RT206-SPACEMIT-EP-INT8-REGRESSION-REVALIDATION-PLUGIN-FULLMODEL-COCO-AND-ISSUE1-GATE-001/runtimes/rt206/lib/libonnxruntime.so.1.24.2+spacemit.a1
+        0x3ff7f70000       0x3ff7f77000     0x7000        0x0  rw-p   
+        0x3ff7f84000       0x3ff7f8b000     0x7000        0x0  rw-p   
+        0x3ff7f8b000       0x3ff7f91000     0x6000        0x0  r-xp   /usr/lib/riscv64-linux-gnu/libatomic.so.1.2.0
+        0x3ff7f91000       0x3ff7f92000     0x1000     0x5000  r--p   /usr/lib/riscv64-linux-gnu/libatomic.so.1.2.0
+        0x3ff7f92000       0x3ff7f93000     0x1000     0x6000  rw-p   /usr/lib/riscv64-linux-gnu/libatomic.so.1.2.0
+        0x3ff7f93000       0x3ff7f96000     0x3000        0x0  rw-p   
+        0x3ff7f96000       0x3ff7fb2000    0x1c000        0x0  r-xp   /usr/lib/riscv64-linux-gnu/libgcc_s.so.1
+        0x3ff7fb2000       0x3ff7fb3000     0x1000    0x1b000  r--p   /usr/lib/riscv64-linux-gnu/libgcc_s.so.1
+        0x3ff7fb3000       0x3ff7fb4000     0x1000    0x1c000  rw-p   /usr/lib/riscv64-linux-gnu/libgcc_s.so.1
+        0x3ff7fd2000       0x3ff7fd4000     0x2000        0x0  rw-p   
+        0x3ff7fd4000       0x3ff7fd6000     0x2000        0x0  rw-p   
+        0x3ff7fd6000       0x3ff7fd8000     0x2000        0x0  r--p   [vvar]
+        0x3ff7fd8000       0x3ff7fda000     0x2000        0x0  r-xp   [vdso]
+        0x3ff7fda000       0x3ff7ffc000    0x22000        0x0  r-xp   /usr/lib/riscv64-linux-gnu/ld-linux-riscv64-lp64d.so.1
+        0x3ff7ffc000       0x3ff7ffe000     0x2000    0x21000  r--p   /usr/lib/riscv64-linux-gnu/ld-linux-riscv64-lp64d.so.1
+        0x3ff7ffe000       0x3ff8000000     0x2000    0x23000  rw-p   /usr/lib/riscv64-linux-gnu/ld-linux-riscv64-lp64d.so.1
+        0x3ffffdf000       0x4000000000    0x21000        0x0  rw-p   [stack]
+   0x3ff62f3afc <__pthread_kill_implementation+212>:	ecall
+   0x3ff62f3b00 <__pthread_kill_implementation+216>:	mv	s1,a0
+   0x3ff62f3b02 <__pthread_kill_implementation+218>:	jal	0x3ff6325030 <__GI_getpid>
+   0x3ff62f3b06 <__pthread_kill_implementation+222>:	sext.w	a1,s1
+   0x3ff62f3b0a <__pthread_kill_implementation+226>:	mv	a2,s4
+   0x3ff62f3b0c <__pthread_kill_implementation+228>:	li	a7,131
+   0x3ff62f3b10 <__pthread_kill_implementation+232>:	ecall
+=> 0x3ff62f3b14 <__pthread_kill_implementation+236>:	mv	a5,a0
+   0x3ff62f3b16 <__pthread_kill_implementation+238>:	lui	a4,0xfffff
+   0x3ff62f3b18 <__pthread_kill_implementation+240>:	sext.w	a3,a5
+   0x3ff62f3b1c <__pthread_kill_implementation+244>:	li	a0,0
+   0x3ff62f3b1e <__pthread_kill_implementation+246>:	bgeu	a4,a3,0x3ff62f3ab8 <__pthread_kill_implementation+144>
+0x3ff62f3afc <__pthread_kill_implementation+212>:	0x00000073	0x10ef84aa	0x859b52e3	0x86520004
+0x3ff62f3b0c <__pthread_kill_implementation+228>:	0x08300893	0x00000073	0x777d87aa	0x0007869b
+0x3ff62f3b1c <__pthread_kill_implementation+244>:	0x7de34501	0x053bf8d7	0xbf4940f0	0xb0ef854e

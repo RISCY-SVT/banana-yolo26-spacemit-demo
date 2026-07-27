@@ -1,0 +1,6 @@
+cpuset	exit_code	signal	timed_out	output_sha256	result	note
+0	0	0	0	afc6013424b46b5aaaf991562841d790910e8a56c3f8caf06a2b091bffb685b9	pass	one-run-gate
+0-3	0	0	0	afc6013424b46b5aaaf991562841d790910e8a56c3f8caf06a2b091bffb685b9	pass	one-run-gate
+4	0	0	0	afc6013424b46b5aaaf991562841d790910e8a56c3f8caf06a2b091bffb685b9	pass	one-run-gate
+4-7	0	0	0	afc6013424b46b5aaaf991562841d790910e8a56c3f8caf06a2b091bffb685b9	pass	one-run-gate
+0-7	0	0	0	afc6013424b46b5aaaf991562841d790910e8a56c3f8caf06a2b091bffb685b9	pass	one-run-gate

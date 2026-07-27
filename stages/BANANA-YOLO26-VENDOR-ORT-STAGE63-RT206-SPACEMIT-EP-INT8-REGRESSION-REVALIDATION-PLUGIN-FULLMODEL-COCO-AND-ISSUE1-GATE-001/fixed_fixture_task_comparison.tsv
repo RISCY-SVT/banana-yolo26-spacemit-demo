@@ -1,0 +1,9 @@
+fixture	surface	comparison	element_count	exact_element_count	mean_abs_diff	max_abs_diff	cpu_score_ge_0_001	ep_score_ge_0_001	interpretation
+bus_r640_nchw_f32	fp16	rt206_spacemit_vs_rt206_cpu	1800	478	76.284255981	507.093750000	176	176	task-level comparison; byte identity is not required
+bus_r640_nchw_f32	fp32	rt206_spacemit_vs_rt206_cpu	1800	144	72.479011536	496.281158447	177	177	task-level comparison; byte identity is not required
+images_F0_f32	fp16	rt206_spacemit_vs_rt206_cpu	1800	450	88.760658264	634.769531250	23	23	task-level comparison; byte identity is not required
+images_F0_f32	fp32	rt206_spacemit_vs_rt206_cpu	1800	115	89.129859924	634.908569336	23	23	task-level comparison; byte identity is not required
+zidane_r640_nchw_f32	fp16	rt206_spacemit_vs_rt206_cpu	1800	476	60.943843842	622.062500000	125	123	task-level comparison; byte identity is not required
+zidane_r640_nchw_f32	fp32	rt206_spacemit_vs_rt206_cpu	1800	153	59.868854523	588.461303711	125	125	task-level comparison; byte identity is not required
+canonical_640_nchw_f32	fp16	rt206_spacemit_vs_rt206_cpu	1800	529	69.436981201	634.375000000	300	300	task-level comparison; byte identity is not required
+canonical_640_nchw_f32	fp32	rt206_spacemit_vs_rt206_cpu	1800	146	62.585277557	645.092346191	300	300	task-level comparison; byte identity is not required

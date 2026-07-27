@@ -1,0 +1,13 @@
+field	value
+asset_name	spacemit-ort.riscv64.2.0.6.tar.gz
+asset_id	490963065
+official_url	https://github.com/spacemit-com/onnxruntime/releases/download/2.0.6/spacemit-ort.riscv64.2.0.6.tar.gz
+http_status	200
+redirect_count	1
+size_bytes	15002263
+api_content_type	application/x-gzip
+download_content_type	application/octet-stream
+sha256	bebcdfb7df6b49eefa3863afcd85a3da2aa83c3ae9252d7d856188c38a70b0e6
+sha512	c23292280a6b1621d0f107a358d36805208c1733fb85461b964871160e1cdf34d61864b417a0d91c42c75d953d4fb03009c2e9ce2116c7c83bdc54b213c69f40
+downloaded_utc	2026-07-27T12:39:04Z
+file_type	gzip compressed data

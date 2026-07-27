@@ -1,0 +1,4 @@
+plugin	graph	runs	output_oracle	result	detail	classification
+official_2_0_6	official QGELU track1	bounded	finite/nonzero	structural pass	no independent numerical oracle in sample	package-abi-fixed
+official_2_0_6	official QDQ Track2	bounded	CPU comparison	wrong output	31892/32768 differing elements; cosine=0.271277368069; mean_abs_diff=2.484936237335; max_abs_diff=6.549999713898; CPU SHA256=7fe12930212a4f60435ddfce9f4c459ad3f3ae474813fc524fc25c34b202a655; EP SHA256=88b823caae36dc597fb5283c3a99ec3423c8860f9c4de62b4b79f6c65c8826aa	new-sample-correctness-defect
+independent_u8_xor	tiny uint8 XOR	1000	independent exact XOR	exact	output SHA256=8f04c27407f8082faf5e54b853caf7889a5fccca357e8f653799ab5a10d0d114; dispatch counter=1011	plugin-execution-fixed

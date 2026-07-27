@@ -1,0 +1,5 @@
+runtime	ort_version	ort_api_version	embedded_ort_commit	ep_header_version	core_sha256	ep_sha256	role
+B120	1.20.2+spacemit	21	historical	2.0.1	5a28c8128a7b1ed9cb29357f42eb7a2a45eb1b23d8791c2fee1eaf0151546238	not-retained-in-stage63	B120 CPU control
+RT204	1.24.2+spacemit.a1	24	c178f12b2	2.0.4	e887a538b6cce9597b1905034b48f89763dd625b04bcd708ceb4b494df6df1ac	a59e29d2ed4c08ab57ad3e72c75a0b9a72020cb0e8f278ef2ef483725d04b47a	historical issue control
+RT205	1.24.2+spacemit.a1	24	9bb02204b	2.0.5	93bb75601d9eceb5aca192fa70c0c3e18b94a70b9f57acdc9b34c2ff426e09e3	3927b51f79f8d2142ff98708183aa9b24b47d6941533499035193a630042a41d	regression control
+RT206	1.24.2+spacemit.a1	24	9bb02204b	2.0.6	93bb75601d9eceb5aca192fa70c0c3e18b94a70b9f57acdc9b34c2ff426e09e3	dcc9503031bca22cf2b33a692f7b4c01d0fbb4a24c34f6e60c7faaddb78274ae	runtime under test

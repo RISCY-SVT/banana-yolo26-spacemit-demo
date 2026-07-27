@@ -1,0 +1,4 @@
+plugin	graph	provider	session	plugin_registration	assignment_or_invocation	status
+official_2_0_6	official QGELU track1	SpacemiT EP	created	observed	plugin path observed	pass
+official_2_0_6	official QDQ Track2	SpacemiT EP	created	observed	plugin path observed	pass-registration
+independent_u8_xor	tiny uint8 XOR	SpacemiT EP	created	observed	dispatch counter 1011	pass

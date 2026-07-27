@@ -1,0 +1,3 @@
+fault_id	signal	si_code	pc	instruction_word	faulting_library	nearest_symbol	classification	note
+rt206_A1_abort	SIGABRT	not-captured	0x3ff62f3b14	not-applicable	libc.so.6	__pthread_kill_implementation	abort	clip-minmax compiler error is followed by C++ termination; provider compile backtrace is preserved
+rt206_B_sigill	SIGILL	not-captured	0x3ff7963300	0xe204082b	libonnxruntime.so.1	unknown internal MLAS kernel	illegal-instruction	decoded only as .insn by accepted objdump; no instruction semantic is inferred

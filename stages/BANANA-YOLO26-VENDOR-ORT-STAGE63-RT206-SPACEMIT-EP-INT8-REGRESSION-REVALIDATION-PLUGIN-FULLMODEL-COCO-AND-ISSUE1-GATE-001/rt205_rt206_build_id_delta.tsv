@@ -1,0 +1,3 @@
+component	rt205_sha256	rt206_sha256	rt205_gnu_build_id	rt206_gnu_build_id	embedded_identity
+libonnxruntime.so.1.24.2+spacemit.a1	93bb75601d9eceb5aca192fa70c0c3e18b94a70b9f57acdc9b34c2ff426e09e3	93bb75601d9eceb5aca192fa70c0c3e18b94a70b9f57acdc9b34c2ff426e09e3	absent	absent	ORT commit 9bb02204b
+libspacemit_ep.so.2	3927b51f79f8d2142ff98708183aa9b24b47d6941533499035193a630042a41d	dcc9503031bca22cf2b33a692f7b4c01d0fbb4a24c34f6e60c7faaddb78274ae	absent	absent	package version 2.0.5 -> 2.0.6; file SHA is binary identity

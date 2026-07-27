@@ -1,0 +1,2 @@
+plugin	warmup	measured_runs	mean_us	output_sha256	dispatch_calls	status
+independent_u8_xor	10	1000	90.238765	8f04c27407f8082faf5e54b853caf7889a5fccca357e8f653799ab5a10d0d114	1011	pass

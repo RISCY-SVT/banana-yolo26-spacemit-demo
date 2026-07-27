@@ -1,0 +1,15 @@
+field	value
+hostname	bf3
+board_os	Bianbu 2.2.1
+kernel	Linux 6.6.63 #2.2.7.2
+boot_id	0a0691d1-7502-44c3-903b-444dba83c1d9
+cpu_model	Spacemit X60
+online_cpus	0-7
+governor_cpus_0_7	performance
+frequency_cpus_0_7_khz	1600000
+data_mount	/dev/nvme0n1p1 ext4 rw,noatime
+root_mount	/dev/mmcblk2p6 ext4 rw,noatime,errors=remount-ro
+data_free	411G
+global_sysctl_changes_planned	none
+boot_changes_planned	none
+cgroup_irq_workqueue_changes_planned	none

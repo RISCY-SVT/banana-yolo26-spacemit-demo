@@ -1,0 +1,6 @@
+arm	disabled_op_types	exit_code	signal	output_sha256	classification	interpretation
+exclude_qdq	QuantizeLinear;DequantizeLinear	0	none	d7a4ee8950a64ac984b39acf56db7f003a4cec900714f07f8bcffa3fd503d6b6	runnable-diagnostic	heavily filtered split executes; no full-INT8 EP or correctness claim
+exclude_conv	Conv	132	SIGILL	missing	new-failure-location	CPU QLinear path reaches the unchanged-core illegal-instruction failure
+exclude_matmul	MatMul	134	SIGABRT	missing	unchanged	clip-minmax Conv compiler failure remains
+exclude_add	Add	134	SIGABRT	missing	unchanged	clip-minmax Conv compiler failure remains
+exclude_qdq_conv_matmul_add	QuantizeLinear;DequantizeLinear;Conv;MatMul;Add	132	SIGILL	missing	not-runnable	broad filtering still reaches an illegal-instruction failure
