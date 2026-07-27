@@ -1,0 +1,2 @@
+surface	exit_code	predictions_present	timing_present	reason
+rt206_spacemit_int8_full	134	0	0	session creation aborts after the provider clip-minmax compile error; full COCO was not started

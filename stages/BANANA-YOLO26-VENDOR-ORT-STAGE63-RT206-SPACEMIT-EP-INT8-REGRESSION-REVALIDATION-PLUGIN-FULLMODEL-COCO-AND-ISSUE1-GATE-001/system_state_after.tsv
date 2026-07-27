@@ -1,0 +1,17 @@
+field	value
+hostname	bf3
+board_os	Bianbu 2.2.1
+kernel	Linux 6.6.63
+boot_id	0a0691d1-7502-44c3-903b-444dba83c1d9
+online_cpus	0-7
+governor_cpus_0_7	performance
+frequency_cpus_0_7_khz	1600000
+data_mount	/dev/nvme0n1p1 ext4   rw,noatime
+root_mount	/dev/mmcblk2p6 ext4   rw,noatime,errors=remount-ro
+core_pattern	|/usr/share/apport/apport -p%p -s%s -c%c -d%d -P%P -u%u -g%g -- %E
+project_process_count	0
+provider_dump_files_on_emmc	0
+project_artifact_root	/data/k1x-stage-runs/BANANA-YOLO26-VENDOR-ORT-STAGE63-RT206-SPACEMIT-EP-INT8-REGRESSION-REVALIDATION-PLUGIN-FULLMODEL-COCO-AND-ISSUE1-GATE-001
+global_sysctl_changes_remaining	0
+boot_changes_remaining	0
+cgroup_irq_workqueue_changes_remaining	0

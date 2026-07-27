@@ -12,6 +12,8 @@ mode=$1
 root=$STAGE63_BOARD_ROOT
 out_root="$root/performance/$mode"
 mkdir -p "$out_root/raw" "$out_root/outputs" "$out_root/state"
+cd "$out_root"
+unset SPACEMIT_EP_DUMP_SUBGRAPHS
 status_tsv="$out_root/status.tsv"
 printf 'arm\truntime\tprovider\tsurface\twarmup\ttotal_inferences\truns_per_repeat\trepeats\texit_code\tsignal\ttimed_out\toutput_sha256\tstatus\n' \
   >"$status_tsv"
@@ -57,7 +59,7 @@ run_arm() {
   local command_log="$out_root/raw/${label}.command.txt"
   rm -f "$output"
   printf '%q ' taskset -c 0-3 env "LD_LIBRARY_PATH=$runtime_lib" \
-    "SPACEMIT_EP_DUMP_SUBGRAPHS=0" "$runner" --provider "$provider" \
+    "$runner" --provider "$provider" \
     --model "$model" --input "$root/fixtures/preprocessed/images_F0_f32.bin" \
     --output "$output" --opt-level all --execution-mode sequential \
     --intra-threads "$threads" --inter-threads 1 --thread-spinning 0 \
@@ -66,7 +68,7 @@ run_arm() {
 
   snapshot_state "$out_root/state/${label}.before.txt"
   set +e
-  taskset -c 0-3 env LD_LIBRARY_PATH="$runtime_lib" SPACEMIT_EP_DUMP_SUBGRAPHS=0 \
+  taskset -c 0-3 env LD_LIBRARY_PATH="$runtime_lib" \
     timeout --signal=TERM --kill-after=5s 3600s \
     /usr/bin/time -v -o "$time_log" "$runner" \
       --provider "$provider" --model "$model" \
