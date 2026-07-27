@@ -2,3 +2,4 @@ ordinal	commit	author_date	changed_files	subject
 1	e046cda1f2fe59167e9b038c3eb20d767d31c221	2026-07-27T18:11:37+02:00	80	test: add isolated SpacemiT ORT 2.0.6 validation evidence
 2	15c739185be1f6377774d75092543154290ffb00	2026-07-27T18:40:21+02:00	31	test: harden RT206 evidence and public repro bundle
 3	6322c04ff48084fdab4f93adb310c41c3394a396	2026-07-28T00:26:58+02:00	15	test: complete RT206 COCO and stability closure
+4	b0febc57c860f2b9fef2ebfb5436e0d24a9c166c	2026-07-28T00:28:21+02:00	2	docs: close Stage63 validation evidence
