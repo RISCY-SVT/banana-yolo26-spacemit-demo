@@ -155,7 +155,7 @@ EOF
 
 (
     cd "$root"
-    find . -type f -print0 |
+    find . -type f ! -name SHA256SUMS -print0 |
         sort -z |
         xargs -0 sha256sum >SHA256SUMS
 )
@@ -166,4 +166,7 @@ tar --sort=name --mtime="@${epoch}" --owner=0 --group=0 --numeric-owner \
     -C "$tmp" -cf - ISSUE_1_RT206_MINIMAL_REPRO_BUNDLE |
     gzip -n >"$output"
 checksum_path="${output%.tar.gz}.sha256"
-sha256sum "$output" >"$checksum_path"
+(
+    cd "$(dirname "$output")"
+    sha256sum "$(basename "$output")" >"$(basename "$checksum_path")"
+)

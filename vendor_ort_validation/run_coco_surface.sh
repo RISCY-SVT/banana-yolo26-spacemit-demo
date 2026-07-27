@@ -88,6 +88,8 @@ export LD_LIBRARY_PATH="$runtime/lib:$opencv/lib"
 export TMPDIR="${TMPDIR:-$output_dir/tmp}"
 export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$output_dir/cache}"
 mkdir -p "$TMPDIR" "$XDG_CACHE_HOME"
+unset SPACEMIT_EP_DUMP_SUBGRAPHS
+cd "$output_dir"
 
 set +e
 timeout_seconds=${STAGE63_COCO_TIMEOUT_SECONDS:-14400}

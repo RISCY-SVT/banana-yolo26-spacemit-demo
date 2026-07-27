@@ -13,7 +13,6 @@ fi
 mode=$1
 root=$STAGE63_BOARD_ROOT
 runner="$root/run_coco_surface.sh"
-predictor="$root/bin/yolo26_coco_predict"
 labels="$root/models/coco80.txt"
 out="$root/coco/$mode"
 mkdir -p "$out"
@@ -24,6 +23,7 @@ run_surface() {
     local model_surface=$3
     local limit=$4
     local surface="${runtime}_${provider}_${model_surface}_${mode}"
+    local predictor="$root/bin/yolo26_coco_predict_${runtime}"
     local model
     case "$model_surface" in
         fp32) model="$root/models/yolo26n_640_e2e_fp32.onnx" ;;
@@ -31,6 +31,10 @@ run_surface() {
         int8) model="$root/models/manual_e2e_rep_conv_matmul_qdq.onnx" ;;
         *) echo "unsupported model surface: $model_surface" >&2; return 2 ;;
     esac
+    [[ -x $predictor ]] || {
+        printf 'missing version-bound predictor: %s\n' "$predictor" >&2
+        return 2
+    }
     "$runner" \
         --predictor "$predictor" \
         --runtime "$root/runtimes/$runtime" \

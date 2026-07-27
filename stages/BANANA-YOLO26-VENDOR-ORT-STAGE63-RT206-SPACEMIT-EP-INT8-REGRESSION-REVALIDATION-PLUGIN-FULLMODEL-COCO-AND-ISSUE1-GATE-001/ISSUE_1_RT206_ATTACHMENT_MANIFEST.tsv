@@ -1,0 +1,3 @@
+artifact	bytes	sha256	content	classification
+ISSUE_1_RT206_MINIMAL_REPRO_BUNDLE.tar.gz	28207	06387731f57e9703f0b7882b25d7cdaba141c924d28dd58522be6bb1dfa3e5f1	tiny generated ONNX repros; fixed inputs; independent expected outputs; neutral runner; independent plugin smoke; decision table	public-safe
+ISSUE_1_RT206_MINIMAL_REPRO_BUNDLE.sha256	108	42009288acd1b302d1adcba8f3cfa949eecfa5e45bf0e688409ddeaf3ac9358f	basename-only archive checksum	public-safe

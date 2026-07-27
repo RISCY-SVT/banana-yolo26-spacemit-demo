@@ -119,7 +119,9 @@ def main() -> int:
         "execution_count",
     ]
     with options.events.open("w", encoding="utf-8", newline="") as output:
-        writer = csv.DictWriter(output, delimiter="\t", fieldnames=event_fields)
+        writer = csv.DictWriter(
+            output, delimiter="\t", fieldnames=event_fields, lineterminator="\n"
+        )
         writer.writeheader()
         writer.writerows(event_rows)
 
@@ -136,7 +138,9 @@ def main() -> int:
         "scope_note",
     ]
     with options.summary.open("w", encoding="utf-8", newline="") as output:
-        writer = csv.DictWriter(output, delimiter="\t", fieldnames=summary_fields)
+        writer = csv.DictWriter(
+            output, delimiter="\t", fieldnames=summary_fields, lineterminator="\n"
+        )
         writer.writeheader()
         writer.writerows(summary_rows)
     return 0

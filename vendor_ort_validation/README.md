@@ -13,8 +13,9 @@ correctness oracle:
   Stage46 runner into distribution statistics.
 - `run_board_performance.sh` runs isolated canonical, stability, and thread
   scaling matrices against versioned runtime roots.
-- `run_coco_surface.sh` binds the historical predictor to exactly one runtime
-  tree and records the binary, model, and runtime identities for each surface.
+- `run_stage63_coco_matrix.sh` selects a version-bound predictor for each
+  runtime; `run_coco_surface.sh` records the binary, model, and runtime
+  identities for each isolated surface.
 - `evaluate_coco.py` evaluates only the image IDs present in a predictor timing
   file and emits global and per-class COCO metrics.
 - `inventory_onnx.py` records source and dumped-provider-subgraph operator

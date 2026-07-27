@@ -108,11 +108,18 @@ def main() -> int:
 
     options.results.parent.mkdir(parents=True, exist_ok=True)
     with options.results.open("w", encoding="utf-8", newline="") as output:
-        writer = csv.DictWriter(output, delimiter="\t", fieldnames=list(rows[0]))
+        writer = csv.DictWriter(
+            output, delimiter="\t", fieldnames=list(rows[0]), lineterminator="\n"
+        )
         writer.writeheader()
         writer.writerows(rows)
     with options.comparisons.open("w", encoding="utf-8", newline="") as output:
-        writer = csv.DictWriter(output, delimiter="\t", fieldnames=list(comparisons[0]))
+        writer = csv.DictWriter(
+            output,
+            delimiter="\t",
+            fieldnames=list(comparisons[0]),
+            lineterminator="\n",
+        )
         writer.writeheader()
         writer.writerows(comparisons)
     return 0

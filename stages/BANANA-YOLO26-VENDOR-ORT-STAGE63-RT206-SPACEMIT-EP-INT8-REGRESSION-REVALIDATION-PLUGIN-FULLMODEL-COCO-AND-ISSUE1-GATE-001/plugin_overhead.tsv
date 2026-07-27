@@ -1,2 +1,4 @@
-plugin	warmup	measured_runs	mean_us	output_sha256	dispatch_calls	status
-independent_u8_xor	10	1000	90.238765	8f04c27407f8082faf5e54b853caf7889a5fccca357e8f653799ab5a10d0d114	1011	pass
+plugin	graph	warmup	measured_runs	session_create_us	first_run_us	steady_mean_us	output_sha256	dispatch_calls	status
+official_2_0_6	official QGELU track1	10	3	40994.965000	10763.207000	6773.410000	01ee09e81fab391cfe46d3fa26fe5329d13964ec8c2a65ffbb7c76a353221e50	not-exported	structural-only
+official_2_0_6	official QDQ Track2	10	3	37116.572000	5526.668000	582.356333	88b823caae36dc597fb5283c3a99ec3423c8860f9c4de62b4b79f6c65c8826aa	not-exported	wrong-output
+independent_u8_xor	tiny uint8 XOR	10	1000	33634.851000	3310.301000	90.238765	8f04c27407f8082faf5e54b853caf7889a5fccca357e8f653799ab5a10d0d114	1011	pass

@@ -153,11 +153,17 @@ def main() -> int:
             output,
             delimiter="\t",
             fieldnames=["arm", "sample", "wall_us", "process_cpu_us"],
+            lineterminator="\n",
         )
         writer.writeheader()
         writer.writerows(rows)
     with options.summary.open("w", encoding="utf-8", newline="") as output:
-        writer = csv.DictWriter(output, delimiter="\t", fieldnames=list(summaries[0]))
+        writer = csv.DictWriter(
+            output,
+            delimiter="\t",
+            fieldnames=list(summaries[0]),
+            lineterminator="\n",
+        )
         writer.writeheader()
         writer.writerows(summaries)
     return 0

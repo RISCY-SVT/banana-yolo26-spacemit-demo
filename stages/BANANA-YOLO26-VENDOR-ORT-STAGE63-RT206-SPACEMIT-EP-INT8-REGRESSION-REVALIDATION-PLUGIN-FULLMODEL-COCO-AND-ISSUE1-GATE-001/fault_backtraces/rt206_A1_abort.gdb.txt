@@ -10,7 +10,7 @@ Thread 2 "runner_rt206" received signal SIGABRT, Aborted.
 [Switching to Thread 0x3ff5ffed60 (LWP 619059)]
 0x0000003ff62f3b14 in __pthread_kill_implementation (threadid=<optimized out>, signo=signo@entry=6, no_tid=no_tid@entry=0) at ./nptl/pthread_kill.c:43
 warning: 43	./nptl/pthread_kill.c: No such file or directory
-  Id   Target Id                                       Frame 
+  Id   Target Id                                       Frame
   1    Thread 0x3ff7f89760 (LWP 619057) "runner_rt206" 0x0000003ff66e91fe in onnxruntime::spacemit::SpineThreadPool::enqueueInternal(std::pair<std::function<void (long)>, int>&&, int) () from /data/k1x-stage-runs/BANANA-YOLO26-VENDOR-ORT-STAGE63-RT206-SPACEMIT-EP-INT8-REGRESSION-REVALIDATION-PLUGIN-FULLMODEL-COCO-AND-ISSUE1-GATE-001/runtimes/rt206/lib/libspacemit_ep.so.2
 * 2    Thread 0x3ff5ffed60 (LWP 619059) "runner_rt206" 0x0000003ff62f3b14 in __pthread_kill_implementation (threadid=<optimized out>, signo=signo@entry=6, no_tid=no_tid@entry=0) at ./nptl/pthread_kill.c:43
 
@@ -146,43 +146,43 @@ Mapped address spaces:
              0x1e000            0x1f000     0x1000     0xd000  r--p   /data/k1x-stage-runs/BANANA-YOLO26-VENDOR-ORT-STAGE63-RT206-SPACEMIT-EP-INT8-REGRESSION-REVALIDATION-PLUGIN-FULLMODEL-COCO-AND-ISSUE1-GATE-001/runners/runner_rt206
              0x1f000            0x20000     0x1000     0xe000  rw-p   /data/k1x-stage-runs/BANANA-YOLO26-VENDOR-ORT-STAGE63-RT206-SPACEMIT-EP-INT8-REGRESSION-REVALIDATION-PLUGIN-FULLMODEL-COCO-AND-ISSUE1-GATE-001/runners/runner_rt206
              0x20000           0x6b4000   0x694000        0x0  rw-p   [heap]
-        0x3fec000000       0x3fec100000   0x100000        0x0  rw-p   
-        0x3fec100000       0x3fee000000  0x1f00000        0x0  ---p   
-        0x3fee000000       0x3ff0000000  0x2000000        0x0  rw-p   
-        0x3ff0000000       0x3ff0030000    0x30000        0x0  rw-p   
-        0x3ff0030000       0x3ff4000000  0x3fd0000        0x0  ---p   
-        0x3ff57ff000       0x3ff5800000     0x1000        0x0  ---p   
-        0x3ff5800000       0x3ff6000000   0x800000        0x0  rw-p   
+        0x3fec000000       0x3fec100000   0x100000        0x0  rw-p
+        0x3fec100000       0x3fee000000  0x1f00000        0x0  ---p
+        0x3fee000000       0x3ff0000000  0x2000000        0x0  rw-p
+        0x3ff0000000       0x3ff0030000    0x30000        0x0  rw-p
+        0x3ff0030000       0x3ff4000000  0x3fd0000        0x0  ---p
+        0x3ff57ff000       0x3ff5800000     0x1000        0x0  ---p
+        0x3ff5800000       0x3ff6000000   0x800000        0x0  rw-p
         0x3ff6000000       0x3ff6234000   0x234000        0x0  r-xp   /usr/lib/riscv64-linux-gnu/libstdc++.so.6.0.33
         0x3ff6234000       0x3ff6240000     0xc000   0x234000  r--p   /usr/lib/riscv64-linux-gnu/libstdc++.so.6.0.33
         0x3ff6240000       0x3ff6242000     0x2000   0x240000  rw-p   /usr/lib/riscv64-linux-gnu/libstdc++.so.6.0.33
-        0x3ff6242000       0x3ff6246000     0x4000        0x0  rw-p   
+        0x3ff6242000       0x3ff6246000     0x4000        0x0  rw-p
         0x3ff6282000       0x3ff63ef000   0x16d000        0x0  r-xp   /usr/lib/riscv64-linux-gnu/libc.so.6
         0x3ff63ef000       0x3ff63f2000     0x3000   0x16d000  r--p   /usr/lib/riscv64-linux-gnu/libc.so.6
         0x3ff63f2000       0x3ff63f4000     0x2000   0x170000  rw-p   /usr/lib/riscv64-linux-gnu/libc.so.6
-        0x3ff63f4000       0x3ff6400000     0xc000        0x0  rw-p   
+        0x3ff63f4000       0x3ff6400000     0xc000        0x0  rw-p
         0x3ff6400000       0x3ff699c000   0x59c000        0x0  r-xp   /data/k1x-stage-runs/BANANA-YOLO26-VENDOR-ORT-STAGE63-RT206-SPACEMIT-EP-INT8-REGRESSION-REVALIDATION-PLUGIN-FULLMODEL-COCO-AND-ISSUE1-GATE-001/runtimes/rt206/lib/libspacemit_ep.so.2.0.6
         0x3ff699c000       0x3ff69aa000     0xe000   0x59b000  r--p   /data/k1x-stage-runs/BANANA-YOLO26-VENDOR-ORT-STAGE63-RT206-SPACEMIT-EP-INT8-REGRESSION-REVALIDATION-PLUGIN-FULLMODEL-COCO-AND-ISSUE1-GATE-001/runtimes/rt206/lib/libspacemit_ep.so.2.0.6
         0x3ff69aa000       0x3ff69b1000     0x7000   0x5a9000  rw-p   /data/k1x-stage-runs/BANANA-YOLO26-VENDOR-ORT-STAGE63-RT206-SPACEMIT-EP-INT8-REGRESSION-REVALIDATION-PLUGIN-FULLMODEL-COCO-AND-ISSUE1-GATE-001/runtimes/rt206/lib/libspacemit_ep.so.2.0.6
-        0x3ff69b1000       0x3ff6a0e000    0x5d000        0x0  rw-p   
-        0x3ff6b61000       0x3ff6b82000    0x21000        0x0  rw-p   
+        0x3ff69b1000       0x3ff6a0e000    0x5d000        0x0  rw-p
+        0x3ff6b61000       0x3ff6b82000    0x21000        0x0  rw-p
         0x3ff6b82000       0x3ff6bfe000    0x7c000        0x0  r-xp   /usr/lib/riscv64-linux-gnu/libm.so.6
         0x3ff6bfe000       0x3ff6bff000     0x1000    0x7b000  r--p   /usr/lib/riscv64-linux-gnu/libm.so.6
         0x3ff6bff000       0x3ff6c00000     0x1000    0x7c000  rw-p   /usr/lib/riscv64-linux-gnu/libm.so.6
         0x3ff6c00000       0x3ff7f20000  0x1320000        0x0  r-xp   /data/k1x-stage-runs/BANANA-YOLO26-VENDOR-ORT-STAGE63-RT206-SPACEMIT-EP-INT8-REGRESSION-REVALIDATION-PLUGIN-FULLMODEL-COCO-AND-ISSUE1-GATE-001/runtimes/rt206/lib/libonnxruntime.so.1.24.2+spacemit.a1
         0x3ff7f20000       0x3ff7f6a000    0x4a000  0x1320000  r--p   /data/k1x-stage-runs/BANANA-YOLO26-VENDOR-ORT-STAGE63-RT206-SPACEMIT-EP-INT8-REGRESSION-REVALIDATION-PLUGIN-FULLMODEL-COCO-AND-ISSUE1-GATE-001/runtimes/rt206/lib/libonnxruntime.so.1.24.2+spacemit.a1
         0x3ff7f6a000       0x3ff7f70000     0x6000  0x136a000  rw-p   /data/k1x-stage-runs/BANANA-YOLO26-VENDOR-ORT-STAGE63-RT206-SPACEMIT-EP-INT8-REGRESSION-REVALIDATION-PLUGIN-FULLMODEL-COCO-AND-ISSUE1-GATE-001/runtimes/rt206/lib/libonnxruntime.so.1.24.2+spacemit.a1
-        0x3ff7f70000       0x3ff7f77000     0x7000        0x0  rw-p   
-        0x3ff7f84000       0x3ff7f8b000     0x7000        0x0  rw-p   
+        0x3ff7f70000       0x3ff7f77000     0x7000        0x0  rw-p
+        0x3ff7f84000       0x3ff7f8b000     0x7000        0x0  rw-p
         0x3ff7f8b000       0x3ff7f91000     0x6000        0x0  r-xp   /usr/lib/riscv64-linux-gnu/libatomic.so.1.2.0
         0x3ff7f91000       0x3ff7f92000     0x1000     0x5000  r--p   /usr/lib/riscv64-linux-gnu/libatomic.so.1.2.0
         0x3ff7f92000       0x3ff7f93000     0x1000     0x6000  rw-p   /usr/lib/riscv64-linux-gnu/libatomic.so.1.2.0
-        0x3ff7f93000       0x3ff7f96000     0x3000        0x0  rw-p   
+        0x3ff7f93000       0x3ff7f96000     0x3000        0x0  rw-p
         0x3ff7f96000       0x3ff7fb2000    0x1c000        0x0  r-xp   /usr/lib/riscv64-linux-gnu/libgcc_s.so.1
         0x3ff7fb2000       0x3ff7fb3000     0x1000    0x1b000  r--p   /usr/lib/riscv64-linux-gnu/libgcc_s.so.1
         0x3ff7fb3000       0x3ff7fb4000     0x1000    0x1c000  rw-p   /usr/lib/riscv64-linux-gnu/libgcc_s.so.1
-        0x3ff7fd2000       0x3ff7fd4000     0x2000        0x0  rw-p   
-        0x3ff7fd4000       0x3ff7fd6000     0x2000        0x0  rw-p   
+        0x3ff7fd2000       0x3ff7fd4000     0x2000        0x0  rw-p
+        0x3ff7fd4000       0x3ff7fd6000     0x2000        0x0  rw-p
         0x3ff7fd6000       0x3ff7fd8000     0x2000        0x0  r--p   [vvar]
         0x3ff7fd8000       0x3ff7fda000     0x2000        0x0  r-xp   [vdso]
         0x3ff7fda000       0x3ff7ffc000    0x22000        0x0  r-xp   /usr/lib/riscv64-linux-gnu/ld-linux-riscv64-lp64d.so.1
