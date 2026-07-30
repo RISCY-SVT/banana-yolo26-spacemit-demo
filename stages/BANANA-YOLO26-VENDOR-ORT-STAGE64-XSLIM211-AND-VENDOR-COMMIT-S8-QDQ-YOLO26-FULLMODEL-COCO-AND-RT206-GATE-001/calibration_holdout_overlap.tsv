@@ -1,0 +1,3 @@
+check	count	status	note
+selected_calibration_vs_selected_holdout	0	pass	selected lists must be disjoint by filename
+calibration_corpus_vs_coco_val_corpus	2015	documented-evaluation-leakage	the accepted coco_calib2K corpus is a 2015-image subset of COCO val2017; 50 selected calibration images are excluded from the 100-image holdout but remain in full COCO

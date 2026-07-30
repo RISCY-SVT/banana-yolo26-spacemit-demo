@@ -1,0 +1,4 @@
+candidate	function_count	opset_imports	custom_domain_count	status
+canonical_fp32_source	0	ai.onnx:18	0	pass-no-custom-functions
+R211_PROJECT_EXACT_SPLIT_run1	0	ai.onnx:24	0	pass-no-custom-functions
+R211_VENDOR_LITERAL_SPLIT_run1b	0	ai.onnx:24	0	pass-no-custom-functions

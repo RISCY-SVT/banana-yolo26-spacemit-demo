@@ -1,0 +1,5 @@
+failure_class	core_captured	global_core_setting_changed	capture_method	status	note
+U8-QDQ-Conv-SIGABRT	0	0	process-local-gdb-batch	pass	one high-quality backtrace/register/disassembly packet captured; no persistent core needed
+U8-QDQ-MatMul-SIGABRT	0	0	process-local-signal-wrapper	pass	distinct provider error preserved; no repeated crash or global core-pattern change
+QLinearConv-SIGILL	0	0	imported-Stage63-process-local-gdb	pass	accepted Stage63 fault packet reused by exact ORT identity
+QLinearMatMul-SIGILL	0	0	imported-Stage63-process-local-gdb	pass	accepted Stage63 fault packet reused by exact ORT identity

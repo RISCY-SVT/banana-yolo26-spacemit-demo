@@ -1,0 +1,15 @@
+field	value
+captured_utc	2026-07-30T07:09:37Z
+boot_id	0a0691d1-7502-44c3-903b-444dba83c1d9
+root_source	/dev/mmcblk2p6
+root_filesystem	ext4
+data_source	/dev/nvme0n1p1
+data_filesystem	ext4
+data_available	409.7G
+root_available	86G
+governor_cpu0_7	performance
+frequency_cpu0_7_khz	1600000
+stale_stage64_processes	0
+stage_root_preexisting	no
+temporary_profile_change	none
+global_kernel_change	none

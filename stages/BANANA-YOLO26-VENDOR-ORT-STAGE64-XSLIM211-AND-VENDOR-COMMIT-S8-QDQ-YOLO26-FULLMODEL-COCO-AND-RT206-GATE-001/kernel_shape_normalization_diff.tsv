@@ -1,0 +1,3 @@
+candidate	conv_count	explicit_valid_kernel_shape_count	normalization_applied	graph_diff	status
+R211_PROJECT_EXACT_SPLIT_run1	102	102	no	none	pass-as-emitted
+R211_VENDOR_LITERAL_SPLIT_run1b	102	102	no	none	pass-as-emitted

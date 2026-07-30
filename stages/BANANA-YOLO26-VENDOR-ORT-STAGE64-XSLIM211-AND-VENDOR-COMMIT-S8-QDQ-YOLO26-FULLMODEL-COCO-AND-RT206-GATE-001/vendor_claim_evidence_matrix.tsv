@@ -1,0 +1,15 @@
+claim	status	evidence	qualification
+SpacemiT ORT 2.x accepts signed INT8 activation QDQ	supported	tiny_vendor_contract_matrix.tsv; zero_point_dtype_value_census.tsv	S8 zero-point 0 and nonzero signed controls are exact and assigned
+SpacemiT ORT 2.x accepts symmetric signed INT8 weights	supported	tiny_vendor_contract_matrix.tsv; scale_granularity_census.tsv	per-channel and per-tensor Conv controls are exact; generated weights use per-channel scales
+UINT8 zero points are unsupported	supported	tiny_control_exit_signals.tsv; fault_inventory.tsv	U8 Conv and MatMul fail with explicit provider errors followed by SIGABRT; failure containment is still defective
+QLinearConv and QLinearMatMul are unsupported	supported-by-historical-negative	stage63_input_evidence.tsv	accepted Stage63 one-run controls SIGILL; Stage64 did not repeat unsafe crashes
+Conv requires explicit kernel_shape	supported-for-placement	tiny_provider_assignment.tsv; conv_kernel_shape_audit.tsv	the omitted-attribute control runs exactly on CPU fallback, while explicit controls are assigned
+XSlim six-output truncation keeps post-processing unquantized	supported	yolo_graph_split_manifest.tsv; postprocess_quantization_audit.tsv; split_boundary_tensor_map.tsv	the selected graph has a signed inference part and a floating-point CPU tail
+Bbox and confidence branches should remain separate	supported	bbox_confidence_separation_audit.md	all six vendor-named boundary tensors are retained independently
+Official XSlim 2.1.1 implements the prescribed split workflow	supported	quantization_run_matrix.tsv; host_cpu_semantic_matrix.tsv; full_model_session_matrix.tsv	the selected project-exact split passes host and board gates
+Official XSlim 2.1.1 handles two-input ReduceMax	not-supported	reducemax_regression_matrix.tsv; xslim_reducemax_source_comparison.md	all official tiny ReduceMax controls fail after opset conversion
+Vendor commit 9a33 fixes two-input ReduceMax	supported	reducemax_regression_matrix.tsv; xslim_reducemax_source_comparison.md	all three vendor-reference controls complete; pure ReduceMax outputs are exact
+Vendor commit 9a33 is required for the prescribed split	not-supported	quantization_run_matrix.tsv; generated_model_manifest.tsv	official and vendor-reference project-exact split models are byte-identical
+Historical Stage63 failure was caused by an unsupported representation	supported-with-scope	stage63_stage64_reconciliation.tsv	a vendor-conforming S8-QDQ split works; this does not excuse abort/SIGILL behavior on unsupported inputs
+Generated S8 route preserves source-model accuracy	unsupported	full_coco_results.tsv	selected S8 mAP50-95 is 0.35907268372810625 versus FP32 0.40473065112282053
+Stage64 result authorizes runtime promotion	unsupported	human_decision_options.md	research evidence only; no default, release, or production surface changed

@@ -1,0 +1,12 @@
+pid	tid	psr	allowed_list	comm
+773990	773990	4	4-7	stage64_two_sta
+773990	773991	1	0-3	stage64_two_sta
+773990	773992	2	0-3	stage64_two_sta
+773990	773993	3	0-3	stage64_two_sta
+773990	773994	0	0	stage64_two_sta
+773990	773995	1	1	stage64_two_sta
+773990	773996	2	2	stage64_two_sta
+773990	773997	3	3	stage64_two_sta
+773990	774000	0	0-3	stage64_two_sta
+773990	774001	1	0-3	stage64_two_sta
+773990	774002	3	0-3	stage64_two_sta

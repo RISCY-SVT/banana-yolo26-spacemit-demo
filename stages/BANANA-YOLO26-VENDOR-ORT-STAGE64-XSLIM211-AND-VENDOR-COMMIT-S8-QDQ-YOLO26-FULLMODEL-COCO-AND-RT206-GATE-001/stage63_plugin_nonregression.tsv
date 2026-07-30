@@ -1,0 +1,5 @@
+surface	stage63_evidence	stage64_check	result
+official-plugin-sample	build-link-load-abi-init-pass	one-load-smoke	pass
+independent-u8-xor-plugin	1000-run-exact	10-exact-dispatches	pass
+independent-u8-xor-output	accepted-oracle-match	sha256=8f04c27407f8082faf5e54b853caf7889a5fccca357e8f653799ab5a10d0d114	pass
+ort206-tree	byte-identified	archive-and-library-hashes-exact	pass

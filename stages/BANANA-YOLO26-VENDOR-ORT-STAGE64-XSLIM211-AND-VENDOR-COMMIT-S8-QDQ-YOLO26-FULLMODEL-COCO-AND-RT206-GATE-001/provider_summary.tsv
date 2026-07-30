@@ -1,0 +1,3 @@
+candidate	profile	provider	op_name	profile_event_count	duration_us	duration_fraction	provider_event_count	provider_duration_us	provider_duration_fraction	scope_note
+R211_PROJECT_EXACT_SPLIT_run1	profile_2026-07-30_12-27-44.json	SpaceMITExecutionProvider	SpineSubgraph_8524024154264716286_1	2	371222	1.000000000	2	371222	1.000000000	an EP subgraph profile event can contain many original ONNX nodes
+R211_VENDOR_LITERAL_SPLIT_run1b	profile_2026-07-30_11-21-09.json	SpaceMITExecutionProvider	SpineSubgraph_2897778592228140233_1	2	349848	1.000000000	2	349848	1.000000000	an EP subgraph profile event can contain many original ONNX nodes

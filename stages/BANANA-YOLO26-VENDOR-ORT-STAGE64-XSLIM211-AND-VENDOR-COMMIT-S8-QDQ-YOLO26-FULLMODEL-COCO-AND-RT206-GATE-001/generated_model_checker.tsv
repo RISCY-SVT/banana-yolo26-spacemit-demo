@@ -1,0 +1,5 @@
+candidate	model	checker_status	checker_error	shape_inference	shape_inference_error	split_tensor_count
+R211_PROJECT_EXACT_SPLIT_run1	r211_project_exact_split	pass	NA	pass	NA	6
+R211_VENDOR_LITERAL_SPLIT_run1b	r211_vendor_literal_split	pass	NA	pass	NA	6
+V9A33_PROJECT_EXACT_SPLIT_run1	v9a33_project_exact_split	pass	NA	pass	NA	6
+V9A33_VENDOR_LITERAL_SPLIT_run1	v9a33_vendor_literal_split	pass	NA	pass	NA	6

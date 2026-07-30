@@ -1,0 +1,21 @@
+question	stage63_old_u8_or_qlinear_surface	xslim_2_1_1_s8_qdq	xslim_9a33_s8_qdq	conclusion
+Float source accepted by XSlim	not-applicable; Stage63 full INT8 model was already QDQ	pass	pass	canonical floating-point graph is accepted by both isolated lanes
+Two-input ReduceMax	not-tested	still-broken	fixed	official 2.1.1 has a real direct-graph defect; the vendor commit fixes it
+Vendor six-output split	absent	pass	pass	both lanes produce the prescribed six-boundary split
+Bbox/conf remain separate	absent	pass	pass	three bbox and three confidence/class tensors remain separate
+QLinear count zero	full model zero; historical tiny QLinear controls fail	pass	pass	selected split graphs contain no QLinear operators
+UINT8 zero-point count zero	fail; historical full graph uses UINT8	pass	pass	selected split graphs contain only signed INT8 zero points
+Activation S8 per-tensor	fail	pass; 710 sites, 700 nonzero zero points	pass; byte-identical model	vendor activation representation is reproduced
+Weight S8 symmetric	fail	pass; 102 per-channel sites, all zero point 0	pass; byte-identical model	vendor weight representation is reproduced
+Every Conv explicit kernel_shape	mixed historical surface	pass; 102 of 102	pass; byte-identical model	no normalization rewrite was needed
+Host score channels valid	historical CPU graph runnable	pass; 100 of 100, zero collapses	pass; byte-identical-model reuse	project-exact S8 score branches remain finite and nontrivial
+Tiny S8 Conv EP exact	not-tested	pass	pass; runtime control is tool-independent	signed zero and nonzero activation zero points execute exactly
+Tiny S8 MatMul EP exact	not-tested	pass	pass; runtime control is tool-independent	signed zero and nonzero activation zero points execute exactly
+Full inference EP session	abort during provider compilation	pass	pass by byte-identical-model reuse	historical failure does not reproduce with vendor-conforming S8 QDQ
+Meaningful Conv/MatMul placement	not-runnable	pass; complete inference session is one SpacemiT fused subgraph	pass by byte-identical-model reuse	no CPU inference event was observed in the ORT profile
+CPU tail valid	not-split	pass	pass by byte-identical-tail reuse	floating-point post-processing is intentionally CPU-only
+Fixed fixtures	INT8 EP not-runnable	pass	pass by byte-identical-model reuse	F0, bus and Zidane complete on CPU and EP
+1000-run stability	not-runnable	pass	pass by byte-identical-model reuse	selected EP route has one stable output hash
+10000-run soak	not-runnable	pass	pass by byte-identical-model reuse	selected EP route completes 10000 measured inferences
+COCO 5000/5000	not-runnable	pass; mAP50-95 0.35907268372810625	pass by byte-identical-model reuse	selected EP route completes all images with zero failures
+Performance	no INT8 EP result	121765.489505 us two-stage mean in selected 10000-run soak	same executable artifact; no duplicate timing	Stage64 establishes a runnable vendor S8 route, not a promotion claim

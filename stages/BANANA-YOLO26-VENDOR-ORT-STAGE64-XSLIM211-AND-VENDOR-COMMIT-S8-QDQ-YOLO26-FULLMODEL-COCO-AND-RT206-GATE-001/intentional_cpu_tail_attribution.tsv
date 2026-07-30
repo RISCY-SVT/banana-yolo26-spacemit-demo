@@ -1,0 +1,3 @@
+candidate	component	provider	classification	included_in_ep_fallback_fraction
+R211_PROJECT_EXACT_SPLIT_run1	post-processing-tail	CPUExecutionProvider	intentional-by-design	0
+R211_VENDOR_LITERAL_SPLIT_run1b	post-processing-tail	CPUExecutionProvider	intentional-by-design	0

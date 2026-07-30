@@ -48,7 +48,16 @@ def write_tsv(path: Path, rows: Iterable[dict[str, Any]]) -> None:
         )
         writer.writeheader()
         for row in materialized:
-            writer.writerow({field: row.get(field, "") for field in fields})
+            writer.writerow(
+                {
+                    field: (
+                        "NA"
+                        if row.get(field) is None or row.get(field) == ""
+                        else row[field]
+                    )
+                    for field in fields
+                }
+            )
 
 
 def combine_tables(
@@ -61,6 +70,76 @@ def combine_tables(
         for row in read_tsv(path):
             rows.append({label: candidate, **row})
     write_tsv(output, rows)
+
+
+def preprocessing_tables(root: Path, output: Path) -> None:
+    calibration = root / "calibration"
+    rows: list[dict[str, Any]] = []
+
+    fixed = calibration / "preprocessing_parity_fixed_fixtures.tsv"
+    if fixed.is_file():
+        for row in read_tsv(fixed):
+            rows.append(
+                {
+                    "scope": "fixed-fixture",
+                    "item": row["fixture"],
+                    "source_image": row["source_image"],
+                    "left_surface": "stage64-project-exact",
+                    "left_sha256": row["stage64_input_sha256"],
+                    "right_surface": "accepted-project-input",
+                    "right_sha256": row["accepted_input_sha256"],
+                    "shape": row["shape"],
+                    "dtype": row["dtype"],
+                    "mismatch_count": row["mismatch_count"],
+                    "max_abs_difference": row["max_abs_difference"],
+                    "status": row["status"],
+                }
+            )
+
+    for scope, path in [
+        ("calibration-sample", calibration / "preprocessing_parity_calibration10.tsv"),
+        ("holdout-sample", calibration / "preprocessing_parity_holdout10.tsv"),
+    ]:
+        if not path.is_file():
+            continue
+        grouped: dict[str, dict[str, dict[str, str]]] = defaultdict(dict)
+        for row in read_tsv(path):
+            grouped[row["path"]][row["mode"]] = row
+        for image_path, modes in sorted(grouped.items()):
+            exact = modes.get("project-exact")
+            literal = modes.get("vendor-literal")
+            if exact is None or literal is None:
+                raise ValueError(f"incomplete preprocessing pair for {image_path}")
+            mismatch_count = int(exact["mismatch_count"])
+            rows.append(
+                {
+                    "scope": scope,
+                    "item": Path(image_path).name,
+                    "source_image": image_path,
+                    "left_surface": "project-exact-letterbox",
+                    "left_sha256": exact["sha256"],
+                    "right_surface": "vendor-literal-direct-resize",
+                    "right_sha256": literal["sha256"],
+                    "shape": exact["shape"],
+                    "dtype": exact["dtype"],
+                    "mismatch_count": mismatch_count,
+                    "max_abs_difference": exact["max_abs_difference"],
+                    "status": (
+                        "different-by-defined-policy"
+                        if mismatch_count
+                        else "identical"
+                    ),
+                }
+            )
+
+    write_tsv(output / "preprocessing_parity.tsv", rows)
+
+
+def reducemax_tables(root: Path, output: Path) -> None:
+    rows: list[dict[str, Any]] = []
+    for path in sorted((root / "host/reducemax").glob("*.tsv")):
+        rows.extend(read_tsv(path))
+    write_tsv(output / "reducemax_regression_matrix.tsv", rows)
 
 
 def quantization_tables(root: Path, output: Path) -> None:
@@ -184,6 +263,11 @@ def conformance_tables(root: Path, output: Path) -> None:
 def semantic_tables(root: Path, output: Path) -> None:
     semantics = root / "host/semantics"
     selected = sorted(semantics.glob("*_holdout100"))
+    semantic_groups = [
+        (path.name, read_tsv(path / "host_cpu_semantic_matrix.tsv"))
+        for path in selected
+        if (path / "host_cpu_semantic_matrix.tsv").is_file()
+    ]
     combine_tables(
         ((path.name, path / "host_cpu_semantic_matrix.tsv") for path in selected),
         output / "host_cpu_semantic_matrix.tsv",
@@ -204,18 +288,86 @@ def semantic_tables(root: Path, output: Path) -> None:
         ((path.name, path / "score_collapse_gate.tsv") for path in selected),
         output / "score_collapse_gate.tsv",
     )
-    combine_tables(
-        ((path.name, path / "postprocess_recombination_oracle.tsv") for path in selected),
-        output / "postprocess_recombination_oracle.tsv",
-    )
-    combine_tables(
-        ((path.name, path / "holdout_100_results.tsv") for path in selected),
-        output / "holdout_100_results.tsv",
-    )
-    combine_tables(
-        ((path.name, path / "host_runtime_binding.tsv") for path in selected),
-        output / "host_runtime_binding.tsv",
-    )
+    recombination_rows: list[dict[str, Any]] = []
+    holdout_rows: list[dict[str, Any]] = []
+    runtime_rows: list[dict[str, Any]] = []
+    for candidate, rows in semantic_groups:
+        split_mae = [float(row["fp32_split_vs_unsplit_mae"]) for row in rows]
+        split_max = [float(row["fp32_split_vs_unsplit_max_abs"]) for row in rows]
+        split_cosine = [
+            float(row["fp32_split_vs_unsplit_cosine"]) for row in rows
+        ]
+        tail_rows = [
+            row for row in rows if row.get("candidate_tail_vs_source_mae", "")
+        ]
+        if not tail_rows:
+            auxiliary = semantics / (
+                candidate.removesuffix("_holdout100") + "_tail_oracle"
+            ) / "host_cpu_semantic_matrix.tsv"
+            if auxiliary.is_file():
+                tail_rows = [
+                    row
+                    for row in read_tsv(auxiliary)
+                    if row.get("candidate_tail_vs_source_mae", "")
+                ]
+        recombination_rows.append(
+            {
+                "candidate": candidate,
+                "images": len(rows),
+                "fp32_split_max_mae": max(split_mae),
+                "fp32_split_max_abs": max(split_max),
+                "fp32_split_min_cosine": min(split_cosine),
+                "fp32_split_status": (
+                    "exact" if max(split_mae) == 0 and max(split_max) == 0 else "fail"
+                ),
+                "candidate_tail_oracle_images": len(tail_rows),
+                "candidate_tail_oracle_status": (
+                    "exact"
+                    if tail_rows
+                    and max(
+                        float(row["candidate_tail_vs_source_mae"])
+                        for row in tail_rows
+                    )
+                    == 0
+                    else "unavailable"
+                    if not tail_rows
+                    else "fail"
+                ),
+            }
+        )
+        holdout_rows.append(
+            {
+                "candidate": candidate,
+                "images": len(rows),
+                "pass_count": sum(row["status"] == "pass" for row in rows),
+                "failure_count": sum(row["status"] != "pass" for row in rows),
+                "score_collapse_count": sum(
+                    int(row["confidence_branch_collapsed"]) for row in rows
+                ),
+                "mean_s8_vs_fp32_cosine": f"{statistics.fmean(float(row['s8_vs_fp32_cosine']) for row in rows):.12g}",
+                "mean_s8_vs_fp32_mae": f"{statistics.fmean(float(row['s8_vs_fp32_mae']) for row in rows):.12g}",
+                "status": (
+                    "pass"
+                    if all(row["status"] == "pass" for row in rows)
+                    else "fail"
+                ),
+            }
+        )
+        runtime_rows.append(
+            {
+                "candidate": candidate,
+                "runtime": "onnxruntime",
+                "runtime_version": "1.24.3",
+                "provider": "CPUExecutionProvider",
+                "graph_optimization": "ORT_DISABLE_ALL",
+                "intra_threads": 1,
+                "inter_threads": 1,
+                "scope": "host semantic validation only",
+            }
+        )
+    write_tsv(output / "postprocess_recombination_oracle.tsv", recombination_rows)
+    write_tsv(output / "holdout_100_results.tsv", holdout_rows)
+    write_tsv(output / "host_runtime_binding.tsv", runtime_rows)
 
 
 def percentile(values: list[float], fraction: float) -> float:
@@ -482,15 +634,22 @@ def coco_tables(root: Path, output: Path) -> None:
     failures: list[dict[str, Any]] = []
     per_class: list[dict[str, Any]] = []
     size_bins: list[dict[str, Any]] = []
+    pipeline_timing: list[dict[str, Any]] = []
     coco_root = root / "host/coco"
     for evaluation in sorted(coco_root.glob("*/*/evaluation.tsv")):
         surface = evaluation.parent.relative_to(coco_root).as_posix()
         data = json.loads(evaluation.read_text(encoding="utf-8"))
-        row = {"surface": surface, **data}
+        scope = (
+            "full-val2017"
+            if int(data["image_count"]) == 5000
+            else f"subset-{data['image_count']}"
+        )
+        row = {"surface": surface, "scope": scope, **data}
         rows.append(row)
         hashes.append(
             {
                 "surface": surface,
+                "scope": scope,
                 "prediction_sha256": data["predictions_sha256"],
                 "timing_sha256": data["timing_sha256"],
                 "image_count": data["image_count"],
@@ -499,6 +658,7 @@ def coco_tables(root: Path, output: Path) -> None:
         failures.append(
             {
                 "surface": surface,
+                "scope": scope,
                 "image_count": data["image_count"],
                 "image_failures": 0,
                 "non_finite_outputs": 0,
@@ -511,18 +671,48 @@ def coco_tables(root: Path, output: Path) -> None:
             ("large", "ap_large"),
         ]:
             size_bins.append(
-                {"surface": surface, "area": area, "ap50_95": data[key]}
+                {
+                    "surface": surface,
+                    "scope": scope,
+                    "area": area,
+                    "ap50_95": data[key],
+                }
             )
         per_class_path = evaluation.parent / "per-class.tsv"
         if per_class_path.is_file():
             per_class.extend(
-                {"surface": surface, **item} for item in read_tsv(per_class_path)
+                {"surface": surface, "scope": scope, **item}
+                for item in read_tsv(per_class_path)
             )
+        timing_path = evaluation.parent / "timing.tsv"
+        if timing_path.is_file():
+            timing_rows = read_tsv(timing_path)
+            for field in [
+                "decode_ms",
+                "preprocess_ms",
+                "inference_ms",
+                "tail_ms",
+                "total_ms",
+            ]:
+                values = [float(item[field]) for item in timing_rows]
+                pipeline_timing.append(
+                    {
+                        "surface": surface,
+                        "component": field.removesuffix("_ms"),
+                        "samples": len(values),
+                        "mean_ms": f"{statistics.fmean(values):.9f}",
+                        "median_ms": f"{statistics.median(values):.9f}",
+                        "p95_ms": f"{percentile(values, 0.95):.9f}",
+                        "p99_ms": f"{percentile(values, 0.99):.9f}",
+                        "max_ms": f"{max(values):.9f}",
+                    }
+                )
     write_tsv(output / "full_coco_results.tsv", rows)
     write_tsv(output / "full_coco_prediction_hashes.tsv", hashes)
     write_tsv(output / "full_coco_failures.tsv", failures)
     write_tsv(output / "full_coco_per_class.tsv", per_class)
     write_tsv(output / "full_coco_size_bins.tsv", size_bins)
+    write_tsv(output / "split_pipeline_timing_breakdown.tsv", pipeline_timing)
 
 
 def fixed_tables(root: Path, output: Path) -> None:
@@ -569,6 +759,8 @@ def main() -> int:
     root = options.stage_root.resolve()
     output = options.output_dir.resolve()
     output.mkdir(parents=True, exist_ok=True)
+    preprocessing_tables(root, output)
+    reducemax_tables(root, output)
     quantization_tables(root, output)
     conformance_tables(root, output)
     semantic_tables(root, output)

@@ -1,0 +1,4 @@
+source	version	filename	type	size_bytes	sha256	status
+PyPI	2.1.1	xslim-2.1.1-py3-none-any.whl	bdist_wheel	312873	e01cd8b3c7070c038ed60415b30dfe1e35140de0de6725208b2eaa0f871069b3	verified
+PyPI	2.1.1	xslim-2.1.1.tar.gz	sdist	322572	9804d5c473b9e79f391a645c403fd50dc68f0334ff07b4408692c4359f4f235c	verified
+local-build	2.1.2	xslim-2.1.2-py3-none-any.whl	vendor-ref-wheel	322028	eb78f2f1cf98e94b3e214397aaa0bef16fe2ad53d318fe032f990e2f38d6d488	verified

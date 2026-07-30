@@ -1,0 +1,4 @@
+runner	sha256	elf_machine	abi	compiler	isa_attributes	needed	rpath	runpath	textrel	ldd_r
+stage64_two_stage_runner	b39da697c4c0f309a9955475946ce5ce6b53b264bd3bae7cb50283fb49ce2188	RISC-V	lp64d	GCC 14.3.0	rv64gcv_zvfh	libspacemit_ep.so.2,libonnxruntime.so.1,libstdc++.so.6,libm.so.6,libgcc_s.so.1,libc.so.6	none	none	none	pass
+stage64_two_stage_coco	d39f5280a46b0bd342de933d6b25005a5858390430e8ce84377374f4a8225ad0	RISC-V	lp64d	GCC 14.3.0	rv64gcv_zvfh	libspacemit_ep.so.2,libonnxruntime.so.1,libopencv_imgcodecs.so.413,libopencv_imgproc.so.413,libopencv_core.so.413,libstdc++.so.6,libm.so.6,libgcc_s.so.1,libc.so.6	none	none	none	pass
+stage64_single_model_runner	4d1ff2ac13b4aa0b7c62874a2cb4dede7fc4fd9c7f88c4b6932e251e8d5cbc46	RISC-V	lp64d	GCC 14.3.0	rv64gc	libspacemit_ep.so.2,libonnxruntime.so.1,libstdc++.so.6,libm.so.6,libgcc_s.so.1,libc.so.6	none	none	none	pass

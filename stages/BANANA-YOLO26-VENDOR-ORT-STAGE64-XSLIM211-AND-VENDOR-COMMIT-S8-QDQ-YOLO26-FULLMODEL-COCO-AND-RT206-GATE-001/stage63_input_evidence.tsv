@@ -1,0 +1,15 @@
+evidence	value	status
+stage63_classification	stage63-rt206-plugin-fixed-int8-ep-regressions-persist	accepted
+stage63_branch_head	94b86a6bf011cc83fefaf2a960191e97a8daf728	exact
+stage63_packet_tree_sha256	f2497a8ddd40b38cdf3454e9d9d95871370dbba40941f151ac796e9f696aedbc	exact
+stage63_final_report_sha256	71a50f21a1be85c53439410ae7bb6635c127ab5330ffcc2442bc201a1d27773f	exact
+ort206_archive_sha256	bebcdfb7df6b49eefa3863afcd85a3da2aa83c3ae9252d7d856188c38a70b0e6	exact
+old_u8_qdq_model_sha256	30a94e4738606673b5e0a73499cbc977167f046f8fa8637d6040ce744f429c0c	historical-negative-control
+plugin_abi_load	official-and-independent-fixed	imported-with-smoke
+independent_plugin_execution	exact-1000-run	imported-plus-10-run-smoke
+old_u8_qdq_full_ep	session-creation-abort	imported-negative-control
+old_qlinearconv	exit-132-sigill	imported-negative-control
+old_qlinearmatmul	exit-132-sigill	imported-negative-control
+fp32_ep_coco_map50_95	0.404745220420	imported-exact-identity
+fp16_ep_coco_map50_95	0.404687	imported-exact-identity
+old_u8_cpu_coco_map50_95	0.374594101159	imported-different-quantization-context

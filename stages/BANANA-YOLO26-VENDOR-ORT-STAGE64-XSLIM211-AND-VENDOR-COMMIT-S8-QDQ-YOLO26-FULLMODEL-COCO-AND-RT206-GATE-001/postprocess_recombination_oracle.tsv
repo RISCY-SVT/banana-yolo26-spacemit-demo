@@ -1,0 +1,4 @@
+candidate	images	fp32_split_max_mae	fp32_split_max_abs	fp32_split_min_cosine	fp32_split_status	candidate_tail_oracle_images	candidate_tail_oracle_status
+R211_PROJECT_EXACT_SPLIT_run1_holdout100	100	0.0	0.0	0.9999999999999998	exact	100	exact
+R211_VENDOR_LITERAL_SPLIT_run1b_holdout100	100	0.0	0.0	0.9999999999999998	exact	1	exact
+V9A33_PROJECT_EXACT_SPLIT_run1_holdout100	100	0.0	0.0	0.9999999999999998	exact	100	exact

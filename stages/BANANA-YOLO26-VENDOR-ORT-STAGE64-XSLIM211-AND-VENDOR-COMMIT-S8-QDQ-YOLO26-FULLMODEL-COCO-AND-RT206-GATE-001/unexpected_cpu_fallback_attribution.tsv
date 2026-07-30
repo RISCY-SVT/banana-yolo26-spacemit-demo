@@ -1,0 +1,3 @@
+candidate	quantized_inference_provider	unexpected_cpu_event_count	unexpected_cpu_time_fraction	status	scope_note
+R211_PROJECT_EXACT_SPLIT_run1	SpaceMITExecutionProvider	0	0	no-unexpected-cpu-event-observed	an EP subgraph profile event can contain many original ONNX nodes
+R211_VENDOR_LITERAL_SPLIT_run1b	SpaceMITExecutionProvider	0	0	no-unexpected-cpu-event-observed	an EP subgraph profile event can contain many original ONNX nodes

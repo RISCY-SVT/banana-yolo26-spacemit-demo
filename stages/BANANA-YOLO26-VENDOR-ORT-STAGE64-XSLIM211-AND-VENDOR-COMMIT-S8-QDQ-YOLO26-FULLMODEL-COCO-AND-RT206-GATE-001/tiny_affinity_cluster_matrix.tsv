@@ -1,0 +1,11 @@
+case_id	test_id	cpus	exit_code	signal	exact	spacemit_kernel_events	cpu_kernel_events	classification
+c1_s8_conv_pc_explicit__spacemit__affinity-0	c1_s8_conv_pc_explicit	0	0	0	1	2	0	exact-spacemit-assigned
+c1_s8_conv_pc_explicit__spacemit__affinity-0_3	c1_s8_conv_pc_explicit	0-3	0	0	1	2	0	exact-spacemit-assigned
+c1_s8_conv_pc_explicit__spacemit__affinity-4	c1_s8_conv_pc_explicit	4	0	0	1	2	0	exact-spacemit-assigned
+c1_s8_conv_pc_explicit__spacemit__affinity-4_7	c1_s8_conv_pc_explicit	4-7	0	0	1	2	0	exact-spacemit-assigned
+c1_s8_conv_pc_explicit__spacemit__affinity-0_7	c1_s8_conv_pc_explicit	0-7	0	0	1	2	0	exact-spacemit-assigned
+m1_s8_matmul__spacemit__affinity-0	m1_s8_matmul	0	0	0	1	2	0	exact-spacemit-assigned
+m1_s8_matmul__spacemit__affinity-0_3	m1_s8_matmul	0-3	0	0	1	2	0	exact-spacemit-assigned
+m1_s8_matmul__spacemit__affinity-4	m1_s8_matmul	4	0	0	1	2	0	exact-spacemit-assigned
+m1_s8_matmul__spacemit__affinity-4_7	m1_s8_matmul	4-7	0	0	1	2	0	exact-spacemit-assigned
+m1_s8_matmul__spacemit__affinity-0_7	m1_s8_matmul	0-7	0	0	1	2	0	exact-spacemit-assigned

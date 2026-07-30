@@ -1,0 +1,17 @@
+field	value
+captured_utc	2026-07-30T07:09:37Z
+hostname	bf3
+os	Bianbu 2.2.1
+kernel	Linux 6.6.63 #2.2.7.2 SMP PREEMPT Fri Aug 15 12:32:44 UTC 2025
+architecture	riscv64
+cpu_model	Spacemit(R) X60
+online_cpus	0-7
+l1d	256 KiB (8 instances)
+l1i	256 KiB (8 instances)
+l2	1 MiB (2 instances)
+governor	performance (CPU0-7)
+frequency_khz	1600000 (CPU0-7)
+boot_id	0a0691d1-7502-44c3-903b-444dba83c1d9
+stage_storage	/data on NVMe
+accepted_ort	2.0.6
+accepted_ort_archive_sha256	bebcdfb7df6b49eefa3863afcd85a3da2aa83c3ae9252d7d856188c38a70b0e6

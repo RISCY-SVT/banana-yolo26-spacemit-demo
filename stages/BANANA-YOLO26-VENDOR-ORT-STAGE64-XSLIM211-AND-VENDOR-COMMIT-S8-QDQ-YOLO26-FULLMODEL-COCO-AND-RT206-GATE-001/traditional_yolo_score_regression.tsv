@@ -1,0 +1,3 @@
+control	status	reason
+historical_traditional_yolo	not-tested-with-reason	The exact historical traditional-YOLO FP32 export was not proven in the accepted inventory; no substitute export was manufactured.
+canonical_e2e_yolo26	pass	The canonical E2E FP32 source and both official split S8 candidates retained finite nontrivial score branches on 100 holdout images.

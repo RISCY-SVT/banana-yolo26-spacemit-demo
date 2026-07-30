@@ -1,0 +1,4 @@
+candidate	runtime	runtime_version	provider	graph_optimization	intra_threads	inter_threads	scope
+R211_PROJECT_EXACT_SPLIT_run1_holdout100	onnxruntime	1.24.3	CPUExecutionProvider	ORT_DISABLE_ALL	1	1	host semantic validation only
+R211_VENDOR_LITERAL_SPLIT_run1b_holdout100	onnxruntime	1.24.3	CPUExecutionProvider	ORT_DISABLE_ALL	1	1	host semantic validation only
+V9A33_PROJECT_EXACT_SPLIT_run1_holdout100	onnxruntime	1.24.3	CPUExecutionProvider	ORT_DISABLE_ALL	1	1	host semantic validation only
