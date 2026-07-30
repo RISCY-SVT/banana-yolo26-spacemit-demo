@@ -23,5 +23,8 @@ ReduceMax, so both XSlim lanes can quantize the inference subgraph despite the
 official release defect. This is classified as `bypassed-by-truncation` for
 the split workflow, not as an official 2.1.1 ReduceMax fix.
 
-Direct E2E remains a diagnostic path and cannot replace the vendor split
-workflow.
+Direct E2E confirms both sides of that boundary. Official 2.1.1 fails during
+metadata tracing at `/model.23/ReduceMax`. The vendor-reference commit emits a
+valid signed-QDQ model, but all 100 host holdout images have score channels
+collapsed to zero. The direct artifact is rejected before board execution and
+cannot replace the vendor split workflow.

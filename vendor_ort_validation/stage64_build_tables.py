@@ -202,6 +202,8 @@ def quantization_tables(root: Path, output: Path) -> None:
                 "status": (
                     "pass-byte-identical"
                     if len(completed) >= 2 and len(hashes) == 1 and len(tree_hashes) <= 1
+                    else "pass-model-byte-identical-analysis-report-differs"
+                    if len(completed) >= 2 and len(hashes) == 1
                     else "single-run"
                     if len(completed) == 1
                     else "failed-or-mismatch"
@@ -385,6 +387,11 @@ def percentile(values: list[float], fraction: float) -> float:
 def sample_summary(surface: str, path: Path) -> list[dict[str, Any]]:
     rows = read_tsv(path)
     result: list[dict[str, Any]] = []
+    profiling = (
+        "enabled"
+        if any((path.parent / "profiles").glob("*.json"))
+        else "disabled"
+    )
     for metric, field in [
         ("inference", "inference_us"),
         ("tail", "tail_us"),
@@ -396,6 +403,7 @@ def sample_summary(surface: str, path: Path) -> list[dict[str, Any]]:
             {
                 "surface": surface,
                 "metric": metric,
+                "profiling": profiling,
                 "samples": len(values),
                 "mean_us": f"{statistics.fmean(values):.6f}",
                 "stddev_us": f"{statistics.pstdev(values):.6f}",
@@ -428,13 +436,56 @@ def performance_tables(root: Path, output: Path) -> None:
         [row for row in rows if int(row["samples"]) >= 100],
     )
     write_tsv(output / "thread_scaling.tsv", thread_rows)
+    long_rows = [
+        row
+        for row in rows
+        if "partial" not in str(row["surface"])
+        and (
+            "soak" in str(row["surface"])
+            or "stability" in str(row["surface"])
+            or int(row["samples"]) >= 10000
+        )
+    ]
+    cpu_coco = (
+        root
+        / "host/coco/R211_PROJECT_EXACT_SPLIT_run1/cpu-full5000/timing.tsv"
+    )
+    if cpu_coco.is_file():
+        timing_rows = read_tsv(cpu_coco)
+        for metric, field in [
+            ("inference", "inference_ms"),
+            ("tail", "tail_ms"),
+            ("two_stage_total", "total_ms"),
+        ]:
+            values = [1000.0 * float(row[field]) for row in timing_rows]
+            mean = statistics.fmean(values)
+            stdev = statistics.pstdev(values)
+            long_rows.append(
+                {
+                    "surface": "R211_PROJECT_EXACT_SPLIT_run1/cpu-full5000",
+                    "metric": metric,
+                    "profiling": "disabled",
+                    "samples": len(values),
+                    "mean_us": f"{mean:.6f}",
+                    "stddev_us": f"{stdev:.6f}",
+                    "cv_pct": f"{100.0 * stdev / mean:.6f}",
+                    "median_us": f"{statistics.median(values):.6f}",
+                    "p95_us": f"{percentile(values, 0.95):.6f}",
+                    "p99_us": f"{percentile(values, 0.99):.6f}",
+                    "p999_us": f"{percentile(values, 0.999):.6f}",
+                    "min_us": f"{min(values):.6f}",
+                    "max_us": f"{max(values):.6f}",
+                    "unique_output_hashes": len(
+                        {row["output_fnv1a64"] for row in timing_rows}
+                    ),
+                    "output_hashes": (
+                        "varied-input stream; see full_coco_prediction_hashes.tsv"
+                    ),
+                }
+            )
     write_tsv(
         output / "long_soak.tsv",
-        [
-            row
-            for row in rows
-            if "soak" in str(row["surface"]) or int(row["samples"]) >= 10000
-        ],
+        long_rows,
     )
     write_tsv(output / "split_pipeline_timing.tsv", rows)
 
@@ -574,35 +625,46 @@ def provider_tables(root: Path, output: Path) -> None:
 
 def thermal_tables(root: Path, output: Path) -> None:
     rows: list[dict[str, Any]] = []
-    board_root = root / "host/board-evidence"
-    for path in sorted(board_root.glob("**/frequency_*.tsv")):
-        rows.append(
-            {
-                "surface": path.parent.relative_to(board_root).as_posix(),
-                "kind": path.name.removesuffix(".tsv"),
-                "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
-                "bytes": path.stat().st_size,
-                "status": "captured",
-            }
-        )
-    for path in sorted(board_root.glob("**/thermal_*.tsv")):
-        rows.append(
-            {
-                "surface": path.parent.relative_to(board_root).as_posix(),
-                "kind": path.name.removesuffix(".tsv"),
-                "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
-                "bytes": path.stat().st_size,
-                "status": (
-                    "captured" if path.stat().st_size else "unavailable-no-thermal-zone"
-                ),
-            }
-        )
+    evidence_roots = [
+        ("board-evidence", root / "host/board-evidence"),
+        ("coco", root / "host/coco"),
+    ]
+    for root_label, evidence_root in evidence_roots:
+        for path in sorted(evidence_root.glob("**/frequency_*.tsv")):
+            rows.append(
+                {
+                    "surface": (
+                        f"{root_label}/"
+                        f"{path.parent.relative_to(evidence_root).as_posix()}"
+                    ),
+                    "kind": path.name.removesuffix(".tsv"),
+                    "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+                    "bytes": path.stat().st_size,
+                    "status": "captured",
+                }
+            )
+        for path in sorted(evidence_root.glob("**/thermal_*.tsv")):
+            rows.append(
+                {
+                    "surface": (
+                        f"{root_label}/"
+                        f"{path.parent.relative_to(evidence_root).as_posix()}"
+                    ),
+                    "kind": path.name.removesuffix(".tsv"),
+                    "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+                    "bytes": path.stat().st_size,
+                    "status": (
+                        "captured"
+                        if path.stat().st_size
+                        else "unavailable-no-thermal-zone"
+                    ),
+                }
+            )
     write_tsv(output / "thermal_frequency.tsv", rows)
 
 
 def resource_tables(root: Path, output: Path) -> None:
     rows: list[dict[str, Any]] = []
-    board_root = root / "host/board-evidence"
     wanted = {
         "User time (seconds)": "user_seconds",
         "System time (seconds)": "system_seconds",
@@ -613,18 +675,28 @@ def resource_tables(root: Path, output: Path) -> None:
         "Involuntary context switches": "involuntary_context_switches",
         "Exit status": "exit_status",
     }
-    for path in sorted(board_root.glob("**/time-v.txt")):
-        values: dict[str, str] = {}
-        for line in path.read_text(encoding="utf-8", errors="replace").splitlines():
-            key, separator, value = line.strip().partition(": ")
-            if separator and key in wanted:
-                values[wanted[key]] = value
-        rows.append(
-            {
-                "surface": path.parent.relative_to(board_root).as_posix(),
-                **values,
-            }
-        )
+    evidence_roots = [
+        ("board-evidence", root / "host/board-evidence"),
+        ("coco", root / "host/coco"),
+    ]
+    for root_label, evidence_root in evidence_roots:
+        for path in sorted(evidence_root.glob("**/time-v.txt")):
+            values: dict[str, str] = {}
+            for line in path.read_text(
+                encoding="utf-8", errors="replace"
+            ).splitlines():
+                key, separator, value = line.strip().partition(": ")
+                if separator and key in wanted:
+                    values[wanted[key]] = value
+            rows.append(
+                {
+                    "surface": (
+                        f"{root_label}/"
+                        f"{path.parent.relative_to(evidence_root).as_posix()}"
+                    ),
+                    **values,
+                }
+            )
     write_tsv(output / "resource_usage.tsv", rows)
 
 
@@ -707,6 +779,85 @@ def coco_tables(root: Path, output: Path) -> None:
                         "max_ms": f"{max(values):.9f}",
                     }
                 )
+    fp32_surface = "IMPORTED_CANONICAL_FP32/cpu-full5000"
+    fp32_per_class = {
+        row["category_id"]: float(row["ap50_95"])
+        for row in per_class
+        if row["surface"] == fp32_surface and row["scope"] == "full-val2017"
+    }
+    for row in per_class:
+        reference = fp32_per_class.get(row["category_id"])
+        row["delta_vs_same_source_fp32"] = (
+            f"{float(row['ap50_95']) - reference:.12f}"
+            if row["scope"] == "full-val2017" and reference is not None
+            else "NA"
+        )
+    s8_cpu_surface = "R211_PROJECT_EXACT_SPLIT_run1/cpu-full5000"
+    s8_cpu_per_class = {
+        row["category_id"]: float(row["ap50_95"])
+        for row in per_class
+        if row["surface"] == s8_cpu_surface and row["scope"] == "full-val2017"
+    }
+    for row in per_class:
+        reference = s8_cpu_per_class.get(row["category_id"])
+        row["delta_vs_s8_cpu"] = (
+            f"{float(row['ap50_95']) - reference:.12f}"
+            if row["scope"] == "full-val2017" and reference is not None
+            else "NA"
+        )
+    fp32_size_bins = {
+        row["area"]: float(row["ap50_95"])
+        for row in size_bins
+        if row["surface"] == fp32_surface and row["scope"] == "full-val2017"
+    }
+    for row in size_bins:
+        reference = fp32_size_bins.get(row["area"])
+        row["delta_vs_same_source_fp32"] = (
+            f"{float(row['ap50_95']) - reference:.12f}"
+            if row["scope"] == "full-val2017" and reference is not None
+            else "NA"
+        )
+    s8_cpu_size_bins = {
+        row["area"]: float(row["ap50_95"])
+        for row in size_bins
+        if row["surface"] == s8_cpu_surface and row["scope"] == "full-val2017"
+    }
+    for row in size_bins:
+        reference = s8_cpu_size_bins.get(row["area"])
+        row["delta_vs_s8_cpu"] = (
+            f"{float(row['ap50_95']) - reference:.12f}"
+            if row["scope"] == "full-val2017" and reference is not None
+            else "NA"
+        )
+    fp32_result = next(
+        (
+            row
+            for row in rows
+            if row["surface"] == fp32_surface and row["scope"] == "full-val2017"
+        ),
+        None,
+    )
+    for row in rows:
+        row["map50_95_delta_vs_same_source_fp32"] = (
+            f"{float(row['map50_95']) - float(fp32_result['map50_95']):.12f}"
+            if row["scope"] == "full-val2017" and fp32_result is not None
+            else "NA"
+        )
+    s8_cpu_result = next(
+        (
+            row
+            for row in rows
+            if row["surface"] == s8_cpu_surface
+            and row["scope"] == "full-val2017"
+        ),
+        None,
+    )
+    for row in rows:
+        row["map50_95_delta_vs_s8_cpu"] = (
+            f"{float(row['map50_95']) - float(s8_cpu_result['map50_95']):.12f}"
+            if row["scope"] == "full-val2017" and s8_cpu_result is not None
+            else "NA"
+        )
     write_tsv(output / "full_coco_results.tsv", rows)
     write_tsv(output / "full_coco_prediction_hashes.tsv", hashes)
     write_tsv(output / "full_coco_failures.tsv", failures)

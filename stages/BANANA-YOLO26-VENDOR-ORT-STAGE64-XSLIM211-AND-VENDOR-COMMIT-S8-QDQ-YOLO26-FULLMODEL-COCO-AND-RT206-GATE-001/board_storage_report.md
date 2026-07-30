@@ -15,3 +15,7 @@ Task-local `TMPDIR`, `XDG_CACHE_HOME`, `PIP_CACHE_DIR`, `TORCH_HOME`, and
 runs predated the explicit environment wrapper. A post-run scan found no
 Stage64 project artifacts in `/tmp` or `/var/tmp`; this is recorded as a
 procedural caveat, not as an observed eMMC project write.
+
+At closure the board task tree contains 756 files and 1,483,301,120 bytes on
+NVMe. The final project process count, Stage64 cgroup count, and matching eMMC
+artifact count are all zero. Board eMMC project-write exceptions: **0**.

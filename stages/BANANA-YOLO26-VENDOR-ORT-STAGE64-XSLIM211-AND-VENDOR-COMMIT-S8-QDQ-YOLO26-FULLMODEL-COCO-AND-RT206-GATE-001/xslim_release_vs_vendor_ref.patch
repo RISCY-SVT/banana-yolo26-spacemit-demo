@@ -1,11 +1,8 @@
 diff --git a/README.md b/README.md
-index 614ebe9222c7444f6af42873383d680f20e4c780..1e8a8de019993f135f238e0a42d59cde5a540219 100644
+index 614ebe9..1e8a8de 100644
 --- a/README.md
 +++ b/README.md
-@@ -137,21 +137,7 @@ See the [samples](samples/) directory for ready-to-run examples covering ResNet-
- 
- ## Changelog
- 
+@@ -140,15 +140 @@ See the [samples](samples/) directory for ready-to-run examples covering ResNet-
 -For a full list of published versions, see the [Releases](https://github.com/spacemit-com/xslim/releases) page. The summary below is synchronized with that release history; `2.1.1` is the current in-tree development version and has not been published yet.
 -
 -| Version | Highlights |
@@ -22,17 +19,11 @@ index 614ebe9222c7444f6af42873383d680f20e4c780..1e8a8de019993f135f238e0a42d59cde
 -| [2.0.7](https://github.com/spacemit-com/xslim/releases/tag/2.0.7) | Fix FP16 conversion bug on complex models |
 -| [2.0.6](https://github.com/spacemit-com/xslim/releases/tag/2.0.6) | Fix metadata props deletion; default CLI behavior changed to model simplification (use `--dynq` for dynamic quantization) |
 +For a full list of published versions, see the [Releases](https://github.com/spacemit-com/xslim/releases) page.
- 
- ## Contributing
- 
 diff --git a/README_zh.md b/README_zh.md
-index 04af63fbae7ac3f0d92844dae094a63435846665..61e4fbd09f4436369c8374a4219d9682d0fb6056 100644
+index 04af63f..61e4fbd 100644
 --- a/README_zh.md
 +++ b/README_zh.md
-@@ -137,21 +137,7 @@ xslim -i input.onnx -o output.onnx --fp16 --ignore_op_names /model/head/MatMul
- 
- ## 更新日志
- 
+@@ -140,15 +140 @@ xslim -i input.onnx -o output.onnx --fp16 --ignore_op_names /model/head/MatMul
 -完整的已发布版本记录请查阅 [Releases](https://github.com/spacemit-com/xslim/releases) 页面。下表已按该页面同步；`2.1.1` 是当前代码树中的开发版本，尚未正式发布。
 -
 -| 版本 | 主要更新 |
@@ -49,24 +40,18 @@ index 04af63fbae7ac3f0d92844dae094a63435846665..61e4fbd09f4436369c8374a4219d9682
 -| [2.0.7](https://github.com/spacemit-com/xslim/releases/tag/2.0.7) | 修复复杂模型转换 FP16 的 bug |
 -| [2.0.6](https://github.com/spacemit-com/xslim/releases/tag/2.0.6) | 修复 metadata props 被删除的问题；默认 CLI 行为调整为模型结构简化（需显式使用 `--dynq` 进行动态量化） |
 +完整的已发布版本记录请查阅 [Releases](https://github.com/spacemit-com/xslim/releases) 页面。
- 
- ## 参与贡献
- 
 diff --git a/VERSION_NUMBER b/VERSION_NUMBER
-index 3e3c2f1e5edb083aab93646ac7b076daa38516dd..eca07e4c1a8cbc603e5d5c2885dc0f0f9b1eef8d 100644
+index 3e3c2f1..eca07e4 100644
 --- a/VERSION_NUMBER
 +++ b/VERSION_NUMBER
 @@ -1 +1 @@
 -2.1.1
 +2.1.2
 diff --git a/src/xslim/onnx_graph_helper.py b/src/xslim/onnx_graph_helper.py
-index 5bd8f8a96551c4b04aea756c76a673e0fffd2c92..f02c201d20d114065779ac52f255d1137b722eaf 100644
+index 5bd8f8a..f02c201 100644
 --- a/src/xslim/onnx_graph_helper.py
 +++ b/src/xslim/onnx_graph_helper.py
-@@ -20,6 +20,47 @@ from xslim.logger import logger
- from .onnxslim_pass import infer_onnx_model, optimize_onnx_model
- 
- 
+@@ -22,0 +23,41 @@ from .onnxslim_pass import infer_onnx_model, optimize_onnx_model
 +# protobuf single-message hard limit is 2GB. Models whose serialized size
 +# approaches this cannot go through in-memory onnx APIs (SerializeToString,
 +# version_converter, infer_shapes, convert_float_to_float16 with shape infer),
@@ -108,13 +93,7 @@ index 5bd8f8a96551c4b04aea756c76a673e0fffd2c92..f02c201d20d114065779ac52f255d113
 +    return estimate_model_size(onnx_model) >= threshold
 +
 +
- def get_onnx_opset(onnx_model: onnx.ModelProto) -> Dict[str, int]:
-     opset_dict = {}
-     for opset in onnx_model.opset_import:
-@@ -348,6 +389,49 @@ def _normalize_clip_optional_bounds(onnx_model: onnx.ModelProto) -> onnx.ModelPr
-     return onnx_model
- 
- 
+@@ -350,0 +392,43 @@ def _normalize_clip_optional_bounds(onnx_model: onnx.ModelProto) -> onnx.ModelPr
 +def safe_convert_version(onnx_model: onnx.ModelProto, target_version: int) -> onnx.ModelProto:
 +    """opset version conversion that works for models of any size.
 +
@@ -158,57 +137,33 @@ index 5bd8f8a96551c4b04aea756c76a673e0fffd2c92..f02c201d20d114065779ac52f255d113
 +    return converted
 +
 +
- def format_onnx_model(
-     onnx_model: onnx.ModelProto, sim_en: bool = True, min_onnx_version: Optional[int] = None
- ) -> onnx.ModelProto:
-@@ -380,13 +464,11 @@ def format_onnx_model(
-     if target_onnx_version is None and ai_onnx_version < required_onnx_version:
-         logger.warning("convert ai.onnx version {} to {}...".format(
-             ai_onnx_version, required_onnx_version))
+@@ -383,2 +467 @@ def format_onnx_model(
 -        onnx_model = onnx.version_converter.convert_version(
 -            onnx_model, required_onnx_version)
 +        onnx_model = safe_convert_version(onnx_model, required_onnx_version)
-     elif target_onnx_version is not None and ai_onnx_version != target_onnx_version:
-         logger.warning("convert ai.onnx version {} to {}...".format(
-             ai_onnx_version, target_onnx_version))
+@@ -388,2 +471 @@ def format_onnx_model(
 -        onnx_model = onnx.version_converter.convert_version(
 -            onnx_model, target_onnx_version)
 +        onnx_model = safe_convert_version(onnx_model, target_onnx_version)
- 
-     if sim_en:
-         logger.info("simplify onnx model...")
 diff --git a/src/xslim/onnxslim_pass/__init__.py b/src/xslim/onnxslim_pass/__init__.py
-index 5532361bf10bd2887bb3e6572867db97253bf2d0..f65f3c6180b59b93984bcd7c79c4ecd5fd77d444 100644
+index 5532361..f65f3c6 100644
 --- a/src/xslim/onnxslim_pass/__init__.py
 +++ b/src/xslim/onnxslim_pass/__init__.py
-@@ -12,6 +12,9 @@ from .padpool import *
- from .qkv_split import *
- from .reciprocal_div import *
- from .slice_fusion import *
+@@ -14,0 +15,3 @@ from .slice_fusion import *
 +from .split_to_slice import *
 +from .window_partition import *
 +from .window_reverse import *
- from .yolo_decode import *
- 
- # from .swish import *
-@@ -31,5 +34,9 @@ def infer_onnx_model(onnx_model):
- 
- def optimize_onnx_model(onnx_model):
-     onnx_model = onnxslim.slim(onnx_model, skip_fusion_patterns=["FusionGemm"])
+@@ -33,0 +37,2 @@ def optimize_onnx_model(onnx_model):
 +    onnx_model = fuse_window_partition(onnx_model)
 +    onnx_model = fuse_window_reverse(onnx_model)
-     onnx_model = ensure_yolo_decode_function(onnx_model)
+@@ -34,0 +40,2 @@ def optimize_onnx_model(onnx_model):
 +    onnx_model = ensure_window_partition_function(onnx_model)
 +    onnx_model = ensure_window_reverse_function(onnx_model)
-     return onnx_model
 diff --git a/src/xslim/onnxslim_pass/layernorm.py b/src/xslim/onnxslim_pass/layernorm.py
-index e9bff2488378dce740cf8ecff78c188e98e000c3..283b375498e2aadcaac0bc7c499b6518b18f38f3 100644
+index e9bff24..283b375 100644
 --- a/src/xslim/onnxslim_pass/layernorm.py
 +++ b/src/xslim/onnxslim_pass/layernorm.py
-@@ -20,37 +20,109 @@ def _get_reduce_mean_axes(node):
-     return np.asarray(node.inputs[1].values).reshape(-1).tolist()
- 
- 
+@@ -23,16 +23,32 @@ def _get_reduce_mean_axes(node):
 -class LayernormPatternCase0Matcher(PatternMatcher):
 -    def __init__(self, priority):
 -        pattern = Pattern(
@@ -257,10 +212,10 @@ index e9bff2488378dce740cf8ecff78c188e98e000c3..283b375498e2aadcaac0bc7c499b6518
 +            [i for i in range(axis)]
 +            + [i for i in range(axis + 1, ndim)]
 +            + [axis]
-         )
+@@ -40 +56 @@ class LayernormPatternCase0Matcher(PatternMatcher):
 -        super().__init__(pattern, priority)
 +        perm_out = list(np.argsort(perm_in).tolist())
- 
+@@ -42,4 +58,61 @@ class LayernormPatternCase0Matcher(PatternMatcher):
 -    @property
 -    def name(self):
 -        """Returns the name of the fusion pattern, 'FusionLayerNorm'."""
@@ -326,22 +281,12 @@ index e9bff2488378dce740cf8ecff78c188e98e000c3..283b375498e2aadcaac0bc7c499b6518
 +
 +    def _check_variance(self, var_node):
 +        raise NotImplementedError
- 
-     def rewrite(self, opset=MIN_ONNX_OPSET_VERSION):
-         reduce_mean_0_node = self.reduce_mean_0
-         reduce_mean_1_node = self.reduce_mean_1
-         sub_0_node = self.sub_0
+@@ -51 +124 @@ class LayernormPatternCase0Matcher(PatternMatcher):
 -        pow_0_node = self.pow_0
 +        var_0_node = self.var_0
-         add_0_node = self.add_0
+@@ -53 +125,0 @@ class LayernormPatternCase0Matcher(PatternMatcher):
 -        div_node = self.div_0
-         mul_0_node = self.mul_0
-         add_1_node = self.add_1
- 
-@@ -59,55 +131,98 @@ class LayernormPatternCase0Matcher(PatternMatcher):
- 
-         input_variable = reduce_mean_0_node.inputs[0]
- 
+@@ -62,4 +134,5 @@ class LayernormPatternCase0Matcher(PatternMatcher):
 -        if (
 -            isinstance(pow_0_node.inputs[1], osg.Constant)
 -            and pow_0_node.inputs[1].values is not None
@@ -351,20 +296,18 @@ index e9bff2488378dce740cf8ecff78c188e98e000c3..283b375498e2aadcaac0bc7c499b6518
 +
 +        if not (
 +            self._check_variance(var_0_node)
-             and isinstance(add_0_node.inputs[1], osg.Constant)
+@@ -67,2 +140,2 @@ class LayernormPatternCase0Matcher(PatternMatcher):
 -            and isinstance(mul_0_node.inputs[1], osg.Constant)
 -            and isinstance(add_1_node.inputs[1], osg.Constant)
 +            and isinstance(scale_input, osg.Constant)
 +            and isinstance(bias_input, osg.Constant)
-             and axes_0
-             and axes_0 == axes_1
-         ):
+@@ -71,0 +145 @@ class LayernormPatternCase0Matcher(PatternMatcher):
 +            return {}
- 
+@@ -73,2 +147 @@ class LayernormPatternCase0Matcher(PatternMatcher):
 -            norm_scale_constant = mul_0_node.inputs[1]
 -            norm_bias_constant = add_1_node.inputs[1]
 +        output_variable = add_1_node.outputs[0]
- 
+@@ -76,2 +149,11 @@ class LayernormPatternCase0Matcher(PatternMatcher):
 -            axis = max(axes_0)
 -            epsilon = float(add_0_node.inputs[1].values)
 +        # Build the replacement ops first.  _build_ln_ops can bail out with an
@@ -378,20 +321,20 @@ index e9bff2488378dce740cf8ecff78c188e98e000c3..283b375498e2aadcaac0bc7c499b6518
 +        )
 +        if not append_ops:
 +            return {}
- 
+@@ -79,2 +161,3 @@ class LayernormPatternCase0Matcher(PatternMatcher):
 -            if not len(norm_scale_constant.shape) == 1 or not len(norm_bias_constant.shape) == 1:
 -                return {}
 +        input_variable.outputs.remove(reduce_mean_0_node)
 +        input_variable.outputs.remove(sub_0_node)
 +        output_variable.inputs.clear()
- 
+@@ -82,2 +165 @@ class LayernormPatternCase0Matcher(PatternMatcher):
 -            input_variable.outputs.remove(reduce_mean_0_node)
 -            input_variable.outputs.remove(sub_0_node)
 +        return append_ops
- 
+@@ -85,2 +166,0 @@ class LayernormPatternCase0Matcher(PatternMatcher):
 -            output_variable = add_1_node.outputs[0]
 -            output_variable.inputs.clear()
- 
+@@ -88,12 +168,46 @@ class LayernormPatternCase0Matcher(PatternMatcher):
 -            return {
 -                reduce_mean_0_node.name: {
 -                    "op": "LayerNormalization",
@@ -450,32 +393,21 @@ index e9bff2488378dce740cf8ecff78c188e98e000c3..283b375498e2aadcaac0bc7c499b6518
 +
 +class LayernormPatternCase1Matcher(_LayernormMatcherBase):
 +    """Pow variance; scale at mul_0.inputs[0]."""
- 
+@@ -100,0 +215,2 @@ class LayernormPatternCase0Matcher(PatternMatcher):
 +    _scale_index = 0
 +    _check_variance = staticmethod(_check_pow_square)
- 
+@@ -102 +217,0 @@ class LayernormPatternCase0Matcher(PatternMatcher):
 -class LayernormPatternCase1Matcher(PatternMatcher):
-     def __init__(self, priority):
-         pattern = Pattern(
-             """
-             input          input            0 2 reduce_mean_0 sub_0
-             ReduceMean     reduce_mean_0    1+ 1 input sub_0
+@@ -108,3 +223,3 @@ class LayernormPatternCase1Matcher(PatternMatcher):
 -            Sub            sub_0            2 1 input reduce_mean_0 pow_0
 -            Pow            pow_0            2 1 sub_0 ? reduce_mean_1
 -            ReduceMean     reduce_mean_1    1+ 1 pow_0 add_0
 +            Sub            sub_0            2 1 input reduce_mean_0 var_0
 +            Pow            var_0            2 1 sub_0 ? reduce_mean_1
 +            ReduceMean     reduce_mean_1    1+ 1 var_0 add_0
-             Add            add_0            2 1 reduce_mean_1 ? sqrt_0
-             Sqrt           sqrt_0           1 1 add_0 div_0
-             Div            div_0            2 1 sub_0 sqrt_0 mul_0
-@@ -120,100 +235,72 @@ class LayernormPatternCase1Matcher(PatternMatcher):
- 
-     @property
-     def name(self):
+@@ -123 +237,0 @@ class LayernormPatternCase1Matcher(PatternMatcher):
 -        """Returns the name of the fusion pattern, 'FusionLayerNorm'."""
-         return "FusionLayerNormCase1"
- 
+@@ -126,9 +239,0 @@ class LayernormPatternCase1Matcher(PatternMatcher):
 -    def rewrite(self, opset=11):
 -        reduce_mean_0_node = self.reduce_mean_0
 -        reduce_mean_1_node = self.reduce_mean_1
@@ -485,17 +417,17 @@ index e9bff2488378dce740cf8ecff78c188e98e000c3..283b375498e2aadcaac0bc7c499b6518
 -        div_node = self.div_0
 -        mul_0_node = self.mul_0
 -        add_1_node = self.add_1
- 
+@@ -136,2 +241,2 @@ class LayernormPatternCase1Matcher(PatternMatcher):
 -        axes_0 = _get_reduce_mean_axes(reduce_mean_0_node)
 -        axes_1 = _get_reduce_mean_axes(reduce_mean_1_node)
 +class LayernormMulSquareCase0Matcher(_LayernormMatcherBase):
 +    """Mul(sub, sub) variance variant; scale at mul_0.inputs[1].
- 
+@@ -139 +244,3 @@ class LayernormPatternCase1Matcher(PatternMatcher):
 -        input_variable = reduce_mean_0_node.inputs[0]
 +    Some exporters emit variance as ``Mul(x - mean, x - mean)`` instead of
 +    ``Pow(x - mean, 2)``; the Pow-based matchers miss those subgraphs.
 +    """
- 
+@@ -141,10 +248,2 @@ class LayernormPatternCase1Matcher(PatternMatcher):
 -        if (
 -            isinstance(pow_0_node.inputs[1], osg.Constant)
 -            and pow_0_node.inputs[1].values is not None
@@ -508,7 +440,7 @@ index e9bff2488378dce740cf8ecff78c188e98e000c3..283b375498e2aadcaac0bc7c499b6518
 -        ):
 +    _scale_index = 1
 +    _check_variance = staticmethod(_check_mul_self_square)
- 
+@@ -152,64 +251,50 @@ class LayernormPatternCase1Matcher(PatternMatcher):
 -            norm_scale_constant = mul_0_node.inputs[0]
 -            norm_bias_constant = add_1_node.inputs[1]
 -
@@ -623,20 +555,14 @@ index e9bff2488378dce740cf8ecff78c188e98e000c3..283b375498e2aadcaac0bc7c499b6518
 +    @property
 +    def name(self):
 +        return "FusionLayerNormMulSquareCase1"
- 
- 
- register_fusion_pattern(LayernormPatternCase0Matcher(1))
- register_fusion_pattern(LayernormPatternCase1Matcher(1))
+@@ -219,0 +305,2 @@ register_fusion_pattern(LayernormPatternCase1Matcher(1))
 +register_fusion_pattern(LayernormMulSquareCase0Matcher(1))
 +register_fusion_pattern(LayernormMulSquareCase1Matcher(1))
 diff --git a/src/xslim/onnxslim_pass/qkv_split.py b/src/xslim/onnxslim_pass/qkv_split.py
-index 86227c3b930c79f5eb12adf30bc30c79951a4070..553585008bb53504210405697139acf7c43a0710 100644
+index 86227c3..5535850 100644
 --- a/src/xslim/onnxslim_pass/qkv_split.py
 +++ b/src/xslim/onnxslim_pass/qkv_split.py
-@@ -43,6 +43,24 @@ def _split_qkv_bias(bias_values):
-     ]
- 
- 
+@@ -45,0 +46,18 @@ def _split_qkv_bias(bias_values):
 +def _split_contiguous_qkv_weight(weight_values):
 +    weight_array = np.asarray(weight_values)
 +    qkv_num = weight_array.shape[1] // 3
@@ -655,13 +581,7 @@ index 86227c3b930c79f5eb12adf30bc30c79951a4070..553585008bb53504210405697139acf7
 +    ]
 +
 +
- def _get_add_constant_and_tensor(add_node):
-     if len(add_node.inputs) != 2:
-         return None, None
-@@ -60,6 +78,73 @@ def _get_add_constant_and_tensor(add_node):
-     return None, None
- 
- 
+@@ -62,0 +81,67 @@ def _get_add_constant_and_tensor(add_node):
 +def _get_constant_int_values(tensor):
 +    if not isinstance(tensor, osg.Constant) or tensor.values is None:
 +        return None
@@ -729,13 +649,7 @@ index 86227c3b930c79f5eb12adf30bc30c79951a4070..553585008bb53504210405697139acf7
 +    return list(getattr(variable, "outputs", []) or [])
 +
 +
- class MatMulQKVSplitPatternMatcher(PatternMatcher):
-     def __init__(self, priority):
-         pattern = Pattern(
-@@ -204,4 +289,210 @@ class MatMulQKVSplitPatternMatcher(PatternMatcher):
-         return new_ops
- 
- 
+@@ -206,0 +292,205 @@ class MatMulQKVSplitPatternMatcher(PatternMatcher):
 +class MatMulReshapeTransposeSplitQKVSqueezePatternMatcher(PatternMatcher):
 +    def __init__(self, priority):
 +        pattern = Pattern(
@@ -941,16 +855,13 @@ index 86227c3b930c79f5eb12adf30bc30c79951a4070..553585008bb53504210405697139acf7
 +        return new_ops
 +
 +
- register_fusion_pattern(MatMulQKVSplitPatternMatcher(1))
+@@ -207,0 +498 @@ register_fusion_pattern(MatMulQKVSplitPatternMatcher(1))
 +register_fusion_pattern(MatMulReshapeTransposeSplitQKVSqueezePatternMatcher(1))
 diff --git a/src/xslim/onnxslim_pass/slice_fusion.py b/src/xslim/onnxslim_pass/slice_fusion.py
-index 108648464a669705bce71dbeff8997b13ab1320b..c1001301e959b1c452d8c5b21de9656cc303e8eb 100644
+index 1086484..c100130 100644
 --- a/src/xslim/onnxslim_pass/slice_fusion.py
 +++ b/src/xslim/onnxslim_pass/slice_fusion.py
-@@ -162,10 +162,11 @@ def _rewrite_slice_to_split(anchor_slice):
-     )
- 
-     for slice_node in slice_group["nodes"]:
+@@ -165,4 +165,5 @@ def _rewrite_slice_to_split(anchor_slice):
 -        if slice_node in data_input.outputs:
 -            data_input.outputs.remove(slice_node)
 -
@@ -960,12 +871,9 @@ index 108648464a669705bce71dbeff8997b13ab1320b..c1001301e959b1c452d8c5b21de9656c
 +        # an upstream multi-output Split look like it has only one consumer,
 +        # causing FusionSingleConsumerSplitToSlice to remove that producer in
 +        # the same pass. Graph cleanup will remove these output-less nodes.
-         slice_node.outputs.clear()
- 
-     return {
 diff --git a/src/xslim/onnxslim_pass/split_to_slice.py b/src/xslim/onnxslim_pass/split_to_slice.py
 new file mode 100644
-index 0000000000000000000000000000000000000000..7fa4433d042ff39efc01c00457e73755638f6750
+index 0000000..7fa4433
 --- /dev/null
 +++ b/src/xslim/onnxslim_pass/split_to_slice.py
 @@ -0,0 +1,172 @@
@@ -1143,7 +1051,7 @@ index 0000000000000000000000000000000000000000..7fa4433d042ff39efc01c00457e73755
 +register_fusion_pattern(SingleConsumerSplitToSlicePatternMatcher(1))
 diff --git a/src/xslim/onnxslim_pass/window_partition.py b/src/xslim/onnxslim_pass/window_partition.py
 new file mode 100644
-index 0000000000000000000000000000000000000000..f1b239bfeda3436086bbfc0b08dc7a068bba0580
+index 0000000..f1b239b
 --- /dev/null
 +++ b/src/xslim/onnxslim_pass/window_partition.py
 @@ -0,0 +1,206 @@
@@ -1355,7 +1263,7 @@ index 0000000000000000000000000000000000000000..f1b239bfeda3436086bbfc0b08dc7a06
 +    return ensure_window_partition_function(fused_model)
 diff --git a/src/xslim/onnxslim_pass/window_reverse.py b/src/xslim/onnxslim_pass/window_reverse.py
 new file mode 100644
-index 0000000000000000000000000000000000000000..804e9ac6947ff1a90253c0f1d54cde6849dec170
+index 0000000..804e9ac
 --- /dev/null
 +++ b/src/xslim/onnxslim_pass/window_reverse.py
 @@ -0,0 +1,207 @@
@@ -1567,13 +1475,10 @@ index 0000000000000000000000000000000000000000..804e9ac6947ff1a90253c0f1d54cde68
 +    fused_model = osg.export_onnx(graph)
 +    return ensure_window_reverse_function(fused_model)
 diff --git a/src/xslim/ppq_decorator/ppq/executor/op/torch/default.py b/src/xslim/ppq_decorator/ppq/executor/op/torch/default.py
-index 929107d6fa414ed60ecf0a1f359b0c4342da1f47..e8300d7d9a2b5073d5dd716fa3ca88f0b8a682ab 100755
+index 929107d..e8300d7 100755
 --- a/src/xslim/ppq_decorator/ppq/executor/op/torch/default.py
 +++ b/src/xslim/ppq_decorator/ppq/executor/op/torch/default.py
-@@ -1783,28 +1783,20 @@ def _NMS_forward(op: Operation, values: List[torch.Tensor], ctx: TorchBackendCon
- def ReduceMax_forward(
-     op: Operation, values: List[torch.Tensor], ctx: TorchBackendContext = None, **kwargs
- ) -> torch.Tensor:
+@@ -1786,14 +1786,6 @@ def ReduceMax_forward(
 -    [input_value] = values
 -    dim = op.attributes.get("axes", None)
 -    keepdim = bool(op.attributes.get("keepdims", 1))
@@ -1594,67 +1499,35 @@ index 929107d6fa414ed60ecf0a1f359b0c4342da1f47..e8300d7d9a2b5073d5dd716fa3ca88f0
 +    if dim is None:
 +        return _reshape_reduce_all_output(torch.max(input_value), input_value, keepdim)
 +    return torch.amax(input_value, dim=dim, keepdim=keepdim)
- 
- 
- def _normalize_reduce_axes(axes):
+@@ -1802,0 +1795,2 @@ def _normalize_reduce_axes(axes):
 +    if axes is None:
 +        return None
-     if isinstance(axes, (int, float)):
+@@ -1804,4 +1798,2 @@ def _normalize_reduce_axes(axes):
 -        axes = [axes]
 -    if isinstance(axes, list) and axes:
 -        axes = tuple(int(axis) for axis in axes)
 -    return axes
 +        return (int(axes),)
 +    return tuple(int(axis) for axis in axes)
- 
- 
- def _get_reduce_axes_from_input(axis_value: torch.Tensor):
-@@ -1823,7 +1815,7 @@ def _get_reduce_inputs(op: Operation, values: List[torch.Tensor], min_input_opse
-         axes = op.attributes.get("axes", None)
-         noop_with_empty_axes = 0
-     axes = _normalize_reduce_axes(axes)
+@@ -1826 +1818 @@ def _get_reduce_inputs(op: Operation, values: List[torch.Tensor], min_input_opse
 -    if axes == []:
 +    if axes is None or len(axes) == 0:
-         if noop_with_empty_axes:
-             return input_value, axes, bool(op.attributes.get("keepdims", 1)), True
-         axes = None
-@@ -1839,6 +1831,7 @@ def _reshape_reduce_all_output(output: torch.Tensor, input_value: torch.Tensor,
- def _reduce_prod(input_value: torch.Tensor, dim, keepdim: bool):
-     if isinstance(dim, int):
-         dim = (dim,)
+@@ -1841,0 +1834 @@ def _reduce_prod(input_value: torch.Tensor, dim, keepdim: bool):
 +    dim = tuple(axis if axis >= 0 else axis + input_value.dim() for axis in dim)
-     output = input_value
-     for axis in sorted(dim, reverse=True):
-         output = torch.prod(output, dim=axis, keepdim=keepdim)
-@@ -1865,7 +1858,9 @@ def ReduceProd_forward(op: Operation, values: List[torch.Tensor], ctx: TorchBack
- 
- def ReduceL1_forward(op: Operation, values: List[torch.Tensor], ctx: TorchBackendContext = None, **kwargs):
-     input_value, dim, keepdim, noop = _get_reduce_inputs(op, values, min_input_opset=18)
+@@ -1868 +1861,3 @@ def ReduceL1_forward(op: Operation, values: List[torch.Tensor], ctx: TorchBacken
 -    if noop or input_value.numel() == 0:
 +    if noop:
 +        return torch.abs(input_value)
 +    if input_value.numel() == 0:
-         return input_value
-     if dim is None:
-         return _reshape_reduce_all_output(torch.sum(torch.abs(input_value)), input_value, keepdim)
-@@ -1874,9 +1869,11 @@ def ReduceL1_forward(op: Operation, values: List[torch.Tensor], ctx: TorchBacken
- 
- def ReduceSumSquare_forward(op: Operation, values: List[torch.Tensor], ctx: TorchBackendContext = None, **kwargs):
-     input_value, dim, keepdim, noop = _get_reduce_inputs(op, values, min_input_opset=18)
+@@ -1877,2 +1871,0 @@ def ReduceSumSquare_forward(op: Operation, values: List[torch.Tensor], ctx: Torc
 -    if noop or input_value.numel() == 0:
 -        return input_value
-     square = torch.square(input_value)
+@@ -1879,0 +1873,4 @@ def ReduceSumSquare_forward(op: Operation, values: List[torch.Tensor], ctx: Torc
 +    if noop:
 +        return square
 +    if input_value.numel() == 0:
 +        return input_value
-     if dim is None:
-         return _reshape_reduce_all_output(torch.sum(square), input_value, keepdim)
-     return torch.sum(square, dim=dim, keepdim=keepdim)
-@@ -1896,72 +1893,21 @@ def ReduceLogSumExp_forward(op: Operation, values: List[torch.Tensor], ctx: Torc
- 
- 
- def ReduceMean_forward(op: Operation, values: List[torch.Tensor], ctx: TorchBackendContext = None, **kwargs):
+@@ -1899,27 +1896,6 @@ def ReduceMean_forward(op: Operation, values: List[torch.Tensor], ctx: TorchBack
 -    if op.opset.onnx_opset_version() >= 18:
 -        ASSERT_NUM_OF_INPUT(op=op, values=values, min_num_of_input=1, max_num_of_input=2)
 -        input_value, dim = values[0], op.attributes.get("axes", None)
@@ -1688,9 +1561,7 @@ index 929107d6fa414ed60ecf0a1f359b0c4342da1f47..e8300d7d9a2b5073d5dd716fa3ca88f0
 +    if dim is None:
 +        return _reshape_reduce_all_output(torch.mean(input_value), input_value, keepdim)
 +    return torch.mean(input_value, dim=dim, keepdim=keepdim)
- 
- 
- def ReduceSum_forward(op: Operation, values: List[torch.Tensor], ctx: TorchBackendContext = None, **kwargs):
+@@ -1929,28 +1905,3 @@ def ReduceSum_forward(op: Operation, values: List[torch.Tensor], ctx: TorchBacke
 -    if op.opset.onnx_opset_version() >= 13:
 -        ASSERT_NUM_OF_INPUT(op=op, values=values, min_num_of_input=1, max_num_of_input=2)
 -        values = VALUE_TO_EXECUTING_DEVICE(op=op, ctx=ctx, values=values)
@@ -1722,7 +1593,7 @@ index 929107d6fa414ed60ecf0a1f359b0c4342da1f47..e8300d7d9a2b5073d5dd716fa3ca88f0
 +    input_value, dim, keepdim, noop = _get_reduce_inputs(op, values, min_input_opset=13)
 +    if noop or input_value.numel() == 0:
 +        return input_value
-     if dim is None:
+@@ -1958,7 +1909,2 @@ def ReduceSum_forward(op: Operation, values: List[torch.Tensor], ctx: TorchBacke
 -        #  The default is to reduce over all the dimensions of the input tensor
 -        output = torch.sum(input_value)
 -        if keepdim:
@@ -1732,13 +1603,7 @@ index 929107d6fa414ed60ecf0a1f359b0c4342da1f47..e8300d7d9a2b5073d5dd716fa3ca88f0
 -    return output
 +        return _reshape_reduce_all_output(torch.sum(input_value), input_value, keepdim)
 +    return torch.sum(input_value, dim=dim, keepdim=keepdim)
- 
- 
- def Shape_forward(op: Operation, values: List[torch.Tensor], ctx: TorchBackendContext = None, **kwargs) -> torch.Tensor:
-@@ -2533,21 +2479,15 @@ def Softmax_forward(
- 
- 
- def ReduceL2_forward(op: Operation, values: List[torch.Tensor], ctx: TorchBackendContext = None, **kwargs):
+@@ -2536,15 +2482,9 @@ def ReduceL2_forward(op: Operation, values: List[torch.Tensor], ctx: TorchBacken
 -    ASSERT_NUM_OF_INPUT(op=op, values=values, min_num_of_input=1, max_num_of_input=2)
 -    input_value, axis = values[0], op.attributes.get("axes", None)
 -    if len(values) > 1:
@@ -1763,49 +1628,29 @@ index 929107d6fa414ed60ecf0a1f359b0c4342da1f47..e8300d7d9a2b5073d5dd716fa3ca88f0
 +        output = torch.linalg.vector_norm(input_value)
 +        return _reshape_reduce_all_output(output, input_value, keepdim)
 +    return torch.linalg.vector_norm(input_value, dim=dim, keepdim=keepdim)
- 
- 
- def PRelu_forward(op: Operation, values: List[torch.Tensor], ctx: TorchBackendContext = None, **kwargs):
 diff --git a/src/xslim/ppq_decorator/ppq/parser/onnx_parser.py b/src/xslim/ppq_decorator/ppq/parser/onnx_parser.py
-index e79455e4d1bcb02a5f7ffc7c0ac04212d99e2fa9..4166c43c7ce5349fb3cef33592dfc0b6b4e9cc60 100644
+index e79455e..4166c43 100644
 --- a/src/xslim/ppq_decorator/ppq/parser/onnx_parser.py
 +++ b/src/xslim/ppq_decorator/ppq/parser/onnx_parser.py
-@@ -4,7 +4,8 @@ import onnx
- from onnx import helper, numpy_helper
- from xslim.defs import GLOBAL_FUNCTIONS_MAPPING, MIN_ONNX_OPSET_VERSION
- 
+@@ -7 +7,2 @@ from xslim.defs import GLOBAL_FUNCTIONS_MAPPING, MIN_ONNX_OPSET_VERSION
 -from ..core import DEFAULT_OPSET_DOMAIN, GRAPH_OPSET_ATTRIB, NetworkFramework, is_file_exist
 +from ..core import (DEFAULT_OPSET_DOMAIN, GRAPH_OPSET_ATTRIB, DataType,
 +                    NetworkFramework, is_file_exist)
- from ..IR import BaseGraph, GraphBuilder, Operation, Opset, Variable
- 
- 
-@@ -107,8 +108,10 @@ class OnnxParser(GraphBuilder):
-                     # The attribute of 'Constant' node is a value, needs to convert to numpy array
-                     value = numpy_helper.to_array(value).copy()
-                 if op.type == "Cast":
+@@ -110,2 +111,4 @@ class OnnxParser(GraphBuilder):
 -                    # The attribute of 'Cast' node is data type (represented in int), need to convert to numpy data type
 -                    value = helper.tensor_dtype_to_np_dtype(value)
 +                    # Cast execution uses PPQ's internal DataType enum.
 +                    value = DataType.convert_from_numpy(
 +                        helper.tensor_dtype_to_np_dtype(value)
 +                    )
-                 op.attributes[key] = value
- 
-         graph_initializers = []
 diff --git a/src/xslim/quantizer/convert_to_fp16.py b/src/xslim/quantizer/convert_to_fp16.py
-index bd56d179359429e02b1750f7927d04a1329a1917..4881cc5d831abd060741ac4188b36556756693b4 100644
+index bd56d17..4881cc5 100644
 --- a/src/xslim/quantizer/convert_to_fp16.py
 +++ b/src/xslim/quantizer/convert_to_fp16.py
-@@ -7,10 +7,55 @@ import numpy as np
- from onnxconverter_common import float16 as convert_float_to_float16
- from xslim.logger import logger
- import onnx_graphsurgeon as osg
+@@ -10 +10 @@ import onnx_graphsurgeon as osg
 -from ..onnx_graph_helper import format_onnx_model
 +from ..onnx_graph_helper import format_onnx_model, is_large_model
- from ..onnxslim_pass import infer_onnx_model
- from xslim.defs import MIN_ONNX_OPSET_VERSION, XQUANT_CONFIG
- from datetime import datetime
+@@ -13,0 +14,45 @@ from datetime import datetime
 +import os
 +import tempfile
 +from onnx.shape_inference import infer_shapes_path
@@ -1851,15 +1696,9 @@ index bd56d179359429e02b1750f7927d04a1329a1917..4881cc5d831abd060741ac4188b36556
 +        op_block_list=op_block_list,
 +        node_block_list=node_block_list,
 +    )
- 
- 
- def legalize_fp16_graph(osg_graph: osg.Graph):
-@@ -115,15 +160,19 @@ def convert_to_fp16_onnx_model(
-                                "Range",
-                                "CumSum"}
- 
+@@ -117,0 +163 @@ def convert_to_fp16_onnx_model(
 +    _op_block_list = list(default_ignore_op_types or set(ignore_op_types_list))
-     try:
+@@ -119,8 +165,11 @@ def convert_to_fp16_onnx_model(
 -        model_fp16 = convert_float_to_float16.convert_float_to_float16(
 -            model_opt,
 -            keep_io_types=True,
@@ -1879,28 +1718,16 @@ index bd56d179359429e02b1750f7927d04a1329a1917..4881cc5d831abd060741ac4188b36556
 +                op_block_list=_op_block_list,
 +                node_block_list=ignore_node_names_list,
 +            )
-     except Exception as e:
-         logger.info(f"FP16 Convert Failed!: {e}")
-         raise
 diff --git a/src/xslim/xslim_pipeline.py b/src/xslim/xslim_pipeline.py
-index c58474d7cafe92370876f3e70186c17018f7bfb5..c5a2471b5dce4794d69e7bfe2932ea1914dd8aa7 100644
+index c58474d..c5a2471 100644
 --- a/src/xslim/xslim_pipeline.py
 +++ b/src/xslim/xslim_pipeline.py
-@@ -17,8 +17,8 @@ from xslim.logger import logger
- from . import CalibrationCollect, XSlimDataset
- from .analyse import statistical_analyse
- from .defs import XQUANT_CONFIG
+@@ -20,2 +20,2 @@ from .defs import XQUANT_CONFIG
 -from .onnx_graph_helper import (format_onnx_model, merge_onnx_model,
 -                                truncate_onnx_model)
 +from .onnx_graph_helper import (format_onnx_model, is_large_model,
 +                                merge_onnx_model, truncate_onnx_model)
- from .optimizer import GraphLegalized
- from .ppq_decorator import (DISPATCHER_TABLE, BaseGraph, GraphDispatcher,
-                             OnnxParser, ONNXRUNTIMExporter, TargetPlatform,
-@@ -279,7 +279,22 @@ def quantize_onnx_model(
- 
-     quant_onnx_model.metadata_props.extend(ori_onnx_model.metadata_props)
-     quant_onnx_model.ir_version = max(9, ori_onnx_model.ir_version)
+@@ -282 +282,16 @@ def quantize_onnx_model(
 -    onnx.save(quant_onnx_model, os.path.join(working_dir, "{}.onnx".format(output_prefix)))
 +    _out_path = os.path.join(working_dir, "{}.onnx".format(output_prefix))
 +    if is_large_model(quant_onnx_model):
@@ -1918,17 +1745,11 @@ index c58474d7cafe92370876f3e70186c17018f7bfb5..c5a2471b5dce4794d69e7bfe2932ea19
 +        )
 +    else:
 +        onnx.save(quant_onnx_model, _out_path)
- 
-     logger.info("quantization eplased time {:.2f} s".format(time.time() - time_start))
-     return quant_onnx_model
 diff --git a/tests/test_onnxslim_pass.py b/tests/test_onnxslim_pass.py
-index e1e414cb45d1db0e4a87aeb00e60b001d71cc09b..e4444a7ca71ca8a879dda0131cc6b2c6850fec4e 100644
+index e1e414c..e4444a7 100644
 --- a/tests/test_onnxslim_pass.py
 +++ b/tests/test_onnxslim_pass.py
-@@ -295,6 +295,93 @@ class TestOnnxSlimPass(unittest.TestCase):
-             graph, opset_imports=[helper.make_opsetid("", 24)]
-         )
- 
+@@ -297,0 +298,87 @@ class TestOnnxSlimPass(unittest.TestCase):
 +    @staticmethod
 +    def _build_layernorm_mul_square_pattern_model():
 +        """Channel-axis LayerNorm decomposed with Mul(sub, sub) self-square."""
@@ -2016,13 +1837,7 @@ index e1e414cb45d1db0e4a87aeb00e60b001d71cc09b..e4444a7ca71ca8a879dda0131cc6b2c6
 +            graph, opset_imports=[helper.make_opsetid("", 24)]
 +        )
 +
-     @staticmethod
-     def _build_rmsnorm_pattern_model_with_axes_input():
-         x = helper.make_tensor_value_info("x", TensorProto.FLOAT, [1, 2, 4])
-@@ -802,6 +889,80 @@ class TestOnnxSlimPass(unittest.TestCase):
-         )
-         return onnx.shape_inference.infer_shapes(model)
- 
+@@ -804,0 +892,74 @@ class TestOnnxSlimPass(unittest.TestCase):
 +    @staticmethod
 +    def _build_matmul_reshape_transpose_split_squeeze_qkv_pattern_model():
 +        x = helper.make_tensor_value_info("x", TensorProto.FLOAT, [1, 2, 4])
@@ -2097,13 +1912,7 @@ index e1e414cb45d1db0e4a87aeb00e60b001d71cc09b..e4444a7ca71ca8a879dda0131cc6b2c6
 +        )
 +        return onnx.shape_inference.infer_shapes(model)
 +
-     @staticmethod
-     def _build_slice_sibling_non_split_pattern_model():
-         x = helper.make_tensor_value_info("x", TensorProto.FLOAT, [1, 64, 40, 40])
-@@ -928,6 +1089,134 @@ class TestOnnxSlimPass(unittest.TestCase):
-         )
-         return onnx.shape_inference.infer_shapes(model)
- 
+@@ -930,0 +1092,128 @@ class TestOnnxSlimPass(unittest.TestCase):
 +    @staticmethod
 +    def _build_single_consumer_split_model():
 +        x = helper.make_tensor_value_info("x", TensorProto.FLOAT, [1, 5, 2])
@@ -2232,13 +2041,7 @@ index e1e414cb45d1db0e4a87aeb00e60b001d71cc09b..e4444a7ca71ca8a879dda0131cc6b2c6
 +        )
 +        return onnx.shape_inference.infer_shapes(model)
 +
-     def test_infer_onnx_model_restores_shape_info_for_float16_model(self):
-         onnxslim_pass_module = _load_onnxslim_pass_module()
-         model = self._build_add_model()
-@@ -1049,6 +1338,96 @@ class TestOnnxSlimPass(unittest.TestCase):
-         self.assertAlmostEqual(attrs["epsilon"], 1e-5, places=7)
-         self.assertEqual(layernorm_node.domain, "")
- 
+@@ -1051,0 +1341,90 @@ class TestOnnxSlimPass(unittest.TestCase):
 +    def test_optimize_onnx_model_fuses_layernorm_mul_square_pattern(self):
 +        onnxslim_pass_module = _load_onnxslim_pass_module()
 +        model = self._build_layernorm_mul_square_pattern_model()
@@ -2329,13 +2132,7 @@ index e1e414cb45d1db0e4a87aeb00e60b001d71cc09b..e4444a7ca71ca8a879dda0131cc6b2c6
 +        ).run(None, feed)[0]
 +        np.testing.assert_allclose(out, ref, rtol=1e-4, atol=1e-5)
 +
-     def test_optimize_onnx_model_fuses_rmsnorm_with_axes_input(self):
-         onnxslim_pass_module = _load_onnxslim_pass_module()
-         model = self._build_rmsnorm_pattern_model_with_axes_input()
-@@ -1254,6 +1633,91 @@ class TestOnnxSlimPass(unittest.TestCase):
-             )
-         )
- 
+@@ -1256,0 +1636,85 @@ class TestOnnxSlimPass(unittest.TestCase):
 +    def test_optimize_onnx_model_fuses_matmul_reshape_transpose_split_squeeze_qkv_pattern(self):
 +        onnxslim_pass_module = _load_onnxslim_pass_module()
 +        model = self._build_matmul_reshape_transpose_split_squeeze_qkv_pattern_model()
@@ -2421,13 +2218,7 @@ index e1e414cb45d1db0e4a87aeb00e60b001d71cc09b..e4444a7ca71ca8a879dda0131cc6b2c6
 +        ]
 +        self.assertEqual(transpose_attrs, [{"perm": [0, 2, 1, 3]}] * 3)
 +
-     def test_optimize_onnx_model_fuses_sibling_slices_to_split(self):
-         onnxslim_pass_module = _load_onnxslim_pass_module()
-         model = self._build_slice_sibling_split_consumer_model()
-@@ -1360,6 +1824,51 @@ class TestOnnxSlimPass(unittest.TestCase):
-             ["Slice", "Slice"],
-         )
- 
+@@ -1362,0 +1827,45 @@ class TestOnnxSlimPass(unittest.TestCase):
 +    def test_optimize_onnx_model_rewrites_single_live_output_split_to_slice(self):
 +        onnxslim_pass_module = _load_onnxslim_pass_module()
 +        model = self._build_single_consumer_split_model()
@@ -2473,26 +2264,13 @@ index e1e414cb45d1db0e4a87aeb00e60b001d71cc09b..e4444a7ca71ca8a879dda0131cc6b2c6
 +            "Split", [node.op_type for node in optimized_model.graph.node]
 +        )
 +
-     def test_build_yolo_decode_function_uses_dynamic_bbox_reshape_shape(self):
-         _load_onnxslim_pass_module()
-         yolo_decode_module = sys.modules["xslim.onnxslim_pass.yolo_decode"]
-@@ -1591,10 +2100,10 @@ class TestOnnxSlimPass(unittest.TestCase):
-                 model, sim_en=False
-             )
- 
+@@ -1594 +2103 @@ class TestOnnxSlimPass(unittest.TestCase):
 -        conv_transpose_node = formatted_model.graph.node[0]
 +        convtranspose_node = formatted_model.graph.node[0]
-         attrs = {
-             attr.name: helper.get_attribute_value(attr)
+@@ -1597 +2106 @@ class TestOnnxSlimPass(unittest.TestCase):
 -            for attr in conv_transpose_node.attribute
 +            for attr in convtranspose_node.attribute
-         }
-         self.assertEqual(list(attrs["kernel_shape"]), [3, 3])
- 
-@@ -1729,5 +2238,144 @@ class TestOnnxSlimPass(unittest.TestCase):
-         onnx.checker.check_model(formatted_model)
- 
- 
+@@ -1731,0 +2241,139 @@ class TestOnnxSlimPass(unittest.TestCase):
 +    @staticmethod
 +    def _build_window_partition_pattern_model():
 +        x = helper.make_tensor_value_info("x", TensorProto.FLOAT, [1, 14, 14, 96])
@@ -2632,41 +2410,22 @@ index e1e414cb45d1db0e4a87aeb00e60b001d71cc09b..e4444a7ca71ca8a879dda0131cc6b2c6
 +        )
 +
 +
- if __name__ == "__main__":
-     unittest.main()
 diff --git a/tests/test_torch_ops.py b/tests/test_torch_ops.py
-index 92764c1c0156191f2c9e081c36b3c02f4ab5bc3a..e437c7269757d71760af9a267ec0cd6952a73f43 100644
+index 92764c1..e437c72 100644
 --- a/tests/test_torch_ops.py
 +++ b/tests/test_torch_ops.py
-@@ -4,7 +4,9 @@ import os
- import sys
- import unittest
- 
+@@ -6,0 +7 @@ import unittest
 +import onnx
- import torch
+@@ -7,0 +9 @@ import torch
 +from onnx import TensorProto, helper
- 
- sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
- 
-@@ -19,6 +21,7 @@ from xslim.ppq_decorator.ppq.executor.op import (DEFAULT_BACKEND_TABLE,
- from xslim.ppq_decorator.ppq.executor.torch import TorchExecutor
- from xslim.ppq_decorator.ppq.IR import BaseGraph, Operation, Variable
- from xslim.ppq_decorator.ppq.IR.base.opdef import DEFAULT_SOCKET_TABLE, Opset
+@@ -21,0 +24 @@ from xslim.ppq_decorator.ppq.IR.base.opdef import DEFAULT_SOCKET_TABLE, Opset
 +from xslim.ppq_decorator.ppq.parser.onnx_parser import OnnxParser
- from xslim.quantizer.xslim import XSlimQuantizer
- 
- 
-@@ -241,12 +244,83 @@ class TestReductionOps(unittest.TestCase):
-     def test_reduce_l2_with_axes_input(self):
-         op = make_op("reduce_l2", "ReduceL2", attributes={"keepdims": 1}, num_inputs=2)
-         op.opset = Opset(version=18)
+@@ -244,2 +247,2 @@ class TestReductionOps(unittest.TestCase):
 -        x = torch.tensor([[3.0, 4.0], [5.0, 12.0]])
 -        axes = torch.tensor([1], dtype=torch.int64)
 +        x = torch.arange(1.0, 49.0).reshape(2, 2, 3, 4)
 +        axes = torch.tensor([1, 2, 3], dtype=torch.int64)
- 
-         result = DEFAULT_BACKEND_TABLE["ReduceL2"](op, [x, axes], CTX)
- 
+@@ -249 +252,72 @@ class TestReductionOps(unittest.TestCase):
 -        torch.testing.assert_close(result, torch.linalg.vector_norm(x, ord=2, dim=[1], keepdim=True))
 +        torch.testing.assert_close(
 +            result,
@@ -2740,13 +2499,7 @@ index 92764c1c0156191f2c9e081c36b3c02f4ab5bc3a..e437c7269757d71760af9a267ec0cd69
 +        result = DEFAULT_BACKEND_TABLE["ReduceProd"](op, [x, axes], CTX)
 +
 +        torch.testing.assert_close(result, torch.prod(x.reshape(2, -1), dim=1))
- 
-     def test_additional_reduce_ops(self):
-         x = torch.tensor([[1.0, -2.0, 3.0], [4.0, -5.0, 6.0]])
-@@ -493,6 +567,24 @@ class TestOtherOps(unittest.TestCase):
-         result = DEFAULT_BACKEND_TABLE["Cast"](op, [x], CTX)
-         self.assertEqual(result.dtype, torch.float32)
- 
+@@ -495,0 +570,18 @@ class TestOtherOps(unittest.TestCase):
 +    def test_parsed_onnx_cast_uses_internal_data_type(self):
 +        x_info = helper.make_tensor_value_info("x", TensorProto.INT64, [3])
 +        y_info = helper.make_tensor_value_info("y", TensorProto.FLOAT, [3])
@@ -2765,18 +2518,9 @@ index 92764c1c0156191f2c9e081c36b3c02f4ab5bc3a..e437c7269757d71760af9a267ec0cd69
 +        )[0]
 +        self.assertEqual(result.dtype, torch.float32)
 +
-     def test_constant_of_shape(self):
-         op = make_op("const_shape", "ConstantOfShape", attributes={"value": torch.tensor([0.0])})
-         shape = torch.tensor([2, 3], dtype=torch.int64)
-@@ -555,9 +647,9 @@ class TestQuantizerConfig(unittest.TestCase):
-             ("ReduceL2", 18),
-             ("ReduceLogSum", 18),
-             ("ReduceLogSumExp", 18),
+@@ -558 +650 @@ class TestQuantizerConfig(unittest.TestCase):
 -            ("ReduceMax", 20),
 +            ("ReduceMax", 18),
-             ("ReduceMean", 18),
+@@ -560 +652 @@ class TestQuantizerConfig(unittest.TestCase):
 -            ("ReduceMin", 20),
 +            ("ReduceMin", 18),
-             ("ReduceProd", 18),
-             ("ReduceSum", 18),
-             ("ReduceSumSquare", 18),

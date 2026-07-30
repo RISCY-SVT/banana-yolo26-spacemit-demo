@@ -5,8 +5,13 @@ R211_PROJECT_EXACT_SPLIT_run1/fixed/images_F0_f32-cpu	cpu	CPUExecutionProvider	C
 R211_PROJECT_EXACT_SPLIT_run1/fixed/images_F0_f32-spacemit	spacemit	SpaceMITExecutionProvider	CPUExecutionProvider	1	1	1
 R211_PROJECT_EXACT_SPLIT_run1/fixed/zidane_r640_nchw_f32-cpu	cpu	CPUExecutionProvider	CPUExecutionProvider	1	1	1
 R211_PROJECT_EXACT_SPLIT_run1/fixed/zidane_r640_nchw_f32-spacemit	spacemit	SpaceMITExecutionProvider	CPUExecutionProvider	1	1	1
+R211_PROJECT_EXACT_SPLIT_run1/performance/cpu-matched500	cpu	CPUExecutionProvider	CPUExecutionProvider	1	1	1
+R211_PROJECT_EXACT_SPLIT_run1/performance/cpu-stability1000-profiled-partial	unknown	unknown	unknown	0	0	0
 R211_PROJECT_EXACT_SPLIT_run1/performance/spacemit-matched500	spacemit	SpaceMITExecutionProvider	CPUExecutionProvider	1	1	1
 R211_PROJECT_EXACT_SPLIT_run1/performance/spacemit-stability1000	spacemit	SpaceMITExecutionProvider	CPUExecutionProvider	1	1	1
+R211_PROJECT_EXACT_SPLIT_run1/performance/wrapper-default-smoke-cpu	cpu	CPUExecutionProvider	CPUExecutionProvider	1	1	1
+R211_PROJECT_EXACT_SPLIT_run1/performance/wrapper-default-smoke-spacemit	spacemit	SpaceMITExecutionProvider	CPUExecutionProvider	1	1	1
+R211_PROJECT_EXACT_SPLIT_run1/performance/wrapper-profile-optin-spacemit	spacemit	SpaceMITExecutionProvider	CPUExecutionProvider	1	1	1
 R211_VENDOR_LITERAL_SPLIT_run1b/bus-cpu	cpu	CPUExecutionProvider	CPUExecutionProvider	1	1	1
 R211_VENDOR_LITERAL_SPLIT_run1b/bus-spacemit	spacemit	SpaceMITExecutionProvider	CPUExecutionProvider	1	1	1
 R211_VENDOR_LITERAL_SPLIT_run1b/cpu-session-smoke	cpu	CPUExecutionProvider	CPUExecutionProvider	1	1	1

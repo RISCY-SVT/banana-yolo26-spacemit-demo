@@ -1,5 +1,7 @@
 configuration	run_count	completed_count	unique_model_sha256_count	unique_output_tree_sha256_count	model_sha256	status
-R211_PROJECT_EXACT_SPLIT	1	1	1	1	29e08be834afb8925ca02af69d9a25df05449e9367ef3d8dd8ca4d57cf59a4fb	single-run
+R211_DIRECT_E2E	1	0	0	1	NA	failed-or-mismatch
+R211_PROJECT_EXACT_SPLIT	2	2	1	2	29e08be834afb8925ca02af69d9a25df05449e9367ef3d8dd8ca4d57cf59a4fb	pass-model-byte-identical-analysis-report-differs
 R211_VENDOR_LITERAL_SPLIT	1	1	1	0	6b92359a307544ed2cd7b557ec9991a446f03523cf44387d1530ffd926d05c40	single-run
+V9A33_DIRECT_E2E	1	1	1	1	f55de815466a32cd6e85e4f18b05e08123d2b8ad92097bcb6a5a4a5dfc9a95b7	single-run
 V9A33_PROJECT_EXACT_SPLIT	1	1	1	1	29e08be834afb8925ca02af69d9a25df05449e9367ef3d8dd8ca4d57cf59a4fb	single-run
 V9A33_VENDOR_LITERAL_SPLIT	1	1	1	1	6b92359a307544ed2cd7b557ec9991a446f03523cf44387d1530ffd926d05c40	single-run

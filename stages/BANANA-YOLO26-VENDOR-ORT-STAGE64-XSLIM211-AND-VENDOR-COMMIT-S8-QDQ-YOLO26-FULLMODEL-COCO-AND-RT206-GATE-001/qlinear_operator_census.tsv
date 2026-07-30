@@ -1,5 +1,6 @@
 candidate	model	op_type	count
 R211_PROJECT_EXACT_SPLIT_run1	r211_project_exact_split	none	0
 R211_VENDOR_LITERAL_SPLIT_run1b	r211_vendor_literal_split	none	0
+V9A33_DIRECT_E2E_run1	v9a33_direct_e2e	none	0
 V9A33_PROJECT_EXACT_SPLIT_run1	v9a33_project_exact_split	none	0
 V9A33_VENDOR_LITERAL_SPLIT_run1	v9a33_vendor_literal_split	none	0

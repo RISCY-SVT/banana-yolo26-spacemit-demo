@@ -11,10 +11,18 @@ R211_PROJECT_EXACT_SPLIT_run1/fixed/zidane_r640_nchw_f32-cpu	inference_session	C
 R211_PROJECT_EXACT_SPLIT_run1/fixed/zidane_r640_nchw_f32-cpu	cpu_tail_session	CPUExecutionProvider	15758.326000	CPU post-processing session creation
 R211_PROJECT_EXACT_SPLIT_run1/fixed/zidane_r640_nchw_f32-spacemit	inference_session	SpaceMITExecutionProvider	1823572.869000	includes model load, graph transforms, and provider compilation
 R211_PROJECT_EXACT_SPLIT_run1/fixed/zidane_r640_nchw_f32-spacemit	cpu_tail_session	CPUExecutionProvider	17078.968000	CPU post-processing session creation
+R211_PROJECT_EXACT_SPLIT_run1/performance/cpu-matched500	inference_session	CPUExecutionProvider	1233381.174000	includes model load, graph transforms, and provider compilation
+R211_PROJECT_EXACT_SPLIT_run1/performance/cpu-matched500	cpu_tail_session	CPUExecutionProvider	15846.621000	CPU post-processing session creation
 R211_PROJECT_EXACT_SPLIT_run1/performance/spacemit-matched500	inference_session	SpaceMITExecutionProvider	1833159.294000	includes model load, graph transforms, and provider compilation
 R211_PROJECT_EXACT_SPLIT_run1/performance/spacemit-matched500	cpu_tail_session	CPUExecutionProvider	17060.646000	CPU post-processing session creation
 R211_PROJECT_EXACT_SPLIT_run1/performance/spacemit-stability1000	inference_session	SpaceMITExecutionProvider	1809729.458000	includes model load, graph transforms, and provider compilation
 R211_PROJECT_EXACT_SPLIT_run1/performance/spacemit-stability1000	cpu_tail_session	CPUExecutionProvider	17002.727000	CPU post-processing session creation
+R211_PROJECT_EXACT_SPLIT_run1/performance/wrapper-default-smoke-cpu	inference_session	CPUExecutionProvider	1234409.231000	includes model load, graph transforms, and provider compilation
+R211_PROJECT_EXACT_SPLIT_run1/performance/wrapper-default-smoke-cpu	cpu_tail_session	CPUExecutionProvider	15853.609000	CPU post-processing session creation
+R211_PROJECT_EXACT_SPLIT_run1/performance/wrapper-default-smoke-spacemit	inference_session	SpaceMITExecutionProvider	1800711.246000	includes model load, graph transforms, and provider compilation
+R211_PROJECT_EXACT_SPLIT_run1/performance/wrapper-default-smoke-spacemit	cpu_tail_session	CPUExecutionProvider	17009.574000	CPU post-processing session creation
+R211_PROJECT_EXACT_SPLIT_run1/performance/wrapper-profile-optin-spacemit	inference_session	SpaceMITExecutionProvider	1818894.725000	includes model load, graph transforms, and provider compilation
+R211_PROJECT_EXACT_SPLIT_run1/performance/wrapper-profile-optin-spacemit	cpu_tail_session	CPUExecutionProvider	16882.439000	CPU post-processing session creation
 R211_VENDOR_LITERAL_SPLIT_run1b/bus-cpu	inference_session	CPUExecutionProvider	1264804.460000	includes model load, graph transforms, and provider compilation
 R211_VENDOR_LITERAL_SPLIT_run1b/bus-cpu	cpu_tail_session	CPUExecutionProvider	16533.690000	CPU post-processing session creation
 R211_VENDOR_LITERAL_SPLIT_run1b/bus-spacemit	inference_session	SpaceMITExecutionProvider	1877832.767000	includes model load, graph transforms, and provider compilation

@@ -1,5 +1,6 @@
 surface	scope	image_count	image_failures	non_finite_outputs	status
 IMPORTED_CANONICAL_FP32/cpu-full5000	full-val2017	5000	0	0	pass
+R211_PROJECT_EXACT_SPLIT_run1/cpu-full5000	full-val2017	5000	0	0	pass
 R211_PROJECT_EXACT_SPLIT_run1/cpu-subset100	subset-100	100	0	0	pass
 R211_PROJECT_EXACT_SPLIT_run1/spacemit-full5000	full-val2017	5000	0	0	pass
 R211_PROJECT_EXACT_SPLIT_run1/spacemit-subset100	subset-100	100	0	0	pass

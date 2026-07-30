@@ -1,0 +1,3 @@
+lane	status	elapsed_seconds	model_sha256	nodes	qdq_count	qlinear_count	uint8_zero_point_count	explicit_conv_kernel_shape	host_images	host_passes	score_collapses	mean_cosine	mean_mae	board_test	full_coco	conclusion
+XSLIM_RELEASE_211	failed-metadata-tracing	16.483469	NA	NA	NA	NA	NA	NA	0	0	0	NA	NA	not-run	not-run	two-input-ReduceMax-defect
+XSLIM_VENDOR_REF_9A33	host-semantic-failure	4867.571069	f55de815466a32cd6e85e4f18b05e08123d2b8ad92097bcb6a5a4a5dfc9a95b7	1224	841	0	0	102/102	100	0	100	0.357148724316	218.005976184235	not-run	not-run	all-score-channels-collapsed

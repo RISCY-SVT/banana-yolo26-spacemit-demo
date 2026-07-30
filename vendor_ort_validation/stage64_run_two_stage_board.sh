@@ -8,7 +8,7 @@ Usage:
     --runner FILE --runtime-lib DIR --inference FILE --tail FILE \
     --input FILE --output-dir DIR --provider cpu|spacemit \
     [--cpu-list 0-3] [--intra-threads 4] [--inter-threads 1] \
-    [--warmup 10] [--runs 100] [--repeats 5]
+    [--warmup 10] [--runs 100] [--repeats 5] [--enable-profiling]
 EOF
 }
 
@@ -25,6 +25,7 @@ inter_threads=1
 warmup=10
 runs=100
 repeats=5
+enable_profiling=0
 
 while (($#)); do
   case "$1" in
@@ -41,6 +42,7 @@ while (($#)); do
     --warmup) warmup=${2:?}; shift 2 ;;
     --runs) runs=${2:?}; shift 2 ;;
     --repeats) repeats=${2:?}; shift 2 ;;
+    --enable-profiling) enable_profiling=1; shift ;;
     --help|-h) usage; exit 0 ;;
     *) printf 'unknown argument: %s\n' "$1" >&2; usage >&2; exit 2 ;;
   esac
@@ -92,7 +94,6 @@ command=(
   --input "$input"
   --output "$output_dir/output.bin"
   --boundary-output-dir "$output_dir/boundaries"
-  --profile-prefix "$output_dir/profiles/profile"
   --samples-output "$output_dir/samples.tsv"
   --intra-threads "$intra_threads"
   --inter-threads "$inter_threads"
@@ -100,6 +101,9 @@ command=(
   --runs "$runs"
   --repeats "$repeats"
 )
+if ((enable_profiling)); then
+  command+=(--profile-prefix "$output_dir/profiles/profile")
+fi
 
 {
   printf 'provider=%s\n' "$provider"
@@ -109,6 +113,7 @@ command=(
   printf 'tail=%s\n' "$tail"
   printf 'input=%s\n' "$input"
   printf 'warmup=%s\nruns=%s\nrepeats=%s\n' "$warmup" "$runs" "$repeats"
+  printf 'profiling=%s\n' "$enable_profiling"
   printf 'command='
   printf '%q ' "${command[@]}"
   printf '\n'

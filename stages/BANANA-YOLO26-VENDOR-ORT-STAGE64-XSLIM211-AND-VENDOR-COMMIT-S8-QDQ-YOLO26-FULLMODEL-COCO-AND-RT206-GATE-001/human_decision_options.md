@@ -11,9 +11,9 @@ separate human decisions:
    licensing, and model distribution rights.
 3. Provide or approve a calibration corpus independent of COCO val2017 before
    treating the measured mAP as calibration-generalization evidence.
-4. Decide whether the direct-E2E `ReduceMax` mismatch warrants requiring a
-   vendor release newer than 2.1.1, despite the prescribed split route working
-   on 2.1.1.
+4. Decide whether to report both direct-E2E defects: official 2.1.1 fails
+   `ReduceMax`, while the repaired vendor-reference path emits all-zero score
+   channels. Neither defect blocks the prescribed split route.
 5. Keep the accepted custom executor and R640 release as the default unless a
    later explicit promotion decision says otherwise.
 

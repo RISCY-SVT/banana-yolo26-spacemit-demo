@@ -33,4 +33,7 @@ audits emitted ONNX dtype/zero-point/granularity rather than assuming identical
 models from that source fact.
 
 The complete source patch is stored as
-`xslim_release_vs_vendor_ref.patch`.
+`xslim_release_vs_vendor_ref.patch`. It is a zero-context unified diff so
+context-only blank lines do not require a repository-wide whitespace
+exception. It validates against the exact 2.1.1 tree with
+`git apply --check --unidiff-zero`.

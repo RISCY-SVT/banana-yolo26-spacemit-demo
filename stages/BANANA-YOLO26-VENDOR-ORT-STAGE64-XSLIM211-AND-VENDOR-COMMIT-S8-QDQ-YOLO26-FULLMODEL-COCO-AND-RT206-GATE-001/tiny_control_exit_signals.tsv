@@ -1,27 +1,27 @@
 case_id	test_id	provider	cpus	exit_code	signal	timed_out	session_created	classification	error_summary
-c1_s8_conv_pc_explicit__cpu__primary	c1_s8_conv_pc_explicit	cpu	0-3	0	0	0	1	exact-cpu
-c2_s8_conv_pc_nonzero_zp__cpu__primary	c2_s8_conv_pc_nonzero_zp	cpu	0-3	0	0	0	1	exact-cpu
-c3_s8_conv_pc_no_kernel__cpu__primary	c3_s8_conv_pc_no_kernel	cpu	0-3	0	0	0	1	exact-cpu
-c5_s8_conv_pt_explicit__cpu__primary	c5_s8_conv_pt_explicit	cpu	0-3	0	0	0	1	exact-cpu
-m1_s8_matmul__cpu__primary	m1_s8_matmul	cpu	0-3	0	0	0	1	exact-cpu
-m2_s8_matmul_nonzero_zp__cpu__primary	m2_s8_matmul_nonzero_zp	cpu	0-3	0	0	0	1	exact-cpu
-c4_u8_conv_pc_explicit__cpu__primary	c4_u8_conv_pc_explicit	cpu	0-3	0	0	0	1	exact-cpu
-m3_u8_matmul__cpu__primary	m3_u8_matmul	cpu	0-3	0	0	0	1	exact-cpu
-c1_s8_conv_pc_explicit__spacemit__primary	c1_s8_conv_pc_explicit	spacemit	0-3	0	0	0	1	exact-spacemit-assigned
-c2_s8_conv_pc_nonzero_zp__spacemit__primary	c2_s8_conv_pc_nonzero_zp	spacemit	0-3	0	0	0	1	exact-spacemit-assigned
-c3_s8_conv_pc_no_kernel__spacemit__primary	c3_s8_conv_pc_no_kernel	spacemit	0-3	0	0	0	1	placement-not-proven
-c5_s8_conv_pt_explicit__spacemit__primary	c5_s8_conv_pt_explicit	spacemit	0-3	0	0	0	1	exact-spacemit-assigned
-m1_s8_matmul__spacemit__primary	m1_s8_matmul	spacemit	0-3	0	0	0	1	exact-spacemit-assigned
-m2_s8_matmul_nonzero_zp__spacemit__primary	m2_s8_matmul_nonzero_zp	spacemit	0-3	0	0	0	1	exact-spacemit-assigned
+c1_s8_conv_pc_explicit__cpu__primary	c1_s8_conv_pc_explicit	cpu	0-3	0	0	0	1	exact-cpu	NA
+c2_s8_conv_pc_nonzero_zp__cpu__primary	c2_s8_conv_pc_nonzero_zp	cpu	0-3	0	0	0	1	exact-cpu	NA
+c3_s8_conv_pc_no_kernel__cpu__primary	c3_s8_conv_pc_no_kernel	cpu	0-3	0	0	0	1	exact-cpu	NA
+c5_s8_conv_pt_explicit__cpu__primary	c5_s8_conv_pt_explicit	cpu	0-3	0	0	0	1	exact-cpu	NA
+m1_s8_matmul__cpu__primary	m1_s8_matmul	cpu	0-3	0	0	0	1	exact-cpu	NA
+m2_s8_matmul_nonzero_zp__cpu__primary	m2_s8_matmul_nonzero_zp	cpu	0-3	0	0	0	1	exact-cpu	NA
+c4_u8_conv_pc_explicit__cpu__primary	c4_u8_conv_pc_explicit	cpu	0-3	0	0	0	1	exact-cpu	NA
+m3_u8_matmul__cpu__primary	m3_u8_matmul	cpu	0-3	0	0	0	1	exact-cpu	NA
+c1_s8_conv_pc_explicit__spacemit__primary	c1_s8_conv_pc_explicit	spacemit	0-3	0	0	0	1	exact-spacemit-assigned	NA
+c2_s8_conv_pc_nonzero_zp__spacemit__primary	c2_s8_conv_pc_nonzero_zp	spacemit	0-3	0	0	0	1	exact-spacemit-assigned	NA
+c3_s8_conv_pc_no_kernel__spacemit__primary	c3_s8_conv_pc_no_kernel	spacemit	0-3	0	0	0	1	placement-not-proven	NA
+c5_s8_conv_pt_explicit__spacemit__primary	c5_s8_conv_pt_explicit	spacemit	0-3	0	0	0	1	exact-spacemit-assigned	NA
+m1_s8_matmul__spacemit__primary	m1_s8_matmul	spacemit	0-3	0	0	0	1	exact-spacemit-assigned	NA
+m2_s8_matmul_nonzero_zp__spacemit__primary	m2_s8_matmul_nonzero_zp	spacemit	0-3	0	0	0	1	exact-spacemit-assigned	NA
 c4_u8_conv_pc_explicit__spacemit__negative-once	c4_u8_conv_pc_explicit	spacemit	0	134	6	0	0	unsupported-abort	what():  operator compile failed at node (_token_2)[Conv], spine graph SpaceMITExecutionProvider_SpineSubgraph_7275293883509990629_1_0 error message: feature dtype u8 and weight dtype s8 not implemented for conv 2d quantize.
 m3_u8_matmul__spacemit__negative-once	m3_u8_matmul	spacemit	0	134	6	0	0	unsupported-abort	what():  operator compile failed at node ()[MatMul], spine graph SpaceMITExecutionProvider_SpineSubgraph_16543531749046972414_1_0 error message: feature dtype u8 not implemented for quantize.
-c1_s8_conv_pc_explicit__spacemit__affinity-0	c1_s8_conv_pc_explicit	spacemit	0	0	0	0	1	exact-spacemit-assigned
-c1_s8_conv_pc_explicit__spacemit__affinity-0_3	c1_s8_conv_pc_explicit	spacemit	0-3	0	0	0	1	exact-spacemit-assigned
-c1_s8_conv_pc_explicit__spacemit__affinity-4	c1_s8_conv_pc_explicit	spacemit	4	0	0	0	1	exact-spacemit-assigned
-c1_s8_conv_pc_explicit__spacemit__affinity-4_7	c1_s8_conv_pc_explicit	spacemit	4-7	0	0	0	1	exact-spacemit-assigned
-c1_s8_conv_pc_explicit__spacemit__affinity-0_7	c1_s8_conv_pc_explicit	spacemit	0-7	0	0	0	1	exact-spacemit-assigned
-m1_s8_matmul__spacemit__affinity-0	m1_s8_matmul	spacemit	0	0	0	0	1	exact-spacemit-assigned
-m1_s8_matmul__spacemit__affinity-0_3	m1_s8_matmul	spacemit	0-3	0	0	0	1	exact-spacemit-assigned
-m1_s8_matmul__spacemit__affinity-4	m1_s8_matmul	spacemit	4	0	0	0	1	exact-spacemit-assigned
-m1_s8_matmul__spacemit__affinity-4_7	m1_s8_matmul	spacemit	4-7	0	0	0	1	exact-spacemit-assigned
-m1_s8_matmul__spacemit__affinity-0_7	m1_s8_matmul	spacemit	0-7	0	0	0	1	exact-spacemit-assigned
+c1_s8_conv_pc_explicit__spacemit__affinity-0	c1_s8_conv_pc_explicit	spacemit	0	0	0	0	1	exact-spacemit-assigned	NA
+c1_s8_conv_pc_explicit__spacemit__affinity-0_3	c1_s8_conv_pc_explicit	spacemit	0-3	0	0	0	1	exact-spacemit-assigned	NA
+c1_s8_conv_pc_explicit__spacemit__affinity-4	c1_s8_conv_pc_explicit	spacemit	4	0	0	0	1	exact-spacemit-assigned	NA
+c1_s8_conv_pc_explicit__spacemit__affinity-4_7	c1_s8_conv_pc_explicit	spacemit	4-7	0	0	0	1	exact-spacemit-assigned	NA
+c1_s8_conv_pc_explicit__spacemit__affinity-0_7	c1_s8_conv_pc_explicit	spacemit	0-7	0	0	0	1	exact-spacemit-assigned	NA
+m1_s8_matmul__spacemit__affinity-0	m1_s8_matmul	spacemit	0	0	0	0	1	exact-spacemit-assigned	NA
+m1_s8_matmul__spacemit__affinity-0_3	m1_s8_matmul	spacemit	0-3	0	0	0	1	exact-spacemit-assigned	NA
+m1_s8_matmul__spacemit__affinity-4	m1_s8_matmul	spacemit	4	0	0	0	1	exact-spacemit-assigned	NA
+m1_s8_matmul__spacemit__affinity-4_7	m1_s8_matmul	spacemit	4-7	0	0	0	1	exact-spacemit-assigned	NA
+m1_s8_matmul__spacemit__affinity-0_7	m1_s8_matmul	spacemit	0-7	0	0	0	1	exact-spacemit-assigned	NA

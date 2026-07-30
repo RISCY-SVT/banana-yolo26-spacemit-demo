@@ -31,3 +31,11 @@ the quantizer capability/policy and does not require every observed activation
 zero point to be nonzero.
 
 The exported ONNX tensors, not source defaults, are the conformance authority.
+
+## Direct-E2E diagnostic
+
+The vendor-reference direct graph is also structurally signed-QDQ: 841 Q/DQ
+nodes, zero QLinear operators, zero UINT8 zero points, and 102/102 explicit
+Conv kernel shapes. Structural conformance is insufficient, however. All 100
+host holdout outputs have zero score channels, so the graph fails semantic
+validation and is rejected before board use.

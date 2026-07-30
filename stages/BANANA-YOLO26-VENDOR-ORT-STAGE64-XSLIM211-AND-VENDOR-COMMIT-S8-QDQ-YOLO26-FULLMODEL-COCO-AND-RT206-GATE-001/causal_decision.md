@@ -37,6 +37,11 @@ vendor-reference lanes emit byte-identical final models. The later commit is
 therefore not required for the prescribed split, although it is required for
 the tested direct `ReduceMax` path.
 
+The repaired direct-E2E path is not semantically usable: all 100 host holdout
+images have finite `1x300x6` outputs but zero nonzero scores. This result
+supports, rather than relaxes, the vendor requirement to preserve separate
+bbox/confidence boundaries and leave post-processing unquantized.
+
 ## Limits
 
 The selected S8 route reaches mAP50-95 `0.35907268372810625`, versus

@@ -19,6 +19,11 @@ The runner verifies:
 - one output hash per measured run;
 - task-local profile, temp, cache, and output paths.
 
+The board timing wrapper leaves ORT profiling disabled by default. Placement
+arms opt in with `--enable-profiling`; timing arms omit it so fused-provider
+and per-node CPU profile event costs are not silently mixed into the primary
+steady-state comparison.
+
 The COCO runner applies the accepted project letterbox, runs the same two
 sessions, de-letterboxes final boxes, and writes timing and prediction files.
 The intentionally CPU-only tail is reported separately and is not counted as

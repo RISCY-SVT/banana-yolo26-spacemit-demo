@@ -1,0 +1,21 @@
+field	value
+captured_utc	2026-07-30T16:50:33Z
+hostname	bf3
+board_os	Bianbu 2.2.1
+kernel	Linux 6.6.63
+boot_id	0a0691d1-7502-44c3-903b-444dba83c1d9
+online_cpus	0-7
+governor_cpus_0_7	performance
+frequency_cpus_0_7_khz	1600000
+data_mount	/dev/nvme0n1p1 ext4 rw,noatime
+root_mount	/dev/mmcblk2p6 ext4 rw,noatime,errors=remount-ro
+core_pattern	|/usr/share/apport/apport -p%p -s%s -c%c -d%d -P%P -u%u -g%g -- %E
+project_process_count	0
+stage_cgroup_count	0
+emmc_named_project_artifact_count	0
+stage_root_bytes	1483301120
+stage_root_file_count	756
+project_artifact_root	/data/k1x-stage-runs/BANANA-YOLO26-VENDOR-ORT-STAGE64-XSLIM211-AND-VENDOR-COMMIT-S8-QDQ-YOLO26-FULLMODEL-COCO-AND-RT206-GATE-001
+global_sysctl_changes_remaining	0
+boot_changes_remaining	0
+cgroup_irq_workqueue_changes_remaining	0
