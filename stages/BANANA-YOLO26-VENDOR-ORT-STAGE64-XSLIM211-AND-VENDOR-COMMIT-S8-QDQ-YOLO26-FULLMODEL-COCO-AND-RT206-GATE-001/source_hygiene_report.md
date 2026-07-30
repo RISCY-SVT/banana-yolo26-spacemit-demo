@@ -4,10 +4,10 @@
 
 Relative to accepted Stage63 head
 `94b86a6bf011cc83fefaf2a960191e97a8daf728`, the final Stage64 branch changes
-153 files:
+161 files:
 
 - 25 files under `vendor_ort_validation/`;
-- 128 files under the Stage64 report tree;
+- 136 files under the Stage64 report tree;
 - zero files under `custom_int8_engine/`;
 - zero files elsewhere.
 

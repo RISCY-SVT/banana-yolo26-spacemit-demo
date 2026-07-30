@@ -1,0 +1,5 @@
+ordinal	commit	author_date	changed_files	subject
+1	7f8ff3bc1fd4bc409fc522db441dc89a524656a9	2026-07-30T13:10:04+02:00	33	test: add XSlim S8-QDQ validation tooling
+2	79b496fc14ba774ad62189306e992d51265fc502	2026-07-30T14:16:45+02:00	4	test: extend Stage64 evidence derivation
+3	04651b786a48229f01771711c0ea3c033076f80e	2026-07-30T15:36:20+02:00	118	evidence: record Stage64 S8-QDQ validation
+4	b6a5975ae3375ddf30f2e48822a49b49c7de6fa5	2026-07-30T18:57:11+02:00	56	evidence: close Stage64 S8-QDQ validation
