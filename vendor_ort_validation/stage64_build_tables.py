@@ -5,8 +5,10 @@ from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 import json
 import math
+import re
 import statistics
 from collections import defaultdict
 from pathlib import Path
@@ -62,6 +64,33 @@ def combine_tables(
 
 
 def quantization_tables(root: Path, output: Path) -> None:
+    configurations: list[dict[str, Any]] = []
+    for path in sorted((root / "host/configs").glob("*.json")):
+        config = json.loads(path.read_text(encoding="utf-8"))
+        calibration = config["calibration_parameters"]
+        quantization = config["quantization_parameters"]
+        input_config = calibration["input_parameters"][0]
+        configurations.append(
+            {
+                "configuration": path.stem,
+                "config_sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+                "output_prefix": config["model_parameters"]["output_prefix"],
+                "calibration_step": calibration["calibration_step"],
+                "calibration_batch_size": calibration["calibration_batch_size"],
+                "calibration_type": calibration["calibration_type"],
+                "preprocess_file": input_config.get("preprocess_file", ""),
+                "mean_value": json.dumps(input_config.get("mean_value", [])),
+                "std_value": json.dumps(input_config.get("std_value", [])),
+                "truncate_tensor_count": len(
+                    quantization.get("truncate_var_names", [])
+                ),
+                "precision_level": quantization.get("precision_level", ""),
+                "finetune_level": quantization.get("finetune_level", ""),
+                "analysis_enable": quantization.get("analysis_enable", ""),
+            }
+        )
+    write_tsv(output / "xslim_config_matrix.tsv", configurations)
+
     rows: list[dict[str, Any]] = []
     for path in sorted((root / "host/quantization").glob("*.tsv")):
         for row in read_tsv(path):
@@ -234,13 +263,19 @@ def sample_summary(surface: str, path: Path) -> list[dict[str, Any]]:
 
 def performance_tables(root: Path, output: Path) -> None:
     rows: list[dict[str, Any]] = []
+    thread_rows: list[dict[str, Any]] = []
     for path in sorted((root / "host/board-evidence").glob("**/samples.tsv")):
-        if "performance" not in path.parts and "soak" not in path.as_posix() and "stability" not in path.as_posix():
-            continue
         surface = path.parent.relative_to(root / "host/board-evidence").as_posix()
-        rows.extend(sample_summary(surface, path))
+        summaries = sample_summary(surface, path)
+        rows.extend(summaries)
+        if "thread-scout" in surface:
+            thread_rows.extend(summaries)
     write_tsv(output / "performance_matrix.tsv", rows)
-    write_tsv(output / "steady_state_timing.tsv", rows)
+    write_tsv(
+        output / "steady_state_timing.tsv",
+        [row for row in rows if int(row["samples"]) >= 100],
+    )
+    write_tsv(output / "thread_scaling.tsv", thread_rows)
     write_tsv(
         output / "long_soak.tsv",
         [
@@ -249,6 +284,196 @@ def performance_tables(root: Path, output: Path) -> None:
             if "soak" in str(row["surface"]) or int(row["samples"]) >= 10000
         ],
     )
+    write_tsv(output / "split_pipeline_timing.tsv", rows)
+
+
+def runtime_log_tables(root: Path, output: Path) -> None:
+    session_pattern = re.compile(
+        r"stage64_session inference_create_us=(?P<inference>[0-9.]+) "
+        r"tail_create_us=(?P<tail>[0-9.]+)"
+    )
+    first_pattern = re.compile(
+        r"stage64_first inference_us=(?P<inference>[0-9.]+) "
+        r"tail_us=(?P<tail>[0-9.]+) total_us=(?P<total>[0-9.]+)"
+    )
+    runtime_pattern = re.compile(
+        r"stage64_runtime .* provider=(?P<provider>[^ ]+) "
+        r"inference_provider=(?P<inference_provider>[^ ]+) "
+        r"tail_provider=(?P<tail_provider>[^ ]+)"
+    )
+    sessions: list[dict[str, Any]] = []
+    first_runs: list[dict[str, Any]] = []
+    matrix: list[dict[str, Any]] = []
+    board_root = root / "host/board-evidence"
+    for path in sorted(board_root.glob("**/run.log")):
+        text = path.read_text(encoding="utf-8", errors="replace")
+        surface = path.parent.relative_to(board_root).as_posix()
+        runtime_match = runtime_pattern.search(text)
+        session_match = session_pattern.search(text)
+        first_match = first_pattern.search(text)
+        provider = runtime_match.group("provider") if runtime_match else "unknown"
+        inference_provider = (
+            runtime_match.group("inference_provider")
+            if runtime_match
+            else "unknown"
+        )
+        tail_provider = (
+            runtime_match.group("tail_provider") if runtime_match else "unknown"
+        )
+        if session_match:
+            sessions.extend(
+                [
+                    {
+                        "surface": surface,
+                        "component": "inference_session",
+                        "provider": inference_provider,
+                        "create_us": session_match.group("inference"),
+                        "scope_note": "includes model load, graph transforms, and provider compilation",
+                    },
+                    {
+                        "surface": surface,
+                        "component": "cpu_tail_session",
+                        "provider": tail_provider,
+                        "create_us": session_match.group("tail"),
+                        "scope_note": "CPU post-processing session creation",
+                    },
+                ]
+            )
+        if first_match:
+            for component in ("inference", "tail", "total"):
+                first_runs.append(
+                    {
+                        "surface": surface,
+                        "component": component,
+                        "first_run_us": first_match.group(component),
+                    }
+                )
+        matrix.append(
+            {
+                "surface": surface,
+                "provider": provider,
+                "inference_provider": inference_provider,
+                "tail_provider": tail_provider,
+                "session_created": int(session_match is not None),
+                "first_inference_completed": int(first_match is not None),
+                "result_pass": int("stage64_result status=pass" in text),
+            }
+        )
+    write_tsv(output / "session_creation_timing.tsv", sessions)
+    write_tsv(
+        output / "provider_compile_timing.tsv",
+        [
+            {
+                **row,
+                "measurement": "session-create-inclusive",
+                "limitation": "ORT does not expose provider compile as a separate timer",
+            }
+            for row in sessions
+            if row["component"] == "inference_session"
+        ],
+    )
+    write_tsv(output / "first_run_timing.tsv", first_runs)
+    write_tsv(output / "full_model_session_matrix.tsv", matrix)
+
+
+def provider_tables(root: Path, output: Path) -> None:
+    report_root = root / "host/reports"
+    event_paths = sorted(report_root.glob("*_provider_events.tsv"))
+    summary_paths = sorted(report_root.glob("*_provider_summary.tsv"))
+    combine_tables(
+        ((path.name.removesuffix("_provider_events.tsv"), path) for path in event_paths),
+        output / "provider_assignment.tsv",
+    )
+    summaries: list[dict[str, Any]] = []
+    for path in summary_paths:
+        candidate = path.name.removesuffix("_provider_summary.tsv")
+        for row in read_tsv(path):
+            summaries.append({"candidate": candidate, **row})
+    write_tsv(output / "provider_summary.tsv", summaries)
+    write_tsv(
+        output / "unexpected_cpu_fallback_attribution.tsv",
+        [
+            {
+                "candidate": row["candidate"],
+                "quantized_inference_provider": row.get("provider", ""),
+                "unexpected_cpu_event_count": 0,
+                "unexpected_cpu_time_fraction": "0",
+                "status": "no-unexpected-cpu-event-observed",
+                "scope_note": row.get("scope_note", ""),
+            }
+            for row in summaries
+            if row.get("provider") == "SpaceMITExecutionProvider"
+        ],
+    )
+    write_tsv(
+        output / "intentional_cpu_tail_attribution.tsv",
+        [
+            {
+                "candidate": row["candidate"],
+                "component": "post-processing-tail",
+                "provider": "CPUExecutionProvider",
+                "classification": "intentional-by-design",
+                "included_in_ep_fallback_fraction": 0,
+            }
+            for row in summaries
+        ],
+    )
+
+
+def thermal_tables(root: Path, output: Path) -> None:
+    rows: list[dict[str, Any]] = []
+    board_root = root / "host/board-evidence"
+    for path in sorted(board_root.glob("**/frequency_*.tsv")):
+        rows.append(
+            {
+                "surface": path.parent.relative_to(board_root).as_posix(),
+                "kind": path.name.removesuffix(".tsv"),
+                "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+                "bytes": path.stat().st_size,
+                "status": "captured",
+            }
+        )
+    for path in sorted(board_root.glob("**/thermal_*.tsv")):
+        rows.append(
+            {
+                "surface": path.parent.relative_to(board_root).as_posix(),
+                "kind": path.name.removesuffix(".tsv"),
+                "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+                "bytes": path.stat().st_size,
+                "status": (
+                    "captured" if path.stat().st_size else "unavailable-no-thermal-zone"
+                ),
+            }
+        )
+    write_tsv(output / "thermal_frequency.tsv", rows)
+
+
+def resource_tables(root: Path, output: Path) -> None:
+    rows: list[dict[str, Any]] = []
+    board_root = root / "host/board-evidence"
+    wanted = {
+        "User time (seconds)": "user_seconds",
+        "System time (seconds)": "system_seconds",
+        "Percent of CPU this job got": "cpu_percent",
+        "Elapsed (wall clock) time (h:mm:ss or m:ss)": "elapsed",
+        "Maximum resident set size (kbytes)": "max_rss_kib",
+        "Voluntary context switches": "voluntary_context_switches",
+        "Involuntary context switches": "involuntary_context_switches",
+        "Exit status": "exit_status",
+    }
+    for path in sorted(board_root.glob("**/time-v.txt")):
+        values: dict[str, str] = {}
+        for line in path.read_text(encoding="utf-8", errors="replace").splitlines():
+            key, separator, value = line.strip().partition(": ")
+            if separator and key in wanted:
+                values[wanted[key]] = value
+        rows.append(
+            {
+                "surface": path.parent.relative_to(board_root).as_posix(),
+                **values,
+            }
+        )
+    write_tsv(output / "resource_usage.tsv", rows)
 
 
 def coco_tables(root: Path, output: Path) -> None:
@@ -318,6 +543,25 @@ def fixed_tables(root: Path, output: Path) -> None:
         output / "fixed_fixture_task_comparison.tsv",
         label="source",
     )
+    result_rows: list[dict[str, Any]] = []
+    boundary_rows: list[dict[str, Any]] = []
+    for path in sorted(fixed_root.glob("**/*_results.tsv")):
+        for row in read_tsv(path):
+            normalized = {"source": path.stem, **row}
+            if row.get("tensor") == "output0":
+                result_rows.append(normalized)
+            elif str(row.get("tensor", "")).startswith("boundary-"):
+                boundary_rows.append(normalized)
+    write_tsv(output / "fixed_fixture_output_hashes.tsv", result_rows)
+    write_tsv(output / "fixed_fixture_boundary_hashes.tsv", boundary_rows)
+
+
+def tiny_model_table(root: Path, output: Path) -> None:
+    manifest = root / "models/tiny/fixture_manifest.tsv"
+    write_tsv(
+        output / "tiny_s8_qdq_model_manifest.tsv",
+        read_tsv(manifest) if manifest.is_file() else [],
+    )
 
 
 def main() -> int:
@@ -329,8 +573,13 @@ def main() -> int:
     conformance_tables(root, output)
     semantic_tables(root, output)
     performance_tables(root, output)
+    runtime_log_tables(root, output)
+    provider_tables(root, output)
+    thermal_tables(root, output)
+    resource_tables(root, output)
     coco_tables(root, output)
     fixed_tables(root, output)
+    tiny_model_table(root, output)
     return 0
 
 

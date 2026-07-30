@@ -28,6 +28,10 @@ correctness oracle:
   QLinear counts, and explicit Conv `kernel_shape` coverage.
 - `stage64_host_validate.py` validates the split FP32 and S8 pipelines on
   x86_64 before a model can reach the board.
+- `stage64_validate_direct.py` applies the same finite-output and score-collapse
+  gate to diagnostic direct-E2E XSlim models.
+- `stage64_build_tables.py` derives compact review tables from immutable raw
+  quantization, host, board, profile, timing, and COCO evidence.
 - `stage64_two_stage_runner.cpp` and `stage64_two_stage_coco.cpp` execute a
   quantized inference graph followed by the explicitly CPU-only FP32 tail.
 - `stage64_run_two_stage_board.sh` and `stage64_run_coco_board.sh` enforce
