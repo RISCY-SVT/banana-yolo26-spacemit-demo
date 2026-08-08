@@ -1,0 +1,4 @@
+surface	file_rows	unique_hashes	duplicate_hashes_or_rows	status
+coco_val2017	5000	5000	0	pass-no-content-duplicates
+coco_calib2k	2015	2015	0	pass-no-content-duplicates
+project_small_fixtures	109	45	64-duplicate-rows	informational-reused-fixtures

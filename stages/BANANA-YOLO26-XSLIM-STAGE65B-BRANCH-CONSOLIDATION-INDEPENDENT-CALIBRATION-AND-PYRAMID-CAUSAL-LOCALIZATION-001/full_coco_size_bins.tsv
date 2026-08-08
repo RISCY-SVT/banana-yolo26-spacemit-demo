@@ -1,0 +1,6 @@
+candidate	ap_small	ap_medium	ap_large	status
+B0	0.179113696685979	0.4176396163742976	0.5165509362490022	imported-stage64-not-independent
+B1	NA	NA	NA	not-run-blocked-independent-calibration-corpus-missing
+B3	NA	NA	NA	not-run-blocked-independent-calibration-corpus-missing
+B4	NA	NA	NA	not-run-blocked-independent-calibration-corpus-missing
+B5	NA	NA	NA	not-run-blocked-independent-calibration-corpus-missing

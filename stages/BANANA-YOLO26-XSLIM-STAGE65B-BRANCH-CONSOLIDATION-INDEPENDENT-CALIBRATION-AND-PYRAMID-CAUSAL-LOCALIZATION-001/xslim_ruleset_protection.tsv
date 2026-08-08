@@ -1,0 +1,9 @@
+service	target	force_push	deletion	linear_history_or_merge	status
+github	main	false	false	linear-history-required	pass
+github	riscy/k1x-yolo26	false	false	linear-history-required	pass
+github	refs/tags/v*	update-blocked	deletion-blocked	ruleset-20581693	pass
+github	refs/tags/evidence/*	update-blocked	deletion-blocked	ruleset-20581693	pass
+gitlab	main	false	protected	ff-merge-project-policy	pass
+gitlab	riscy/k1x-yolo26	false	protected	ff-merge-project-policy	pass
+gitlab	v*	NA	protected-tag	maintainer-create	pass
+gitlab	evidence/*	NA	protected-tag	maintainer-create	pass

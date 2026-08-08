@@ -1,0 +1,6 @@
+selection	small_objects	medium_objects	large_objects	status
+C50_RANDOM	NA	NA	NA	not-run-blocked-independent-calibration-corpus-missing
+C200_RANDOM	NA	NA	NA	not-run-blocked-independent-calibration-corpus-missing
+C500_RANDOM	NA	NA	NA	not-run-blocked-independent-calibration-corpus-missing
+C1000_RANDOM	NA	NA	NA	not-run-blocked-independent-calibration-corpus-missing
+C500_SIZE_BALANCED	NA	NA	NA	not-run-blocked-independent-calibration-corpus-missing

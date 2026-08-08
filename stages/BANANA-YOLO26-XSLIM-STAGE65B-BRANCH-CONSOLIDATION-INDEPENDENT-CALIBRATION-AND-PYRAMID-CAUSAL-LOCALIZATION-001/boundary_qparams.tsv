@@ -1,0 +1,7 @@
+candidate	boundary	scale	zero_point	dtype	granularity	status
+B1	P3-bbox	NA	NA	NA	NA	not-run-blocked-independent-calibration-corpus-missing
+B1	P3-confidence	NA	NA	NA	NA	not-run-blocked-independent-calibration-corpus-missing
+B1	P4-bbox	NA	NA	NA	NA	not-run-blocked-independent-calibration-corpus-missing
+B1	P4-confidence	NA	NA	NA	NA	not-run-blocked-independent-calibration-corpus-missing
+B1	P5-bbox	NA	NA	NA	NA	not-run-blocked-independent-calibration-corpus-missing
+B1	P5-confidence	NA	NA	NA	NA	not-run-blocked-independent-calibration-corpus-missing

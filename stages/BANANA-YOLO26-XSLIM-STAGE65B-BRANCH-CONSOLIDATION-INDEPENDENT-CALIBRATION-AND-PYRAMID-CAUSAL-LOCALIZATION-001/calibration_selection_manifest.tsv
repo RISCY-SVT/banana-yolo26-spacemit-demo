@@ -1,0 +1,6 @@
+selection	requested_count	selected_count	list_sha256	status
+C50_RANDOM	50	0	NA	not-run-blocked-independent-calibration-corpus-missing
+C200_RANDOM	200	0	NA	not-run-blocked-independent-calibration-corpus-missing
+C500_RANDOM	500	0	NA	not-run-blocked-independent-calibration-corpus-missing
+C1000_RANDOM	1000	0	NA	not-run-blocked-independent-calibration-corpus-missing
+C500_SIZE_BALANCED	500	0	NA	not-run-blocked-independent-calibration-corpus-missing

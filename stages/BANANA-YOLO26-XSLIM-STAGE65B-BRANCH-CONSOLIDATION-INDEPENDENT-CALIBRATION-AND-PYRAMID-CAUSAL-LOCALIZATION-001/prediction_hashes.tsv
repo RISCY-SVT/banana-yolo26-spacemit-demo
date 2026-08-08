@@ -1,0 +1,6 @@
+candidate	prediction_sha256	source	status
+B0	6162fc26a654f19e21a7ba65f064ab1c3f651a318453944e25026f2e75ae3a00	Stage64-S8-CPU	imported-not-independent
+B1	NA	Stage65B	not-run-blocked-independent-calibration-corpus-missing
+B3	NA	Stage65B	not-run-blocked-independent-calibration-corpus-missing
+B4	NA	Stage65B	not-run-blocked-independent-calibration-corpus-missing
+B5	NA	Stage65B	not-run-blocked-independent-calibration-corpus-missing

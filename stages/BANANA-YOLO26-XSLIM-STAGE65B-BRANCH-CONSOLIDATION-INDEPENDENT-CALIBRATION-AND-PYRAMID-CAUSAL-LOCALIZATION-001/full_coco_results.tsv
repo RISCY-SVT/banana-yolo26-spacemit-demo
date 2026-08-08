@@ -1,0 +1,6 @@
+candidate	source	images	map50_95	map50	ap_small	ap_medium	ap_large	prediction_sha256	status
+B0	stage64-imported-s8-cpu	5000	0.35876850879267863	0.5141763070517243	0.179113696685979	0.4176396163742976	0.5165509362490022	6162fc26a654f19e21a7ba65f064ab1c3f651a318453944e25026f2e75ae3a00	imported-not-independent
+B1	stage65b-independent-50	0	NA	NA	NA	NA	NA	NA	not-run-blocked-independent-calibration-corpus-missing
+B3	stage65b-independent-500	0	NA	NA	NA	NA	NA	NA	not-run-blocked-independent-calibration-corpus-missing
+B4	stage65b-independent-1000	0	NA	NA	NA	NA	NA	NA	not-run-blocked-independent-calibration-corpus-missing
+B5	stage65b-size-balanced-500	0	NA	NA	NA	NA	NA	NA	not-run-blocked-independent-calibration-corpus-missing

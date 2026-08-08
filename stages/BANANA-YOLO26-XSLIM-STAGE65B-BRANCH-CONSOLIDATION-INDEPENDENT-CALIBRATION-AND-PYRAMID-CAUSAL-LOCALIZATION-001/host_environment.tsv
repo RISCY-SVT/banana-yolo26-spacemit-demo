@@ -1,0 +1,11 @@
+component	version_or_identity	status
+python	3.12.3	pass
+xslim	2.1.2+riscy.1	pass
+numpy	2.5.1	pass
+torch	2.10.0+cpu	pass
+onnx	1.21.0	pass
+onnxruntime-host	1.24.3	pass
+onnxslim	0.1.87	pass
+opencv-python	4.13.0.90	pass
+pip-freeze-sha256	ed93344e187d4ea04d146500ba39181523cc38823e48ad83de983b7dd6012990	pass
+board_execution	not-authorized-not-run	pass

@@ -1,0 +1,7 @@
+candidate	boundary	images	below_range	above_range	rail_hits	mean_bias	normalized_mae	cosine	status
+B1	P3-bbox	0	NA	NA	NA	NA	NA	NA	not-run-blocked-independent-calibration-corpus-missing
+B1	P3-confidence	0	NA	NA	NA	NA	NA	NA	not-run-blocked-independent-calibration-corpus-missing
+B1	P4-bbox	0	NA	NA	NA	NA	NA	NA	not-run-blocked-independent-calibration-corpus-missing
+B1	P4-confidence	0	NA	NA	NA	NA	NA	NA	not-run-blocked-independent-calibration-corpus-missing
+B1	P5-bbox	0	NA	NA	NA	NA	NA	NA	not-run-blocked-independent-calibration-corpus-missing
+B1	P5-confidence	0	NA	NA	NA	NA	NA	NA	not-run-blocked-independent-calibration-corpus-missing

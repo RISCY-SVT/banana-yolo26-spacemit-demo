@@ -1,0 +1,6 @@
+candidate	quantize_linear	dequantize_linear	qlinear	int8_zero_points	uint8_zero_points	status
+B1	NA	NA	NA	NA	NA	not-run-blocked-independent-calibration-corpus-missing
+B2	NA	NA	NA	NA	NA	not-run-blocked-independent-calibration-corpus-missing
+B3	NA	NA	NA	NA	NA	not-run-blocked-independent-calibration-corpus-missing
+B4	NA	NA	NA	NA	NA	not-run-blocked-independent-calibration-corpus-missing
+B5	NA	NA	NA	NA	NA	not-run-blocked-independent-calibration-corpus-missing

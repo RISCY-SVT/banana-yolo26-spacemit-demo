@@ -1,0 +1,6 @@
+candidate	onnx_checker	shape_inference	qlinear_count	uint8_zp_count	status
+B1	NA	NA	NA	NA	not-run-blocked-independent-calibration-corpus-missing
+B2	NA	NA	NA	NA	not-run-blocked-independent-calibration-corpus-missing
+B3	NA	NA	NA	NA	not-run-blocked-independent-calibration-corpus-missing
+B4	NA	NA	NA	NA	not-run-blocked-independent-calibration-corpus-missing
+B5	NA	NA	NA	NA	not-run-blocked-independent-calibration-corpus-missing

@@ -1,0 +1,7 @@
+candidate	branch	cosine	normalized_mae	bias	status
+B1	P3-bbox	NA	NA	NA	not-run-blocked-independent-calibration-corpus-missing
+B1	P3-confidence	NA	NA	NA	not-run-blocked-independent-calibration-corpus-missing
+B1	P4-bbox	NA	NA	NA	not-run-blocked-independent-calibration-corpus-missing
+B1	P4-confidence	NA	NA	NA	not-run-blocked-independent-calibration-corpus-missing
+B1	P5-bbox	NA	NA	NA	not-run-blocked-independent-calibration-corpus-missing
+B1	P5-confidence	NA	NA	NA	not-run-blocked-independent-calibration-corpus-missing

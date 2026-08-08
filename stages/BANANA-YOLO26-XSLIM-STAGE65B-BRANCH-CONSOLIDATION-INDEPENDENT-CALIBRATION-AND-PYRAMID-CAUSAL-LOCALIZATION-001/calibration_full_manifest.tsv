@@ -1,0 +1,5 @@
+source_id	file_rows	unique_content	val2017_overlap	independent_content	manifest_sha256	qualification
+coco_val2017	5000	5000	5000	0	2e210112a7ea2a0a7687ad7f3ef25ea4488522f47f985680cd792e6c43f95e8f	evaluation-only
+coco_calib2k	2015	2015	2015	0	6744d1c703212cc0eca19965b56b0d3c129dd186e59084f7a183e8a8fa693d63	rejected-content-overlap
+project_small_fixtures	109	45	32	13	4d5c5bcdd53a6b577b175c231ec159541f7ff349013853df49b1a48654ce3e4a	rejected-too-small-and-not-corpus
+coco_train2017_images	0	0	0	0	NA	absent

@@ -1,0 +1,10 @@
+arm	replacement	images_holdout	images_val_subset	status
+H0	all-six-S8	0	0	not-run-blocked-independent-calibration-corpus-missing
+H1	FP32-P5-confidence-only	0	0	not-run-blocked-independent-calibration-corpus-missing
+H2	FP32-P5-bbox-only	0	0	not-run-blocked-independent-calibration-corpus-missing
+H3	FP32-P4-confidence-only	0	0	not-run-blocked-independent-calibration-corpus-missing
+H4	FP32-P3-confidence-only	0	0	not-run-blocked-independent-calibration-corpus-missing
+H5	both-FP32-P5-boundaries	0	0	not-run-blocked-independent-calibration-corpus-missing
+H6	all-three-FP32-confidence	0	0	not-run-blocked-independent-calibration-corpus-missing
+H7	all-three-FP32-bbox	0	0	not-run-blocked-independent-calibration-corpus-missing
+H8	all-six-FP32-control	0	0	not-run-blocked-independent-calibration-corpus-missing

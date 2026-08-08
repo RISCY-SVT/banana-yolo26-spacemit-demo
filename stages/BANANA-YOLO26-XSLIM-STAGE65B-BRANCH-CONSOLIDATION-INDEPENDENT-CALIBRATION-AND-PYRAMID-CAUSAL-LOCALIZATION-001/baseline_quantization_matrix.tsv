@@ -1,0 +1,7 @@
+id	corpus	count	precision	finetune	model_sha256	status
+B0	stage64-imported-val2017-subset	50	0	1	29e08be834afb8925ca02af69d9a25df05449e9367ef3d8dd8ca4d57cf59a4fb	imported-historical-control-only
+B1	independent-random	50	0	1	NA	not-run-blocked-independent-calibration-corpus-missing
+B2	independent-random	200	1	2	NA	not-run-blocked-independent-calibration-corpus-missing
+B3	independent-random	500	1	2	NA	not-run-blocked-independent-calibration-corpus-missing
+B4	independent-random	1000	1	2	NA	not-run-blocked-independent-calibration-corpus-missing
+B5	independent-size-balanced	500	1	2	NA	not-run-blocked-independent-calibration-corpus-missing
