@@ -1,0 +1,9 @@
+lane	corpus	calibration_count	precision_level	finetune_level	model_sha256	reproducibility	status	effective_config_sha256	effective_image_list
+B0	Stage64-val-derived	50	0	1	29e08be834afb8925ca02af69d9a25df05449e9367ef3d8dd8ca4d57cf59a4fb	imported-exact-identity	imported-historical-control		NA
+B1	COCO-train-natural-C50	50	0	1	ad1b4d28e3c4d9d837c218ef16fd8435ecfd7847033a8c7af846f5e855109b21	byte-identical	pass	59cfe5b27f93b440c5ba8704f87267da192a10ca1c463167c729c41bd084408c	/data/datasets/coco2017-independent-stage65b-r1/lists/selection_C50.txt
+B2	COCO-train-natural-C50	50	1	2	0e7040d4e8b1b2d08a4e36cec4c99dcea6d52294e04901d17dfce10725c6d617	byte-identical	pass	0f1e707da7f69f0743c406783060433bb66553b8d37694b41eb77d5cce3be8b6	/data/datasets/coco2017-independent-stage65b-r1/lists/selection_C50.txt
+B3	COCO-train-natural-C200	200	1	2	b781da491ec13c7d7da7f528dd7120afe4caa43b831237b8fca85c54b6a81046	byte-identical	pass	66221bda839a926bf7fc66d843ae979a3a4ae160f2c5100cd125a7ebbd4bc2b2	/data/datasets/coco2017-independent-stage65b-r1/lists/selection_C200.txt
+B4	COCO-train-natural-C500	500	1	2	5be6f5e06dc072d30044a4aee3fe64746a05bbfd1b68d6c77f65a2e0f95823e9	byte-identical	pass	be1b1ee87eb843205fafc69098e13b9ef7ede933606afd526c9a9b9382e11a51	/data/datasets/coco2017-independent-stage65b-r1/lists/selection_C500.txt
+B5	COCO-train-natural-C1000	1000	1	2	ce00720ac8a25ca20de9d39c2610cef7eed2b6fecdd7952a1bf2e57acac59be0	byte-identical	pass	cd2572ef42f3a17529e22777b8b4780a16460bdfddde5cf596ca462b07905183	/data/datasets/coco2017-independent-stage65b-r1/lists/selection_C1000.txt
+B6	COCO-train-size-balanced-C500	500	1	2	2e0de239651e2f077e7f9deaf5b7e2d1f1f1d6781ddff7e2429e7dd29daa75d0	byte-identical	pass	f918570b92658828d84ca69ccc6983a831a12e7426c37e674c2005f2678ffefb	/data/datasets/coco2017-independent-stage65b-r1/lists/selection_C500_size_balanced.txt
+O1	Open-Images-V7-validation	0	1	2			not-run-nonblocking-allowlisted-image-surface-unavailable		NA

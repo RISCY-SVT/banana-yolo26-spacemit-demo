@@ -1,0 +1,2 @@
+artifact	raw_path	rows	bytes	sha256	status
+coco-train2017-all-image-metadata	/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65B-R1-COCO-TRAIN2017-EVALUATION-DISJOINT-CORPUS-PTQ-GRAPHWISE-AND-PYRAMID-CAUSAL-LOCALIZATION-001/dataset/coco_image_metadata_all.tsv	118287	30164753	5f07fde36a603d6a12f4df988ffeb029055d33b103383e80a7cf2c0d063e8d61	raw-complete; compact-pointer-in-git

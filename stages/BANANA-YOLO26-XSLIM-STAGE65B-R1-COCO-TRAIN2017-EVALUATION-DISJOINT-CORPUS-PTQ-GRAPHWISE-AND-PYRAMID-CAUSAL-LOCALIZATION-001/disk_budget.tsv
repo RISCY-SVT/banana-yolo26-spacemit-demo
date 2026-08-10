@@ -1,0 +1,2 @@
+capture	mount	total_bytes	used_bytes	available_bytes	mandatory_budget_bytes	dataset_bytes	status
+post-acquisition-2026-08-08T20:40Z	/data	858572963840	393808130048	464764833792	26843545600	20570635140	pass

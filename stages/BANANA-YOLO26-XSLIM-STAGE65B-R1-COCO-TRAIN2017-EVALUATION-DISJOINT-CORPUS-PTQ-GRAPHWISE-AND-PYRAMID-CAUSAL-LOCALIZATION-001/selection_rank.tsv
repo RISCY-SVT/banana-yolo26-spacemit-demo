@@ -1,0 +1,2 @@
+artifact	raw_path	rows	sha256	status
+deterministic-qualified-image-ranking	/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65B-R1-COCO-TRAIN2017-EVALUATION-DISJOINT-CORPUS-PTQ-GRAPHWISE-AND-PYRAMID-CAUSAL-LOCALIZATION-001/dataset/selection_rank.tsv	117266	4465cbc7e498052a540765ecb1738555d08c7efc17dfa99285c1808bfe535a3f	raw-complete; compact-pointer-in-git

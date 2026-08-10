@@ -1,0 +1,5 @@
+surface	status	rows	bytes	sha256	reason
+validation-bounding-boxes	metadata-only	303980	25105048	d8bbd59410af14835d7733165a7bb8a3f0213981b22dd5077b0b9f7878991ff2	official metadata captured
+validation-image-metadata	metadata-only	41620	15245485	ed93a0e121fe345effdfc7359b848dbc64a1ff6778c8c73563157cb500b33a17	official metadata captured
+class-descriptions	metadata-only	601	12064	1839e0e7e84130ae281f7f67413768601b031581c0c42e7fc17527b8e2a99aa9	official metadata captured
+O1-image-bytes	not-run-nonblocking	0	0		official downloader object host outside allowlist; allowlisted equivalent returned HTTP 403

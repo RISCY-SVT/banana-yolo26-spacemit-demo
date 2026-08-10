@@ -1,0 +1,3 @@
+role	url	http_status	redirect	content_length	etag	last_modified	started_utc	completed_utc	tls_policy
+annotations	https://images.cocodataset.org/annotations/annotations_trainval2017.zip	200	none	252907541	"f4bbac642086de4f52a3fdda2de5fa2c"	Tue, 10 Jul 2018 17:58:17 GMT	2026-08-08T19:30:22Z	2026-08-08T19:30:42Z	official-hostname; observed-certificate-hostname-mismatch; SPKI-pinned
+train2017	https://images.cocodataset.org/zips/train2017.zip	200	none	19336861798	"62ff7d7fbcc7e0c0604cbb0f9047ce77-2306"	Wed, 11 Jul 2018 05:02:03 GMT	2026-08-08T19:30:53Z	2026-08-08T19:54:55Z	official-hostname; observed-certificate-hostname-mismatch; SPKI-pinned

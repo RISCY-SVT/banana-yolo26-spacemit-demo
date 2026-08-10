@@ -26,6 +26,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--output-root", required=True, type=Path)
     parser.add_argument("--summary", required=True, type=Path)
     parser.add_argument("--timeout-seconds", type=int, default=14400)
+    parser.add_argument("--launcher", type=Path)
+    parser.add_argument("--random-seed", type=int)
     return parser.parse_args()
 
 
@@ -101,6 +103,18 @@ def main() -> int:
     for name, path in environment_roots.items():
         path.mkdir(parents=True, exist_ok=True)
         environment[name] = str(path.resolve())
+    xslim_command = [str(options.python)]
+    if options.launcher is not None:
+        if options.random_seed is None:
+            raise ValueError("--launcher requires --random-seed")
+        if not options.launcher.is_file():
+            raise FileNotFoundError(options.launcher)
+        environment["STAGE65B_R1_RANDOM_SEED"] = str(options.random_seed)
+        xslim_command.append(str(options.launcher.resolve()))
+    else:
+        if options.random_seed is not None:
+            raise ValueError("--random-seed requires --launcher")
+        xslim_command.extend(["-m", "xslim"])
     time_binary = shutil.which("time")
     if time_binary:
         command = [
@@ -108,9 +122,7 @@ def main() -> int:
             "-v",
             "-o",
             str(time_path),
-            str(options.python),
-            "-m",
-            "xslim",
+            *xslim_command,
             "-c",
             str(effective_config),
         ]
@@ -120,9 +132,7 @@ def main() -> int:
             encoding="utf-8",
         )
         command = [
-            str(options.python),
-            "-m",
-            "xslim",
+            *xslim_command,
             "-c",
             str(effective_config),
         ]
@@ -180,6 +190,8 @@ def main() -> int:
         "effective_config_sha256": sha256(effective_config),
         "python": str(options.python.absolute()),
         "python_realpath": str(options.python.resolve()),
+        "launcher": str(options.launcher.resolve()) if options.launcher else "",
+        "random_seed": "" if options.random_seed is None else options.random_seed,
         "returncode": returncode,
         "elapsed_seconds": f"{elapsed:.6f}",
         "output_model": str(output_model),

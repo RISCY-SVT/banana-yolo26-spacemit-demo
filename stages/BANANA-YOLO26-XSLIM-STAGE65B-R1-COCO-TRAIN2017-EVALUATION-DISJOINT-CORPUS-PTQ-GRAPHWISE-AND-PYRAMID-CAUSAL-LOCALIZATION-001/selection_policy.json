@@ -1,0 +1,20 @@
+{
+  "balanced_min_images_per_original_coco_size_bin": 167,
+  "balanced_observed": {
+    "large": 422,
+    "medium": 358,
+    "small": 260
+  },
+  "balanced_pool_size": 1000,
+  "classification": "internal-rd-only; no image redistribution; no commercial-clearance claim",
+  "decoder": "Pillow 12.3.0",
+  "mode": "RGB8",
+  "natural_pool_size": 3000,
+  "near_duplicate": "64-bit dHash, Hamming <= 1, warning only",
+  "orientation": "ImageOps.exif_transpose",
+  "pixel_hash_encoding": "prefix+uint64le(width)+uint64le(height)+contiguous_RGB8_bytes",
+  "pixel_hash_version": "stage65b-r1-rgb8-v1",
+  "policy_version": "stage65b-r1-coco-train2017-selection-v1",
+  "rank_byte_encoding": "utf8(policy_version)+NUL+ascii(annotation_sha256)+NUL+ascii(decimal_image_id)",
+  "val_scout_policy_version": "stage65b-r1-coco-val2017-scout-v1"
+}

@@ -1,0 +1,15 @@
+item	value	status
+package	xslim	pass
+version	2.1.2+riscy.1	pass
+wheel	xslim-2.1.2+riscy.1-py3-none-any.whl	pass
+wheel_sha256	635441d26458c6754627dd9595132cfd9a16d762d3ed0252f0039be668c01784	pass-imported-published-identity
+installation	fresh-stage-local-venv-from-frozen-wheelhouse	pass
+editable_install	false	pass
+checkout_import	false	pass
+package_path	stage-local-venv-site-packages	pass-sanitized
+pip_check	No broken requirements found.	pass
+xslim-yolo-output-check	help-exit-0	pass
+xslim-qdq-boundary-audit	help-exit-0	pass
+randomness_contract	released-tool-does-not-seed-all-used-rngs	observed
+decision_launcher	seed-python-numpy-torch-opencv-and-enable-deterministic-torch	pass-seed-65001
+board_execution	not-authorized-not-run	pass

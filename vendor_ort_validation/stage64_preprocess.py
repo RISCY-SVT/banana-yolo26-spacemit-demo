@@ -73,6 +73,11 @@ def preprocess_impl(
     return torch.from_numpy(np.stack(tensors, axis=0))
 
 
+def boundary_audit_preprocess(path: str | Path) -> np.ndarray:
+    """Adapt the project-exact tensor for one-path validation CLIs."""
+    return letterbox_rgb_nchw(path)[None, ...]
+
+
 def digest(array: np.ndarray) -> str:
     return hashlib.sha256(array.tobytes(order="C")).hexdigest()
 

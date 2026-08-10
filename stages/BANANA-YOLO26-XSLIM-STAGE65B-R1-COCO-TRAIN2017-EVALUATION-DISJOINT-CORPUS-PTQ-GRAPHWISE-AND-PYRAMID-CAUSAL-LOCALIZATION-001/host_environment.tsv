@@ -1,0 +1,16 @@
+component	version_or_identity	status
+python	3.12.3	pass
+platform	Linux-6.12.0-211.43.1.el10_2.x86_64-x86_64-with-glibc2.39	pass
+xslim	2.1.2+riscy.1	pass
+numpy	2.5.1	pass
+torch	2.10.0+cpu	pass
+onnx	1.21.0	pass
+onnxruntime-host	1.24.3	pass
+onnxslim	0.1.87	pass
+opencv-python	4.13.0.90	pass
+Pillow	12.3.0	pass
+pip-freeze-sha256	7ca1b78d8792eb8f01bd46537a219c1c15b7a5850a507d2b097fd01f025310f3	pass
+pythonhashseed	0	pass
+xslim_random_seed	65001	pass-decision-runs
+torch_deterministic_algorithms	true	pass-decision-runs
+board_execution	not-authorized-not-run	pass
