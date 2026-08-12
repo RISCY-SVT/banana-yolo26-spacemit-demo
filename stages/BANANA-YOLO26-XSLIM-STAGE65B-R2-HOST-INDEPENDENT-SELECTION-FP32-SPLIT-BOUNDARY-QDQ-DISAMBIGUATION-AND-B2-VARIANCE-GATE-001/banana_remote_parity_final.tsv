@@ -1,0 +1,4 @@
+checkpoint	ref	local	github	gitlab_rd	status
+post-evidence-push	yolo26-vendor-ort-xslim211-s8-qdq-validation	09ae3655e13a2bd22b8ac4cc22f226be212c8313	09ae3655e13a2bd22b8ac4cc22f226be212c8313	09ae3655e13a2bd22b8ac4cc22f226be212c8313	pass
+protected-final	yolo26-custom-int8-engine	1fd2e71bb1d5a924e7c0444cada94f681b73aa91	1fd2e71bb1d5a924e7c0444cada94f681b73aa91	1fd2e71bb1d5a924e7c0444cada94f681b73aa91	pass
+handoff-final	yolo26-vendor-ort-xslim211-s8-qdq-validation	branch-head-containing-this-report	branch-head-containing-this-report	branch-head-containing-this-report	post-push-exact-readback-required-and-recorded-in-result-packet

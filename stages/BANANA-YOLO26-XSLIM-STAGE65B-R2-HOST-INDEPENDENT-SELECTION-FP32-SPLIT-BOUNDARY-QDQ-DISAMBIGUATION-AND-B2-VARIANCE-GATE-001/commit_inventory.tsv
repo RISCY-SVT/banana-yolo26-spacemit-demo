@@ -1,0 +1,5 @@
+sequence	role	commit	parent	publication_status
+0	stage-start	40615a5d31ff1687d2f00b74f83470071793ab6c	64435c96100b098dea69735b32cb09705b881771	accepted-before-stage
+1	intermediate-causal-tooling	9310fdf671cc7ca79240ff65f0c0ee792d724995	40615a5d31ff1687d2f00b74f83470071793ab6c	github-gitlab-rd-parity-pass
+2	host-evidence-closure	09ae3655e13a2bd22b8ac4cc22f226be212c8313	9310fdf671cc7ca79240ff65f0c0ee792d724995	github-gitlab-rd-parity-pass
+3	parity-and-packet-attestation	branch-head-containing-this-report	09ae3655e13a2bd22b8ac4cc22f226be212c8313	exact-sha-resolved-by-post-push-readback-and-result-packet
