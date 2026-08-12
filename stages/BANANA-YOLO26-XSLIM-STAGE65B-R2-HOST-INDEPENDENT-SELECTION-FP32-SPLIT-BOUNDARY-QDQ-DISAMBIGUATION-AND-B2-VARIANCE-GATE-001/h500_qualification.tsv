@@ -1,0 +1,7 @@
+check	observed	expected	status
+H500-count	500	500	pass
+calibration-image-id-overlap	0	0	pass
+calibration-JPEG-SHA256-overlap	0	0	pass
+calibration-pixel-SHA256-overlap	0	0	pass
+calibration-disjoint	yes	yes	pass
+model-training-independent	no (COCO train2017 lineage)	no	pass

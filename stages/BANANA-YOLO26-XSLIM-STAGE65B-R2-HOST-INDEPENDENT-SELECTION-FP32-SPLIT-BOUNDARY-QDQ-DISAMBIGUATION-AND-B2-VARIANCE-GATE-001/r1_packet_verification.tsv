@@ -1,0 +1,5 @@
+field	expected	observed	status
+tree_sha256	c2a2e2cb69969af2a05128d29d78db1398fb0838e74705409768da6620b6579c	c2a2e2cb69969af2a05128d29d78db1398fb0838e74705409768da6620b6579c	pass
+file_count	118	118	pass
+byte_count	14284954	14284954	pass
+symlink_count	0	0	pass

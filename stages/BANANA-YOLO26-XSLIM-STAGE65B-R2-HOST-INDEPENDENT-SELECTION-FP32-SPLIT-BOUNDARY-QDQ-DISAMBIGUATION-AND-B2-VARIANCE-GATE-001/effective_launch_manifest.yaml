@@ -1,0 +1,12 @@
+stage_id: BANANA-YOLO26-XSLIM-STAGE65B-R2-HOST-INDEPENDENT-SELECTION-FP32-SPLIT-BOUNDARY-QDQ-DISAMBIGUATION-AND-B2-VARIANCE-GATE-001
+launch_authority: direct-user-authorization
+launched_at_utc: 2026-08-12T09:31:54Z
+research_branch_start: 40615a5d31ff1687d2f00b74f83470071793ab6c
+protected_main: 1fd2e71bb1d5a924e7c0444cada94f681b73aa91
+r1_packet_tree_sha256: c2a2e2cb69969af2a05128d29d78db1398fb0838e74705409768da6620b6579c
+r1_packet_files: 118
+r1_packet_bytes: 14284954
+fp32_source_sha256: d71286588abe691ede49faa5ca9a471b7e9e5257669953ee59abbc2e9d115fc2
+xslim_wheel_sha256: 635441d26458c6754627dd9595132cfd9a16d762d3ed0252f0039be668c01784
+board_execution_authorized: false
+new_branch_authorized: false

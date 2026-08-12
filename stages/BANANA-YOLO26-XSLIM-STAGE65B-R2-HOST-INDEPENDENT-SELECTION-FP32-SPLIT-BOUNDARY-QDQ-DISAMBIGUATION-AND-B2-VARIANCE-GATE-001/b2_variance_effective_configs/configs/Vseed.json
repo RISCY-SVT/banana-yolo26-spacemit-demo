@@ -1,0 +1,52 @@
+{
+  "calibration_parameters": {
+    "calibration_batch_size": 1,
+    "calibration_device": "cpu",
+    "calibration_step": 50,
+    "calibration_type": "default",
+    "input_parameters": [
+      {
+        "color_format": "rgb",
+        "data_list_path": "/data/worktrees/banana-yolo26-xslim211-s8-qdq-validation/stages/BANANA-YOLO26-XSLIM-STAGE65B-R2-HOST-INDEPENDENT-SELECTION-FP32-SPLIT-BOUNDARY-QDQ-DISAMBIGUATION-AND-B2-VARIANCE-GATE-001/b2_variance_effective_configs/lists/Vseed.txt",
+        "file_type": "img",
+        "input_name": "images",
+        "input_shape": [
+          1,
+          3,
+          640,
+          640
+        ],
+        "mean_value": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "preprocess_file": "/data/worktrees/banana-yolo26-xslim211-s8-qdq-validation/vendor_ort_validation/stage64_preprocess.py:preprocess_impl",
+        "std_value": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    ]
+  },
+  "model_parameters": {
+    "onnx_model": "/data/banana-yolo26-spacemit-demo/.deps/models/yolo26/fp32_fp16_xslim_effect_matrix/yolo26n_640_e2e_fp32.onnx",
+    "output_prefix": "stage65b_r2_vseed_split_s8_qdq",
+    "skip_onnxsim": false,
+    "working_dir": "STAGE65B_R2_DRIVER_REPLACES_THIS"
+  },
+  "quantization_parameters": {
+    "analysis_enable": true,
+    "finetune_level": 2,
+    "precision_level": 1,
+    "truncate_var_names": [
+      "/model.23/one2one_cv2.0/one2one_cv2.0.2/Conv_output_0",
+      "/model.23/one2one_cv3.0/one2one_cv3.0.2/Conv_output_0",
+      "/model.23/one2one_cv2.1/one2one_cv2.1.2/Conv_output_0",
+      "/model.23/one2one_cv3.1/one2one_cv3.1.2/Conv_output_0",
+      "/model.23/one2one_cv2.2/one2one_cv2.2.2/Conv_output_0",
+      "/model.23/one2one_cv3.2/one2one_cv3.2.2/Conv_output_0"
+    ]
+  }
+}

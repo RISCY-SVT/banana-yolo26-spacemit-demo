@@ -1,0 +1,10 @@
+arm	replaced_boundary_indices	replaced_semantics	starts_from_candidate_boundaries	same_tail	status
+H0		none	1	1	pass
+H1	5	P5 confidence	1	1	pass
+H2	4	P5 bbox	1	1	pass
+H3	3	P4 confidence	1	1	pass
+H4	1	P3 confidence	1	1	pass
+H5	4,5	P5 bbox and confidence	1	1	pass
+H6	1,3,5	P3/P4/P5 confidence	1	1	pass
+H7	0,2,4	P3/P4/P5 bbox	1	1	pass
+H8	0,1,2,3,4,5	all six boundaries	1	1	pass
