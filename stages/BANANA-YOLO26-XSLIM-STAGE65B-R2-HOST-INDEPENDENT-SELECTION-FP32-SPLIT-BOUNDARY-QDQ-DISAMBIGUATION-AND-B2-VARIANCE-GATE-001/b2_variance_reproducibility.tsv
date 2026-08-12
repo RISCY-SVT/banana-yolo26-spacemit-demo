@@ -1,0 +1,4 @@
+lane	requirement	run1_sha256	run2_sha256	byte_identical	status
+Vseed	mandatory-triggered-second-generation	81ae8ac31aca734c3b0ca3808476d7290ae25588622298eb1e26abdae8c872e3	81ae8ac31aca734c3b0ca3808476d7290ae25588622298eb1e26abdae8c872e3	1	pass
+Vorder	not-required-by-predeclared-gate	5ab49bff35f60c1927c6c72551463a38cd972cc6afe445b3e672a3ce1b63cb40	NA	NA	pass-single-generation-authorized
+Vdraw	not-required-by-predeclared-gate	fdbf22f4c6325b17aacc1a57ae790a4028de74352b7d29572f0584b5e0891d72	NA	NA	pass-single-generation-authorized

@@ -1,0 +1,2 @@
+selection_surface	selection_rule	winner	winner_map50_95	runner_up	runner_up_map50_95	point_delta	prebootstrap_tie_threshold	prebootstrap_statistical_tie	bootstrap_pair	bootstrap_percentile_2_5	bootstrap_percentile_97_5	bootstrap_probability_delta_gt_zero	selection	note
+H500-calibration-disjoint	map50_95-then-ap_large-then-lane-id	B2	0.4446654879525213	B0	0.4375988415074177	0.00706664644510363	0.005	0	B2-B0	-0.0013079212367526015	0.016270033970465735	0.96	B2	val2017 scout/full-val not used for selection

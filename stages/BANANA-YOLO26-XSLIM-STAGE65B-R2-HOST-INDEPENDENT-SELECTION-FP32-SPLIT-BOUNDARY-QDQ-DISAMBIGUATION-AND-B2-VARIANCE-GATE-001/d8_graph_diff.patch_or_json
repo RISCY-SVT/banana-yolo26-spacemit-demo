@@ -1,0 +1,58 @@
+{
+  "classification": "surgically-modified-host-diagnostic-only",
+  "deployable_or_provider_evidence": false,
+  "input_model": "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65B-R1-COCO-TRAIN2017-EVALUATION-DISJOINT-CORPUS-PTQ-GRAPHWISE-AND-PYRAMID-CAUSAL-LOCALIZATION-001/postprocess/B2/candidate-gate/B2/models/stage65b_r1_b2.inference.onnx",
+  "input_sha256": "40ba6a7f9aebaa98a1c3abe5fce1f66f1bebcd0b10b7af3d26d30414a331d853",
+  "output_model": "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65B-R2-HOST-INDEPENDENT-SELECTION-FP32-SPLIT-BOUNDARY-QDQ-DISAMBIGUATION-AND-B2-VARIANCE-GATE-001/models/B2-D8-final-six-output-qdq-bypass-diagnostic.onnx",
+  "removed": [
+    {
+      "added_identity": "Stage65B_R2_D8_OutputIdentity_0",
+      "boundary": "/model.23/one2one_cv2.0/one2one_cv2.0.2/Conv_output_0",
+      "identity_input": "PPQ_Variable_2235",
+      "identity_output": "/model.23/one2one_cv2.0/one2one_cv2.0.2/Conv_output_0",
+      "removed_dequantize": "PPQ_Operation_1241",
+      "removed_quantize": "PPQ_Operation_1240"
+    },
+    {
+      "added_identity": "Stage65B_R2_D8_OutputIdentity_1",
+      "boundary": "/model.23/one2one_cv3.0/one2one_cv3.0.2/Conv_output_0",
+      "identity_input": "PPQ_Variable_2355",
+      "identity_output": "/model.23/one2one_cv3.0/one2one_cv3.0.2/Conv_output_0",
+      "removed_dequantize": "PPQ_Operation_1281",
+      "removed_quantize": "PPQ_Operation_1280"
+    },
+    {
+      "added_identity": "Stage65B_R2_D8_OutputIdentity_2",
+      "boundary": "/model.23/one2one_cv2.1/one2one_cv2.1.2/Conv_output_0",
+      "identity_input": "PPQ_Variable_2631",
+      "identity_output": "/model.23/one2one_cv2.1/one2one_cv2.1.2/Conv_output_0",
+      "removed_dequantize": "PPQ_Operation_1373",
+      "removed_quantize": "PPQ_Operation_1372"
+    },
+    {
+      "added_identity": "Stage65B_R2_D8_OutputIdentity_3",
+      "boundary": "/model.23/one2one_cv3.1/one2one_cv3.1.2/Conv_output_0",
+      "identity_input": "PPQ_Variable_2730",
+      "identity_output": "/model.23/one2one_cv3.1/one2one_cv3.1.2/Conv_output_0",
+      "removed_dequantize": "PPQ_Operation_1406",
+      "removed_quantize": "PPQ_Operation_1405"
+    },
+    {
+      "added_identity": "Stage65B_R2_D8_OutputIdentity_4",
+      "boundary": "/model.23/one2one_cv2.2/one2one_cv2.2.2/Conv_output_0",
+      "identity_input": "PPQ_Variable_2988",
+      "identity_output": "/model.23/one2one_cv2.2/one2one_cv2.2.2/Conv_output_0",
+      "removed_dequantize": "PPQ_Operation_1492",
+      "removed_quantize": "PPQ_Operation_1491"
+    },
+    {
+      "added_identity": "Stage65B_R2_D8_OutputIdentity_5",
+      "boundary": "/model.23/one2one_cv3.2/one2one_cv3.2.2/Conv_output_0",
+      "identity_input": "PPQ_Variable_3039",
+      "identity_output": "/model.23/one2one_cv3.2/one2one_cv3.2.2/Conv_output_0",
+      "removed_dequantize": "PPQ_Operation_1509",
+      "removed_quantize": "PPQ_Operation_1508"
+    }
+  ],
+  "unchanged_upstream_qdq_count": 800
+}

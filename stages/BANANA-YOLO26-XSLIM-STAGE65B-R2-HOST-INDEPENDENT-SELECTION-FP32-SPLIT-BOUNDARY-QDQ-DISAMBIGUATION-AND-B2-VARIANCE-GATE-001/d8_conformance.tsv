@@ -1,0 +1,2 @@
+checker	shape_inference	six_outputs	tail_input_identity	output_name_identity	output_shape_identity	output_dtype_float	qlinear_count	uint8_zero_point_count	conv_kernel_shape_failures	status
+pass	pass	1	1	1	1	1	0	0	0	pass

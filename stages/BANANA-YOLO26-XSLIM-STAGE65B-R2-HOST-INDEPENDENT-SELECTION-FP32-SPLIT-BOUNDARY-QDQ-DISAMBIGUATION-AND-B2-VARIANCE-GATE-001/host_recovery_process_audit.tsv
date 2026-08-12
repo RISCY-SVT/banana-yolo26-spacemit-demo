@@ -1,0 +1,9 @@
+check	observation	disposition	status
+historical-reboot-cause	Previous-boot journal and ring-buffer evidence were unavailable; the user states that Windows 10 externally rebooted the host.	Preserve both the historical unknown-from-container wording and the append-only operational clarification.	pass
+R1-incomplete-B3	The interrupted B3 output tree was already isolated; clean B3 run2 reproduced run1 byte-for-byte.	No R1 decision surface was reused from the incomplete tree.	pass
+R2-resume-point	One expected Vseed host-evaluation process was active at recovery; it completed with exit 0 and wrote its summary atomically.	Continued from completed immutable H500, FP32, and D8 evidence without regenerating accepted artifacts.	pass
+R2-PTQ-processes	Vseed run1/run2, Vorder run1, and Vdraw run1 all exited 0; all generated ONNX files passed checker.	Vseed run2 was required and was byte-identical to run1.	pass
+R2-evaluator-processes	Vseed, Vorder, and Vdraw conformance/fixture/scout/H500 evaluators all exited 0.	No candidate evaluator remains active.	pass
+R2-bootstrap-processes	Mandatory H500, D8 H500/full-val, and variance H500 bootstrap jobs exited 0.	No bootstrap process remains active.	pass
+final-process-inventory	No stage65b_r2, XSlim PTQ, evaluator, or bootstrap worker remains after completion.	No cleanup or termination was required.	pass
+board-processes	No board command or SpacemiT EP execution was issued.	Host-only scope preserved.	pass
