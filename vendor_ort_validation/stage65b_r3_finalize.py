@@ -28,6 +28,9 @@ FULL_D8 = 0.3793441320923446
 FULL_H8 = 0.4018217950262668
 FULL_RESIDUAL = 0.022477662933922227
 FULL_THRESHOLD = 0.005619415733480557
+FINAL_BOOTSTRAP_DRAW_SHA256 = (
+    "35f4077634743cd23d64d7898d827f631a81191a04d381b7386e826cec7679c8"
+)
 
 
 def parse_args() -> argparse.Namespace:
@@ -343,6 +346,17 @@ Classification: `distributed-error`, with `outlier-dominated-range`, lower-tail 
 
 
 def full_val_reports(raw: Path, tracked: Path, r2: Path) -> None:
+    new_arm_rows = read_tsv(raw / "full-val/fq8/arm_summary.tsv") + read_tsv(
+        raw / "full-val/qf/arm_summary.tsv"
+    )
+    if len(new_arm_rows) != 4 or any(
+        int(row["images"]) != 5000
+        or int(row["non_finite"]) != 0
+        or int(row["score_collapsed_images"]) != 0
+        or row["status"] != "pass"
+        for row in new_arm_rows
+    ):
+        raise RuntimeError("new full-val arm conformance/count contract differs")
     surfaces = {
         "D8": r2 / "d8/full-val-metrics/results.tsv",
         "H8": r2 / "fp32/full-val-current/metrics-H8/results.tsv",
@@ -354,6 +368,12 @@ def full_val_reports(raw: Path, tracked: Path, r2: Path) -> None:
     rows: list[dict[str, Any]] = []
     for surface, path in surfaces.items():
         row: dict[str, Any] = dict(metric_row(path))
+        if (
+            int(row["images"]) != 5000
+            or int(row["failures"]) != 0
+            or int(row["non_finite_predictions"]) != 0
+        ):
+            raise RuntimeError(f"full-val gate failed for {surface}: {row}")
         row["surface"] = surface
         if surface.startswith("FQ8"):
             row["delta_from_d8"] = float(row["map50_95"]) - FULL_D8
@@ -393,6 +413,29 @@ def full_val_reports(raw: Path, tracked: Path, r2: Path) -> None:
     l2 = float(metric_row(surfaces["FQ8-L2"])["map50_95"])
     e1 = float(metric_row(surfaces["FQ8-E1"])["map50_95"])
     qf = float(metric_row(surfaces["QF-L3"])["map50_95"])
+    final_l3 = bootstrap_map(final)[("L3-D8", "map50_95")]
+    if int(final_l3["replicates"]) != 10000 or int(final_l3["seed"]) != 65003:
+        raise RuntimeError("final L3-D8 bootstrap count/seed contract differs")
+    if int(final_l3["reused_screening_prefix_replicates"]) != 1000:
+        raise RuntimeError("final bootstrap did not preserve the accepted 1000 prefix")
+    if abs(float(final_l3["point_delta"]) - (l3 - FULL_D8)) > 1e-12:
+        raise RuntimeError("final L3-D8 bootstrap point delta differs from full-val")
+    remap_rows = read_tsv(
+        raw / "full-val/bootstrap-final-l3-d8-10000/synthetic_id_validation.tsv"
+    )
+    if len(remap_rows) != 10 or any(
+        row["status"] != "pass" or float(row["absolute_difference"]) > 1e-12
+        for row in remap_rows
+    ):
+        raise RuntimeError("final bootstrap literal synthetic-ID remap differs")
+    hash_lines = (
+        raw
+        / "full-val/bootstrap-final-l3-d8-10000/paired_bootstrap_replicates.sha256"
+    ).read_text(encoding="utf-8").splitlines()
+    if len(hash_lines) != 2 or not hash_lines[1].startswith(
+        FINAL_BOOTSTRAP_DRAW_SHA256 + "  "
+    ):
+        raise RuntimeError("final bootstrap draw identity differs")
     write_text(
         tracked / "full_val_localization_decision.md",
         f"""# Full-val localization decision
@@ -404,6 +447,7 @@ Full val2017 is confirmation, not selection. All four predeclared arms passed 50
 - FQ8-L2: {l2:.12f}, recovery {(l2 - FULL_D8) / FULL_RESIDUAL:.3%}.
 - FQ8-E1 negative control: {e1:.12f}, delta {e1 - FULL_D8:+.12f}.
 - QF-L3 reverse confirmation: {qf:.12f}, H8 gap {FULL_H8 - qf:.12f}.
+- Final L3-D8 paired bootstrap: 10000 replicates, point delta {float(final_l3['point_delta']):.12f}, percentile 95% CI {float(final_l3['percentile_2_5']):.12f}..{float(final_l3['percentile_97_5']):.12f}, P(delta > 0)={float(final_l3['probability_delta_gt_zero']):.6f}.
 
 The full-val result reproduces H500: error is distributed between an early R0/stem-model.2 contributor and a larger late R7/model.23 per-scale-head-prefix contributor. L3 minus L2 is below the predeclared quarter-residual point threshold, so no single refined sub-block is declared independently material.
 """,
@@ -589,6 +633,13 @@ def tooling_reports(raw: Path, tracked: Path) -> None:
 
 
 def final_reports(tracked: Path) -> None:
+    final_bootstrap = next(
+        row
+        for row in read_tsv(tracked / "selected_full_coco_bootstrap.tsv")
+        if row["scope"] == "final-top-region"
+        and row["pair"] == "L3-D8"
+        and row["metric"] == "map50_95"
+    )
     write_text(
         tracked / "STAGE65B_R3_FINAL_REPORT.md",
         f"""# Stage65B-R3 Final Report
@@ -615,7 +666,7 @@ Reverse confirmation shows QF-C0 remains 0.007204 below H8 and QF-L3 remains 0.0
 
 ## Full val2017
 
-The four predeclared new arms all completed 5000/5000 with zero failures/non-finite/collapse. FQ8-L3 reaches 0.397752 mAP (81.90% residual recovery), FQ8-L2 0.394140 (65.82%), FQ8-E1 negative control 0.379543, and QF-L3 0.384050. These results reproduce the H500 localization without selecting on val2017.
+The four predeclared new arms all completed 5000/5000 with zero failures/non-finite/collapse. FQ8-L3 reaches 0.397752 mAP (81.90% residual recovery), FQ8-L2 0.394140 (65.82%), FQ8-E1 negative control 0.379543, and QF-L3 0.384050. The final 10000-replicate paired L3-D8 bootstrap gives a 95% interval of {float(final_bootstrap['percentile_2_5']):.6f}..{float(final_bootstrap['percentile_97_5']):.6f}, with P(delta > 0)={float(final_bootstrap['probability_delta_gt_zero']):.6f}. These results reproduce the H500 localization without selecting on val2017.
 
 ## Mechanism
 
@@ -634,7 +685,7 @@ At most two proposals are frozen: an all-S8 local robust-range policy for R0+R7 
 
 Контрольные split/splice-модели прошли точную реконструкцию на фиксированных изображениях и на всех 500 изображениях H500. Остаточная ошибка после D8 не локализуется в одном операторе. Доказаны два распределённых вклада: ранний участок stem/model.0-model.2 и поздние префиксы bbox/confidence-ветвей model.23. Поздний frontier L3 восстанавливает около 82% остатка как на H500, так и на полном val2017, но ранний вклад остаётся статистически значимым.
 
-Аудит активаций подтверждает clipping/rail occupancy и ошибку восстановления в model.2 и особенно в P4/P5 confidence-префиксах. Предложены не более двух последующих политик: сначала локальная all-S8 коррекция диапазонов/observer, затем только при её недостаточности ограниченное исключение или повышенная точность confidence-префикса. Модели не генерировались, плата K1X не запускалась, исходники XSlim и custom executor не менялись.
+Финальный paired bootstrap L3-D8 выполнен на 10000 повторах: 95% интервал {float(final_bootstrap['percentile_2_5']):.6f}..{float(final_bootstrap['percentile_97_5']):.6f}, P(delta > 0)={float(final_bootstrap['probability_delta_gt_zero']):.6f}. Аудит активаций подтверждает clipping/rail occupancy и ошибку восстановления в model.2 и особенно в P4/P5 confidence-префиксах. Предложены не более двух последующих политик: сначала локальная all-S8 коррекция диапазонов/observer, затем только при её недостаточности ограниченное исключение или повышенная точность confidence-префикса. Модели не генерировались, плата K1X не запускалась, исходники XSlim и custom executor не менялись.
 """,
     )
 
