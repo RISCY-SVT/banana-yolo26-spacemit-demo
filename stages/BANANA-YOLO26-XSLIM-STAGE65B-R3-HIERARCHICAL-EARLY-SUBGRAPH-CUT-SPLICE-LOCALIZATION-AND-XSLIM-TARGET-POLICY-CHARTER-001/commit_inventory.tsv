@@ -1,0 +1,7 @@
+sequence	commit	parent	purpose	role
+0	84caf893c73f2a33dfbbedacfa56c7ca40843557	09ae3655e13a2bd22b8ac4cc22f226be212c8313	accepted Stage65B-R2 branch end	stage-start
+1	0e1dcf0664173b8c1de3561d790a913ba241a5e7	84caf893c73f2a33dfbbedacfa56c7ca40843557	test: add Stage65B-R3 causal localization gates	tooling
+2	be626382686d6372916585f26acb2631b71f0daa	0e1dcf0664173b8c1de3561d790a913ba241a5e7	feat: make final paired bootstrap crash-resumable	tooling
+3	9f5207da4d3ad84a26ac07c2ada70bbad802d4b8	be626382686d6372916585f26acb2631b71f0daa	test: enforce final full-val evidence contracts	tooling
+4	eece4fba90c7437e0f3d52fbc18a254078670c10	9f5207da4d3ad84a26ac07c2ada70bbad802d4b8	test: preserve selected activation hashes per image	tooling
+5	a6ebce4417f9ace858fabbcb047f460635eea684	eece4fba90c7437e0f3d52fbc18a254078670c10	docs: record Stage65B-R3 localization evidence	final-evidence-closure
