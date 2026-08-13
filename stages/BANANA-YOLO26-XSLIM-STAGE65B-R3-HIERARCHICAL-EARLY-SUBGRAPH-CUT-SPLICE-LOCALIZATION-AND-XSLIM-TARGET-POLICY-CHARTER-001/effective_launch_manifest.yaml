@@ -1,0 +1,17 @@
+{
+  "board_execution_authorized": false,
+  "execution_authority": "direct-user-authorization",
+  "new_branch_authorized": false,
+  "protected_main": "1fd2e71bb1d5a924e7c0444cada94f681b73aa91",
+  "r2_packet": {
+    "bytes": 809627,
+    "files": 75,
+    "tree_sha256": "d80b3362fa0abd99afa3fc1985fe547e774113f690e5ab0140b0b4c7276639db"
+  },
+  "raw_root": "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65B-R3-HIERARCHICAL-EARLY-SUBGRAPH-CUT-SPLICE-LOCALIZATION-AND-XSLIM-TARGET-POLICY-CHARTER-001",
+  "research_branch": "yolo26-vendor-ort-xslim211-s8-qdq-validation",
+  "research_start": "84caf893c73f2a33dfbbedacfa56c7ca40843557",
+  "stage_id": "BANANA-YOLO26-XSLIM-STAGE65B-R3-HIERARCHICAL-EARLY-SUBGRAPH-CUT-SPLICE-LOCALIZATION-AND-XSLIM-TARGET-POLICY-CHARTER-001",
+  "targeted_model_generation_authorized": false,
+  "tracked_root": "/data/worktrees/banana-yolo26-xslim211-s8-qdq-validation/stages/BANANA-YOLO26-XSLIM-STAGE65B-R3-HIERARCHICAL-EARLY-SUBGRAPH-CUT-SPLICE-LOCALIZATION-AND-XSLIM-TARGET-POLICY-CHARTER-001"
+}
