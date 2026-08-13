@@ -1,0 +1,9 @@
+region	description	first_module	last_module	first_topological_index	last_topological_index	node_count	status
+R0	input/stem and early model.0-model.2	0	2	0	21	21	frozen-before-task-metrics
+R1	early/mid backbone model.3-model.6	3	6	22	76	53	frozen-before-task-metrics
+R2	later backbone model.7-model.8	7	8	77	112	35	frozen-before-task-metrics
+R3	model.9 and model.10 attention/FFN	9	10	113	154	41	frozen-before-task-metrics
+R4	late backbone / neck entry model.11-model.13	11	13	155	189	35	frozen-before-task-metrics
+R5	neck fusion model.14-model.20	14	20	190	263	74	frozen-before-task-metrics
+R6	model.21/model.22 pre-head, Concat/Split and attention/FFN	21	22	264	303	40	frozen-before-task-metrics
+R7	model.23 per-scale head prefixes and terminal Conv	23	23	304	363	60	frozen-before-task-metrics

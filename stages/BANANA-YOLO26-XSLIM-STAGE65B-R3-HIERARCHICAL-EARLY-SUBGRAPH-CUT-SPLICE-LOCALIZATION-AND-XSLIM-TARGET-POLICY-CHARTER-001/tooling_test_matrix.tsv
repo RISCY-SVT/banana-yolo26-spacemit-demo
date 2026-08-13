@@ -1,0 +1,5 @@
+test_surface	result	status	raw_evidence
+focused-pytest	12-passed	pass	/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65B-R3-HIERARCHICAL-EARLY-SUBGRAPH-CUT-SPLICE-LOCALIZATION-AND-XSLIM-TARGET-POLICY-CHARTER-001/tooling-tests/pytest.log
+compileall	stage65b-r3-tools-and-tests	pass	/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65B-R3-HIERARCHICAL-EARLY-SUBGRAPH-CUT-SPLICE-LOCALIZATION-AND-XSLIM-TARGET-POLICY-CHARTER-001/tooling-tests/compileall.tsv
+ruff	not-run-unavailable	not-run-non-gating	/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65B-R3-HIERARCHICAL-EARLY-SUBGRAPH-CUT-SPLICE-LOCALIZATION-AND-XSLIM-TARGET-POLICY-CHARTER-001/tooling-tests/ruff.tsv
+git-diff-check	no-whitespace-errors	pass	final-git-hygiene

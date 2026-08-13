@@ -292,7 +292,7 @@ QF-C0 remains 0.007204 mAP below H8 (95% CI 0.001506..0.012273), so material err
 
 def activation_reports(raw: Path, tracked: Path, r1: Path) -> None:
     original = read_tsv(raw / "activation-audit/selected_region_activation_error.tsv")
-    revised = read_tsv(raw / "activation-audit-v2/selected_region_activation_error.tsv")
+    revised = read_tsv(raw / "activation-audit-v3/selected_region_activation_error.tsv")
     if len(original) != 22 or len(revised) != len(original):
         raise RuntimeError("selected activation tensor count differs")
     original_fields = list(original[0])
@@ -304,7 +304,7 @@ def activation_reports(raw: Path, tracked: Path, r1: Path) -> None:
         raise RuntimeError("per-image hash rerun changed accepted activation metrics")
     per_image_path = (
         raw
-        / "activation-audit-v2/selected_region_activation_per_image_hashes.tsv"
+        / "activation-audit-v3/selected_region_activation_per_image_hashes.tsv"
     )
     per_image_rows = read_tsv(per_image_path)
     if len(per_image_rows) != 11000 or any(
@@ -314,11 +314,11 @@ def activation_reports(raw: Path, tracked: Path, r1: Path) -> None:
     ):
         raise RuntimeError("selected activation per-image hash contract differs")
     copy(
-        raw / "activation-audit-v2/selected_region_activation_error.tsv",
+        raw / "activation-audit-v3/selected_region_activation_error.tsv",
         tracked / "selected_region_activation_error.tsv",
     )
     copy(
-        raw / "activation-audit-v2/selected_region_qparams.tsv",
+        raw / "activation-audit-v3/selected_region_qparams.tsv",
         tracked / "selected_region_qparams.tsv",
     )
     graphwise = read_tsv(r1 / "graphwise_normalized.tsv")
@@ -428,6 +428,8 @@ def full_val_reports(raw: Path, tracked: Path, r2: Path) -> None:
     combined: list[dict[str, str]] = []
     for scope, path in (("screening", screening), ("final-top-region", final)):
         for row in read_tsv(path):
+            if not row.get("reused_screening_prefix_replicates"):
+                row["reused_screening_prefix_replicates"] = "not-applicable"
             combined.append({"scope": scope, **row})
     write_tsv(tracked / "selected_full_coco_bootstrap.tsv", combined)
 

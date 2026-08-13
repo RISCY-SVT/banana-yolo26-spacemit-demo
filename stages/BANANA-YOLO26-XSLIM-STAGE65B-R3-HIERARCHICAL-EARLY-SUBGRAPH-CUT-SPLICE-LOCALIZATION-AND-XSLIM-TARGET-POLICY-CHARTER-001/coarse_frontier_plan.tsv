@@ -1,0 +1,9 @@
+frontier	region	mode	anchor	source_upstream_nodes	source_downstream_nodes	cut_tensor_count	cut_tensors	selection_status	build_status
+C0	R0-stem-model0-model2	cutoff	/model.2/cv2/act/Mul	22	342	1	/model.2/cv2/act/Mul_output_0	frozen-before-task-metrics	pass
+C1	R1-early-mid-backbone-model3-model6	cutoff	/model.6/cv2/act/Mul	77	287	2	/model.4/cv2/act/Mul_output_0;/model.6/cv2/act/Mul_output_0	frozen-before-task-metrics	pass
+C2	R2-later-backbone-model7-model8	cutoff	/model.8/cv2/act/Mul	113	251	3	/model.4/cv2/act/Mul_output_0;/model.6/cv2/act/Mul_output_0;/model.8/cv2/act/Mul_output_0	frozen-before-task-metrics	pass
+C3	R3-model9-model10-attention-ffn	cutoff	/model.10/cv2/act/Mul	155	209	3	/model.4/cv2/act/Mul_output_0;/model.6/cv2/act/Mul_output_0;/model.10/cv2/act/Mul_output_0	frozen-before-task-metrics	pass
+C4	R4-neck-entry-model11-model13	cutoff	/model.13/cv2/act/Mul	190	174	3	/model.4/cv2/act/Mul_output_0;/model.10/cv2/act/Mul_output_0;/model.13/cv2/act/Mul_output_0	frozen-before-task-metrics	pass
+C5	R5-neck-fusion-model14-model20	cutoff	/model.20/act/Mul	264	100	4	/model.10/cv2/act/Mul_output_0;/model.16/cv2/act/Mul_output_0;/model.19/cv2/act/Mul_output_0;/model.20/act/Mul_output_0	frozen-before-task-metrics	pass
+C6	R6-pre-head-model21-model22	cutoff	/model.22/cv2/act/Mul	304	60	3	/model.16/cv2/act/Mul_output_0;/model.19/cv2/act/Mul_output_0;/model.22/cv2/act/Mul_output_0	frozen-before-task-metrics	pass
+C7	R7-per-scale-head-prefixes	head	six-final-head-convs	358	6	6	/model.23/one2one_cv2.0/one2one_cv2.0.1/act/Mul_output_0;/model.23/one2one_cv2.1/one2one_cv2.1.1/act/Mul_output_0;/model.23/one2one_cv2.2/one2one_cv2.2.1/act/Mul_output_0;/model.23/one2one_cv3.0/one2one_cv3.0.1/one2one_cv3.0.1.1/act/Mul_output_0;/model.23/one2one_cv3.1/one2one_cv3.1.1/one2one_cv3.1.1.1/act/Mul_output_0;/model.23/one2one_cv3.2/one2one_cv3.2.1/one2one_cv3.2.1.1/act/Mul_output_0	frozen-before-task-metrics	pass

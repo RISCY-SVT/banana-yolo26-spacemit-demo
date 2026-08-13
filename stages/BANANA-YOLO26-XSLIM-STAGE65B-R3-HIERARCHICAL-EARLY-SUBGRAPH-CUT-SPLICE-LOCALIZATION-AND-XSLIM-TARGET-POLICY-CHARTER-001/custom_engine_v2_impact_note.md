@@ -1,0 +1,3 @@
+# K1X custom-engine V2 impact note
+
+This Stage does not modify the custom executor and does not reinterpret `K1X_INT8_V1`. A future `K1X_INT8_V2` exporter would need per-op scale/zero-point identities, per-channel weight scales, exact multiplier/right shift, ties-to-even rounding, saturation, accumulator bounds, an explicit qdomain graph, residual/concat alignment, NCHWc8 layout hints, and a packed-weight manifest. Policy A is compatible in principle only after these contracts are exported exactly. Policy B conflicts with the resident all-INT8 dataflow unless explicit mixed-precision conversions and costs are designed and measured.
