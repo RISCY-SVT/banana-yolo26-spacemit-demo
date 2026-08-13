@@ -189,8 +189,10 @@ def main() -> int:
     fp_session = session(fp_path, options.threads)
     b2_session = session(b2_path, options.threads)
     images = paths_from_list(options.image_list, 0)
+    per_image_hash_rows: list[dict[str, Any]] = []
     for image_index, path in enumerate(images):
         tensor, _ = image_tensor_and_geometry(path)
+        input_hash = sha256_array(tensor)
         feed = {fp_session.get_inputs()[0].name: tensor}
         fp_values = fp_session.run(None, feed)
         feed = {b2_session.get_inputs()[0].name: tensor}
@@ -211,6 +213,15 @@ def main() -> int:
             fp64 = fp_value.astype(np.float64, copy=False)
             b264 = b2_value.astype(np.float64, copy=False)
             delta = b264 - fp64
+            fp_hash = sha256_array(fp_value)
+            b2_hash = sha256_array(b2_value)
+            pair_hash = hashlib.sha256(
+                path.name.encode("utf-8")
+                + b"\0"
+                + fp_hash.encode("ascii")
+                + b"\0"
+                + b2_hash.encode("ascii")
+            ).hexdigest()
             state["count"] += fp_value.size
             state["fp_min"] = min(state["fp_min"], float(fp_value.min()))
             state["fp_max"] = max(state["fp_max"], float(fp_value.max()))
@@ -228,8 +239,22 @@ def main() -> int:
             state["norm_fp"] += float(np.sum(fp64 * fp64))
             state["norm_b2"] += float(np.sum(b264 * b264))
             state["hash"].update(path.name.encode("utf-8") + b"\0")
-            state["hash"].update(sha256_array(fp_value).encode("ascii") + b"\0")
-            state["hash"].update(sha256_array(b2_value).encode("ascii") + b"\0")
+            state["hash"].update(fp_hash.encode("ascii") + b"\0")
+            state["hash"].update(b2_hash.encode("ascii") + b"\0")
+            per_image_hash_rows.append(
+                {
+                    "frontiers": ";".join(
+                        item["frontier"] for item in tensor_rows[name]
+                    ),
+                    "tensor": name,
+                    "image_index": image_index,
+                    "image": path.name,
+                    "input_sha256": input_hash,
+                    "fp32_activation_sha256": fp_hash,
+                    "b2_dequantized_activation_sha256": b2_hash,
+                    "activation_pair_sha256": pair_hash,
+                }
+            )
             flat_fp = fp_value.reshape(-1)
             flat_b2 = b2_value.reshape(-1)
             stride = max(1, flat_fp.size // options.sample_per_image)
@@ -238,6 +263,9 @@ def main() -> int:
         if options.log_every and (image_index + 1) % options.log_every == 0:
             print(f"activation audit: {image_index + 1}/{len(images)}", flush=True)
 
+    per_image_path = options.output_dir / "selected_region_activation_per_image_hashes.tsv"
+    write_tsv(per_image_path, per_image_hash_rows)
+    per_image_file_sha256 = sha256(per_image_path)
     output_rows: list[dict[str, Any]] = []
     for tensor in tensors:
         state = aggregates[tensor]
@@ -270,6 +298,9 @@ def main() -> int:
                 "fp32_histogram_sample": percentile_text(np.concatenate(state["fp_samples"])),
                 "b2_histogram_sample": percentile_text(np.concatenate(state["b2_samples"])),
                 "per_image_pair_hash": state["hash"].hexdigest(),
+                "per_image_hash_table": str(per_image_path),
+                "per_image_hash_table_sha256": per_image_file_sha256,
+                "per_image_hash_table_rows": len(per_image_hash_rows),
             }
         )
     write_tsv(options.output_dir / "selected_region_activation_error.tsv", output_rows)

@@ -291,12 +291,34 @@ QF-C0 remains 0.007204 mAP below H8 (95% CI 0.001506..0.012273), so material err
 
 
 def activation_reports(raw: Path, tracked: Path, r1: Path) -> None:
+    original = read_tsv(raw / "activation-audit/selected_region_activation_error.tsv")
+    revised = read_tsv(raw / "activation-audit-v2/selected_region_activation_error.tsv")
+    if len(original) != 22 or len(revised) != len(original):
+        raise RuntimeError("selected activation tensor count differs")
+    original_fields = list(original[0])
+    if any(
+        {field: row[field] for field in original_fields}
+        != {field: revised[index][field] for field in original_fields}
+        for index, row in enumerate(original)
+    ):
+        raise RuntimeError("per-image hash rerun changed accepted activation metrics")
+    per_image_path = (
+        raw
+        / "activation-audit-v2/selected_region_activation_per_image_hashes.tsv"
+    )
+    per_image_rows = read_tsv(per_image_path)
+    if len(per_image_rows) != 11000 or any(
+        row["per_image_hash_table_sha256"] != sha256(per_image_path)
+        or int(row["per_image_hash_table_rows"]) != len(per_image_rows)
+        for row in revised
+    ):
+        raise RuntimeError("selected activation per-image hash contract differs")
     copy(
-        raw / "activation-audit/selected_region_activation_error.tsv",
+        raw / "activation-audit-v2/selected_region_activation_error.tsv",
         tracked / "selected_region_activation_error.tsv",
     )
     copy(
-        raw / "activation-audit/selected_region_qparams.tsv",
+        raw / "activation-audit-v2/selected_region_qparams.tsv",
         tracked / "selected_region_qparams.tsv",
     )
     graphwise = read_tsv(r1 / "graphwise_normalized.tsv")
