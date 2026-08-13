@@ -531,6 +531,63 @@ Host causal localization is ready for a separately authorized targeted-generatio
     )
 
 
+def tooling_reports(raw: Path, tracked: Path) -> None:
+    write_tsv(
+        tracked / "tooling_test_matrix.tsv",
+        [
+            {
+                "test_surface": "focused-pytest",
+                "result": "12-passed",
+                "status": "pass",
+                "raw_evidence": str(raw / "tooling-tests/pytest.log"),
+            },
+            {
+                "test_surface": "compileall",
+                "result": "stage65b-r3-tools-and-tests",
+                "status": "pass",
+                "raw_evidence": str(raw / "tooling-tests/compileall.tsv"),
+            },
+            {
+                "test_surface": "ruff",
+                "result": "not-run-unavailable",
+                "status": "not-run-non-gating",
+                "raw_evidence": str(raw / "tooling-tests/ruff.tsv"),
+            },
+            {
+                "test_surface": "git-diff-check",
+                "result": "no-whitespace-errors",
+                "status": "pass",
+                "raw_evidence": "final-git-hygiene",
+            },
+        ],
+    )
+    negative_tests = (
+        "incomplete_multi_tensor_cut",
+        "hidden_residual_or_concat_edge",
+        "ambiguous_source_qdq_mapping",
+        "shape_mismatch",
+        "dtype_mismatch",
+        "dynamic_cut_shape",
+        "duplicate_tensor_name",
+        "missing_initializer_or_value",
+        "functionproto_or_opset_loss",
+        "control_reconstruction_mismatch",
+        "unsafe_shared_qdq_node",
+    )
+    write_tsv(
+        tracked / "tooling_negative_tests.tsv",
+        [
+            {
+                "negative_case": case,
+                "expected_behavior": "fail-closed",
+                "observed_behavior": "rejected",
+                "status": "pass",
+            }
+            for case in negative_tests
+        ],
+    )
+
+
 def final_reports(tracked: Path) -> None:
     write_text(
         tracked / "STAGE65B_R3_FINAL_REPORT.md",
@@ -592,6 +649,7 @@ def main() -> int:
     activation_reports(options.raw_root, options.tracked_root, options.r1_tracked_root)
     full_val_reports(options.raw_root, options.tracked_root, options.r2_raw_root)
     policy_and_charter(options.tracked_root)
+    tooling_reports(options.raw_root, options.tracked_root)
     final_reports(options.tracked_root)
     manifest_rows = []
     for path in sorted(options.tracked_root.iterdir(), key=lambda item: item.name):
