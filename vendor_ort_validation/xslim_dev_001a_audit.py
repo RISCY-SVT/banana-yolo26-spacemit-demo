@@ -7,6 +7,7 @@ import argparse
 import csv
 import hashlib
 import json
+import math
 import subprocess
 from pathlib import Path
 from typing import Any
@@ -231,6 +232,123 @@ def graph_audit(candidate_path: Path, b2_path: Path) -> dict[str, Any]:
     }
 
 
+def exported_qparam_audit(
+    model_path: Path,
+    manifest_path: Path,
+    lane: str,
+    surface: str,
+) -> tuple[list[dict[str, Any]], bool]:
+    model = onnx.load(model_path, load_external_data=True)
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    initializers = {
+        item.name: numpy_helper.to_array(item) for item in model.graph.initializer
+    }
+    consumers: dict[str, list[Any]] = {}
+    nodes_by_name: dict[str, list[Any]] = {}
+    for node in model.graph.node:
+        nodes_by_name.setdefault(node.name, []).append(node)
+        for value in node.input:
+            consumers.setdefault(value, []).append(node)
+
+    rows: list[dict[str, Any]] = []
+    final_qparams = manifest.get("final_qparams", [])
+    phase_ok = manifest.get("phase") == "post-calibration-final"
+    for entry in final_qparams:
+        tensor_names = entry.get("tensor_names", [])
+        tensor = tensor_names[0] if len(tensor_names) == 1 else ""
+        producer_name = ""
+        output_index = -1
+        if "_output_" in tensor:
+            producer_name, output_text = tensor.rsplit("_output_", 1)
+            if output_text.isdigit():
+                output_index = int(output_text)
+        producers = nodes_by_name.get(producer_name, [])
+        quantizers: list[Any] = []
+        producer_output = ""
+        if len(producers) == 1 and 0 <= output_index < len(producers[0].output):
+            producer_output = producers[0].output[output_index]
+            quantizers = [
+                node
+                for node in consumers.get(producer_output, [])
+                if node.op_type == "QuantizeLinear"
+            ]
+
+        exported_scale: float | None = None
+        exported_zero_point: int | None = None
+        scale_initializer = ""
+        zero_point_initializer = ""
+        if len(quantizers) == 1 and len(quantizers[0].input) >= 3:
+            scale_initializer = quantizers[0].input[1]
+            zero_point_initializer = quantizers[0].input[2]
+            if (
+                scale_initializer in initializers
+                and zero_point_initializer in initializers
+            ):
+                exported_scale = float(
+                    initializers[scale_initializer].reshape(-1)[0]
+                )
+                exported_zero_point = int(
+                    initializers[zero_point_initializer].reshape(-1)[0]
+                )
+        scale_match = (
+            exported_scale is not None
+            and math.isclose(
+                exported_scale,
+                float(entry["scale"]),
+                rel_tol=2.0e-7,
+                abs_tol=1.0e-12,
+            )
+        )
+        zero_point_match = (
+            exported_zero_point is not None
+            and exported_zero_point == int(entry["zero_point"])
+        )
+        matched = all(
+            (
+                phase_ok,
+                len(tensor_names) == 1,
+                len(producers) == 1,
+                output_index >= 0,
+                len(quantizers) == 1,
+                scale_match,
+                zero_point_match,
+                bool(entry.get("locked")),
+            )
+        )
+        rows.append(
+            {
+                "lane": lane,
+                "surface": surface,
+                "policy_name": entry.get("policy_name", ""),
+                "tensor": tensor,
+                "producer_name": producer_name,
+                "producer_output_index": output_index,
+                "producer_match_count": len(producers),
+                "producer_output": producer_output,
+                "quantize_match_count": len(quantizers),
+                "scale_initializer": scale_initializer,
+                "zero_point_initializer": zero_point_initializer,
+                "manifest_scale": entry.get("scale", ""),
+                "exported_scale": exported_scale,
+                "scale_match": int(scale_match),
+                "manifest_zero_point": entry.get("zero_point", ""),
+                "exported_zero_point": exported_zero_point,
+                "zero_point_match": int(zero_point_match),
+                "locked": int(bool(entry.get("locked"))),
+                "manifest_phase": manifest.get("phase", ""),
+                "status": "pass" if matched else "fail",
+            }
+        )
+    expected_count = EXPECTED_TARGET_COUNTS[lane]
+    passed = (
+        phase_ok
+        and len(final_qparams) == expected_count
+        and len(rows) == expected_count
+        and all(row["status"] == "pass" for row in rows)
+    )
+    return rows, passed
+
+
 def main() -> int:
     options = parse_args()
     options.report_dir.mkdir(parents=True, exist_ok=True)
@@ -249,6 +367,7 @@ def main() -> int:
     fixed_rows: list[dict[str, Any]] = []
     holdout_rows: list[dict[str, Any]] = []
     profile_rows: list[dict[str, Any]] = []
+    exported_qparam_rows: list[dict[str, Any]] = []
 
     for lane in LANES:
         run1 = model_from_run(options.raw_root, lane, "run1")
@@ -401,6 +520,14 @@ def main() -> int:
             onnx.load(inference, load_external_data=True)
         )
         topology_rows.append(dict(audit))
+        deployable_qparams, deployable_qparams_pass = exported_qparam_audit(
+            run1, manifest1, lane, "deployable"
+        )
+        inference_qparams, inference_qparams_pass = exported_qparam_audit(
+            inference, manifest1, lane, "split-inference"
+        )
+        exported_qparam_rows.extend(deployable_qparams)
+        exported_qparam_rows.extend(inference_qparams)
 
         profile_report = candidate_root / "spacemit-profile.json"
         if not profile_report.exists():
@@ -483,6 +610,8 @@ def main() -> int:
             (
                 gate["status"] == "pass",
                 audit["status"] == "pass",
+                deployable_qparams_pass,
+                inference_qparams_pass,
                 bool(profile.get("passed")),
                 fixed_rc == 0,
                 semantic_failures == 0,
@@ -498,6 +627,8 @@ def main() -> int:
                 "tail_sha256": sha256(tail),
                 "candidate_gate": gate["status"],
                 "topology_audit": audit["status"],
+                "deployable_exported_qparams": int(deployable_qparams_pass),
+                "inference_exported_qparams": int(inference_qparams_pass),
                 "profile_pass": int(bool(profile.get("passed"))),
                 "fixed_fixture_returncode": fixed_rc,
                 "semantic_failures": semantic_failures,
@@ -528,6 +659,10 @@ def main() -> int:
     write_tsv(options.report_dir / "candidate_fixed_fixtures.tsv", fixed_rows)
     write_tsv(options.report_dir / "candidate_holdout_semantics.tsv", holdout_rows)
     write_tsv(options.report_dir / "candidate_profile_validation.tsv", profile_rows)
+    write_tsv(
+        options.report_dir / "candidate_exported_qparams.tsv",
+        exported_qparam_rows,
+    )
     return 0
 
 
