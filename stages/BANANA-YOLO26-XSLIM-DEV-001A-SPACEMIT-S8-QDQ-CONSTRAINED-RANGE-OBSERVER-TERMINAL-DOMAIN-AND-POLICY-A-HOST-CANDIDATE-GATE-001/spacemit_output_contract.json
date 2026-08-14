@@ -1,0 +1,65 @@
+{
+  "outputs": [
+    {
+      "dtype": "float",
+      "name": "/model.23/one2one_cv2.0/one2one_cv2.0.2/Conv_output_0",
+      "shape": [
+        1,
+        4,
+        80,
+        80
+      ]
+    },
+    {
+      "dtype": "float",
+      "name": "/model.23/one2one_cv3.0/one2one_cv3.0.2/Conv_output_0",
+      "shape": [
+        1,
+        80,
+        80,
+        80
+      ]
+    },
+    {
+      "dtype": "float",
+      "name": "/model.23/one2one_cv2.1/one2one_cv2.1.2/Conv_output_0",
+      "shape": [
+        1,
+        4,
+        40,
+        40
+      ]
+    },
+    {
+      "dtype": "float",
+      "name": "/model.23/one2one_cv3.1/one2one_cv3.1.2/Conv_output_0",
+      "shape": [
+        1,
+        80,
+        40,
+        40
+      ]
+    },
+    {
+      "dtype": "float",
+      "name": "/model.23/one2one_cv2.2/one2one_cv2.2.2/Conv_output_0",
+      "shape": [
+        1,
+        4,
+        20,
+        20
+      ]
+    },
+    {
+      "dtype": "float",
+      "name": "/model.23/one2one_cv3.2/one2one_cv3.2.2/Conv_output_0",
+      "shape": [
+        1,
+        80,
+        20,
+        20
+      ]
+    }
+  ],
+  "profile": "spacemit_k1x_s8_qdq_split_v1"
+}

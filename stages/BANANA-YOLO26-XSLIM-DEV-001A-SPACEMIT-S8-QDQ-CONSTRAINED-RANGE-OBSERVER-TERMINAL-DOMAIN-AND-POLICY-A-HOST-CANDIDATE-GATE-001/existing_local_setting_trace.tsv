@@ -1,0 +1,7 @@
+phase	baseline_behavior	dev_001a_behavior	decision
+configuration	input_names/output_names with max_percentile, precision_level, calibration_type	adds exact tensor_names, strict range_policy, and manifest path	backward-compatible extension
+pre_fusion_refine	custom settings applied by QuantizeConfigRefinePass	legacy bounded settings still apply there; tensor-only range settings are deferred	preserved
+fusion	quantization roots may be redirected by fusion/simplify	LocalPolicyRebindPass resolves the final dominated root after fusion	closed prior trace gap
+calibration	RuntimeBlockWiseCalibrationPass may update qparams	constrained observer computes selected qparams and lock excludes them from LSQ updates	closed prior survival gap
+finalization	no selected-domain final audit	ConstrainedRangeFinalizePass restores, validates, and records final qparams	fail-closed
+export	QDQ emitted from final PPQ graph	manifest and structural profile compare exported qparams/contract	structural evidence only

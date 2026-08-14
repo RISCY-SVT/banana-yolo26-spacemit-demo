@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "XSlim constrained signed-INT8 range policy",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "enabled": {"type": "boolean", "default": false},
+    "strict": {"type": "boolean", "default": true},
+    "objective": {
+      "type": "string",
+      "enum": ["minmax", "percentile", "mse", "kl", "constrained-mse"],
+      "default": "constrained-mse"
+    },
+    "preserve_zero": {"type": "boolean", "default": true},
+    "required_real_min": {"type": ["number", "null"]},
+    "required_real_max": {"type": ["number", "null"]},
+    "semantic_floor": {
+      "oneOf": [
+        {"type": "number"},
+        {"type": "string", "enum": ["silu"]},
+        {"type": "null"}
+      ]
+    },
+    "percentile": {"type": "number", "exclusiveMinimum": 0.5, "maximum": 1.0, "default": 0.9999},
+    "search_steps": {"type": "integer", "minimum": 8, "maximum": 512, "default": 32},
+    "scale_epsilon": {"type": "number", "exclusiveMinimum": 0.0, "default": 1e-12},
+    "lock_qparams": {"type": "boolean", "default": true}
+  }
+}

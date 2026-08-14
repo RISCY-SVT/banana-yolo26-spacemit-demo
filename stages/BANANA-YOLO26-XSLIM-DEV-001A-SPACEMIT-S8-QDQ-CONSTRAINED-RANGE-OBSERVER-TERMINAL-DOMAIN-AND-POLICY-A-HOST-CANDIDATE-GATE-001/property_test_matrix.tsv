@@ -1,0 +1,12 @@
+property	result	evidence
+round_half_even_positive_negative_ties	pass	ONNX QuantizeLinear oracle comparison
+signed_int8_rail_saturation	pass	exact -128/127 rail oracle
+zero_representability	pass	degenerate and constrained distributions
+all_zero_tensor	pass	deterministic finite qparams
+constant_positive_tensor	pass	deterministic finite qparams
+constant_negative_tensor	pass	deterministic finite qparams
+outlier_dominated_distribution	pass	floor and positive-headroom constraints
+silu_floor_opt_in	pass	not applied globally
+all_supported_objectives	pass	minmax; percentile; MSE; KL; constrained-MSE
+deterministic_scale_zero_point	pass	repeated objective selection
+fusion_calibration_export_survival	pass	selected qparams retained through synthetic pipeline/export control

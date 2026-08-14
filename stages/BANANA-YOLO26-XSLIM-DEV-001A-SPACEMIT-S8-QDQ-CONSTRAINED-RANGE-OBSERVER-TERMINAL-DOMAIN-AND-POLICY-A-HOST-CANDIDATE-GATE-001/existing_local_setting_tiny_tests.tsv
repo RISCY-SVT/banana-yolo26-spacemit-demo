@@ -1,0 +1,6 @@
+surface	tests	result	evidence
+selector_and_manifest	8	pass	tests/test_local_range_setting.py
+numeric_range_policy	14	pass	tests/test_constrained_range_policy.py
+spacemit_profile	5	pass	tests/test_spacemit_s8_qdq_profile.py
+focused_total	27	pass	27 passed in focused run
+full_regression	174	pass	174 passed, 2 inherited warnings, 65 subtests

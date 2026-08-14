@@ -1,0 +1,12 @@
+field	value
+development_version	2.1.2+riscy.2.dev1
+source_code_commit	38e6affb96fba77c02bc977dffcc8bf135b5e562
+source_code_tree	bde0aeb3d9fd6314e4d432fd35155aac7d95cb82
+wheel_sha256	c31afd3a0f1479e55e242d162b25a203e4511e7ea6a8c3e71eb3232dc92de6b8
+sdist_sha256	d8d14ffa920ded5b7befe030f85fbbef3ac7a371f66c69ef0bfafe673cefd9b6
+wheel_reproducible	yes
+normalized_sdist_reproducible	yes
+wheel_fresh_install	pass
+sdist_fresh_install	pass
+license_notice_payload	pass
+publication	forbidden-not-published

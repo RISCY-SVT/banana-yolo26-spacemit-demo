@@ -1,0 +1,10 @@
+test_surface	result	count_or_detail	raw_evidence
+focused_contract_tests	pass	27 passed	/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-DEV-001A-SPACEMIT-S8-QDQ-CONSTRAINED-RANGE-OBSERVER-TERMINAL-DOMAIN-AND-POLICY-A-HOST-CANDIDATE-GATE-001/logs/focused_contract_tests_final.log
+full_pytest	pass	174 passed; 2 inherited warnings; 65 subtests	/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-DEV-001A-SPACEMIT-S8-QDQ-CONSTRAINED-RANGE-OBSERVER-TERMINAL-DOMAIN-AND-POLICY-A-HOST-CANDIDATE-GATE-001/logs/pytest_full.log
+ruff_focused	pass	all checks passed	/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-DEV-001A-SPACEMIT-S8-QDQ-CONSTRAINED-RANGE-OBSERVER-TERMINAL-DOMAIN-AND-POLICY-A-HOST-CANDIDATE-GATE-001/logs/ruff_focused.log
+compileall	pass	source and tests	/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-DEV-001A-SPACEMIT-S8-QDQ-CONSTRAINED-RANGE-OBSERVER-TERMINAL-DOMAIN-AND-POLICY-A-HOST-CANDIDATE-GATE-001/logs/compileall.log
+focused_mypy	pass	2 changed public modules; follow-imports=skip	/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-DEV-001A-SPACEMIT-S8-QDQ-CONSTRAINED-RANGE-OBSERVER-TERMINAL-DOMAIN-AND-POLICY-A-HOST-CANDIDATE-GATE-001/logs/mypy_focused_final.log
+inherited_whole_project_mypy	non-gating	971 existing/import-chain errors across 69 files	/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-DEV-001A-SPACEMIT-S8-QDQ-CONSTRAINED-RANGE-OBSERVER-TERMINAL-DOMAIN-AND-POLICY-A-HOST-CANDIDATE-GATE-001/logs/mypy_focused_current.log
+git_diff_check	pass	no whitespace errors	XSlim worktree
+wheel_fresh_install	pass	pip check; package 2.1.2+riscy.2.dev1; 3 CLI smokes	/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-DEV-001A-SPACEMIT-S8-QDQ-CONSTRAINED-RANGE-OBSERVER-TERMINAL-DOMAIN-AND-POLICY-A-HOST-CANDIDATE-GATE-001/venvs/wheel-install-38e6aff
+sdist_fresh_install	pass	pip check; package 2.1.2+riscy.2.dev1; 3 CLI smokes	/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-DEV-001A-SPACEMIT-S8-QDQ-CONSTRAINED-RANGE-OBSERVER-TERMINAL-DOMAIN-AND-POLICY-A-HOST-CANDIDATE-GATE-001/venvs/sdist-install-38e6aff
