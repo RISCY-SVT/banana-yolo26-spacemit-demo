@@ -1,0 +1,7 @@
+lane	deployable_byte_identical	analysis_byte_identical	range_manifest_byte_identical	expected_matched_targets	observed_matched_targets	status
+A1	1	1	1	6	6	pass
+A2	1	1	1	4	4	pass
+A3	1	1	1	3	3	pass
+A4	1	1	1	6	6	pass
+A5	1	1	1	13	13	pass
+A6	1	1	1	16	16	pass

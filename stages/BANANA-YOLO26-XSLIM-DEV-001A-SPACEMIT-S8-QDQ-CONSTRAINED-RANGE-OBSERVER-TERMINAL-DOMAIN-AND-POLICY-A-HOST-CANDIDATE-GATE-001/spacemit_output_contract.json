@@ -1,7 +1,7 @@
 {
   "outputs": [
     {
-      "dtype": "float",
+      "dtype": "float32",
       "name": "/model.23/one2one_cv2.0/one2one_cv2.0.2/Conv_output_0",
       "shape": [
         1,
@@ -11,7 +11,7 @@
       ]
     },
     {
-      "dtype": "float",
+      "dtype": "float32",
       "name": "/model.23/one2one_cv3.0/one2one_cv3.0.2/Conv_output_0",
       "shape": [
         1,
@@ -21,7 +21,7 @@
       ]
     },
     {
-      "dtype": "float",
+      "dtype": "float32",
       "name": "/model.23/one2one_cv2.1/one2one_cv2.1.2/Conv_output_0",
       "shape": [
         1,
@@ -31,7 +31,7 @@
       ]
     },
     {
-      "dtype": "float",
+      "dtype": "float32",
       "name": "/model.23/one2one_cv3.1/one2one_cv3.1.2/Conv_output_0",
       "shape": [
         1,
@@ -41,7 +41,7 @@
       ]
     },
     {
-      "dtype": "float",
+      "dtype": "float32",
       "name": "/model.23/one2one_cv2.2/one2one_cv2.2.2/Conv_output_0",
       "shape": [
         1,
@@ -51,7 +51,7 @@
       ]
     },
     {
-      "dtype": "float",
+      "dtype": "float32",
       "name": "/model.23/one2one_cv3.2/one2one_cv3.2.2/Conv_output_0",
       "shape": [
         1,

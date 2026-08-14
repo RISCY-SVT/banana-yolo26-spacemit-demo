@@ -1,8 +1,8 @@
 lane	policy_groups	matched_tensor_count	observer	calibration_count	precision_level	finetune_level	seed	generation_runs	status
 A0	frozen-B2-control	0	default	50	1	2	65001	0	imported
-A1	T6	6	kl	50	1	2	65001	2	planned
-A2	R0	4	kl	50	1	2	65001	2	planned
-A3	R7-confidence	3	kl	50	1	2	65001	2	planned
-A4	R7-all-six	6	kl	50	1	2	65001	2	planned
-A5	T6+R0+R7-confidence	13	kl	50	1	2	65001	2	planned
-A6	T6+R0+R7-all-six	16	kl	50	1	2	65001	2	planned
+A1	T6	6	kl	50	1	2	65001	2	complete-byte-identical
+A2	R0	4	kl	50	1	2	65001	2	complete-byte-identical
+A3	R7-confidence	3	kl	50	1	2	65001	2	complete-byte-identical
+A4	R7-all-six	6	kl	50	1	2	65001	2	complete-byte-identical
+A5	T6+R0+R7-confidence	13	kl	50	1	2	65001	2	complete-byte-identical
+A6	T6+R0+R7-all-six	16	kl	50	1	2	65001	2	complete-byte-identical

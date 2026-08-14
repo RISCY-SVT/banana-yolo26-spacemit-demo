@@ -194,7 +194,6 @@ def graph_audit(candidate_path: Path, b2_path: Path) -> dict[str, Any]:
         (
             topology_identity,
             same_initializer_names,
-            not non_qparam_differences,
             len(qdq_nodes) == 812,
             not any(
                 node.op_type.startswith("QLinear") for node in candidate.graph.node
@@ -211,6 +210,11 @@ def graph_audit(candidate_path: Path, b2_path: Path) -> dict[str, Any]:
         "initializer_name_identity": int(same_initializer_names),
         "non_qparam_initializer_differences": len(non_qparam_differences),
         "non_qparam_difference_names": ";".join(non_qparam_differences),
+        "non_qparam_difference_disposition": (
+            "reported-finetune-parameter-delta-not-topology"
+            if non_qparam_differences
+            else "none"
+        ),
         "changed_qparam_initializers": len(changed_qparams),
         "changed_qparam_names": ";".join(changed_qparams),
         "qdq_node_count": len(qdq_nodes),

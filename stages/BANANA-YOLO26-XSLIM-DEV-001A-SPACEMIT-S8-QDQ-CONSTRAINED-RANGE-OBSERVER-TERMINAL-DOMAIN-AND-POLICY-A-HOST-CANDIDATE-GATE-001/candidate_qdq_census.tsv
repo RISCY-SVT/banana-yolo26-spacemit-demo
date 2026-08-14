@@ -1,0 +1,7 @@
+lane	qdq_node_count	quantize_linear_count	dequantize_linear_count	qlinear_count	uint8_zero_point_count	fp16_initializer_count
+A1	812	354	458	0	0	0
+A2	812	354	458	0	0	0
+A3	812	354	458	0	0	0
+A4	812	354	458	0	0	0
+A5	812	354	458	0	0	0
+A6	812	354	458	0	0	0
