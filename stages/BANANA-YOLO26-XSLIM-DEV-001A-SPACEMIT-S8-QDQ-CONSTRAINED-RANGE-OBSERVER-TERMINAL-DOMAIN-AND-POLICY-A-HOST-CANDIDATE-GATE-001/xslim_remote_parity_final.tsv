@@ -1,0 +1,6 @@
+surface	branch_or_ref	observed	expected	status	note
+local	riscy/k1x-yolo26	3e275c6496d603d3f75f363ed00aa633ffc00408	3e275c6496d603d3f75f363ed00aa633ffc00408	pass	clean worktree
+github	riscy/k1x-yolo26	3e275c6496d603d3f75f363ed00aa633ffc00408	3e275c6496d603d3f75f363ed00aa633ffc00408	pass	fast-forward push
+gitlab	riscy/k1x-yolo26	3e275c6496d603d3f75f363ed00aa633ffc00408	3e275c6496d603d3f75f363ed00aa633ffc00408	pass	fast-forward push
+local	v2.1.2-riscy.1-object	604507c45c8eb2ff5c548d30d981203fedc61ea3	604507c45c8eb2ff5c548d30d981203fedc61ea3	pass	published tag unchanged
+local	v2.1.2-riscy.1-peeled	12647b4a79fe5ec9a3973515a17cece4cb83daf4	12647b4a79fe5ec9a3973515a17cece4cb83daf4	pass	published tag unchanged

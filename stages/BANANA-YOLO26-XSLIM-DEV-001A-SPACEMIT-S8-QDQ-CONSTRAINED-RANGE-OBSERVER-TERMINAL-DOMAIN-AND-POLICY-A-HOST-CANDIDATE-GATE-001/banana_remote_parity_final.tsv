@@ -1,0 +1,5 @@
+phase	surface	branch	observed	expected	status	note
+evidence-before-attestation	local	yolo26-vendor-ort-xslim211-s8-qdq-validation	994899a3e28983ab30c74cfc344c63cbea5bddd2	994899a3e28983ab30c74cfc344c63cbea5bddd2	pass	full-val evidence committed
+evidence-before-attestation	github	yolo26-vendor-ort-xslim211-s8-qdq-validation	994899a3e28983ab30c74cfc344c63cbea5bddd2	994899a3e28983ab30c74cfc344c63cbea5bddd2	pass	fast-forward push
+evidence-before-attestation	gitlab-rd	yolo26-vendor-ort-xslim211-s8-qdq-validation	994899a3e28983ab30c74cfc344c63cbea5bddd2	994899a3e28983ab30c74cfc344c63cbea5bddd2	pass	fast-forward push; server redirected moved project transparently
+final-closure	result-packet	refs/heads/yolo26-vendor-ort-xslim211-s8-qdq-validation	post-push-attestation	pending-by-construction	The commit containing this report is verified after push in the result packet post-push attestation.
