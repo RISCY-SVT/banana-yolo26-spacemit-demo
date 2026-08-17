@@ -1,0 +1,2 @@
+status	reason
+not-run-gated-by-h500-failure	Matched ABBA execution is permitted only after H500 and full-COCO pass

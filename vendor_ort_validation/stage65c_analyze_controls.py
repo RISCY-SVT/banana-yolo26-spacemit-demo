@@ -136,9 +136,10 @@ def main() -> int:
     write_tsv(out / "affinity_smoke.tsv", ["test_id", "cpus", "exit_code", "exact", "status"], affinity_rows)
 
     plugin = read_tsv(board / "plugin/plugin_nonregression.raw.tsv")
+    plugin_columns = list(plugin[0])
     for row in plugin:
         row["status"] = "pass" if row["exit_code"] == "0" and row["exact"] == "1" else "fail"
-    write_tsv(out / "plugin_nonregression.tsv", list(plugin[0]) + ["status"], plugin)
+    write_tsv(out / "plugin_nonregression.tsv", plugin_columns + ["status"], plugin)
 
     session_raw = read_tsv(board / "profile/session_matrix.raw.tsv")
     session_rows = []

@@ -1,0 +1,2 @@
+status	reason
+not-run-gated-by-h500-failure	A1 EP violated the predeclared H500 AR-small and AR-large gates

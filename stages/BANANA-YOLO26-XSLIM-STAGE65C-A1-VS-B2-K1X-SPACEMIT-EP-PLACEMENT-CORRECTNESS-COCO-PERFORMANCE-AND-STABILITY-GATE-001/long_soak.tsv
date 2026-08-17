@@ -1,0 +1,2 @@
+status	reason
+not-run-gated-by-h500-failure	Long soak requires correctness, H500, full COCO and matched-performance pass
