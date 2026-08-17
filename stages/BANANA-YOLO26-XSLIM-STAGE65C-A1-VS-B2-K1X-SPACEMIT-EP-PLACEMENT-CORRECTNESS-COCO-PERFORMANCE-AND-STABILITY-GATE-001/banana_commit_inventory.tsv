@@ -1,0 +1,3 @@
+order	commit	tree	parent	subject	scope
+1	771fbf546ae62db7451db4c247e1734985f1f6a3	fc16805bfdaf5d51476df48ea8761ae58d93bfbd	dee0975d02660691b1f690ae1530fd0247891981	test: add frozen A1 versus B2 K1X validation harness	board-tooling-preflight-controls-placement-fixtures
+2	041a5af8c75fdce9e28a3122b3fde3b5ad48cb11	8a9022ff62239ce76eaf57f983adaa130e6a7f3e	771fbf546ae62db7451db4c247e1734985f1f6a3	test: evaluate A1 against B2 on K1X H500	h500-bootstrap-stop-gate-system-closure
