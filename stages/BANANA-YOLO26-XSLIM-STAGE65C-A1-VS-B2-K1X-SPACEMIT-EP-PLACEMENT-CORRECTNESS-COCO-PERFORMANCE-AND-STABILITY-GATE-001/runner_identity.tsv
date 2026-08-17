@@ -1,0 +1,6 @@
+tool	path	bytes	sha256
+two_stage_coco	/data/k1x-stage-runs/BANANA-YOLO26-VENDOR-ORT-STAGE64-XSLIM211-AND-VENDOR-COMMIT-S8-QDQ-YOLO26-FULLMODEL-COCO-AND-RT206-GATE-001/bin/stage64_two_stage_coco	83608	d39f5280a46b0bd342de933d6b25005a5858390430e8ce84377374f4a8225ad0
+two_stage_runner	/data/k1x-stage-runs/BANANA-YOLO26-VENDOR-ORT-STAGE64-XSLIM211-AND-VENDOR-COMMIT-S8-QDQ-YOLO26-FULLMODEL-COCO-AND-RT206-GATE-001/bin/stage64_two_stage_runner	88048	b39da697c4c0f309a9955475946ce5ce6b53b264bd3bae7cb50283fb49ce2188
+single_model_runner	/data/k1x-stage-runs/BANANA-YOLO26-VENDOR-ORT-STAGE64-XSLIM211-AND-VENDOR-COMMIT-S8-QDQ-YOLO26-FULLMODEL-COCO-AND-RT206-GATE-001/host/build/public-repro-runner/stage64_single_model_runner	41560	4d1ff2ac13b4aa0b7c62874a2cb4dede7fc4fd9c7f88c4b6932e251e8d5cbc46
+coco_evaluator	/data/worktrees/banana-yolo26-xslim211-s8-qdq-validation/vendor_ort_validation/stage65b_r1_coco_metrics.py	6642	ebd252d34473b7645d679fcdb209d32a86ab45dc5d0e75279ac1a0533c68eec9
+paired_bootstrap	/data/worktrees/banana-yolo26-xslim211-s8-qdq-validation/vendor_ort_validation/stage65b_r2_bootstrap.py	13752	5d3649908f7f0cf3ff02e133dfbeb58504baa14afac102ea0de9d62af916d245

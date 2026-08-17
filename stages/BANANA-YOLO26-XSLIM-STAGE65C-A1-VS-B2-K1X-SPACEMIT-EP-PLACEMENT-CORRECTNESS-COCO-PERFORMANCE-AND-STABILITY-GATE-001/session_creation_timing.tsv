@@ -1,0 +1,9 @@
+model	provider	mode	inference_create_us	tail_create_us	status
+A1	cpu	profile	1265985.506000	16289.685000	pass
+A1	cpu	repeat	1255488.479000	16470.563000	pass
+A1	spacemit	profile	1837079.025000	17467.073000	pass
+A1	spacemit	repeat	1819486.843000	17566.490000	pass
+B2	cpu	profile	1261829.125000	16324.136000	pass
+B2	cpu	repeat	1264094.184000	16471.806000	pass
+B2	spacemit	profile	1846575.034000	17789.943000	pass
+B2	spacemit	repeat	1836744.327000	17590.359000	pass

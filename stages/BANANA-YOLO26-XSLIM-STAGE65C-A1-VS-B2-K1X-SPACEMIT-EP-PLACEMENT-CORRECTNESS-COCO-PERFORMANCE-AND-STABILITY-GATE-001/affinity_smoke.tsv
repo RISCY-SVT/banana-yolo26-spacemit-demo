@@ -1,0 +1,13 @@
+test_id	cpus	exit_code	exact	status
+c1_s8_conv_pc_explicit	0-3	0	1	pass
+m1_s8_matmul	0-3	0	1	pass
+c1_s8_conv_pc_explicit	0	0	1	pass
+c1_s8_conv_pc_explicit	0-3	0	1	pass
+c1_s8_conv_pc_explicit	4	0	1	pass
+c1_s8_conv_pc_explicit	4-7	0	1	pass
+c1_s8_conv_pc_explicit	0-7	0	1	pass
+m1_s8_matmul	0	0	1	pass
+m1_s8_matmul	0-3	0	1	pass
+m1_s8_matmul	4	0	1	pass
+m1_s8_matmul	4-7	0	1	pass
+m1_s8_matmul	0-7	0	1	pass

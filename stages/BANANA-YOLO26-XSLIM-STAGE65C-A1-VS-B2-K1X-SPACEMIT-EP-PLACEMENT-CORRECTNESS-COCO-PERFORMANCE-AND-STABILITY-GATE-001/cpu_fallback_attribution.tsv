@@ -1,0 +1,5 @@
+model	requested_provider	inference_cpu_events	intended_separate_tail	unexpected_fallback	status
+B2	cpu	2586	CPUExecutionProvider	no	pass
+B2	spacemit	0	CPUExecutionProvider	no	pass
+A1	cpu	2586	CPUExecutionProvider	no	pass
+A1	spacemit	0	CPUExecutionProvider	no	pass

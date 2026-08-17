@@ -1,0 +1,5 @@
+model	requested_provider	profile	event_provider	node_events	unique_profile_nodes	node_duration_us
+B2	cpu	/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65C-A1-VS-B2-K1X-SPACEMIT-EP-PLACEMENT-CORRECTNESS-COCO-PERFORMANCE-AND-STABILITY-GATE-001/board/profile/B2-cpu-profile/profiles/profile_2026-08-17_20-06-07.json	CPUExecutionProvider	2586	1293	6312236.0
+B2	spacemit	/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65C-A1-VS-B2-K1X-SPACEMIT-EP-PLACEMENT-CORRECTNESS-COCO-PERFORMANCE-AND-STABILITY-GATE-001/board/profile/B2-spacemit-profile/profiles/profile_2026-08-17_20-06-36.json	SpaceMITExecutionProvider	2	1	455105.0
+A1	cpu	/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65C-A1-VS-B2-K1X-SPACEMIT-EP-PLACEMENT-CORRECTNESS-COCO-PERFORMANCE-AND-STABILITY-GATE-001/board/profile/A1-cpu-profile/profiles/profile_2026-08-17_20-06-42.json	CPUExecutionProvider	2586	1293	6317109.0
+A1	spacemit	/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65C-A1-VS-B2-K1X-SPACEMIT-EP-PLACEMENT-CORRECTNESS-COCO-PERFORMANCE-AND-STABILITY-GATE-001/board/profile/A1-spacemit-profile/profiles/profile_2026-08-17_20-07-11.json	SpaceMITExecutionProvider	2	1	451607.0

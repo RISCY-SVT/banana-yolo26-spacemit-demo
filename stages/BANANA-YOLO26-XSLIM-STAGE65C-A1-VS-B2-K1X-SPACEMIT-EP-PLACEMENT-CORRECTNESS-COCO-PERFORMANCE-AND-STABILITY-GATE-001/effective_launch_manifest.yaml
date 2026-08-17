@@ -1,0 +1,11 @@
+stage_id: BANANA-YOLO26-XSLIM-STAGE65C-A1-VS-B2-K1X-SPACEMIT-EP-PLACEMENT-CORRECTNESS-COCO-PERFORMANCE-AND-STABILITY-GATE-001
+authorization: direct-user
+banana_head: dee0975d02660691b1f690ae1530fd0247891981
+banana_tree: b5cc5b5e31e45088a12052623123d312cd80faa8
+xslim_head: 3e275c6496d603d3f75f363ed00aa633ffc00408
+xslim_tree: acdd6d64f35c7554f2559c781c5cbe0806acac1a
+dev001a_packet_tree_sha256: 4be1455764a4ffa28cdf523c5ac1b0ec509be38b8c9a20792404ae2dd97e6d12
+board_target: svt@banana
+board_workspace: /data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65C-A1-VS-B2-K1X-SPACEMIT-EP-PLACEMENT-CORRECTNESS-COCO-PERFORMANCE-AND-STABILITY-GATE-001
+runtime_version: 2.0.6
+models: frozen; regeneration forbidden

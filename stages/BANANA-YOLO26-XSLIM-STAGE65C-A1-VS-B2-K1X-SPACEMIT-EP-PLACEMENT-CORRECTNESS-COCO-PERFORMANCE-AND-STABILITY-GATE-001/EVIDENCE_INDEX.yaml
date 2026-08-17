@@ -1,0 +1,23 @@
+stage_id: BANANA-YOLO26-XSLIM-STAGE65C-A1-VS-B2-K1X-SPACEMIT-EP-PLACEMENT-CORRECTNESS-COCO-PERFORMANCE-AND-STABILITY-GATE-001
+canonical:
+  banana_tracked_stage:
+    local: stages/BANANA-YOLO26-XSLIM-DEV-001A-SPACEMIT-S8-QDQ-CONSTRAINED-RANGE-OBSERVER-TERMINAL-DOMAIN-AND-POLICY-A-HOST-CANDIDATE-GATE-001
+    drive_folder_id: 1VBW2P_CIP7girDhHlQLhMzqiZI81a1u8
+  xslim_tracked_stage:
+    local: /data/worktrees/riscy-xslim-k1x-yolo26/stages/BANANA-YOLO26-XSLIM-DEV-001A-SPACEMIT-S8-QDQ-CONSTRAINED-RANGE-OBSERVER-TERMINAL-DOMAIN-AND-POLICY-A-HOST-CANDIDATE-GATE-001
+    drive_folder_id: 1Utzno9lFRSnMd9lyrlHcijqPkNXB6IlF
+  raw_stage:
+    local: /data/k1x-stage-runs/BANANA-YOLO26-XSLIM-DEV-001A-SPACEMIT-S8-QDQ-CONSTRAINED-RANGE-OBSERVER-TERMINAL-DOMAIN-AND-POLICY-A-HOST-CANDIDATE-GATE-001
+    drive_folder_id: 1YekAhDbqPQJOn1haJAuun2q4MA8Ocrq7
+  result_packet:
+    local: /exchange/results/outbox/BANANA-YOLO26-XSLIM-DEV-001A-SPACEMIT-S8-QDQ-CONSTRAINED-RANGE-OBSERVER-TERMINAL-DOMAIN-AND-POLICY-A-HOST-CANDIDATE-GATE-001
+    drive_folder_id: 1eXCjaRqI-9i5x1g9KiwRbN1jHVTzZXPE
+  shared_log:
+    drive_folder_id: 1SivwPeWrygpGE8VnQFK0CiG7QwfkMhKB
+  post_push_attestation:
+    source: canonical tracked parity reports plus live Git ref readback
+superseded_or_duplicate:
+  - drive_folder_id: 14H7g6TrFOLnBRt7HZUX12RPY_6hl-ASt
+    role: duplicate task-run/result mirror
+verification_scope: bounded metadata and selected report content; no model or dataset download
+mirror_debt: full remote tree-byte verification unavailable; nonblocking because local packet and Git identities are exact

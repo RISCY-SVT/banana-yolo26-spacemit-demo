@@ -1,0 +1,7 @@
+role	drive_folder_id	verification	status
+result_packet	1eXCjaRqI-9i5x1g9KiwRbN1jHVTzZXPE	folder inventory and selected report content	pass-bounded
+banana_tracked_stage	1VBW2P_CIP7girDhHlQLhMzqiZI81a1u8	required reports and final parity visible	pass-bounded
+xslim_tracked_stage	1Utzno9lFRSnMd9lyrlHcijqPkNXB6IlF	compact source reports visible	pass-bounded
+raw_stage	1YekAhDbqPQJOn1haJAuun2q4MA8Ocrq7	raw directory roles visible; model bytes not downloaded	pass-bounded
+shared_log	1SivwPeWrygpGE8VnQFK0CiG7QwfkMhKB	shared log role visible	pass-bounded
+duplicate_mirror	14H7g6TrFOLnBRt7HZUX12RPY_6hl-ASt	duplicate task/result role retained	debt-nonblocking
