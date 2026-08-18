@@ -77,8 +77,8 @@ def main() -> int:
     for (case_group, image_id, model, provider), group in sorted(grouped.items()):
         one_session = [row for row in group if row["mode"] == "one-session"]
         recreations = [row for row in group if row["mode"] == "recreate"]
-        output_hashes = {row["output_sha256"] for row in recreations}
-        boundary_hashes = {row["boundary_manifest_sha256"] for row in recreations}
+        output_hashes = {row["output_sha256"] for row in group}
+        boundary_hashes = {row["boundary_manifest_sha256"] for row in group}
         status = (
             len(one_session) == 1
             and len(recreations) == 10
@@ -90,10 +90,10 @@ def main() -> int:
             {
                 "case_group": case_group, "image_id": image_id, "model": model, "provider": provider,
                 "one_session_runs": 100, "clean_session_recreations": len(recreations),
-                "unique_recreated_output_hashes": len(output_hashes),
-                "recreated_output_sha256": next(iter(output_hashes)) if len(output_hashes) == 1 else "multiple",
-                "unique_recreated_boundary_manifests": len(boundary_hashes),
-                "recreated_boundary_manifest_sha256": next(iter(boundary_hashes)) if len(boundary_hashes) == 1 else "multiple",
+                "unique_all_session_output_hashes": len(output_hashes),
+                "all_session_output_sha256": next(iter(output_hashes)) if len(output_hashes) == 1 else "multiple",
+                "unique_all_session_boundary_manifests": len(boundary_hashes),
+                "all_session_boundary_manifest_sha256": next(iter(boundary_hashes)) if len(boundary_hashes) == 1 else "multiple",
                 "status": "pass" if status else "fail",
             }
         )

@@ -164,6 +164,10 @@ def main() -> int:
                     "a1_ep_lost_vs_b2_ep": matches["B2_EP"]["matched"] and not matches["A1_EP"]["matched"],
                     "a1_cpu_recovered_vs_b2_cpu": matches["A1_CPU"]["matched"] and not matches["B2_CPU"]["matched"],
                     "a1_cpu_lost_vs_b2_cpu": matches["B2_CPU"]["matched"] and not matches["A1_CPU"]["matched"],
+                    "any_surface_disagreement": len(
+                        {int(matches[surface]["matched"]) for surface in SURFACES}
+                    )
+                    > 1,
                 }
                 stats = aggregate[(image, category, bucket)]
                 class_stats = per_class[(category, bucket)]
@@ -255,6 +259,8 @@ def main() -> int:
     for row in delta_rows:
         image = int(row["image_id"])
         bucket = str(row["size_bin"])
+        if row["any_surface_disagreement"]:
+            by_image[image]["any_disagreement"] += 1
         if row["a1_cpu_matched_a1_ep_missed"]:
             by_image[image][f"{bucket}_provider_loss"] += 1
         if row["a1_ep_lost_vs_b2_ep"]:
@@ -298,7 +304,7 @@ def main() -> int:
 
     control_scores: dict[int, int] = defaultdict(int)
     for (image, _category, bucket), values in aggregate.items():
-        if image in used or bucket != "large":
+        if image in used or image in by_image or bucket != "large":
             continue
         if all(values[f"{surface}_matched"] == values["B2_CPU_matched"] for surface in SURFACES):
             control_scores[image] += values["B2_CPU_matched"]
