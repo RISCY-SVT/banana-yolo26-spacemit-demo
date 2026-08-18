@@ -107,6 +107,8 @@ def main() -> int:
 
     replay_rows = []
     outputs: dict[tuple[int, str], np.ndarray] = {}
+    host_outputs_by_surface: dict[tuple[int, str], np.ndarray] = {}
+    boundary_sets: dict[tuple[int, str], list[np.ndarray]] = {}
     for case in selected:
         image_id = int(case["image_id"])
         for surface in SURFACES:
@@ -118,6 +120,7 @@ def main() -> int:
                 array = np.fromfile(path, dtype=np.float32).reshape(item.shape)
                 boundaries.append(array)
                 boundary_hashes.append(sha256(path))
+            boundary_sets[(image_id, surface)] = boundaries
             feed = {item.name: value for item, value in zip(inputs, boundaries)}
             first = tail.run(None, feed)[0]
             second = tail.run(None, feed)[0]
@@ -137,6 +140,7 @@ def main() -> int:
             if not np.array_equal(board_original, board_replay):
                 raise RuntimeError(f"board tail replay contract failed: {image_id} {surface}")
             outputs[(image_id, surface)] = board_original[0]
+            host_outputs_by_surface[(image_id, surface)] = first[0]
             replay_rows.append(
                 {
                     "selection_group": case["selection_group"], "image_id": image_id, "surface": surface,
@@ -194,6 +198,96 @@ def main() -> int:
                 )
     write_tsv(options.output_dir / "tail_topk_membership_delta.tsv", topk_rows)
     write_tsv(options.output_dir / "tail_threshold_crossings.tsv", crossing_rows)
+
+    splice_rows = []
+    for case in selected:
+        image_id = int(case["image_id"])
+        for model in ("B2", "A1"):
+            cpu_key = (image_id, f"{model}-cpu")
+            ep_key = (image_id, f"{model}-spacemit")
+            cpu_output = host_outputs_by_surface[cpu_key]
+            ep_output = host_outputs_by_surface[ep_key]
+            cpu_ep_mean_abs = compare(cpu_output, ep_output)[1]
+            for boundary_index, boundary_input in enumerate(inputs):
+                hybrid_boundaries = list(boundary_sets[ep_key])
+                hybrid_boundaries[boundary_index] = boundary_sets[cpu_key][boundary_index]
+                feed = {item.name: value for item, value in zip(inputs, hybrid_boundaries)}
+                hybrid = tail.run(None, feed)[0]
+                repeated = tail.run(None, feed)[0]
+                if not np.array_equal(hybrid, repeated):
+                    raise RuntimeError(
+                        f"hybrid tail replay is nondeterministic: {image_id} {model} {boundary_index}"
+                    )
+                hybrid = hybrid[0]
+                hybrid_ep = compare(hybrid, ep_output)
+                hybrid_cpu = compare(hybrid, cpu_output)
+                recovery = (
+                    (cpu_ep_mean_abs - hybrid_cpu[1]) / cpu_ep_mean_abs
+                    if cpu_ep_mean_abs > 0
+                    else 0.0
+                )
+                hybrid_cpu_matches = greedy_matches(hybrid, cpu_output, 100)
+                hybrid_ep_matches = greedy_matches(hybrid, ep_output, 100)
+                splice_rows.append(
+                    {
+                        "selection_group": case["selection_group"],
+                        "image_id": image_id,
+                        "model": model,
+                        "replaced_boundary_index": boundary_index,
+                        "replaced_boundary_name": boundary_input.name,
+                        "hybrid_output_sha256": sha256_bytes(
+                            np.ascontiguousarray(hybrid).tobytes(order="C")
+                        ),
+                        "hybrid_vs_ep_max_abs": hybrid_ep[0],
+                        "hybrid_vs_ep_mean_abs": hybrid_ep[1],
+                        "hybrid_vs_ep_cosine": hybrid_ep[2],
+                        "hybrid_vs_cpu_max_abs": hybrid_cpu[0],
+                        "hybrid_vs_cpu_mean_abs": hybrid_cpu[1],
+                        "hybrid_vs_cpu_cosine": hybrid_cpu[2],
+                        "cpu_ep_mean_abs": cpu_ep_mean_abs,
+                        "mean_abs_recovery_fraction": recovery,
+                        "top100_matches_with_cpu": len(hybrid_cpu_matches),
+                        "top100_matches_with_ep": len(hybrid_ep_matches),
+                        "score_ge_0_001": int(np.count_nonzero(hybrid[:, 4] >= 0.001)),
+                        "score_ge_0_01": int(np.count_nonzero(hybrid[:, 4] >= 0.01)),
+                        "score_ge_0_05": int(np.count_nonzero(hybrid[:, 4] >= 0.05)),
+                    }
+                )
+    write_tsv(options.output_dir / "tail_boundary_splice.tsv", splice_rows)
+
+    ranking_rows = []
+    for model in ("B2", "A1"):
+        for boundary_index, boundary_input in enumerate(inputs):
+            rows = [
+                row
+                for row in splice_rows
+                if row["model"] == model and row["replaced_boundary_index"] == boundary_index
+            ]
+            ranking_rows.append(
+                {
+                    "model": model,
+                    "boundary_index": boundary_index,
+                    "boundary_name": boundary_input.name,
+                    "selected_cases": len(rows),
+                    "mean_abs_recovery_fraction": float(
+                        np.mean([float(row["mean_abs_recovery_fraction"]) for row in rows])
+                    ),
+                    "median_abs_recovery_fraction": float(
+                        np.median([float(row["mean_abs_recovery_fraction"]) for row in rows])
+                    ),
+                    "mean_top100_matches_with_cpu": float(
+                        np.mean([int(row["top100_matches_with_cpu"]) for row in rows])
+                    ),
+                }
+            )
+    ranking_rows.sort(
+        key=lambda row: (
+            row["model"],
+            -row["mean_abs_recovery_fraction"],
+            row["boundary_index"],
+        )
+    )
+    write_tsv(options.output_dir / "tail_boundary_splice_ranking.tsv", ranking_rows)
     return 0
 
 
