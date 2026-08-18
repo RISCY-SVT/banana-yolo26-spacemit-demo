@@ -53,7 +53,11 @@ tail -n +2 "$selection" | while IFS=$'\t' read -r group rank image_id rest; do
           --threads 4 \
           --runs 2 >"$output/tail-replay.log" 2>&1
       output_sha=$(sha256sum "$output/output.bin" | awk '{print $1}')
-      boundary_sha=$(sha256sum "$output"/boundaries/*.bin | LC_ALL=C sort | sha256sum | awk '{print $1}')
+      boundary_sha=$(
+        for path in "$output"/boundaries/*.bin; do
+          printf '%s  %s\n' "$(sha256sum "$path" | awk '{print $1}')" "$(basename "$path")"
+        done | LC_ALL=C sort | sha256sum | awk '{print $1}'
+      )
       replay_sha=$(sha256sum "$output/tail-replay.bin" | awk '{print $1}')
       printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\n' \
         "$image_id" "$model" "$provider" "$rc" "$output_sha" "$boundary_sha" "$replay_sha" >>"$status"
