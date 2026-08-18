@@ -63,6 +63,7 @@ rsync -a "$HOST_BUILD/stage65c_r1_tail_replay" "$BOARD:$BOARD_ROOT/bin/"
 rsync -a \
   /data/worktrees/banana-yolo26-xslim211-s8-qdq-validation/vendor_ort_validation/stage65c_r1_board_boundaries.sh \
   /data/worktrees/banana-yolo26-xslim211-s8-qdq-validation/vendor_ort_validation/stage65c_r1_board_determinism.sh \
+  /data/worktrees/banana-yolo26-xslim211-s8-qdq-validation/vendor_ort_validation/stage65c_r1_board_finalize.sh \
   /data/worktrees/banana-yolo26-xslim211-s8-qdq-validation/vendor_ort_validation/stage65c_board_coco.sh \
   "$BOARD:$BOARD_ROOT/bin/"
 
