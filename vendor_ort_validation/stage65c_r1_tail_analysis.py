@@ -256,32 +256,40 @@ def main() -> int:
     write_tsv(options.output_dir / "tail_boundary_splice.tsv", splice_rows)
 
     ranking_rows = []
-    for model in ("B2", "A1"):
-        for boundary_index, boundary_input in enumerate(inputs):
-            rows = [
-                row
-                for row in splice_rows
-                if row["model"] == model and row["replaced_boundary_index"] == boundary_index
-            ]
-            ranking_rows.append(
-                {
-                    "model": model,
-                    "boundary_index": boundary_index,
-                    "boundary_name": boundary_input.name,
-                    "selected_cases": len(rows),
-                    "mean_abs_recovery_fraction": float(
-                        np.mean([float(row["mean_abs_recovery_fraction"]) for row in rows])
-                    ),
-                    "median_abs_recovery_fraction": float(
-                        np.median([float(row["mean_abs_recovery_fraction"]) for row in rows])
-                    ),
-                    "mean_top100_matches_with_cpu": float(
-                        np.mean([int(row["top100_matches_with_cpu"]) for row in rows])
-                    ),
-                }
-            )
+    groups = ("large-loss", "small-loss", "matched-control", "all")
+    for group in groups:
+        for model in ("B2", "A1"):
+            for boundary_index, boundary_input in enumerate(inputs):
+                rows = [
+                    row
+                    for row in splice_rows
+                    if row["model"] == model
+                    and row["replaced_boundary_index"] == boundary_index
+                    and (group == "all" or row["selection_group"] == group)
+                ]
+                if not rows:
+                    raise RuntimeError(f"empty tail ranking group: {group} {model}")
+                ranking_rows.append(
+                    {
+                        "selection_group": group,
+                        "model": model,
+                        "boundary_index": boundary_index,
+                        "boundary_name": boundary_input.name,
+                        "selected_cases": len(rows),
+                        "mean_abs_recovery_fraction": float(
+                            np.mean([float(row["mean_abs_recovery_fraction"]) for row in rows])
+                        ),
+                        "median_abs_recovery_fraction": float(
+                            np.median([float(row["mean_abs_recovery_fraction"]) for row in rows])
+                        ),
+                        "mean_top100_matches_with_cpu": float(
+                            np.mean([int(row["top100_matches_with_cpu"]) for row in rows])
+                        ),
+                    }
+                )
     ranking_rows.sort(
         key=lambda row: (
+            groups.index(row["selection_group"]),
             row["model"],
             -row["mean_abs_recovery_fraction"],
             row["boundary_index"],
