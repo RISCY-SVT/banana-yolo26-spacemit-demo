@@ -71,6 +71,24 @@ ssh -o BatchMode=yes "$BOARD" bash -s -- "$BOARD_ROOT" <<'REMOTE'
 set -euo pipefail
 root=$1
 chmod +x "$root"/bin/*
+check_sha256() {
+  local expected=$1 path=$2 actual
+  actual=$(sha256sum "$path" | awk '{print $1}')
+  [[ $actual == "$expected" ]] || {
+    printf 'SHA-256 mismatch: %s expected=%s actual=%s\n' "$path" "$expected" "$actual" >&2
+    exit 2
+  }
+}
+check_sha256 f7c5345f68cf79a5c3748274239a14cdaa59f77eac0425f7771694febaa24632 \
+  "$root/models/stage65b_r1_a1.inference.onnx"
+check_sha256 40ba6a7f9aebaa98a1c3abe5fce1f66f1bebcd0b10b7af3d26d30414a331d853 \
+  "$root/models/stage65b_r1_b2.inference.onnx"
+check_sha256 18ffff41e6812fa781baf7b9c1fcd41b41d6118145d785c3e550499070a512a3 \
+  "$root/models/stage65b_r1_a1.postprocess.onnx"
+check_sha256 93bb75601d9eceb5aca192fa70c0c3e18b94a70b9f57acdc9b34c2ff426e09e3 \
+  "$root/runtime/lib/libonnxruntime.so.1.24.2+spacemit.a1"
+check_sha256 dcc9503031bca22cf2b33a692f7b4c01d0fbb4a24c34f6e60c7faaddb78274ae \
+  "$root/runtime/lib/libspacemit_ep.so.2.0.6"
 {
   sha256sum "$root/models/stage65b_r1_a1.inference.onnx"
   sha256sum "$root/models/stage65b_r1_b2.inference.onnx"
