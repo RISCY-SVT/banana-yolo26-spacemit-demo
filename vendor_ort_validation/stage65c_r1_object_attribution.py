@@ -95,15 +95,15 @@ def prepare(coco: COCO, ids: list[int], path: Path) -> dict[str, Any]:
 def match_record(base: dict[str, Any], image: int, category: int, gt_id: int, threshold_index: int, gt_bbox: list[float]) -> dict[str, Any]:
     entry = base["entries"].get((image, category))
     if entry is None:
-        return {"matched": 0, "detection_id": 0, "score": "", "rank": "", "iou": ""}
+        return {"matched": 0, "detection_id": 0, "score": "NA", "rank": "NA", "iou": "NA"}
     gt_ids = [int(value) for value in entry["gtIds"]]
     try:
         gt_index = gt_ids.index(gt_id)
     except ValueError:
-        return {"matched": 0, "detection_id": 0, "score": "", "rank": "", "iou": ""}
+        return {"matched": 0, "detection_id": 0, "score": "NA", "rank": "NA", "iou": "NA"}
     detection_id = int(entry["gtMatches"][threshold_index, gt_index])
     if detection_id == 0:
-        return {"matched": 0, "detection_id": 0, "score": "", "rank": "", "iou": ""}
+        return {"matched": 0, "detection_id": 0, "score": "NA", "rank": "NA", "iou": "NA"}
     detection_ids = [int(value) for value in entry["dtIds"]]
     rank = detection_ids.index(detection_id) + 1
     detection = base["result"].anns[detection_id]
