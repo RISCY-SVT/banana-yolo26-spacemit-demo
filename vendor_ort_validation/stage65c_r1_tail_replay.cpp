@@ -70,7 +70,8 @@ std::size_t element_size(ONNXTensorElementDataType type) {
   case ONNX_TENSOR_ELEMENT_DATA_TYPE_DOUBLE:
     return 8;
   default:
-    throw std::runtime_error("unsupported tensor type");
+    throw std::runtime_error("unsupported tensor type: " +
+                             std::to_string(static_cast<int>(type)));
   }
 }
 
@@ -154,7 +155,8 @@ int main(int argc, char **argv) {
     for (std::size_t index = 0; index < 6; ++index) {
       auto name = session.GetInputNameAllocated(index, allocator);
       names.emplace_back(name.get());
-      const auto info = session.GetInputTypeInfo(index).GetTensorTypeAndShapeInfo();
+      const auto type_info = session.GetInputTypeInfo(index);
+      const auto info = type_info.GetTensorTypeAndShapeInfo();
       const auto shape = info.GetShape();
       const auto type = info.GetElementType();
       const auto bytes = element_count(shape) * element_size(type);
