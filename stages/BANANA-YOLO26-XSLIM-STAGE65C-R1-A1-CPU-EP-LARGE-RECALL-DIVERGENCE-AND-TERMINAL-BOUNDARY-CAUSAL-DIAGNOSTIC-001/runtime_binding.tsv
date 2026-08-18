@@ -1,0 +1,6 @@
+field	value	status
+declared_runtime	2.0.6	pass
+ort_asset_sha256	bebcdfb7df6b49eefa3863afcd85a3da2aa83c3ae9252d7d856188c38a70b0e6	pass
+ort_core_sha256	93bb75601d9eceb5aca192fa70c0c3e18b94a70b9f57acdc9b34c2ff426e09e3	pass
+spacemit_ep_sha256	dcc9503031bca22cf2b33a692f7b4c01d0fbb4a24c34f6e60c7faaddb78274ae	pass
+runtime_root	/data/vendor-runtimes/spacemit-ort/2.0.6	pass

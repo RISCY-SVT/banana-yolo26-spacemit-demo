@@ -1,0 +1,13 @@
+stage_id: BANANA-YOLO26-XSLIM-STAGE65C-R1-A1-CPU-EP-LARGE-RECALL-DIVERGENCE-AND-TERMINAL-BOUNDARY-CAUSAL-DIAGNOSTIC-001
+authorization: direct-user
+banana_head: 4868cbfbe0d1de41437b3568026069a12f806585
+banana_tree: eef2dd835834e3163e721dd79b5fc1af11a226ff
+xslim_head: 3e275c6496d603d3f75f363ed00aa633ffc00408
+xslim_tree: acdd6d64f35c7554f2559c781c5cbe0806acac1a
+stage65c_packet_tree_sha256: 27bfec346a38cf365754478ca386f4985303eb3d910f71726c7ec09f5432ebcd
+board_target: svt@banana
+board_workspace: /data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65C-R1-A1-CPU-EP-LARGE-RECALL-DIVERGENCE-AND-TERMINAL-BOUNDARY-CAUSAL-DIAGNOSTIC-001
+runtime_version: 2.0.6
+models: frozen; regeneration forbidden
+h500_bootstrap_seed: 65008
+full_val_bootstrap_seed: 65009
