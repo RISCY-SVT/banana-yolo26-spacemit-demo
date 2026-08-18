@@ -179,8 +179,8 @@ def main() -> int:
                         "selection_group": case["selection_group"], "image_id": image_id, "model": model,
                         "top_k": limit, "matched_members": len(matches),
                         "cpu_only_members": limit - len(matches), "ep_only_members": limit - len(matches),
-                        "mean_rank_displacement": float(np.mean(displacement)) if displacement else "",
-                        "maximum_rank_displacement": int(max(displacement)) if displacement else "",
+                        "mean_rank_displacement": float(np.mean(displacement)) if displacement else "NA",
+                        "maximum_rank_displacement": int(max(displacement)) if displacement else "NA",
                     }
                 )
             matches = greedy_matches(cpu, ep, 300)
