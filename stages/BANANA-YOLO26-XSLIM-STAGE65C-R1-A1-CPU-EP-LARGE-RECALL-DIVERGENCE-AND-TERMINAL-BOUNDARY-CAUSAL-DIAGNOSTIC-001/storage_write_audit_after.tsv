@@ -1,0 +1,5 @@
+surface	value
+stage_root_mount	/dev/nvme0n1p1 ext4   rw,noatime
+root_mount	/dev/mmcblk2p6 ext4   rw,noatime,errors=remount-ro
+emmc_stage_path_count	0
+active_stage_process_count	0
