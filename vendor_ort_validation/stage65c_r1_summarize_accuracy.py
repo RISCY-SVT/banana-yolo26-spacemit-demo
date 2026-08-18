@@ -137,7 +137,10 @@ def main() -> int:
         full_contract = float(a1_ep_map["point_delta"]) >= 0.005 and float(a1_ep_map["percentile_2_5"]) > 0.0
         for metric in ("ap_small", "ap_medium", "ap_large", "ar_small", "ar_medium", "ar_large"):
             full_contract = full_contract and float(pairs[("A1_EP-vs-B2_EP", metric)]["point_delta"]) >= -0.005
-        no_material_negative = interaction_classes["map50_95"] != "negative-interaction" and interaction_classes["ar_large"] != "negative-interaction"
+        no_material_negative = all(
+            classification != "negative-interaction"
+            for classification in interaction_classes.values()
+        )
         sampling_artifact = full_contract and no_material_negative
         if intrinsic_confirmed and provider_negative:
             classification = "stage65c-r1-a1-model-intrinsic-and-spacemit-ep-specific-large-recall-loss-confirmed"
