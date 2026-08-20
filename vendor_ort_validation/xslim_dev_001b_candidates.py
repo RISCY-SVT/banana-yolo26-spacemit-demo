@@ -1091,6 +1091,27 @@ def graph_signature(model: onnx.ModelProto) -> dict[str, Any]:
     }
 
 
+def candidate_lane_groups(
+    group_status: Mapping[str, Mapping[str, Any]],
+) -> dict[str, tuple[str, ...]]:
+    """Return the frozen matrix, conditionally adding only the combined lane."""
+
+    missing = sorted(set(GROUPS) - set(group_status))
+    if missing:
+        raise ValueError("missing reconstruction group status: " + ", ".join(missing))
+    lanes: dict[str, tuple[str, ...]] = {
+        "C2_T6_RANK_QP": (),
+        "C3_R7_BR": ("R7",),
+        "C4_R0_BR": ("R0",),
+    }
+    qualified = tuple(
+        group for group in ("R7", "R0") if bool(group_status[group]["qualified"])
+    )
+    if qualified:
+        lanes["C5_COMBINED"] = qualified
+    return lanes
+
+
 def build(args: argparse.Namespace) -> int:
     if args.output_root.exists():
         raise RuntimeError("refusing to overwrite candidate generation output")
@@ -1102,14 +1123,7 @@ def build(args: argparse.Namespace) -> int:
     arrays_file = np.load(components_path, allow_pickle=False)
     arrays = {name: arrays_file[name] for name in arrays_file.files}
     group_status = manifest["group_status"]
-    lanes: dict[str, tuple[str, ...]] = {"C2_T6_RANK_QP": ()}
-    if group_status["R7"]["qualified"]:
-        lanes["C3_R7_BR"] = ("R7",)
-    if group_status["R0"]["qualified"]:
-        lanes["C4_R0_BR"] = ("R0",)
-    qualified = tuple(group for group in ("R7", "R0") if group_status[group]["qualified"])
-    if qualified:
-        lanes["C5_COMBINED"] = qualified
+    lanes = candidate_lane_groups(group_status)
 
     identity_rows = []
     qparam_rows = []

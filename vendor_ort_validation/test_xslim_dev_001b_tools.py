@@ -120,3 +120,24 @@ def test_component_archive_is_byte_reproducible(tmp_path) -> None:
         assert sorted(loaded.files) == sorted(arrays)
         for name, expected in arrays.items():
             np.testing.assert_array_equal(loaded[name], expected)
+
+
+def test_fixed_candidate_matrix_only_conditions_combined_lane() -> None:
+    none_qualified = tools.candidate_lane_groups(
+        {"R7": {"qualified": False}, "R0": {"qualified": False}}
+    )
+    assert none_qualified == {
+        "C2_T6_RANK_QP": (),
+        "C3_R7_BR": ("R7",),
+        "C4_R0_BR": ("R0",),
+    }
+
+    r7_qualified = tools.candidate_lane_groups(
+        {"R7": {"qualified": True}, "R0": {"qualified": False}}
+    )
+    assert r7_qualified["C5_COMBINED"] == ("R7",)
+
+    both_qualified = tools.candidate_lane_groups(
+        {"R7": {"qualified": True}, "R0": {"qualified": True}}
+    )
+    assert both_qualified["C5_COMBINED"] == ("R7", "R0")
