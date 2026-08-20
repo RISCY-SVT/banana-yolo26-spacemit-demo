@@ -10,6 +10,7 @@ import hashlib
 import io
 import json
 import math
+import os
 import random
 import zipfile
 from collections.abc import Iterable, Mapping, Sequence
@@ -549,9 +550,23 @@ def require_baseline_rounding_identity(
     return differences
 
 
+def require_python_hash_seed(seed: int) -> str:
+    """Fail before mutation when hash-backed traversal is not reproducible."""
+
+    expected = str(seed)
+    actual = os.environ.get("PYTHONHASHSEED")
+    if actual != expected:
+        raise RuntimeError(
+            "PYTHONHASHSEED must equal the configured seed before process start: "
+            f"expected {expected}, got {actual!r}"
+        )
+    return actual
+
+
 def export_prequant_reference(args: argparse.Namespace) -> int:
     """Export the deterministic FP graph after XSlim's prequant passes only."""
 
+    require_python_hash_seed(args.seed)
     if args.output.exists() or args.manifest.exists():
         raise RuntimeError("refusing to overwrite prequant reference state")
 
@@ -658,6 +673,7 @@ def export_prequant_reference(args: argparse.Namespace) -> int:
 
 
 def prepare(args: argparse.Namespace) -> int:
+    require_python_hash_seed(args.seed)
     if args.raw_root.exists() or args.report_root.exists():
         raise RuntimeError("refusing to overwrite candidate preparation state")
     random.seed(args.seed)

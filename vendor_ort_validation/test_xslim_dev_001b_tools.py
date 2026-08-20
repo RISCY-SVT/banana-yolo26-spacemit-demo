@@ -159,3 +159,16 @@ def test_reconstruction_reference_must_round_back_to_accepted_codes() -> None:
             accepted,
             "conv",
         )
+
+
+def test_python_hash_seed_must_be_fixed_before_deterministic_process(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.delenv("PYTHONHASHSEED", raising=False)
+    with pytest.raises(RuntimeError, match="expected 65001"):
+        tools.require_python_hash_seed(65001)
+    monkeypatch.setenv("PYTHONHASHSEED", "65002")
+    with pytest.raises(RuntimeError, match="got '65002'"):
+        tools.require_python_hash_seed(65001)
+    monkeypatch.setenv("PYTHONHASHSEED", "65001")
+    assert tools.require_python_hash_seed(65001) == "65001"
