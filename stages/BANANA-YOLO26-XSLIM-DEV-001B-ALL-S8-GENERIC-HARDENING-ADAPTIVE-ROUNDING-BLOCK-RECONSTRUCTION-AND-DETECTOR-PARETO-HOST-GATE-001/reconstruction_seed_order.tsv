@@ -1,0 +1,8 @@
+group	conv_node	global_seed	derived_seed	sample_order_sha256	patch_selection_policy	optimization_images	validation_images	activation_drop_probability
+R0	/model.0/conv/Conv	65001	17505250295829775297	953392e07c7855dfd3f0fb64efea8257696375213c1972f662497b4cd9213e72	xslim-dev-001b-conv-patch-splitmix64-v2	160	40	0.0
+R0	/model.1/conv/Conv	65001	14881830544145141876	feee29b7d458d2add65aa5a3340a56b6608e4f5fef831e462c56b0eecf4cf19a	xslim-dev-001b-conv-patch-splitmix64-v2	160	40	0.0
+R0	/model.2/cv1/conv/Conv	65001	4893465699191032964	5cd8657ba1734788396dddf300be63c32451c493df80f55d748d40f4c806c20e	xslim-dev-001b-conv-patch-splitmix64-v2	160	40	0.0
+R0	/model.2/cv2/conv/Conv	65001	7665888460033858654	3014eead05c8e623395acc53dd7b585e45926ede49c718436d7fd15c376f3f8b	xslim-dev-001b-conv-patch-splitmix64-v2	160	40	0.0
+R7	/model.23/one2one_cv3.0/one2one_cv3.0.1/one2one_cv3.0.1.1/conv/Conv	65001	385029109839131171	7de26f537375bb1fe393a24724e180c2daed15c05b00af6b0538b622350f53de	xslim-dev-001b-conv-patch-splitmix64-v2	160	40	0.0
+R7	/model.23/one2one_cv3.1/one2one_cv3.1.1/one2one_cv3.1.1.1/conv/Conv	65001	14556221412838375256	ed89bfd38b86f6fbc7be7150f0665278c36fcbbd64e1ab00a27762c10c43f567	xslim-dev-001b-conv-patch-splitmix64-v2	160	40	0.0
+R7	/model.23/one2one_cv3.2/one2one_cv3.2.1/one2one_cv3.2.1.1/conv/Conv	65001	11486501235414660381	3bc48551ed0c0add6c0602167f1edd19b61c55b0c89018090ac2fe32feaf8a83	xslim-dev-001b-conv-patch-splitmix64-v2	160	40	0.0

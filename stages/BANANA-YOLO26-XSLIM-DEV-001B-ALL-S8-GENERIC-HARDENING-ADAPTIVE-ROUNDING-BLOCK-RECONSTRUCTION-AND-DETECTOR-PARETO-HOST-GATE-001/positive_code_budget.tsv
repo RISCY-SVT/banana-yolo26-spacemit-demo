@@ -1,0 +1,4 @@
+terminal	positive_code_budget	negative_code_count	scale	zero_point
+/model.23/one2one_cv3.0/one2one_cv3.0.2/Conv_output_0	8	247	0.12896603345870972	119
+/model.23/one2one_cv3.1/one2one_cv3.1.2/Conv_output_0	8	247	0.37640878558158875	119
+/model.23/one2one_cv3.2/one2one_cv3.2.2/Conv_output_0	16	239	0.17163723707199097	111

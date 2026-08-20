@@ -1,0 +1,7 @@
+lane	role	terminal_confidence_qparams	reconstruction_groups	generation_runs	status
+C0_B2	frozen-control	B2	none	0	accepted-input
+C1_A1	frozen-control	DEV-001A-T6	none	0	accepted-input
+C2_T6_RANK_QP	candidate	rank-selected	none	2	generated
+C3_R7_BR	candidate	rank-selected	R7-confidence	2	generated
+C4_R0_BR	candidate	rank-selected	R0	2	generated
+C5_COMBINED	candidate	rank-selected	R7-confidence;R0	2	generated

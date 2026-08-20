@@ -1,0 +1,5 @@
+repository	branch	surface	local	remote	status
+Banana	yolo26-vendor-ort-xslim211-s8-qdq-validation	github	16d36c569e267016cecabc6333515d2feecb12aa	16d36c569e267016cecabc6333515d2feecb12aa	pass
+Banana	yolo26-vendor-ort-xslim211-s8-qdq-validation	gitlab-rd	16d36c569e267016cecabc6333515d2feecb12aa	16d36c569e267016cecabc6333515d2feecb12aa	pass
+XSlim	riscy/k1x-yolo26	github	3e275c6496d603d3f75f363ed00aa633ffc00408	3e275c6496d603d3f75f363ed00aa633ffc00408	pass
+XSlim	riscy/k1x-yolo26	gitlab	3e275c6496d603d3f75f363ed00aa633ffc00408	3e275c6496d603d3f75f363ed00aa633ffc00408	pass

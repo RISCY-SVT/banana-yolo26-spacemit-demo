@@ -1,0 +1,5 @@
+lane	deployable_run1_equals_run2	inference_run1_equals_run2	component_manifest_equals	normalized_report_equals	status
+C2_T6_RANK_QP	1	1	1	1	pass
+C3_R7_BR	1	1	1	1	pass
+C4_R0_BR	1	1	1	1	pass
+C5_COMBINED	1	1	1	1	pass

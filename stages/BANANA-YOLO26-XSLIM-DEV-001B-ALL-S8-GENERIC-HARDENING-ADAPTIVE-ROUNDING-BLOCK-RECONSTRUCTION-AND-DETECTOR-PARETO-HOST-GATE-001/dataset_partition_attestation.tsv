@@ -1,0 +1,8 @@
+surface	count	sha256	overlap_h500	overlap_val2017	policy	status
+C200	200	f47f3b58dc99be17bfed15293968c44573a20919dec0a3ca7350d47c923f4f3a	0	0	xslim-dev-001b-reconstruction-split-v1	pass
+optimization_C160	160	a7588e76e4b0d14061663f52cfb58ef275d3dfa44d4c30a36a9104b919528145	0	0	xslim-dev-001b-reconstruction-split-v1	pass
+validation_C40	40	a76237de6a56f6d618ecbe2a6c7fe41f7db4604b3beec5141be354f430d58a03	0	0	xslim-dev-001b-reconstruction-split-v1	pass
+H500	500	35b0afc2c4d9dfd20634fd7cb5b883e6eef8d67a34d5a5c832259b36ea8ce097	self	0	accepted-R1	pass
+val2017	5000	d4b401d6be0446f1cea0aa2ea99fc4d367c498c02b18ebac75b77c2e2fe21bae	0	self	accepted-R1	pass
+train2017-annotations	118287	610fce4944abdeb15354cc765333805529359d12d88f2f711393ca586901d01d	n/a	n/a	accepted-R1	pass
+val2017-annotations	5000	e8c7f7908f1d7278341fae127d0da654f102f11bd7b21d8aeefa635b8c810b6f	n/a	n/a	accepted-R1	pass

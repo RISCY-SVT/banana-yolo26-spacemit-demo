@@ -1,0 +1,5 @@
+lane	status	qdq_nodes	qlinear	uint8_zero_points	fp16_values_or_casts	conv_kernel_shape	boundary_contract	new_fp_islands	new_qdq_boundaries	tail_sha256
+C2_T6_RANK_QP	pass	812	0	0	0	102/102	pass	0	0	18ffff41e6812fa781baf7b9c1fcd41b41d6118145d785c3e550499070a512a3
+C3_R7_BR	pass	812	0	0	0	102/102	pass	0	0	18ffff41e6812fa781baf7b9c1fcd41b41d6118145d785c3e550499070a512a3
+C4_R0_BR	pass	812	0	0	0	102/102	pass	0	0	18ffff41e6812fa781baf7b9c1fcd41b41d6118145d785c3e550499070a512a3
+C5_COMBINED	pass	812	0	0	0	102/102	pass	0	0	18ffff41e6812fa781baf7b9c1fcd41b41d6118145d785c3e550499070a512a3

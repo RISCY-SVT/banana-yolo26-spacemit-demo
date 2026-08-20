@@ -1,0 +1,17 @@
+{
+  "banana_declared_start": "d3afe14480ec2efbb2df9436deaa9022d631faa0",
+  "banana_effective_start": "16d36c569e267016cecabc6333515d2feecb12aa",
+  "banana_effective_tree": "c3196278586f6d247d1bd727bc2a6a2999476f9c",
+  "banana_reconciliation": "accepted-prior-append-only-erratum",
+  "board_execution_authorized": false,
+  "execution_authority": "direct-user-authorization",
+  "new_branch_authorized": false,
+  "packet": {
+    "bytes": 1983169,
+    "files": 63,
+    "tree_sha256": "8398831b147cc890436e968d830b14c0d5347ee5a24946b03156c66aa08b22e6"
+  },
+  "stage_id": "BANANA-YOLO26-XSLIM-DEV-001B-ALL-S8-GENERIC-HARDENING-ADAPTIVE-ROUNDING-BLOCK-RECONSTRUCTION-AND-DETECTOR-PARETO-HOST-GATE-001",
+  "xslim_start": "3e275c6496d603d3f75f363ed00aa633ffc00408",
+  "xslim_tree": "acdd6d64f35c7554f2559c781c5cbe0806acac1a"
+}

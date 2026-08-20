@@ -1,0 +1,8 @@
+group	anchor	weight_initializer	weight_elements	default_nearest_diff_from_b2	initial_baseline_diff_from_b2	trainable_floor_ceil_elements	frozen_baseline_elements	hardened_diff_from_b2	round_up_fraction	final_dtype	training_only_variables_exported
+R0	/model.0/act/Mul_output_0	model.0.conv.weight	432	15	0	429	3	81	0.7060185074806213	int8	0
+R0	/model.1/act/Mul_output_0	model.1.conv.weight	4608	971	0	4401	207	257	0.5833333134651184	int8	0
+R0	/model.2/cv1/act/Mul_output_0	model.2.cv1.conv.weight	1024	255	0	981	43	18	0.544921875	int8	0
+R0	/model.2/cv2/act/Mul_output_0	model.2.cv2.conv.weight	3072	31	0	3050	22	100	0.5029296875	int8	0
+R7	/model.23/one2one_cv3.0/one2one_cv3.0.1/one2one_cv3.0.1.1/act/Mul_output_0	model.23.one2one_cv3.0.1.1.conv.weight	6400	1241	0	6315	85	333	0.5262500047683716	int8	0
+R7	/model.23/one2one_cv3.1/one2one_cv3.1.1/one2one_cv3.1.1.1/act/Mul_output_0	model.23.one2one_cv3.1.1.1.conv.weight	6400	1570	0	6244	156	326	0.5279687643051147	int8	0
+R7	/model.23/one2one_cv3.2/one2one_cv3.2.1/one2one_cv3.2.1.1/act/Mul_output_0	model.23.one2one_cv3.2.1.1.conv.weight	6400	1755	0	6191	209	1131	0.35984376072883606	int8	0
