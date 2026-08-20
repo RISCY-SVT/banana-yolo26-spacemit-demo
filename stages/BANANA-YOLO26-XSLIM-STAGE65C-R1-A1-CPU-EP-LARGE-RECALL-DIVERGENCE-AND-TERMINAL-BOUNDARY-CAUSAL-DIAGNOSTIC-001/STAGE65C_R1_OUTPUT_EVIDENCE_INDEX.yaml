@@ -1,0 +1,17 @@
+schema: stage65c-r1-output-evidence-index-v1
+stage_id: BANANA-YOLO26-XSLIM-STAGE65C-R1-A1-CPU-EP-LARGE-RECALL-DIVERGENCE-AND-TERMINAL-BOUNDARY-CAUSAL-DIAGNOSTIC-001
+input_evidence:
+  stage65c_packet: /exchange/results/outbox/BANANA-YOLO26-XSLIM-STAGE65C-A1-VS-B2-K1X-SPACEMIT-EP-PLACEMENT-CORRECTNESS-COCO-PERFORMANCE-AND-STABILITY-GATE-001
+  frozen_models: referenced by frozen_artifact_identity.tsv and SHA-256
+  common_tail: referenced by frozen_artifact_identity.tsv and SHA-256
+output_evidence:
+  tracked_stage: stages/BANANA-YOLO26-XSLIM-STAGE65C-R1-A1-CPU-EP-LARGE-RECALL-DIVERGENCE-AND-TERMINAL-BOUNDARY-CAUSAL-DIAGNOSTIC-001
+  raw_stage: /data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65C-R1-A1-CPU-EP-LARGE-RECALL-DIVERGENCE-AND-TERMINAL-BOUNDARY-CAUSAL-DIAGNOSTIC-001
+  result_packet: /exchange/results/outbox/BANANA-YOLO26-XSLIM-STAGE65C-R1-A1-CPU-EP-LARGE-RECALL-DIVERGENCE-AND-TERMINAL-BOUNDARY-CAUSAL-DIAGNOSTIC-001
+  shared_log: referenced by the result packet shared-log-dir.txt
+  post_push_attestation: banana_remote_parity_final.tsv
+excluded_or_partial:
+  smoke_roots: incomplete awk-index smoke attempts
+  reason: board awk portability failure; excluded before accepted determinism evidence
+  thermal_files: zero-byte thermal_before.tsv and thermal_after.tsv files
+  thermal_disposition: not evidence
