@@ -1,0 +1,63 @@
+schema_version: 1
+stage_id: BANANA-YOLO26-XSLIM-STAGE65C-R1-A1-CPU-EP-LARGE-RECALL-DIVERGENCE-AND-TERMINAL-BOUNDARY-CAUSAL-DIAGNOSTIC-001
+index_role: append-only-interpretation-erratum-companion
+original_classification: stage65c-r1-recall-causality-inconclusive-frozen-a1-remains-blocked
+original_closure_commit: d3afe14480ec2efbb2df9436deaa9022d631faa0
+
+input_evidence:
+  stage65c_packet:
+    path: /exchange/results/outbox/BANANA-YOLO26-XSLIM-STAGE65C-A1-VS-B2-K1X-SPACEMIT-EP-PLACEMENT-CORRECTNESS-COCO-PERFORMANCE-AND-STABILITY-GATE-001
+    role: accepted-parent-stage-packet
+  frozen_models:
+    identity_manifest: frozen_artifact_identity.tsv
+    role: A1-and-B2-model-identity-authority
+  common_tail:
+    identity_manifest: frozen_artifact_identity.tsv
+    sha256: 18ffff41e6812fa781baf7b9c1fcd41b41d6118145d785c3e550499070a512a3
+
+output_evidence:
+  tracked_stage:
+    path: stages/BANANA-YOLO26-XSLIM-STAGE65C-R1-A1-CPU-EP-LARGE-RECALL-DIVERGENCE-AND-TERMINAL-BOUNDARY-CAUSAL-DIAGNOSTIC-001
+    role: canonical-compact-stage-evidence
+  raw_stage:
+    path: /data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65C-R1-A1-CPU-EP-LARGE-RECALL-DIVERGENCE-AND-TERMINAL-BOUNDARY-CAUSAL-DIAGNOSTIC-001
+    role: canonical-raw-evidence
+  result_packet:
+    path: /exchange/results/outbox/BANANA-YOLO26-XSLIM-STAGE65C-R1-A1-CPU-EP-LARGE-RECALL-DIVERGENCE-AND-TERMINAL-BOUNDARY-CAUSAL-DIAGNOSTIC-001
+    tree_sha256: 8398831b147cc890436e968d830b14c0d5347ee5a24946b03156c66aa08b22e6
+    files: 63
+    bytes: 1983169
+    role: canonical-original-result-packet
+  shared_log:
+    path: /data/ncnn-logs/ai-team/2026-08-18/2026-08-18_08-53-09__contcodex__BANANA-YOLO26-XSLIM-STAGE65C-R1-A1-CPU-EP-LARGE-RECALL-DIVERGENCE-AND-TERMINAL-BOUNDARY-CAUSAL-DIAGNOSTIC-001__stage65c-r1-recall-diagnostic
+    role: canonical-stage-coordination-log
+  post_push_attestation:
+    paths:
+      - /exchange/results/outbox/BANANA-YOLO26-XSLIM-STAGE65C-R1-A1-CPU-EP-LARGE-RECALL-DIVERGENCE-AND-TERMINAL-BOUNDARY-CAUSAL-DIAGNOSTIC-001/artifacts/post-push/final_identity_attestation.tsv
+      - /exchange/results/outbox/BANANA-YOLO26-XSLIM-STAGE65C-R1-A1-CPU-EP-LARGE-RECALL-DIVERGENCE-AND-TERMINAL-BOUNDARY-CAUSAL-DIAGNOSTIC-001/artifacts/post-push/remote_parity_attestation.tsv
+    role: canonical-original-closure-attestation
+  append_only_erratum:
+    path: STAGE65C_R1_INTERPRETATION_ERRATUM.md
+    role: interpretation-correction-only
+  supplemental_erratum_packet:
+    path: /exchange/results/outbox/BANANA-YOLO26-XSLIM-STAGE65C-R1-INTERPRETATION-ERRATUM-001
+    role: append-only-erratum-handoff
+
+excluded_or_partial:
+  smoke_roots:
+    - path: /data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65C-R1-A1-CPU-EP-LARGE-RECALL-DIVERGENCE-AND-TERMINAL-BOUNDARY-CAUSAL-DIAGNOSTIC-001/board/recovery-smoke/interrupted
+      reason: incomplete-status-root-excluded-from-decisions
+    - path: /data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65C-R1-A1-CPU-EP-LARGE-RECALL-DIVERGENCE-AND-TERMINAL-BOUNDARY-CAUSAL-DIAGNOSTIC-001/board/recovery-smoke/awk-failure
+      reason: status-parser-portability-failure-excluded-from-decisions
+  thermal_files:
+    path_pattern: raw-stage/**/thermal_before.tsv,raw-stage/**/thermal_after.tsv
+    reason: zero-byte-files-are-not-thermal-evidence
+  superseded_or_duplicate_mirrors:
+    status: none-classified-by-this-erratum
+
+immutability:
+  original_final_report_sha256: 714cf735be8f79ccda5bd9be1f87b0b6852e3ccbb0f935757af0e4868b34df84
+  original_recovery_report_sha256: cb4334b509b4a960a279151e2c20229403fcdb70280b4f1bea934ac331e02583
+  original_classification_sha256: 7a51a03cd008ff6f726a7cad4be0763a487cdcf8ef791b5682a7f985f29ea457
+  original_packet_unchanged: true
+  original_classification_unchanged: true
