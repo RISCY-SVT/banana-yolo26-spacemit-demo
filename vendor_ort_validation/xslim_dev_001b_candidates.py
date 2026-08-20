@@ -563,6 +563,17 @@ def require_python_hash_seed(seed: int) -> str:
     return actual
 
 
+def canonicalize_transient_export_metadata(model: onnx.ModelProto) -> list[str]:
+    """Remove wall-clock metadata from a stage-local diagnostic export."""
+
+    transient_keys = {"xslim_export_time"}
+    removed = sorted(item.key for item in model.metadata_props if item.key in transient_keys)
+    retained = [copy.deepcopy(item) for item in model.metadata_props if item.key not in transient_keys]
+    del model.metadata_props[:]
+    model.metadata_props.extend(retained)
+    return removed
+
+
 def export_prequant_reference(args: argparse.Namespace) -> int:
     """Export the deterministic FP graph after XSlim's prequant passes only."""
 
@@ -646,6 +657,7 @@ def export_prequant_reference(args: argparse.Namespace) -> int:
             for item in model.functions
         ):
             model.functions.append(function_proto)
+    removed_metadata = canonicalize_transient_export_metadata(model)
     onnx.checker.check_model(model)
     onnx.shape_inference.infer_shapes(model)
     args.output.parent.mkdir(parents=True, exist_ok=True)
@@ -665,6 +677,7 @@ def export_prequant_reference(args: argparse.Namespace) -> int:
             },
             "seed": args.seed,
             "threads": args.threads,
+            "removed_transient_metadata": removed_metadata,
             "calibration_images": len(dataset),
             "truncate_outputs": list(setting.quantization_parameters.truncate_var_names),
         },

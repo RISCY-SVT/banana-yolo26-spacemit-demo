@@ -172,3 +172,23 @@ def test_python_hash_seed_must_be_fixed_before_deterministic_process(
         tools.require_python_hash_seed(65001)
     monkeypatch.setenv("PYTHONHASHSEED", "65001")
     assert tools.require_python_hash_seed(65001) == "65001"
+
+
+def test_transient_export_timestamp_is_removed_without_touching_other_metadata() -> None:
+    model = helper.make_model(
+        helper.make_graph([], "tiny", [], []),
+        producer_name="xslim",
+    )
+    helper.set_model_props(
+        model,
+        {
+            "xslim_export_time": "2026-08-20-23:59:59",
+            "xslim_version": "2.1.2+riscy.2.dev2",
+        },
+    )
+    assert tools.canonicalize_transient_export_metadata(model) == [
+        "xslim_export_time"
+    ]
+    assert [(item.key, item.value) for item in model.metadata_props] == [
+        ("xslim_version", "2.1.2+riscy.2.dev2")
+    ]
