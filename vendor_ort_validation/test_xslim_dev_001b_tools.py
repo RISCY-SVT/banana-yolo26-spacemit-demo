@@ -4,6 +4,7 @@ import hashlib
 
 import numpy as np
 import onnx
+import pytest
 import xslim_dev_001b_candidates as tools
 from onnx import TensorProto, helper, numpy_helper
 
@@ -141,3 +142,20 @@ def test_fixed_candidate_matrix_only_conditions_combined_lane() -> None:
         {"R7": {"qualified": True}, "R0": {"qualified": True}}
     )
     assert both_qualified["C5_COMBINED"] == ("R7", "R0")
+
+
+def test_reconstruction_reference_must_round_back_to_accepted_codes() -> None:
+    accepted = np.asarray([0, 1, -2], dtype=np.int8)
+    assert tools.require_baseline_rounding_identity(accepted.copy(), accepted, "conv") == 0
+    with pytest.raises(RuntimeError, match="1 differences"):
+        tools.require_baseline_rounding_identity(
+            np.asarray([0, 2, -2], dtype=np.int8),
+            accepted,
+            "conv",
+        )
+    with pytest.raises(RuntimeError, match="shape/dtype"):
+        tools.require_baseline_rounding_identity(
+            accepted.astype(np.int16),
+            accepted,
+            "conv",
+        )

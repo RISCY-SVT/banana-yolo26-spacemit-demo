@@ -10,6 +10,7 @@ import hashlib
 import io
 import json
 import math
+import random
 import zipfile
 from collections.abc import Iterable, Mapping, Sequence
 from pathlib import Path
@@ -530,6 +531,134 @@ def normalized_mse(student: Sequence[np.ndarray], teacher: Sequence[np.ndarray])
     return float(np.mean(losses))
 
 
+def require_baseline_rounding_identity(
+    initial_codes: np.ndarray,
+    accepted_codes: np.ndarray,
+    target_name: str,
+) -> int:
+    """Require adaptive-rounding rollback to reconstruct the accepted baseline."""
+
+    if initial_codes.shape != accepted_codes.shape or initial_codes.dtype != accepted_codes.dtype:
+        raise RuntimeError(f"baseline rounding shape/dtype differs for {target_name}")
+    differences = int(np.count_nonzero(initial_codes != accepted_codes))
+    if differences:
+        raise RuntimeError(
+            "post-equalization FP reference does not reconstruct the accepted B2 "
+            f"weight codes for {target_name}: {differences} differences"
+        )
+    return differences
+
+
+def export_prequant_reference(args: argparse.Namespace) -> int:
+    """Export the deterministic FP graph after XSlim's prequant passes only."""
+
+    if args.output.exists() or args.manifest.exists():
+        raise RuntimeError("refusing to overwrite prequant reference state")
+
+    import cv2
+    from xslim.optimizer import GraphLegalized
+    from xslim.ppq_decorator import ONNXRUNTIMExporter, TorchExecutor
+    from xslim.quantizer import XSlimQuantizer
+    from xslim.xslim_pipeline import (
+        dispatch_graph,
+        parse_xslim_config,
+        xslim_load_onnx_graph,
+    )
+
+    from xslim import CalibrationCollect, XSlimDataset
+
+    random.seed(args.seed)
+    np.random.seed(args.seed % (2**32))
+    torch.manual_seed(args.seed)
+    cv2.setRNGSeed(args.seed % (2**31))
+    torch.use_deterministic_algorithms(True)
+    torch.set_num_threads(args.threads)
+
+    setting = parse_xslim_config(str(args.base_config))
+    model_path = setting.model_parameters.onnx_model
+    graph, _tail, _truncate_vars, saved_functions = xslim_load_onnx_graph(
+        model_path,
+        not setting.model_parameters.skip_onnxsim,
+        setting.quantization_parameters.truncate_var_names,
+        setting.model_parameters.opset,
+    )
+    GraphLegalized(graph)()
+    graph = dispatch_graph(graph=graph, dispatcher="conservative")
+    setting.calibration_parameters.check_input_parameters(graph)
+    input_parameters = setting.calibration_parameters.input_parameters
+    dataset = XSlimDataset(setting.calibration_parameters)
+    dataloader = torch.utils.data.DataLoader(
+        dataset,
+        batch_size=dataset.auto_batch_size,
+    )
+    quantizer = XSlimQuantizer(graph)
+    executor = TorchExecutor(
+        graph=quantizer._graph,
+        device=setting.calibration_parameters.calibration_device,
+    )
+    collate = CalibrationCollect(
+        input_parameters,
+        setting.calibration_parameters.calibration_device,
+    )
+    input_names = list(graph.inputs)
+    if len(input_names) != 1:
+        raise RuntimeError("prequant reference exporter requires one graph input")
+    dummy_input: dict[str, torch.Tensor] | None = None
+    for raw_data in dataloader:
+        data = collate(raw_data)
+        if isinstance(data, torch.Tensor):
+            dummy_input = {input_names[0]: data}
+        elif isinstance(data, dict):
+            dummy_input = data
+        else:
+            raise TypeError(f"unsupported calibration input type: {type(data)!r}")
+    if dummy_input is None:
+        raise RuntimeError("prequant reference calibration dataset is empty")
+
+    executor.load_graph(quantizer._graph)
+    executor.tracing_operation_meta(inputs=dummy_input)
+    pipeline = quantizer.build_prequant_pipeline(setting, executor=executor)
+    pipeline.optimize(
+        graph=quantizer._graph,
+        dataloader=dataloader,
+        executor=executor,
+        verbose=False,
+        calib_steps=setting.calibration_parameters.calibration_step,
+        collate_fn=collate,
+    )
+    model = ONNXRUNTIMExporter().export(quantizer._graph)
+    for function_proto in saved_functions:
+        if not any(
+            item.domain == function_proto.domain and item.name == function_proto.name
+            for item in model.functions
+        ):
+            model.functions.append(function_proto)
+    onnx.checker.check_model(model)
+    onnx.shape_inference.infer_shapes(model)
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    onnx.save_model(model, args.output)
+    json_dump(
+        args.manifest,
+        {
+            "contract": "xslim-dev-001b-post-equalization-fp-reference-v1",
+            "base_config": {
+                "path": str(args.base_config),
+                "sha256": sha256(args.base_config),
+            },
+            "output": {
+                "path": str(args.output),
+                "bytes": args.output.stat().st_size,
+                "sha256": sha256(args.output),
+            },
+            "seed": args.seed,
+            "threads": args.threads,
+            "calibration_images": len(dataset),
+            "truncate_outputs": list(setting.quantization_parameters.truncate_var_names),
+        },
+    )
+    return 0
+
+
 def prepare(args: argparse.Namespace) -> int:
     if args.raw_root.exists() or args.report_root.exists():
         raise RuntimeError("refusing to overwrite candidate preparation state")
@@ -539,26 +668,32 @@ def prepare(args: argparse.Namespace) -> int:
     diagnostic_root.mkdir()
 
     fp32 = onnx.load(args.fp32_inference)
+    reconstruction_reference = onnx.load(args.prequant_reference)
     b2 = onnx.load(args.b2_inference)
     descriptors = [
-        target_descriptor(fp32, b2, group, anchor)
+        target_descriptor(reconstruction_reference, b2, group, anchor)
         for group, anchors in GROUPS.items()
         for anchor in anchors
     ]
     terminal = [trace_terminal_qdq(b2, output) for output in TERMINAL_CONFIDENCE]
-    fp_outputs = list(OUTPUTS) + [item["conv_output"] for item in descriptors]
+    fp_outputs = list(OUTPUTS)
+    reference_outputs = [item["conv_output"] for item in descriptors]
     b2_outputs = (
         list(OUTPUTS)
         + [item["float_source"] for item in terminal]
         + [item["conv_input"] for item in descriptors]
     )
     fp_diagnostic = add_outputs(fp32, fp_outputs)
+    reference_diagnostic = add_outputs(reconstruction_reference, reference_outputs)
     b2_diagnostic = add_outputs(b2, b2_outputs)
     fp_path = diagnostic_root / "fp32-diagnostic.onnx"
+    reference_path = diagnostic_root / "prequant-reference-diagnostic.onnx"
     b2_path = diagnostic_root / "b2-diagnostic.onnx"
     onnx.save_model(fp_diagnostic, fp_path)
+    onnx.save_model(reference_diagnostic, reference_path)
     onnx.save_model(b2_diagnostic, b2_path)
     onnx.checker.check_model(fp_diagnostic)
+    onnx.checker.check_model(reference_diagnostic)
     onnx.checker.check_model(b2_diagnostic)
 
     tail = onnx.load(args.tail)
@@ -567,10 +702,11 @@ def prepare(args: argparse.Namespace) -> int:
     onnx.save_model(tail_debug, tail_path)
     tail_session = make_session(tail_path, 1)
     fp_session = make_session(fp_path, args.threads)
+    reference_session = make_session(reference_path, args.threads)
     b2_session = make_session(b2_path, args.threads)
 
     b2_initializers = initializer_map(b2)
-    fp_initializers = initializer_map(fp32)
+    fp_initializers = initializer_map(reconstruction_reference)
     reconstruction_data: dict[str, dict[str, list[dict[str, np.ndarray]]]] = {
         item["anchor"]: {"optimization": [], "validation": []} for item in descriptors
     }
@@ -584,9 +720,10 @@ def prepare(args: argparse.Namespace) -> int:
         for image_index, image_path in enumerate(paths):
             image, _ = image_tensor_and_geometry(image_path)
             fp_values = run_named(fp_session, image)
+            reference_values = run_named(reference_session, image)
             b2_values = run_named(b2_session, image)
             for descriptor in descriptors:
-                teacher = fp_values[descriptor["conv_output"]]
+                teacher = reference_values[descriptor["conv_output"]]
                 height, width = map(int, teacher.shape[-2:])
                 positions = selected_positions(
                     image_path.name,
@@ -771,6 +908,11 @@ def prepare(args: argparse.Namespace) -> int:
                 channel_axis=0,
             )
             initial_nearest_codes = rounder.codes(hard=True).detach().numpy().astype(np.int8)
+            initial_diff_from_b2 = require_baseline_rounding_identity(
+                initial_nearest_codes,
+                b2_codes,
+                str(descriptor["conv_node"]),
+            )
             train_items = [
                 (
                     torch.from_numpy(item["patches"]),
@@ -888,7 +1030,6 @@ def prepare(args: argparse.Namespace) -> int:
             final_bias = corrected_bias if bias_accepted else bias
             final_validation = min(before_bias_loss, after_bias_loss)
             changed_from_b2 = int(np.count_nonzero(hardened != b2_codes))
-            initial_diff_from_b2 = int(np.count_nonzero(initial_nearest_codes != b2_codes))
             component_arrays[f"weight::{descriptor['weight_initializer']}"] = hardened
             component_arrays[f"bias::{descriptor['bias_initializer']}"] = final_bias
             improvement = b2_validation_loss - final_validation
@@ -990,6 +1131,10 @@ def prepare(args: argparse.Namespace) -> int:
     manifest = {
         "contract": "xslim-dev-001b-candidate-components-v1",
         "fp32_inference": {"path": str(args.fp32_inference), "sha256": sha256(args.fp32_inference)},
+        "prequant_reference": {
+            "path": str(args.prequant_reference),
+            "sha256": sha256(args.prequant_reference),
+        },
         "b2_inference": {"path": str(args.b2_inference), "sha256": sha256(args.b2_inference)},
         "tail": {"path": str(args.tail), "sha256": sha256(args.tail)},
         "optimization_list": {"path": str(args.optimization_list), "sha256": sha256(args.optimization_list)},
@@ -1181,8 +1326,17 @@ def build(args: argparse.Namespace) -> int:
 def parser() -> argparse.ArgumentParser:
     root = argparse.ArgumentParser(description=__doc__)
     commands = root.add_subparsers(dest="command", required=True)
+    export_parser = commands.add_parser("export-prequant")
+    export_parser.add_argument("--base-config", required=True, type=Path)
+    export_parser.add_argument("--output", required=True, type=Path)
+    export_parser.add_argument("--manifest", required=True, type=Path)
+    export_parser.add_argument("--seed", type=int, default=65001)
+    export_parser.add_argument("--threads", type=int, default=4)
+    export_parser.set_defaults(function=export_prequant_reference)
+
     prepare_parser = commands.add_parser("prepare")
     prepare_parser.add_argument("--fp32-inference", required=True, type=Path)
+    prepare_parser.add_argument("--prequant-reference", required=True, type=Path)
     prepare_parser.add_argument("--b2-inference", required=True, type=Path)
     prepare_parser.add_argument("--tail", required=True, type=Path)
     prepare_parser.add_argument("--optimization-list", required=True, type=Path)
