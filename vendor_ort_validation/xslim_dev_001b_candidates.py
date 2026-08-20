@@ -662,6 +662,11 @@ def export_prequant_reference(args: argparse.Namespace) -> int:
 def prepare(args: argparse.Namespace) -> int:
     if args.raw_root.exists() or args.report_root.exists():
         raise RuntimeError("refusing to overwrite candidate preparation state")
+    random.seed(args.seed)
+    np.random.seed(args.seed % (2**32))
+    torch.manual_seed(args.seed)
+    torch.use_deterministic_algorithms(True)
+    torch.set_num_threads(args.threads)
     args.raw_root.mkdir(parents=True)
     args.report_root.mkdir(parents=True)
     diagnostic_root = args.raw_root / "diagnostics"
@@ -743,7 +748,7 @@ def prepare(args: argparse.Namespace) -> int:
                     sampled, _, _ = stratified_activation_sample(
                         values,
                         args.terminal_samples_per_image,
-                        seed=65001,
+                        seed=args.seed,
                         tensor_name=f"{item['output']}:{image_path.name}",
                     )
                     terminal_samples[item["output"]].append(sampled.astype(np.float32))
@@ -955,7 +960,7 @@ def prepare(args: argparse.Namespace) -> int:
                 return output
 
             config = ReconstructionConfig(
-                seed=65001,
+                seed=args.seed,
                 max_iterations=args.reconstruction_iterations,
                 validation_interval=10,
                 patience=5,
@@ -1144,6 +1149,8 @@ def prepare(args: argparse.Namespace) -> int:
         "group_status": group_status,
         "components": {"path": components_path.name, "sha256": sha256(components_path)},
         "activation_drop_probability": 0.0,
+        "seed": args.seed,
+        "threads": args.threads,
         "patch_selection_policy": PATCH_SELECTION_POLICY,
     }
     manifest_path = args.raw_root / "candidate-components.json"
@@ -1343,6 +1350,7 @@ def parser() -> argparse.ArgumentParser:
     prepare_parser.add_argument("--validation-list", required=True, type=Path)
     prepare_parser.add_argument("--raw-root", required=True, type=Path)
     prepare_parser.add_argument("--report-root", required=True, type=Path)
+    prepare_parser.add_argument("--seed", type=int, default=65001)
     prepare_parser.add_argument("--threads", type=int, default=4)
     prepare_parser.add_argument("--patches-per-image", type=int, default=8)
     prepare_parser.add_argument("--terminal-samples-per-image", type=int, default=4096)
