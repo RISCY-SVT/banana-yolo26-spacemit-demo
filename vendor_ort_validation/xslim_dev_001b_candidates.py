@@ -556,6 +556,7 @@ def export_prequant_reference(args: argparse.Namespace) -> int:
         raise RuntimeError("refusing to overwrite prequant reference state")
 
     import cv2
+    from xslim import CalibrationCollect, XSlimDataset
     from xslim.optimizer import GraphLegalized
     from xslim.ppq_decorator import ONNXRUNTIMExporter, TorchExecutor
     from xslim.quantizer import XSlimQuantizer
@@ -564,9 +565,6 @@ def export_prequant_reference(args: argparse.Namespace) -> int:
         parse_xslim_config,
         xslim_load_onnx_graph,
     )
-
-    from xslim import CalibrationCollect, XSlimDataset
-
     random.seed(args.seed)
     np.random.seed(args.seed % (2**32))
     torch.manual_seed(args.seed)
@@ -906,15 +904,24 @@ def prepare(args: argparse.Namespace) -> int:
             weight_scale = numpy_helper.to_array(b2_initializers[descriptor["weight_scale_initializer"]]).astype(np.float32)
             weight_zero = numpy_helper.to_array(b2_initializers[descriptor["weight_zero_point_initializer"]]).astype(np.int8)
             bias = numpy_helper.to_array(b2_initializers[descriptor["bias_initializer"]]).astype(np.float32)
-            rounder = AdaptiveWeightRounder(
+            default_rounder = AdaptiveWeightRounder(
                 torch.from_numpy(fp_weight),
                 torch.from_numpy(weight_scale),
                 torch.from_numpy(weight_zero),
                 channel_axis=0,
             )
-            initial_nearest_codes = rounder.codes(hard=True).detach().numpy().astype(np.int8)
+            default_nearest_codes = default_rounder.codes(hard=True).detach().numpy().astype(np.int8)
+            default_nearest_diff_from_b2 = int(np.count_nonzero(default_nearest_codes != b2_codes))
+            rounder = AdaptiveWeightRounder(
+                torch.from_numpy(fp_weight),
+                torch.from_numpy(weight_scale),
+                torch.from_numpy(weight_zero),
+                initial_codes=torch.from_numpy(b2_codes),
+                channel_axis=0,
+            )
+            initial_baseline_codes = rounder.codes(hard=True).detach().numpy().astype(np.int8)
             initial_diff_from_b2 = require_baseline_rounding_identity(
-                initial_nearest_codes,
+                initial_baseline_codes,
                 b2_codes,
                 str(descriptor["conv_node"]),
             )
@@ -1065,7 +1072,10 @@ def prepare(args: argparse.Namespace) -> int:
                     "anchor": anchor,
                     "weight_initializer": descriptor["weight_initializer"],
                     "weight_elements": hardened.size,
-                    "initial_nearest_diff_from_b2": initial_diff_from_b2,
+                    "default_nearest_diff_from_b2": default_nearest_diff_from_b2,
+                    "initial_baseline_diff_from_b2": initial_diff_from_b2,
+                    "trainable_floor_ceil_elements": int(torch.count_nonzero(rounder.trainable_mask).item()),
+                    "frozen_baseline_elements": int(rounder.trainable_mask.numel() - torch.count_nonzero(rounder.trainable_mask).item()),
                     "hardened_diff_from_b2": changed_from_b2,
                     "round_up_fraction": result_manifest["per_weight_round_up_fraction"][descriptor["weight_initializer"]],
                     "final_dtype": str(hardened.dtype),
