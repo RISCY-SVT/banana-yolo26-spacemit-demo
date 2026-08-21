@@ -1,0 +1,4 @@
+surface	local	github	gitlab_rd	status
+content_evidence_checkpoint	99f6e13e246b6dd27abfc9cb6140f2058da2634f	99f6e13e246b6dd27abfc9cb6140f2058da2634f	99f6e13e246b6dd27abfc9cb6140f2058da2634f	pass
+protected_main	1fd2e71bb1d5a924e7c0444cada94f681b73aa91	1fd2e71bb1d5a924e7c0444cada94f681b73aa91	1fd2e71bb1d5a924e7c0444cada94f681b73aa91	pass
+post_report_closure	see-result-packet-post-push-attestation	see-result-packet-post-push-attestation	see-result-packet-post-push-attestation	pending-until-containing-commit-exists
