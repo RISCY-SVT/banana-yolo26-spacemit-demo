@@ -9,6 +9,7 @@ import hashlib
 import io
 import json
 import multiprocessing as mp
+import os
 from collections.abc import Iterable
 from pathlib import Path
 from typing import Any
@@ -86,6 +87,14 @@ def selected_ids(path: Path, coco: COCO) -> list[int]:
 def valid_mean(values: np.ndarray) -> float:
     selected = values[values >= 0]
     return float(selected.mean()) if selected.size else float("nan")
+
+
+def metric_difference(left: float, right: float) -> float:
+    if np.isnan(left) and np.isnan(right):
+        return 0.0
+    if not np.isfinite(left) or not np.isfinite(right):
+        return float("inf")
+    return abs(left - right)
 
 
 def official_metrics(evaluator: COCOeval) -> dict[str, float]:
@@ -307,6 +316,108 @@ def summarize(delta: np.ndarray) -> dict[str, float]:
     }
 
 
+def sync_memmap(array: np.memmap) -> None:
+    array.flush()
+    descriptor = os.open(array.filename, os.O_RDONLY)
+    try:
+        os.fsync(descriptor)
+    finally:
+        os.close(descriptor)
+
+
+def resume_contract(
+    options: argparse.Namespace,
+    parsed: dict[str, Path],
+    draw_sha: str,
+) -> dict[str, Any]:
+    return {
+        "contract_version": "xslim-dev-001c-bootstrap-resume-v1",
+        "tool_sha256": sha256(Path(__file__).resolve()),
+        "annotations": str(options.annotations.resolve()),
+        "annotations_sha256": sha256(options.annotations),
+        "image_list": str(options.image_list.resolve()),
+        "image_list_sha256": sha256(options.image_list),
+        "surfaces": {
+            name: {"path": str(path), "sha256": sha256(path)}
+            for name, path in sorted(parsed.items())
+        },
+        "surface_order": list(parsed),
+        "metrics": list(METRICS),
+        "replicates": options.replicates,
+        "seed": options.seed,
+        "draw_matrix_raw_sha256": draw_sha,
+    }
+
+
+def initialize_resume_state(
+    options: argparse.Namespace,
+    parsed: dict[str, Path],
+    draws: np.ndarray,
+    expected_nan: np.ndarray,
+) -> tuple[np.memmap, np.memmap]:
+    draw_sha = hashlib.sha256(draws.tobytes(order="C")).hexdigest()
+    contract = resume_contract(options, parsed, draw_sha)
+    contract_path = options.output_dir / "resume_contract.json"
+    state = options.output_dir / "resume-state"
+    if options.output_dir.exists():
+        if not contract_path.is_file():
+            raise RuntimeError("existing bootstrap root has no resume contract")
+        observed = json.loads(contract_path.read_text(encoding="utf-8"))
+        if observed != contract:
+            raise RuntimeError("bootstrap resume contract differs")
+    else:
+        options.output_dir.mkdir(parents=True)
+        contract_path.write_text(
+            json.dumps(contract, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+        )
+    state.mkdir(exist_ok=True)
+
+    draw_file = options.output_dir / "draw_matrix_int32.npy"
+    if draw_file.exists():
+        observed_draws = np.load(draw_file, mmap_mode="r", allow_pickle=False)
+        if observed_draws.shape != draws.shape or observed_draws.dtype != draws.dtype:
+            raise RuntimeError("saved draw matrix shape/dtype differs")
+        observed_sha = hashlib.sha256(
+            np.asarray(observed_draws).tobytes(order="C")
+        ).hexdigest()
+        if observed_sha != draw_sha:
+            raise RuntimeError("saved draw matrix bytes differ")
+    else:
+        np.save(draw_file, draws, allow_pickle=False)
+
+    value_path = state / "surface_metrics.float64.memmap"
+    done_path = state / "done.uint8.memmap"
+    value_mode = "r+" if value_path.exists() else "w+"
+    done_mode = "r+" if done_path.exists() else "w+"
+    values = np.memmap(
+        value_path,
+        dtype=np.float64,
+        mode=value_mode,
+        shape=(options.replicates, len(parsed), len(METRICS)),
+    )
+    done = np.memmap(
+        done_path,
+        dtype=np.uint8,
+        mode=done_mode,
+        shape=(options.replicates,),
+    )
+    if value_mode == "w+":
+        values[:] = np.nan
+        sync_memmap(values)
+    if done_mode == "w+":
+        done[:] = 0
+        sync_memmap(done)
+    completed_values = np.asarray(values[np.asarray(done, dtype=bool)])
+    if completed_values.size and invalid_metric_values(completed_values, expected_nan):
+        raise RuntimeError("completed bootstrap resume rows violate the value contract")
+    return values, done
+
+
+def invalid_metric_values(values: np.ndarray, expected_nan: np.ndarray) -> bool:
+    expected = np.broadcast_to(expected_nan, values.shape)
+    return bool(np.any(np.isinf(values)) or np.any(np.isnan(values) != expected))
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--annotations", required=True, type=Path)
@@ -317,20 +428,19 @@ def main() -> int:
     parser.add_argument("--replicates", type=int, default=10_000)
     parser.add_argument("--seed", type=int, default=65007)
     parser.add_argument("--workers", type=int, default=1)
+    parser.add_argument("--checkpoint-every", type=int, default=10)
     parser.add_argument("--output-dir", required=True, type=Path)
     options = parser.parse_args()
     if options.replicates < 10_000:
         raise ValueError("DEV-001C requires at least 10000 shared draws")
-    if options.output_dir.exists():
-        raise RuntimeError(f"refusing existing output directory: {options.output_dir}")
+    if options.checkpoint_every < 1:
+        raise ValueError("checkpoint interval must be positive")
     parsed_entries = [parse_surface(value) for value in options.surface]
     parsed = dict(parsed_entries)
     if len(parsed) != len(parsed_entries) or set(parsed) != {"B2", "A1", "C2"}:
         raise ValueError("DEV-001C requires exactly B2, A1 and C2 surfaces")
     if options.baseline not in parsed or options.pareto_reference not in parsed:
         raise ValueError("baseline and Pareto reference surfaces are required")
-    options.output_dir.mkdir(parents=True)
-
     log = io.StringIO()
     with contextlib.redirect_stdout(log):
         coco = COCO(str(options.annotations))
@@ -345,13 +455,21 @@ def main() -> int:
         0, len(ids), size=(options.replicates, len(ids)), dtype=np.int32
     )
     draw_sha = hashlib.sha256(_DRAWS.tobytes(order="C")).hexdigest()
+    expected_nan = np.asarray(
+        [
+            [np.isnan(_BASES[surface]["point"][metric]) for metric in METRICS]
+            for surface in _SURFACES
+        ],
+        dtype=bool,
+    )
+    values, done = initialize_resume_state(options, parsed, _DRAWS, expected_nan)
 
     validation_rows: list[dict[str, Any]] = []
     for surface in _SURFACES:
         for metric in METRICS:
             vectorized = _BASES[surface]["point"][metric]
             literal = _BASES[surface]["literal_point"][metric]
-            difference = abs(vectorized - literal)
+            difference = metric_difference(vectorized, literal)
             validation_rows.append(
                 {
                     "check": "point-literal-vs-vectorized",
@@ -374,7 +492,7 @@ def main() -> int:
             _BASES[surface]["counts"],
         )
         for metric in METRICS:
-            difference = abs(vectorized[metric] - literal[metric])
+            difference = metric_difference(vectorized[metric], literal[metric])
             validation_rows.append(
                 {
                     "check": "bootstrap-draw-0-literal-vs-vectorized",
@@ -394,30 +512,6 @@ def main() -> int:
             f"literal/vectorized COCO cross-check failed in {len(failed_validation)} rows"
         )
 
-    values = np.empty(
-        (options.replicates, len(_SURFACES), len(METRICS)), dtype=np.float64
-    )
-    if options.workers == 1:
-        results = map(worker, range(options.replicates))
-        pool = None
-    else:
-        pool = mp.get_context("fork").Pool(options.workers)
-        results = pool.imap_unordered(worker, range(options.replicates), chunksize=1)
-    try:
-        for completed, (replicate, result) in enumerate(results, 1):
-            values[replicate] = result
-            if completed % 100 == 0:
-                print(f"bootstrap {completed}/{options.replicates}", flush=True)
-    except BaseException:
-        if pool is not None:
-            pool.terminate()
-            pool.join()
-        raise
-    else:
-        if pool is not None:
-            pool.close()
-            pool.join()
-
     metrics_rows = []
     for surface in _SURFACES:
         row = {
@@ -428,6 +522,51 @@ def main() -> int:
         row.update(_BASES[surface]["point"])
         metrics_rows.append(row)
     write_tsv(options.output_dir / "complete_metrics.tsv", metrics_rows)
+
+    pending = [int(index) for index in np.flatnonzero(done == 0)]
+    print(
+        f"bootstrap resume: completed={int(done.sum())} "
+        f"pending={len(pending)} total={options.replicates}",
+        flush=True,
+    )
+    if options.workers == 1:
+        results = map(worker, pending)
+        pool = None
+    else:
+        pool = mp.get_context("fork").Pool(options.workers)
+        results = pool.imap_unordered(worker, pending, chunksize=1)
+    checkpoint: list[int] = []
+    try:
+        for replicate, result in results:
+            values[replicate] = result
+            checkpoint.append(replicate)
+            if len(checkpoint) >= options.checkpoint_every:
+                sync_memmap(values)
+                done[checkpoint] = 1
+                sync_memmap(done)
+                checkpoint.clear()
+            completed = int(done.sum()) + len(checkpoint)
+            if completed % 100 == 0:
+                print(f"bootstrap {completed}/{options.replicates}", flush=True)
+    except BaseException:
+        if pool is not None:
+            pool.terminate()
+            pool.join()
+        if checkpoint:
+            sync_memmap(values)
+            done[checkpoint] = 1
+            sync_memmap(done)
+        raise
+    else:
+        if pool is not None:
+            pool.close()
+            pool.join()
+    if checkpoint:
+        sync_memmap(values)
+        done[checkpoint] = 1
+        sync_memmap(done)
+    if not np.all(done == 1) or invalid_metric_values(values, expected_nan):
+        raise RuntimeError("cannot finalize incomplete bootstrap resume state")
 
     pair_rows = []
     pairs = [
@@ -464,7 +603,6 @@ def main() -> int:
         draw_sha256=np.asarray(draw_sha),
     )
     draw_file = options.output_dir / "draw_matrix_int32.npy"
-    np.save(draw_file, _DRAWS, allow_pickle=False)
     (options.output_dir / "replicates.sha256").write_text(
         f"{sha256(replicate_file)}  {replicate_file.name}\n"
         f"{sha256(draw_file)}  {draw_file.name}\n"
