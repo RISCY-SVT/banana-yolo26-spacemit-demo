@@ -1,0 +1,20 @@
+{
+  "banana_start": "6e7a2baf0d4b8dc2922c72ddfdcb8c83b85356f1",
+  "banana_tree": "c2774c6beb88f558f71202c2a08f86a9fbd5929c",
+  "board_execution_authorized": false,
+  "bootstrap_seed": 65007,
+  "conditional_full_val": true,
+  "dev001b_packet": {
+    "bytes": 181055,
+    "files": 59,
+    "tree_sha256": "139092b15cede35760edf5d6fdfef98503a9bab788974cd4f7409d5bdfb997f9"
+  },
+  "execution_authority": "direct-user-authorization",
+  "host_only": true,
+  "model_generation_authorized": false,
+  "new_branch_authorized": false,
+  "selection_policy": "xslim-dev-001c-fresh-h5000-v1",
+  "stage_id": "BANANA-YOLO26-XSLIM-DEV-001C-C2-FROZEN-INDEPENDENT-HOLDOUT-ADJUDICATION-AND-VENDOR-PTQ-LANE-CLOSURE-001",
+  "xslim_start": "46d5d36bcb6979bab6567fb4fe62839689f1881c",
+  "xslim_tree": "1788779cd0887a1c8e6924cd63ad7d16d42f41ca"
+}

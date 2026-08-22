@@ -1,0 +1,12 @@
+field	value
+python	/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65B-R1-COCO-TRAIN2017-EVALUATION-DISJOINT-CORPUS-PTQ-GRAPHWISE-AND-PYRAMID-CAUSAL-LOCALIZATION-001/host/venv/bin/python
+python_sha256	1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118
+runner	/data/worktrees/banana-yolo26-xslim211-s8-qdq-validation/vendor_ort_validation/stage65b_r1_evaluate.py
+runner_sha256	79ad059411bb153f3abcb8d4abd0f1e79e5e04b12863fc121dc227d2fe89bd65
+metrics	/data/worktrees/banana-yolo26-xslim211-s8-qdq-validation/vendor_ort_validation/stage65b_r1_coco_metrics.py
+metrics_sha256	ebd252d34473b7645d679fcdb209d32a86ab45dc5d0e75279ac1a0533c68eec9
+preprocess	/data/worktrees/banana-yolo26-xslim211-s8-qdq-validation/vendor_ort_validation/stage64_preprocess.py
+preprocess_sha256	d9d149adf9e1c5242f63722d0cd700a2f204c74edbafd045a5ad6bdf04d1d0b8
+threads	4
+threshold	0.001
+provider	CPUExecutionProvider

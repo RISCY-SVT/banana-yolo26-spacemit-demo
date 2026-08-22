@@ -1,0 +1,23 @@
+{
+  "bootstrap_replicates": 10000,
+  "bootstrap_seed": 65007,
+  "classification": {
+    "final_generalization_authority": false,
+    "model_training_independent": false,
+    "quantization_selection_independent": true
+  },
+  "count": 5000,
+  "decoder": "Pillow 12.3.0",
+  "excluded_union_count": 1515,
+  "orientation": "ImageOps.exif_transpose",
+  "pixel_hash": "stage65b-r1-rgb8-v1 NUL + uint64le(width) + uint64le(height) + RGB8 bytes",
+  "policy_version": "xslim-dev-001c-fresh-h5000-v1",
+  "rank_byte_encoding": "utf8(policy)+NUL+ascii(train_annotation_sha256)+NUL+ascii(decimal_image_id)",
+  "rank_tie_break": "numeric image_id ascending",
+  "replacement": "reject exact ID/file/pixel overlaps and internal duplicates, then take next rank",
+  "selection": "natural rank only; no category, size, prediction, or result optimization",
+  "selection_list_sha256": "55021fbc1a58109f22239b02d433bb92caa25589613a5883288d7dd71ff4dfb9",
+  "surface": "H5000_C2_ADJUDICATION",
+  "train_annotation_sha256": "610fce4944abdeb15354cc765333805529359d12d88f2f711393ca586901d01d",
+  "val_annotation_sha256": "e8c7f7908f1d7278341fae127d0da654f102f11bd7b21d8aeefa635b8c810b6f"
+}

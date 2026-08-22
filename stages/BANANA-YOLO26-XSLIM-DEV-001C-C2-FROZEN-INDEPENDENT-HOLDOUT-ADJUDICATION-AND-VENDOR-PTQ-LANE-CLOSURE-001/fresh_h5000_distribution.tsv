@@ -1,0 +1,95 @@
+dimension	key	label	count	license_url
+category-instance	1	person	11083	not-applicable
+category-instance	2	bicycle	239	not-applicable
+category-instance	3	car	1666	not-applicable
+category-instance	4	motorcycle	345	not-applicable
+category-instance	5	airplane	186	not-applicable
+category-instance	6	bus	269	not-applicable
+category-instance	7	train	195	not-applicable
+category-instance	8	truck	397	not-applicable
+category-instance	9	boat	422	not-applicable
+category-instance	10	traffic light	468	not-applicable
+category-instance	11	fire hydrant	80	not-applicable
+category-instance	13	stop sign	87	not-applicable
+category-instance	14	parking meter	35	not-applicable
+category-instance	15	bench	367	not-applicable
+category-instance	16	bird	422	not-applicable
+category-instance	17	cat	235	not-applicable
+category-instance	18	dog	257	not-applicable
+category-instance	19	horse	244	not-applicable
+category-instance	20	sheep	285	not-applicable
+category-instance	21	cow	280	not-applicable
+category-instance	22	elephant	242	not-applicable
+category-instance	23	bear	42	not-applicable
+category-instance	24	zebra	225	not-applicable
+category-instance	25	giraffe	195	not-applicable
+category-instance	27	backpack	363	not-applicable
+category-instance	28	umbrella	503	not-applicable
+category-instance	31	handbag	522	not-applicable
+category-instance	32	tie	233	not-applicable
+category-instance	33	suitcase	233	not-applicable
+category-instance	34	frisbee	102	not-applicable
+category-instance	35	skis	303	not-applicable
+category-instance	36	snowboard	135	not-applicable
+category-instance	37	sports ball	269	not-applicable
+category-instance	38	kite	296	not-applicable
+category-instance	39	baseball bat	113	not-applicable
+category-instance	40	baseball glove	150	not-applicable
+category-instance	41	skateboard	236	not-applicable
+category-instance	42	surfboard	255	not-applicable
+category-instance	43	tennis racket	203	not-applicable
+category-instance	44	bottle	985	not-applicable
+category-instance	46	wine glass	365	not-applicable
+category-instance	47	cup	801	not-applicable
+category-instance	48	fork	266	not-applicable
+category-instance	49	knife	322	not-applicable
+category-instance	50	spoon	226	not-applicable
+category-instance	51	bowl	581	not-applicable
+category-instance	52	banana	390	not-applicable
+category-instance	53	apple	241	not-applicable
+category-instance	54	sandwich	169	not-applicable
+category-instance	55	orange	228	not-applicable
+category-instance	56	broccoli	286	not-applicable
+category-instance	57	carrot	278	not-applicable
+category-instance	58	hot dog	126	not-applicable
+category-instance	59	pizza	226	not-applicable
+category-instance	60	donut	386	not-applicable
+category-instance	61	cake	275	not-applicable
+category-instance	62	chair	1669	not-applicable
+category-instance	63	couch	234	not-applicable
+category-instance	64	potted plant	358	not-applicable
+category-instance	65	bed	189	not-applicable
+category-instance	67	dining table	691	not-applicable
+category-instance	70	toilet	173	not-applicable
+category-instance	72	tv	257	not-applicable
+category-instance	73	laptop	251	not-applicable
+category-instance	74	mouse	102	not-applicable
+category-instance	75	remote	233	not-applicable
+category-instance	76	keyboard	136	not-applicable
+category-instance	77	cell phone	307	not-applicable
+category-instance	78	microwave	69	not-applicable
+category-instance	79	oven	130	not-applicable
+category-instance	80	toaster	9	not-applicable
+category-instance	81	sink	229	not-applicable
+category-instance	82	refrigerator	113	not-applicable
+category-instance	84	book	945	not-applicable
+category-instance	85	clock	266	not-applicable
+category-instance	86	vase	299	not-applicable
+category-instance	87	scissors	78	not-applicable
+category-instance	88	teddy bear	204	not-applicable
+category-instance	89	hair drier	7	not-applicable
+category-instance	90	toothbrush	92	not-applicable
+object-size-instance	small	small	14609	not-applicable
+image-contains-size	small	small	2564	not-applicable
+object-size-instance	medium	medium	12241	not-applicable
+image-contains-size	medium	medium	3494	not-applicable
+object-size-instance	large	large	8524	not-applicable
+image-contains-size	large	large	4034	not-applicable
+license-image	1	Attribution-NonCommercial-ShareAlike License	1354	http://creativecommons.org/licenses/by-nc-sa/2.0/
+license-image	2	Attribution-NonCommercial License	670	http://creativecommons.org/licenses/by-nc/2.0/
+license-image	3	Attribution-NonCommercial-NoDerivs License	1395	http://creativecommons.org/licenses/by-nc-nd/2.0/
+license-image	4	Attribution License	824	http://creativecommons.org/licenses/by/2.0/
+license-image	5	Attribution-ShareAlike License	475	http://creativecommons.org/licenses/by-sa/2.0/
+license-image	6	Attribution-NoDerivs License	260	http://creativecommons.org/licenses/by-nd/2.0/
+license-image	7	No known copyright restrictions	22	http://flickr.com/commons/usage/
+license-image	8	United States Government Work	0	http://www.usa.gov/copyright.shtml
