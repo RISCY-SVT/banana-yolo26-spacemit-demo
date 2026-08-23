@@ -1,24 +1,26 @@
 {
-  "accepted_predictions": {
-    "A1_full_val": "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-DEV-001A-SPACEMIT-S8-QDQ-CONSTRAINED-RANGE-OBSERVER-TERMINAL-DOMAIN-AND-POLICY-A-HOST-CANDIDATE-GATE-001/candidates/full-val/A1/predictions.json",
-    "B2_full_val": "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65B-R1-COCO-TRAIN2017-EVALUATION-DISJOINT-CORPUS-PTQ-GRAPHWISE-AND-PYRAMID-CAUSAL-LOCALIZATION-001/full-matrix/full-coco/B2/predictions.json"
-  },
-  "excluded_or_intermediate_roots": [
-    "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-DEV-001C-C2-FROZEN-INDEPENDENT-HOLDOUT-ADJUDICATION-AND-VENDOR-PTQ-LANE-CLOSURE-001/fresh-h5000/images",
-    "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-DEV-001C-C2-FROZEN-INDEPENDENT-HOLDOUT-ADJUDICATION-AND-VENDOR-PTQ-LANE-CLOSURE-001/h5000",
-    "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-DEV-001C-C2-FROZEN-INDEPENDENT-HOLDOUT-ADJUDICATION-AND-VENDOR-PTQ-LANE-CLOSURE-001/bootstrap"
-  ],
-  "frozen_models": [
-    "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65B-R1-COCO-TRAIN2017-EVALUATION-DISJOINT-CORPUS-PTQ-GRAPHWISE-AND-PYRAMID-CAUSAL-LOCALIZATION-001/quantization/B2/run1/output/stage65b_r1_b2_split_s8_qdq.onnx",
-    "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65B-R1-COCO-TRAIN2017-EVALUATION-DISJOINT-CORPUS-PTQ-GRAPHWISE-AND-PYRAMID-CAUSAL-LOCALIZATION-001/postprocess/B2/candidate-gate/B2/models/stage65b_r1_b2.inference.onnx",
-    "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-DEV-001A-SPACEMIT-S8-QDQ-CONSTRAINED-RANGE-OBSERVER-TERMINAL-DOMAIN-AND-POLICY-A-HOST-CANDIDATE-GATE-001/candidates/quantization/A1/run1/output/xslim_dev_001a_a1_split_s8_qdq.onnx",
-    "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-DEV-001A-SPACEMIT-S8-QDQ-CONSTRAINED-RANGE-OBSERVER-TERMINAL-DOMAIN-AND-POLICY-A-HOST-CANDIDATE-GATE-001/candidates/postprocess/A1/models/stage65b_r1_a1.inference.onnx",
-    "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-DEV-001B-ALL-S8-GENERIC-HARDENING-ADAPTIVE-ROUNDING-BLOCK-RECONSTRUCTION-AND-DETECTOR-PARETO-HOST-GATE-001/candidates/run1/C2_T6_RANK_QP/c2_t6_rank_qp.deployable.onnx",
-    "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-DEV-001B-ALL-S8-GENERIC-HARDENING-ADAPTIVE-ROUNDING-BLOCK-RECONSTRUCTION-AND-DETECTOR-PARETO-HOST-GATE-001/candidates/run1/C2_T6_RANK_QP/c2_t6_rank_qp.inference.onnx",
-    "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65B-R1-COCO-TRAIN2017-EVALUATION-DISJOINT-CORPUS-PTQ-GRAPHWISE-AND-PYRAMID-CAUSAL-LOCALIZATION-001/postprocess/B2/candidate-gate/B2/models/stage65b_r1_b2.postprocess.onnx"
-  ],
+  "tracked_stage": "/data/worktrees/banana-yolo26-xslim211-s8-qdq-validation/stages/BANANA-YOLO26-XSLIM-DEV-001C-C2-FROZEN-INDEPENDENT-HOLDOUT-ADJUDICATION-AND-VENDOR-PTQ-LANE-CLOSURE-001",
   "raw_stage": "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-DEV-001C-C2-FROZEN-INDEPENDENT-HOLDOUT-ADJUDICATION-AND-VENDOR-PTQ-LANE-CLOSURE-001",
   "result_packet": "/exchange/results/outbox/BANANA-YOLO26-XSLIM-DEV-001C-C2-FROZEN-INDEPENDENT-HOLDOUT-ADJUDICATION-AND-VENDOR-PTQ-LANE-CLOSURE-001",
   "shared_log": "/data/ncnn-logs/ai-team/2026-08-22/2026-08-22_15-11-03__contcodex__BANANA-YOLO26-XSLIM-DEV-001C-C2-FROZEN-INDEPENDENT-HOLDOUT-ADJUDICATION-AND-VENDOR-PTQ-LANE-CLOSURE-001__dev-001c-h5000-adjudication",
-  "tracked_stage": "/data/worktrees/banana-yolo26-xslim211-s8-qdq-validation/stages/BANANA-YOLO26-XSLIM-DEV-001C-C2-FROZEN-INDEPENDENT-HOLDOUT-ADJUDICATION-AND-VENDOR-PTQ-LANE-CLOSURE-001"
+  "frozen_models": {
+    "B2_deployable": "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65B-R1-COCO-TRAIN2017-EVALUATION-DISJOINT-CORPUS-PTQ-GRAPHWISE-AND-PYRAMID-CAUSAL-LOCALIZATION-001/quantization/B2/run1/output/stage65b_r1_b2_split_s8_qdq.onnx",
+    "B2_inference": "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65B-R1-COCO-TRAIN2017-EVALUATION-DISJOINT-CORPUS-PTQ-GRAPHWISE-AND-PYRAMID-CAUSAL-LOCALIZATION-001/postprocess/B2/candidate-gate/B2/models/stage65b_r1_b2.inference.onnx",
+    "A1_deployable": "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-DEV-001A-SPACEMIT-S8-QDQ-CONSTRAINED-RANGE-OBSERVER-TERMINAL-DOMAIN-AND-POLICY-A-HOST-CANDIDATE-GATE-001/candidates/quantization/A1/run1/output/xslim_dev_001a_a1_split_s8_qdq.onnx",
+    "A1_inference": "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-DEV-001A-SPACEMIT-S8-QDQ-CONSTRAINED-RANGE-OBSERVER-TERMINAL-DOMAIN-AND-POLICY-A-HOST-CANDIDATE-GATE-001/candidates/postprocess/A1/models/stage65b_r1_a1.inference.onnx",
+    "C2_deployable": "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-DEV-001B-ALL-S8-GENERIC-HARDENING-ADAPTIVE-ROUNDING-BLOCK-RECONSTRUCTION-AND-DETECTOR-PARETO-HOST-GATE-001/candidates/run1/C2_T6_RANK_QP/c2_t6_rank_qp.deployable.onnx",
+    "C2_inference": "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-DEV-001B-ALL-S8-GENERIC-HARDENING-ADAPTIVE-ROUNDING-BLOCK-RECONSTRUCTION-AND-DETECTOR-PARETO-HOST-GATE-001/candidates/run1/C2_T6_RANK_QP/c2_t6_rank_qp.inference.onnx",
+    "common_tail": "/data/k1x-stage-runs/BANANA-YOLO26-VENDOR-ORT-STAGE64-XSLIM211-AND-VENDOR-COMMIT-S8-QDQ-YOLO26-FULLMODEL-COCO-AND-RT206-GATE-001/models/R211_PROJECT_EXACT_SPLIT_run1/r211_project_exact_split.postprocess.onnx"
+  },
+  "accepted_predictions": {
+    "B2_full_val": "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65B-R1-COCO-TRAIN2017-EVALUATION-DISJOINT-CORPUS-PTQ-GRAPHWISE-AND-PYRAMID-CAUSAL-LOCALIZATION-001/full-matrix/full-coco/B2/predictions.json",
+    "A1_full_val": "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-DEV-001A-SPACEMIT-S8-QDQ-CONSTRAINED-RANGE-OBSERVER-TERMINAL-DOMAIN-AND-POLICY-A-HOST-CANDIDATE-GATE-001/candidates/full-val/A1/predictions.json"
+  },
+  "excluded_or_intermediate_roots": {
+    "selected_image_bytes_not_exported": "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-DEV-001C-C2-FROZEN-INDEPENDENT-HOLDOUT-ADJUDICATION-AND-VENDOR-PTQ-LANE-CLOSURE-001/fresh-h5000/images",
+    "prelaunch_missing_time_binary": "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-DEV-001C-C2-FROZEN-INDEPENDENT-HOLDOUT-ADJUDICATION-AND-VENDOR-PTQ-LANE-CLOSURE-001/excluded-incomplete-prelaunch-missing-usr-bin-time",
+    "prelaunch_wrong_annotation_path": "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-DEV-001C-C2-FROZEN-INDEPENDENT-HOLDOUT-ADJUDICATION-AND-VENDOR-PTQ-LANE-CLOSURE-001/excluded-incomplete-metrics-wrong-annotation-path",
+    "superseded_bootstrap_nan_contract_selftest": "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-DEV-001C-C2-FROZEN-INDEPENDENT-HOLDOUT-ADJUDICATION-AND-VENDOR-PTQ-LANE-CLOSURE-001/tool-selftest/excluded-bootstrap-resume-pre-nan-contract-fix",
+    "superseded_bootstrap_value_contract_selftest": "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-DEV-001C-C2-FROZEN-INDEPENDENT-HOLDOUT-ADJUDICATION-AND-VENDOR-PTQ-LANE-CLOSURE-001/tool-selftest/excluded-bootstrap-resume-pre-value-contract-fix"
+  }
 }
