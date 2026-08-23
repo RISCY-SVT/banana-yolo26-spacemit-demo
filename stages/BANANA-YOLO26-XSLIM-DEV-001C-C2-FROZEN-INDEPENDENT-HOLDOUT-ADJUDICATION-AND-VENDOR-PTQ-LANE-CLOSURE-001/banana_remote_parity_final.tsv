@@ -1,0 +1,3 @@
+checkpoint	branch	local	github	gitlab_rd	status	verified_utc
+evidence-closure	yolo26-vendor-ort-xslim211-s8-qdq-validation	66a5799f412d27f805f85ca81bdfb42be7cb427f	66a5799f412d27f805f85ca81bdfb42be7cb427f	66a5799f412d27f805f85ca81bdfb42be7cb427f	pass	2026-08-23T10:44:00Z
+final-closure	yolo26-vendor-ort-xslim211-s8-qdq-validation	resolved-after-this-report-commit	resolved-after-this-report-commit	resolved-after-this-report-commit	see-post_push_attestation.tsv-in-result-packet	post-push
