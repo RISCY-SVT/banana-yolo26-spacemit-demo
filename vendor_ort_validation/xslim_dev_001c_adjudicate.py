@@ -294,6 +294,7 @@ def main() -> int:
     annotated_bootstrap = []
     for row in bootstrap:
         value: dict[str, Any] = dict(row)
+        value["interval_classification_at_minus_0_005"] = "not-applicable"
         if row["pair"] == "C2-vs-B2" and row["metric"] in SIZE_METRICS:
             value["interval_classification_at_minus_0_005"] = interval_classification(
                 float(row["percentile_2_5"]), float(row["percentile_97_5"])
