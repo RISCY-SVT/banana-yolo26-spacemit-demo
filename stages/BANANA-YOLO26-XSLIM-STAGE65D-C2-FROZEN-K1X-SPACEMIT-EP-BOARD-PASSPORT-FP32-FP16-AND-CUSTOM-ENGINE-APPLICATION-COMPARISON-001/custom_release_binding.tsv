@@ -1,0 +1,14 @@
+field	value	status	evidence
+release	0.10.0-internal-rd.1	pass	/data/releases/banana-yolo26-k1x-int8-executor/0.10.0-internal-rd.1-stage62-sdk/config/release.env
+protected_source_config	0.9.2-historical-not-current-package	pass	/data/banana-yolo26-spacemit-demo/config/release.env
+integer_contract	K1X_INT8_V1	pass	/data/releases/banana-yolo26-k1x-int8-executor/0.10.0-internal-rd.1-stage62-sdk/config/release.env
+execution	read-only-binding-no-rebuild-no-current-run	pass	H500 C2 CPU/EP provider agreement failed
+tag_object	bf1043d669ff38461a62d116f383ad530128d9b5	pass	annotated-tag
+tag_peeled_commit	1fd2e71bb1d5a924e7c0444cada94f681b73aa91	pass	protected-main
+release_manifest_sha256	dced8ddfc540ab5b7fd72ecfe7a16021338ea56258fb33d09c5e023ba3d98b98	pass	/data/releases/banana-yolo26-k1x-int8-executor/0.10.0-internal-rd.1-stage62-sdk/release_manifest.json
+sha256sums_sha256	f9c604d7a3167664a86c48dd101e4f4935a243bde726c6853a9f9390aa278341	pass	/data/releases/banana-yolo26-k1x-int8-executor/0.10.0-internal-rd.1-stage62-sdk/SHA256SUMS
+executor_sha256	34da155ed02a83a74babbec30aff960bdccfb6cc16018230ae7bc030462f7187	pass	/data/releases/banana-yolo26-k1x-int8-executor/0.10.0-internal-rd.1-stage62-sdk/bin/yolo26_k1x_int8
+healthcheck_sha256	4b82ff86aecbb07d1a5647bb7a92b9f9f3711a877ac5b54ed37fa30c75dfe2b4	pass	/data/releases/banana-yolo26-k1x-int8-executor/0.10.0-internal-rd.1-stage62-sdk/bin/y26_k1x_healthcheck
+prediction_sha256	cda5c8c7a46d61d9c90f6292001eea190cb8f6617efe647a33dc6134dd57ccda	pass	/data/releases/banana-yolo26-k1x-int8-executor/0.10.0-internal-rd.1-stage62-sdk/outputs/accuracy/full_coco_summary.tsv
+map50_95	0.3707408944391919	pass	/data/releases/banana-yolo26-k1x-int8-executor/0.10.0-internal-rd.1-stage62-sdk/outputs/accuracy/full_coco_summary.tsv
+source_model_sha256	30a94e4738606673b5e0a73499cbc977167f046f8fa8637d6040ce744f429c0c	pass	/data/releases/banana-yolo26-k1x-int8-executor/0.10.0-internal-rd.1-stage62-sdk/model-evidence/SOURCE_MODEL_SHA256

@@ -150,7 +150,12 @@ def main() -> int:
     for row in interaction_rows:
         lower = float(row["percentile_2_5"])
         upper = float(row["percentile_97_5"])
-        margin = 0.002 if row["metric"] == "map50_95" else 0.005
+        if row["metric"] == "map50_95":
+            margin = 0.002
+        elif row["metric"] == "prediction_count":
+            margin = 0.0
+        else:
+            margin = 0.005
         if lower >= -margin and upper <= margin:
             classification = "provider-neutral"
         elif upper < -margin or lower > margin:

@@ -1,0 +1,7 @@
+artifact	role	host_full_val_map50_95	board_h500_cpu_map50_95	board_h500_ep_map50_95	placement	cpu_ep_agreement	performance	stability	disposition
+B2	universal-control	0.3658592288412378	0.4443998906888379	0.44355661563546556	pass-one-925-node-subgraph	control-reference	not-run-gate-closed	not-run-gate-closed	retain-B2
+C2	frozen-host-winner	0.3785087779678713	0.4542491371399816	0.4511048937694146	pass-one-925-node-subgraph	fail-map-and-AP-large	not-run-gate-closed	not-run-gate-closed	diagnostic-only-not-promoted
+A1	historical-frozen-research	0.37293515356510193	historical-Stage65C	historical-Stage65C	historical-pass	historical-fail	not-opened	not-opened	not-promoted
+FP32	same-source-host-reference	0.4018217950262668	not-run	not-run	not-run	not-run	not-run	not-run	host-reference-only
+FP16	precision-reference	not-run-no-comparable-frozen-artifact	not-run	not-run	not-run	not-run	not-run	not-run	identity-unresolved
+custom-engine	cross-surface-application-reference	0.3707408944391919	not-comparable	not-comparable	different-runtime	not-applicable	not-run-gate-closed	historical-only	accepted-unchanged

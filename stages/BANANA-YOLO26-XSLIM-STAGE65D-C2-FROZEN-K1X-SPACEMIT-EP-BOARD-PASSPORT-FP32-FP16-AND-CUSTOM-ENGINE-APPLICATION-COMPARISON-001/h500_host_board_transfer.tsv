@@ -1,0 +1,5 @@
+model	board_provider	host_map50_95	board_map50_95	board_minus_host	interpretation
+B2	CPU	0.4446654879525213	0.4443998906888379	-0.00026559726368341474	task-level H500 transfer; prediction bytes may differ
+B2	EP	0.4446654879525213	0.44355661563546556	-0.0011088723170557535	task-level H500 transfer; prediction bytes may differ
+C2	CPU	0.4554374941369365	0.4542491371399816	-0.001188356996954909	task-level H500 transfer; prediction bytes may differ
+C2	EP	0.4554374941369365	0.4511048937694146	-0.004332600367521922	task-level H500 transfer; prediction bytes may differ
