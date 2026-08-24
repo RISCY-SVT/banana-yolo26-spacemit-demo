@@ -1,0 +1,5 @@
+surface	branch	local	github	gitlab_rd	status	timestamp_utc
+tracked_stage_closure	yolo26-vendor-ort-xslim211-s8-qdq-validation	29767a200f25e49963f9eaa6550d3a6865496ec7	29767a200f25e49963f9eaa6550d3a6865496ec7	29767a200f25e49963f9eaa6550d3a6865496ec7	pass	2026-08-24T15:17:34Z
+protected_main	yolo26-custom-int8-engine	1fd2e71bb1d5a924e7c0444cada94f681b73aa91	1fd2e71bb1d5a924e7c0444cada94f681b73aa91	1fd2e71bb1d5a924e7c0444cada94f681b73aa91	pass	2026-08-24T15:17:34Z
+
+# The exact metadata-attestation commit and its post-push local/GitHub/GitLab-RD equality are recorded in the result packet POST_PUSH_ATTESTATION.tsv. A tracked file cannot contain its own commit SHA without changing that SHA.
