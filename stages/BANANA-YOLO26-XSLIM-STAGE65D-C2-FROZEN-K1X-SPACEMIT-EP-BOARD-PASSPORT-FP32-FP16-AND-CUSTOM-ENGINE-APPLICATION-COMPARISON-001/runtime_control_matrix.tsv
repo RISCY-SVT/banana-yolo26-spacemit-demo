@@ -1,0 +1,29 @@
+control	provider	cpu_set	classification	status
+c1_s8_conv_pc_explicit	cpu	0-3	supported	pass
+c2_s8_conv_pc_nonzero_zp	cpu	0-3	supported	pass
+c3_s8_conv_pc_no_kernel	cpu	0-3	supported	pass
+c5_s8_conv_pt_explicit	cpu	0-3	supported	pass
+m1_s8_matmul	cpu	0-3	supported	pass
+m2_s8_matmul_nonzero_zp	cpu	0-3	supported	pass
+c4_u8_conv_pc_explicit	cpu	0-3	supported	pass
+m3_u8_matmul	cpu	0-3	supported	pass
+c1_s8_conv_pc_explicit	spacemit	0-3	supported	pass
+c2_s8_conv_pc_nonzero_zp	spacemit	0-3	supported	pass
+c3_s8_conv_pc_no_kernel	spacemit	0-3	supported	pass
+c5_s8_conv_pt_explicit	spacemit	0-3	supported	pass
+m1_s8_matmul	spacemit	0-3	supported	pass
+m2_s8_matmul_nonzero_zp	spacemit	0-3	supported	pass
+c4_u8_conv_pc_explicit	spacemit	0	expected-unsupported-u8	pass
+m3_u8_matmul	spacemit	0	expected-unsupported-u8	pass
+c1_s8_conv_pc_explicit	spacemit	0	supported	pass
+c1_s8_conv_pc_explicit	spacemit	0-3	supported	pass
+c1_s8_conv_pc_explicit	spacemit	4	supported	pass
+c1_s8_conv_pc_explicit	spacemit	4-7	supported	pass
+c1_s8_conv_pc_explicit	spacemit	0-7	supported	pass
+m1_s8_matmul	spacemit	0	supported	pass
+m1_s8_matmul	spacemit	0-3	supported	pass
+m1_s8_matmul	spacemit	4	supported	pass
+m1_s8_matmul	spacemit	4-7	supported	pass
+m1_s8_matmul	spacemit	0-7	supported	pass
+official_qgelu	spacemit		plugin-smoke	pass
+independent_u8_xor	spacemit		plugin-smoke	pass

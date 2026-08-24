@@ -1,0 +1,5 @@
+repository	remote	ref	actual	expected	status
+banana-yolo26-xslim211-s8-qdq-validation	github	refs/heads/yolo26-vendor-ort-xslim211-s8-qdq-validation	e4b2d9622bd6db39e3b69ff9ba425e806a18b3ea	e4b2d9622bd6db39e3b69ff9ba425e806a18b3ea	pass
+banana-yolo26-xslim211-s8-qdq-validation	gitlab-rd	refs/heads/yolo26-vendor-ort-xslim211-s8-qdq-validation	e4b2d9622bd6db39e3b69ff9ba425e806a18b3ea	e4b2d9622bd6db39e3b69ff9ba425e806a18b3ea	pass
+riscy-xslim-k1x-yolo26	github	refs/heads/riscy/k1x-yolo26	46d5d36bcb6979bab6567fb4fe62839689f1881c	46d5d36bcb6979bab6567fb4fe62839689f1881c	pass
+riscy-xslim-k1x-yolo26	gitlab	refs/heads/riscy/k1x-yolo26	46d5d36bcb6979bab6567fb4fe62839689f1881c	46d5d36bcb6979bab6567fb4fe62839689f1881c	pass

@@ -1,0 +1,16 @@
+{
+  "stage_id": "BANANA-YOLO26-XSLIM-STAGE65D-C2-FROZEN-K1X-SPACEMIT-EP-BOARD-PASSPORT-FP32-FP16-AND-CUSTOM-ENGINE-APPLICATION-COMPARISON-001",
+  "authorization": "direct-user",
+  "banana_start": "e4b2d9622bd6db39e3b69ff9ba425e806a18b3ea",
+  "xslim_immutable": "46d5d36bcb6979bab6567fb4fe62839689f1881c",
+  "board_target": "svt@banana",
+  "board_boot_id": "0a0691d1-7502-44c3-903b-444dba83c1d9",
+  "board_workspace": "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65D-C2-FROZEN-K1X-SPACEMIT-EP-BOARD-PASSPORT-FP32-FP16-AND-CUSTOM-ENGINE-APPLICATION-COMPARISON-001",
+  "host_raw_root": "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65D-C2-FROZEN-K1X-SPACEMIT-EP-BOARD-PASSPORT-FP32-FP16-AND-CUSTOM-ENGINE-APPLICATION-COMPARISON-001",
+  "tracked_root": "/data/worktrees/banana-yolo26-xslim211-s8-qdq-validation/stages/BANANA-YOLO26-XSLIM-STAGE65D-C2-FROZEN-K1X-SPACEMIT-EP-BOARD-PASSPORT-FP32-FP16-AND-CUSTOM-ENGINE-APPLICATION-COMPARISON-001",
+  "shared_log": "/data/ncnn-logs/ai-team/2026-08-24/2026-08-24_12-29-11__contcodex__BANANA-YOLO26-XSLIM-STAGE65D-C2-FROZEN-K1X-SPACEMIT-EP-BOARD-PASSPORT-FP32-FP16-AND-CUSTOM-ENGINE-APPLICATION-COMPARISON-001__stage65d-c2-board-passport",
+  "runtime": "SpacemiT ORT 2.0.6",
+  "models": "frozen; regeneration forbidden",
+  "h500_bootstrap_seed": 65010,
+  "full_val_bootstrap_seed": 65011
+}

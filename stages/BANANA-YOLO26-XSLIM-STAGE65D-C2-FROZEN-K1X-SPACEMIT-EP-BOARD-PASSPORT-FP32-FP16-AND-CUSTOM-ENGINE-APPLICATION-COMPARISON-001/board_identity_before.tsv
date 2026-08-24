@@ -1,0 +1,11 @@
+field	value
+hostname	bf3
+device_model	spacemit k1-x deb1 board
+device_serial	92262f3b0dc4
+boot_id	0a0691d1-7502-44c3-903b-444dba83c1d9
+kernel	Linux 6.6.63 #2.2.7.2 SMP PREEMPT Fri Aug 15 12:32:44 UTC 2025 riscv64 GNU/Linux
+os_release	"PRETTY_NAME=""Bianbu 2.2.1"";NAME=""Bianbu"";VERSION_ID=""2.2.1"";VERSION=""2.2.1 (Noble Numbat)"";VERSION_CODENAME=noble;ID=bianbu;ID_LIKE=debian;HOME_URL=""https://bianbu.spacemit.com"";SUPPORT_URL=""https://bianbu.spacemit.com"";BUG_REPORT_URL=""https://ticket.spacemit.com"";PRIVACY_POLICY_URL=""https://www.spacemit.com/privacy-policy"";UBUNTU_CODENAME=noble;LOGO=bianbu-logo;"
+allowed_cpu_list	0-7
+memory	MemTotal:=16266200kB;MemAvailable:=14636692kB;
+data_mount	/data  /dev/nvme0n1p1 ext4   rw,noatime
+root_mount	/      /dev/mmcblk2p6 ext4   rw,noatime,errors=remount-ro

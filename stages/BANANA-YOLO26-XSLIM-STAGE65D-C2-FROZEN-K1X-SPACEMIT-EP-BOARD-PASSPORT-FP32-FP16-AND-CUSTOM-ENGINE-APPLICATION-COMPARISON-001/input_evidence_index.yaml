@@ -1,0 +1,21 @@
+{
+  "tracked_stage": "/data/worktrees/banana-yolo26-xslim211-s8-qdq-validation/stages/BANANA-YOLO26-XSLIM-STAGE65D-C2-FROZEN-K1X-SPACEMIT-EP-BOARD-PASSPORT-FP32-FP16-AND-CUSTOM-ENGINE-APPLICATION-COMPARISON-001",
+  "raw_stage": "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65D-C2-FROZEN-K1X-SPACEMIT-EP-BOARD-PASSPORT-FP32-FP16-AND-CUSTOM-ENGINE-APPLICATION-COMPARISON-001",
+  "result_packet": "/exchange/results/outbox/BANANA-YOLO26-XSLIM-STAGE65D-C2-FROZEN-K1X-SPACEMIT-EP-BOARD-PASSPORT-FP32-FP16-AND-CUSTOM-ENGINE-APPLICATION-COMPARISON-001",
+  "shared_log": "/data/ncnn-logs/ai-team/2026-08-24/2026-08-24_12-29-11__contcodex__BANANA-YOLO26-XSLIM-STAGE65D-C2-FROZEN-K1X-SPACEMIT-EP-BOARD-PASSPORT-FP32-FP16-AND-CUSTOM-ENGINE-APPLICATION-COMPARISON-001__stage65d-c2-board-passport",
+  "input_packet": "/exchange/results/outbox/BANANA-YOLO26-XSLIM-DEV-001C-C2-FROZEN-INDEPENDENT-HOLDOUT-ADJUDICATION-AND-VENDOR-PTQ-LANE-CLOSURE-001",
+  "frozen_models": {
+    "B2_deployable": "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65B-R1-COCO-TRAIN2017-EVALUATION-DISJOINT-CORPUS-PTQ-GRAPHWISE-AND-PYRAMID-CAUSAL-LOCALIZATION-001/quantization/B2/run1/output/stage65b_r1_b2_split_s8_qdq.onnx",
+    "B2_inference": "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65B-R1-COCO-TRAIN2017-EVALUATION-DISJOINT-CORPUS-PTQ-GRAPHWISE-AND-PYRAMID-CAUSAL-LOCALIZATION-001/postprocess/B2/candidate-gate/B2/models/stage65b_r1_b2.inference.onnx",
+    "C2_deployable": "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-DEV-001B-ALL-S8-GENERIC-HARDENING-ADAPTIVE-ROUNDING-BLOCK-RECONSTRUCTION-AND-DETECTOR-PARETO-HOST-GATE-001/candidates/run1/C2_T6_RANK_QP/c2_t6_rank_qp.deployable.onnx",
+    "C2_inference": "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-DEV-001B-ALL-S8-GENERIC-HARDENING-ADAPTIVE-ROUNDING-BLOCK-RECONSTRUCTION-AND-DETECTOR-PARETO-HOST-GATE-001/candidates/run1/C2_T6_RANK_QP/c2_t6_rank_qp.inference.onnx",
+    "common_tail": "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65B-R1-COCO-TRAIN2017-EVALUATION-DISJOINT-CORPUS-PTQ-GRAPHWISE-AND-PYRAMID-CAUSAL-LOCALIZATION-001/postprocess/B2/candidate-gate/B2/models/stage65b_r1_b2.postprocess.onnx"
+  },
+  "accepted_predictions": {
+    "FP32_H8_full_val": "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65B-R1-COCO-TRAIN2017-EVALUATION-DISJOINT-CORPUS-PTQ-GRAPHWISE-AND-PYRAMID-CAUSAL-LOCALIZATION-001/full-matrix/hybrid-full-coco/H8/predictions.json",
+    "B2_host_full_val": "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65B-R1-COCO-TRAIN2017-EVALUATION-DISJOINT-CORPUS-PTQ-GRAPHWISE-AND-PYRAMID-CAUSAL-LOCALIZATION-001/full-matrix/full-coco/B2/predictions.json",
+    "C2_host_full_val": "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-DEV-001C-C2-FROZEN-INDEPENDENT-HOLDOUT-ADJUDICATION-AND-VENDOR-PTQ-LANE-CLOSURE-001/full-val/C2/predictions.json"
+  },
+  "accepted_application_reference": "/data/releases/banana-yolo26-k1x-int8-executor/0.10.0-internal-rd.1-stage62-sdk",
+  "excluded_or_intermediate_roots": {}
+}

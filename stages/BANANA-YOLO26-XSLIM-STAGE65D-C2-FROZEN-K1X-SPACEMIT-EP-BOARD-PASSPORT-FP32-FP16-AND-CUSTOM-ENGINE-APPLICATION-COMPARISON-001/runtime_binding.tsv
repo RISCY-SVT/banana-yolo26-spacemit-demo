@@ -1,0 +1,6 @@
+field	value	status
+declared_runtime	2.0.6	pass
+runtime_log	ort_version=1.24.2+spacemit.a1 ort_build_info=ORT Build Info: git-branch=HEAD, git-commit-id=9bb02204b, build type=Release spacemit_ep_header_version=2.0.6 provider=spacemit inference_provider=SpaceMITExecutionProvider tail_provider=CPUExecutionProvider intra_threads=4 inter_threads=1	pass
+core_sha256	93bb75601d9eceb5aca192fa70c0c3e18b94a70b9f57acdc9b34c2ff426e09e3	pass
+ep_sha256	dcc9503031bca22cf2b33a692f7b4c01d0fbb4a24c34f6e60c7faaddb78274ae	pass
+runtime_root	single Stage65D NVMe runtime root	pass

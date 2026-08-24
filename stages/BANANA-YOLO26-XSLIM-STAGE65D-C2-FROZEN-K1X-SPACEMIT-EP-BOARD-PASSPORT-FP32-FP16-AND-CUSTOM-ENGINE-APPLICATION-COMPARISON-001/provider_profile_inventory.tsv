@@ -1,0 +1,5 @@
+model	requested_provider	profile	event_provider	node_events	unique_profile_nodes	node_duration_us
+B2	cpu	/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65D-C2-FROZEN-K1X-SPACEMIT-EP-BOARD-PASSPORT-FP32-FP16-AND-CUSTOM-ENGINE-APPLICATION-COMPARISON-001/board/profile/B2-cpu-profile/profiles/profile_2026-08-24_14-40-05.json	CPUExecutionProvider	2586	1293	6319390.0
+B2	spacemit	/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65D-C2-FROZEN-K1X-SPACEMIT-EP-BOARD-PASSPORT-FP32-FP16-AND-CUSTOM-ENGINE-APPLICATION-COMPARISON-001/board/profile/B2-spacemit-profile/profiles/profile_2026-08-24_14-40-33.json	SpaceMITExecutionProvider	2	1	451849.0
+C2	cpu	/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65D-C2-FROZEN-K1X-SPACEMIT-EP-BOARD-PASSPORT-FP32-FP16-AND-CUSTOM-ENGINE-APPLICATION-COMPARISON-001/board/profile/C2-cpu-profile/profiles/profile_2026-08-24_14-40-40.json	CPUExecutionProvider	2586	1293	6307702.0
+C2	spacemit	/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65D-C2-FROZEN-K1X-SPACEMIT-EP-BOARD-PASSPORT-FP32-FP16-AND-CUSTOM-ENGINE-APPLICATION-COMPARISON-001/board/profile/C2-spacemit-profile/profiles/profile_2026-08-24_14-41-08.json	SpaceMITExecutionProvider	2	1	454161.0
