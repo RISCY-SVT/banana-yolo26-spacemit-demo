@@ -1,0 +1,4 @@
+packet	field	actual	expected	status
+stage65c_r1	tree_sha256	8398831b147cc890436e968d830b14c0d5347ee5a24946b03156c66aa08b22e6	8398831b147cc890436e968d830b14c0d5347ee5a24946b03156c66aa08b22e6	pass
+stage65c_r1	file_count	63	63	pass
+stage65c_r1	byte_count	1983169	1983169	pass

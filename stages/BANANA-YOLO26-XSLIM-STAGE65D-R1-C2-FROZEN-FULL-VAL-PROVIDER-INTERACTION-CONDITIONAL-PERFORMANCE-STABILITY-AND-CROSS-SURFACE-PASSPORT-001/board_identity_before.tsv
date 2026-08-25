@@ -1,0 +1,12 @@
+field	actual	expected	status
+hostname	bf3	bf3	pass
+serial	92262f3b0dc4	92262f3b0dc4	pass
+boot_id	0a0691d1-7502-44c3-903b-444dba83c1d9	live-captured	pass
+os	Bianbu 2.2.1	Bianbu 2.2.1	pass
+kernel	6.6.63	6.6.63	pass
+clock_delta_seconds	0.942	<=10	pass
+data_mount	/dev/nvme0n1p1 ext4   /data	non-mmc /data	pass
+root_mount	/dev/mmcblk2p6 ext4   /	mmc root accepted; project writes forbidden	pass
+data_writable	yes	yes	pass
+data_free_bytes	435932966912	>=20GiB	pass
+required_commands	/usr/bin/time,/usr/bin/taskset,/usr/bin/sha256sum,/usr/bin/python3	four commands present	pass

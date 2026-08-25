@@ -1,0 +1,6 @@
+test	expected	actual	status	raw_root
+performance_positive_contract	pass	pass	pass	/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65D-R1-C2-FROZEN-FULL-VAL-PROVIDER-INTERACTION-CONDITIONAL-PERFORMANCE-STABILITY-AND-CROSS-SURFACE-PASSPORT-001/tooling-tests-v2
+stability_positive_contract	pass	pass	pass	/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65D-R1-C2-FROZEN-FULL-VAL-PROVIDER-INTERACTION-CONDITIONAL-PERFORMANCE-STABILITY-AND-CROSS-SURFACE-PASSPORT-001/tooling-tests-v2
+performance_corrupt_samples_sha	fail-closed	fail-closed	pass	/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65D-R1-C2-FROZEN-FULL-VAL-PROVIDER-INTERACTION-CONDITIONAL-PERFORMANCE-STABILITY-AND-CROSS-SURFACE-PASSPORT-001/tooling-tests-negative-v1
+stability_corrupt_output_sha	fail-closed	fail-closed	pass	/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65D-R1-C2-FROZEN-FULL-VAL-PROVIDER-INTERACTION-CONDITIONAL-PERFORMANCE-STABILITY-AND-CROSS-SURFACE-PASSPORT-001/tooling-tests-negative-v1
+custom_context_raw_parser_contract	pass	pass	pass	/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65D-R1-C2-FROZEN-FULL-VAL-PROVIDER-INTERACTION-CONDITIONAL-PERFORMANCE-STABILITY-AND-CROSS-SURFACE-PASSPORT-001/tooling-tests-custom-v1

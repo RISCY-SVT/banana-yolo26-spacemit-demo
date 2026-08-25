@@ -1,0 +1,3 @@
+model	profile	event_provider	node_events	unique_profile_nodes
+B2	/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65D-R1-C2-FROZEN-FULL-VAL-PROVIDER-INTERACTION-CONDITIONAL-PERFORMANCE-STABILITY-AND-CROSS-SURFACE-PASSPORT-001/board/r1-recheck/B2-spacemit-profile/profiles/profile_2026-08-25_17-48-09.json	SpaceMITExecutionProvider	2	1
+C2	/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65D-R1-C2-FROZEN-FULL-VAL-PROVIDER-INTERACTION-CONDITIONAL-PERFORMANCE-STABILITY-AND-CROSS-SURFACE-PASSPORT-001/board/r1-recheck/C2-spacemit-profile/profiles/profile_2026-08-25_17-48-23.json	SpaceMITExecutionProvider	2	1

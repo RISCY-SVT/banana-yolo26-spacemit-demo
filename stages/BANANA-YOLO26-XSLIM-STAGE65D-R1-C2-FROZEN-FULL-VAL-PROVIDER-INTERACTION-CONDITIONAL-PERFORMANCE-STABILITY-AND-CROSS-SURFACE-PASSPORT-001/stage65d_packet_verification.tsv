@@ -1,0 +1,5 @@
+packet	field	actual	expected	status
+stage65d	tree_sha256	adcc6e12b0760f4d65725e34de2306bd4c42b64f7f202bcf21e2828a4a7face5	adcc6e12b0760f4d65725e34de2306bd4c42b64f7f202bcf21e2828a4a7face5	pass
+stage65d	file_count	108	108	pass
+stage65d	byte_count	319268	319268	pass
+stage65d	artifact_file_count	103	103	pass

@@ -1,0 +1,3 @@
+model	fused_subgraphs	fused_node_count	graph_inputs	graph_outputs	provider_dump_sha256	unexpected_cpu_events	topology_equal_to_b2	status
+B2	1	925	1	6	baf686e0ee99276c4743abe8beb2c735be818fc07bd9ce25f81b3081795451c1	0	yes	pass
+C2	1	925	1	6	ab478f5be36f7e9587bb86996ff4fa32865b8b30b11c1dd6c7a2fea6ef77b5df	0	yes	pass
