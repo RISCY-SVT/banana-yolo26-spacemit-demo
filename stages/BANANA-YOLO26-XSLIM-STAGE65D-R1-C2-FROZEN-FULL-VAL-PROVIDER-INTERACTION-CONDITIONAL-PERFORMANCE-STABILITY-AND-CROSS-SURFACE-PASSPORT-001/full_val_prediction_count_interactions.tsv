@@ -1,0 +1,2 @@
+metric	replicates	seed	draw_matrix_sha256	point_interaction	bootstrap_mean	bootstrap_median	percentile_2_5	percentile_97_5	probability_gt_zero	probability_lt_zero	practical_margin	classification
+prediction_count	10000	65012	a6d5586545b347630b30d01efdb5cb010daf7801919e1fc118913fede37c285a	-5516.0	-5517.5383	-5518.0	-5923.0	-5126.0	0.0	1.0	descriptive-only	descriptive-only

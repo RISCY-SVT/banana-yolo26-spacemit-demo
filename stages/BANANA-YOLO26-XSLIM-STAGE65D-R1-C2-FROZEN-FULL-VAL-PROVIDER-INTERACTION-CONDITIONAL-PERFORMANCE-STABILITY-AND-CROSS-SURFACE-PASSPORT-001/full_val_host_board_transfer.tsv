@@ -1,0 +1,5 @@
+model	board_provider	host_map50_95	board_map50_95	board_minus_host	interpretation
+B2	CPU	0.3658592288412378	0.3656463372292463	-0.00021289161199150586	task-level transfer; byte equality not required
+B2	EP	0.3658592288412378	0.36625103775505324	0.00039180891381546123	task-level transfer; byte equality not required
+C2	CPU	0.3785087779678713	0.37862579021097253	0.00011701224310123326	task-level transfer; byte equality not required
+C2	EP	0.3785087779678713	0.37885017812504546	0.0003414001571741543	task-level transfer; byte equality not required

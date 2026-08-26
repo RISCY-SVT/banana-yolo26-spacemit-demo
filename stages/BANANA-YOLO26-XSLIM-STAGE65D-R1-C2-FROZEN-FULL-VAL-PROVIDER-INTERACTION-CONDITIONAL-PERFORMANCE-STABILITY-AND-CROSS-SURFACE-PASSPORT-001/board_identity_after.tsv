@@ -1,0 +1,11 @@
+field	value
+timestamp_utc	2026-08-26T07:15:31Z
+hostname	bf3
+device_serial	92262f3b0dc4
+boot_id	0a0691d1-7502-44c3-903b-444dba83c1d9
+kernel	6.6.63
+os_release	Bianbu 2.2.1
+data_mount	/dev/nvme0n1p1 ext4   rw,noatime
+root_mount	/dev/mmcblk2p6 ext4   rw,noatime,errors=remount-ro
+data_free_bytes	435584962560
+emmc_stage_path_count	0

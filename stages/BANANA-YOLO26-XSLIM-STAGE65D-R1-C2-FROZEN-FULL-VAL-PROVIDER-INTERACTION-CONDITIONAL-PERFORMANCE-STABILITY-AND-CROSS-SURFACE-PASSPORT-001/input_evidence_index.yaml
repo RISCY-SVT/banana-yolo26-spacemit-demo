@@ -25,6 +25,9 @@
     "score_rank_tool_smoke": "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65D-R1-C2-FROZEN-FULL-VAL-PROVIDER-INTERACTION-CONDITIONAL-PERFORMANCE-STABILITY-AND-CROSS-SURFACE-PASSPORT-001/tooling-smoke-score-rank",
     "positive_parser_regression": "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65D-R1-C2-FROZEN-FULL-VAL-PROVIDER-INTERACTION-CONDITIONAL-PERFORMANCE-STABILITY-AND-CROSS-SURFACE-PASSPORT-001/tooling-tests-v2",
     "negative_parser_regression": "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65D-R1-C2-FROZEN-FULL-VAL-PROVIDER-INTERACTION-CONDITIONAL-PERFORMANCE-STABILITY-AND-CROSS-SURFACE-PASSPORT-001/tooling-tests-negative-v1",
-    "custom_context_parser_regression": "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65D-R1-C2-FROZEN-FULL-VAL-PROVIDER-INTERACTION-CONDITIONAL-PERFORMANCE-STABILITY-AND-CROSS-SURFACE-PASSPORT-001/tooling-tests-custom-v1"
+    "custom_context_parser_regression": "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65D-R1-C2-FROZEN-FULL-VAL-PROVIDER-INTERACTION-CONDITIONAL-PERFORMANCE-STABILITY-AND-CROSS-SURFACE-PASSPORT-001/tooling-tests-custom-v1",
+    "score_rank_incomplete_contract_reproduction": "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65D-R1-C2-FROZEN-FULL-VAL-PROVIDER-INTERACTION-CONDITIONAL-PERFORMANCE-STABILITY-AND-CROSS-SURFACE-PASSPORT-001/hygiene/score-rank-repro-v2; excluded because provider interaction input was intentionally absent",
+    "score_rank_missing_interaction_negative": "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65D-R1-C2-FROZEN-FULL-VAL-PROVIDER-INTERACTION-CONDITIONAL-PERFORMANCE-STABILITY-AND-CROSS-SURFACE-PASSPORT-001/hygiene/score-rank-missing-interaction-negative",
+    "score_rank_complete_contract_reproduction": "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65D-R1-C2-FROZEN-FULL-VAL-PROVIDER-INTERACTION-CONDITIONAL-PERFORMANCE-STABILITY-AND-CROSS-SURFACE-PASSPORT-001/hygiene/score-rank-repro-v3"
   }
 }

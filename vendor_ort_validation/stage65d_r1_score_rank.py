@@ -144,6 +144,16 @@ def main() -> int:
     paths = dict(parse_surface(value) for value in options.surface)
     if tuple(sorted(paths)) != tuple(sorted(SURFACES)) or len(options.surface) != 4:
         raise ValueError(f"one path is required for each surface: {SURFACES}")
+    interaction_path = options.tracked_root / "full_val_board_provider_interactions.tsv"
+    if not interaction_path.is_file():
+        raise FileNotFoundError(
+            "provider interaction report must exist before score/rank interpretation: "
+            f"{interaction_path}"
+        )
+    with interaction_path.open(encoding="utf-8", newline="") as stream:
+        interactions = list(csv.DictReader(stream, delimiter="\t"))
+    if not interactions:
+        raise ValueError(f"provider interaction report is empty: {interaction_path}")
     surfaces = {name: load(paths[name]) for name in SURFACES}
 
     census_rows: list[dict[str, object]] = []
@@ -296,18 +306,43 @@ def main() -> int:
     change_rows.sort(key=lambda row: (str(row["pair"]), str(row["scope"]), str(row["key"])))
     write_tsv(options.tracked_root / "full_val_matched_candidate_changes.tsv", change_rows)
 
-    c2_membership = next(row for row in membership_rows if row["pair"] == "C2_EP-vs-C2_CPU" and row["topk"] == 300)
-    b2_membership = next(row for row in membership_rows if row["pair"] == "B2_EP-vs-B2_CPU" and row["topk"] == 300)
+    c2_top100 = next(row for row in membership_rows if row["pair"] == "C2_EP-vs-C2_CPU" and row["topk"] == 100)
+    b2_top100 = next(row for row in membership_rows if row["pair"] == "B2_EP-vs-B2_CPU" and row["topk"] == 100)
+    c2_top300 = next(row for row in membership_rows if row["pair"] == "C2_EP-vs-C2_CPU" and row["topk"] == 300)
+    b2_top300 = next(row for row in membership_rows if row["pair"] == "B2_EP-vs-B2_CPU" and row["topk"] == 300)
     c2_changes = next(row for row in change_rows if row["pair"] == "C2_EP-vs-C2_CPU" and row["scope"] == "aggregate")
+    b2_changes = next(row for row in change_rows if row["pair"] == "B2_EP-vs-B2_CPU" and row["scope"] == "aggregate")
+
+    threshold_counts = {
+        (str(row["surface"]), float(row["threshold"])): int(row["prediction_count"])
+        for row in census_rows
+        if row["scope"] == "aggregate" and row["key"] == "all"
+    }
+    c2_low_delta = threshold_counts[("C2_EP", 0.001)] - threshold_counts[("C2_CPU", 0.001)]
+    b2_low_delta = threshold_counts[("B2_EP", 0.001)] - threshold_counts[("B2_CPU", 0.001)]
+    c2_mid_delta = threshold_counts[("C2_EP", 0.05)] - threshold_counts[("C2_CPU", 0.05)]
+    b2_mid_delta = threshold_counts[("B2_EP", 0.05)] - threshold_counts[("B2_CPU", 0.05)]
+
+    task_interactions = [row for row in interactions if row["metric"] != "prediction_count"]
+    material_count = sum("material" in row["classification"] for row in task_interactions)
+    inconclusive_count = sum(
+        row["classification"] == "provider-interaction-inconclusive"
+        for row in task_interactions
+    )
+    neutral_count = sum(
+        row["classification"] == "provider-neutral" for row in task_interactions
+    )
     report = [
         "# Provider score/rank sensitivity interpretation",
         "",
         "This analysis uses frozen full-val prediction JSON only. Spatial candidates are paired by deterministic mutual-best bbox IoU >= 0.5; it does not expose provider-internal rounding.",
         "",
-        f"- C2 EP/CPU Top-300 membership Jaccard: `{float(c2_membership['jaccard']):.9f}`; crossings: `{c2_membership['membership_crossings']}`.",
-        f"- B2 EP/CPU Top-300 membership Jaccard: `{float(b2_membership['jaccard']):.9f}`; crossings: `{b2_membership['membership_crossings']}`.",
-        f"- C2 EP/CPU matched score absolute mean delta: `{float(c2_changes['score_abs_delta_mean']):.12f}`; class changes: `{c2_changes['class_changes']}`.",
-        "- These data can support or weaken the narrow confidence-ranking/TopK amplification hypothesis, but cannot by themselves prove an EP bug, exact rounding mode, or an LSB-level root cause.",
+        f"- C2 EP/CPU Top-100 membership Jaccard is `{float(c2_top100['jaccard']):.9f}` with `{c2_top100['membership_crossings']}` crossings; B2 EP/CPU is `{float(b2_top100['jaccard']):.9f}` with `{b2_top100['membership_crossings']}` crossings. C2 is not uniquely worse on this control-normalized surface.",
+        f"- Top-300 Jaccard is `{float(c2_top300['jaccard']):.9f}` for C2 and `{float(b2_top300['jaccard']):.9f}` for B2. The recorded Top-300 crossing count is zero by construction because the serialized detector output is already capped at 300; it is not evidence of membership equality.",
+        f"- C2 EP/CPU matched score absolute mean delta is `{float(c2_changes['score_abs_delta_mean']):.12f}` with `{c2_changes['class_changes']}` class changes; B2 is `{float(b2_changes['score_abs_delta_mean']):.12f}` with `{b2_changes['class_changes']}` class changes.",
+        f"- EP minus CPU prediction-count deltas are `{c2_low_delta}` (C2) versus `{b2_low_delta}` (B2) at score 0.001 and `{c2_mid_delta}` versus `{b2_mid_delta}` at score 0.05. Counts are descriptive and are not an accuracy oracle.",
+        f"- Population-level difference-in-differences classifies `{neutral_count}` task metrics provider-neutral, `{inconclusive_count}` inconclusive, and `{material_count}` material. Therefore the deterministic ranking differences do not establish a C2-specific material provider interaction.",
+        "- The data are compatible with confidence/rank sensitivity in both frozen models, but cannot prove an EP bug, exact rounding mode, or an LSB-level root cause.",
     ]
     (options.tracked_root / "provider_sensitivity_interpretation.md").write_text("\n".join(report) + "\n", encoding="utf-8")
     return 0

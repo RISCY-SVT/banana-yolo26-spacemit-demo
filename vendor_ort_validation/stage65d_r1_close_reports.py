@@ -163,6 +163,12 @@ def main() -> int:
         write_not_run(out / "stability_decision.md", "task-gate-closed")
     performance_pass = decision(out / "performance_decision.md") == "pass" if task_pass else False
     stability_pass = decision(out / "stability_decision.md") == "pass" if task_pass else False
+    performance_status = "pass" if performance_pass else (
+        "fail" if task_pass else "not-run-task-gate-closed"
+    )
+    stability_status = "pass" if stability_pass else (
+        "fail" if task_pass else "not-run-task-gate-closed"
+    )
     interactions = read_tsv(out / "full_val_board_provider_interactions.tsv")
     classified = [row for row in interactions if row["metric"] != "prediction_count"]
     material = [row for row in classified if "material" in row["classification"]]
@@ -281,8 +287,8 @@ def main() -> int:
             "board_ep_map50_95": board["B2_EP"]["map50_95"],
             "placement": "one-925-node-fused-subgraph",
             "provider_interaction": "control-reference",
-            "performance": performance_pass,
-            "stability": stability_pass,
+            "performance": performance_status,
+            "stability": stability_status,
             "disposition": "retain-control",
         },
         {
@@ -293,9 +299,15 @@ def main() -> int:
             "board_ep_map50_95": board["C2_EP"]["map50_95"],
             "placement": "one-925-node-fused-subgraph",
             "provider_interaction": "material" if material else ("inconclusive" if inconclusive else "neutral"),
-            "performance": performance_pass,
-            "stability": stability_pass,
-            "disposition": "human-review" if classification.endswith("human-promotion-review-required") else "diagnostic-only",
+            "performance": performance_status,
+            "stability": stability_status,
+            "disposition": (
+                "human-review"
+                if classification.endswith("human-promotion-review-required")
+                else "task-failed-retain-b2"
+                if not task_pass
+                else "diagnostic-only"
+            ),
         },
         {
             "artifact": "A1",
@@ -381,6 +393,37 @@ def main() -> int:
         for row in read_tsv(out / "full_val_board_complete_bootstrap.tsv")
         if row["pair"] == "C2_EP-vs-B2_EP" and row["metric"] == "map50_95"
     )
+    bootstrap = {
+        (row["pair"], row["metric"]): row
+        for row in read_tsv(out / "full_val_board_complete_bootstrap.tsv")
+    }
+    point_deltas = {
+        metric: float(board["C2_EP"][metric]) - float(board["B2_EP"][metric])
+        for metric in (
+            "map50_95",
+            "ap_small",
+            "ap_medium",
+            "ap_large",
+            "ar_small",
+            "ar_medium",
+            "ar_large",
+        )
+    }
+    interaction_counts: dict[str, int] = {}
+    for row in classified:
+        interaction_counts[row["classification"]] = (
+            interaction_counts.get(row["classification"], 0) + 1
+        )
+    provider_status = "material" if material else (
+        "inconclusive" if inconclusive else "neutral"
+    )
+    map_interaction = next(row for row in classified if row["metric"] == "map50_95")
+    ar_small_interaction = next(row for row in classified if row["metric"] == "ar_small")
+    ar_large_interaction = next(row for row in classified if row["metric"] == "ar_large")
+    prediction_hashes = {
+        row["surface"]: row["sha256"]
+        for row in read_tsv(out / "full_val_board_prediction_hashes.tsv")
+    }
     c2_ep_delta = float(board["C2_EP"]["map50_95"]) - float(board["B2_EP"]["map50_95"])
     report = f"""# Stage65D-R1 final report
 
@@ -388,19 +431,38 @@ Classification: `{classification}`
 Publication: `not-authorized-not-attempted`
 Stage: `{STAGE_ID}`
 
-## Board task result
+## Identity and placement
 
-B2/C2 placement remained one equal 925-node SpaceMIT subgraph with no unexpected CPU inference events. C2 EP minus B2 EP full-val mAP50-95 is `{c2_ep_delta:.12f}` with 95% CI `[{map_pair['percentile_2_5']}, {map_pair['percentile_97_5']}]`; the predeclared task gate is `{'pass' if task_pass else 'fail'}`.
+The exact frozen B2/C2 inference models and common tail were used with SpaceMIT ORT 2.0.6. B2 and C2 each produced one equal 925-source-node fused SpaceMIT subgraph, six outputs, and zero unexpected CPU inference events. Bounded controls and F0 CPU/EP fixtures passed without non-finite output or score collapse.
 
-Provider interaction: `{('material' if material else 'inconclusive' if inconclusive else 'neutral')}` across the complete predeclared metric set. Absolute CPU/EP point gaps and prediction-count interactions remain secondary warnings.
+## Full val2017
+
+| Surface | mAP50-95 | AP-S | AP-M | AP-L | AR-S | AR-M | AR-L | Predictions |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| B2 CPU | {float(board['B2_CPU']['map50_95']):.12f} | {float(board['B2_CPU']['ap_small']):.12f} | {float(board['B2_CPU']['ap_medium']):.12f} | {float(board['B2_CPU']['ap_large']):.12f} | {float(board['B2_CPU']['ar_small']):.12f} | {float(board['B2_CPU']['ar_medium']):.12f} | {float(board['B2_CPU']['ar_large']):.12f} | {board['B2_CPU']['prediction_count']} |
+| B2 EP | {float(board['B2_EP']['map50_95']):.12f} | {float(board['B2_EP']['ap_small']):.12f} | {float(board['B2_EP']['ap_medium']):.12f} | {float(board['B2_EP']['ap_large']):.12f} | {float(board['B2_EP']['ar_small']):.12f} | {float(board['B2_EP']['ar_medium']):.12f} | {float(board['B2_EP']['ar_large']):.12f} | {board['B2_EP']['prediction_count']} |
+| C2 CPU | {float(board['C2_CPU']['map50_95']):.12f} | {float(board['C2_CPU']['ap_small']):.12f} | {float(board['C2_CPU']['ap_medium']):.12f} | {float(board['C2_CPU']['ap_large']):.12f} | {float(board['C2_CPU']['ar_small']):.12f} | {float(board['C2_CPU']['ar_medium']):.12f} | {float(board['C2_CPU']['ar_large']):.12f} | {board['C2_CPU']['prediction_count']} |
+| C2 EP | {float(board['C2_EP']['map50_95']):.12f} | {float(board['C2_EP']['ap_small']):.12f} | {float(board['C2_EP']['ap_medium']):.12f} | {float(board['C2_EP']['ap_large']):.12f} | {float(board['C2_EP']['ar_small']):.12f} | {float(board['C2_EP']['ar_medium']):.12f} | {float(board['C2_EP']['ar_large']):.12f} | {board['C2_EP']['prediction_count']} |
+
+C2 EP minus B2 EP mAP50-95 is `{c2_ep_delta:.12f}` with 95% CI `[{map_pair['percentile_2_5']}, {map_pair['percentile_97_5']}]` and `P(delta>0)={map_pair['probability_gt_zero']}`. AP deltas (S/M/L) are `{point_deltas['ap_small']:.12f}`, `{point_deltas['ap_medium']:.12f}`, `{point_deltas['ap_large']:.12f}`. AR deltas (S/M/L) are `{point_deltas['ar_small']:.12f}`, `{point_deltas['ar_medium']:.12f}`, `{point_deltas['ar_large']:.12f}`.
+
+The predeclared task gate is `{'pass' if task_pass else 'fail'}`. AR-small fails both its `-0.003` point guard (`{point_deltas['ar_small']:.12f}`) and `-0.005` lower-CI guard (`{bootstrap[('C2_EP-vs-B2_EP', 'ar_small')]['percentile_2_5']}`). AR-large misses the point guard by `{abs(point_deltas['ar_large'] + 0.003):.12f}` while its CI guard passes. This is a task-contract failure despite the material mAP/AP-large gain.
+
+Prediction SHA-256 values: B2 CPU `{prediction_hashes['B2_CPU']}`, B2 EP `{prediction_hashes['B2_EP']}`, C2 CPU `{prediction_hashes['C2_CPU']}`, C2 EP `{prediction_hashes['C2_EP']}`. Every surface completed 5000/5000 with zero runner/evaluator failures, non-finite predictions, or collapse.
+
+## Provider diagnostic
+
+Population difference-in-differences contains `{interaction_counts.get('provider-neutral', 0)}` provider-neutral metrics, `{interaction_counts.get('provider-interaction-inconclusive', 0)}` inconclusive metrics, and `{len(material)}` material metrics; overall status is `{provider_status}`. mAP interaction is `{float(map_interaction['point_interaction']):.12f}` with 95% CI `[{map_interaction['percentile_2_5']}, {map_interaction['percentile_97_5']}]` and is provider-neutral. AR-small interaction is `{float(ar_small_interaction['point_interaction']):.12f}` with CI `[{ar_small_interaction['percentile_2_5']}, {ar_small_interaction['percentile_97_5']}]`; AR-large is `{float(ar_large_interaction['point_interaction']):.12f}` with CI `[{ar_large_interaction['percentile_2_5']}, {ar_large_interaction['percentile_97_5']}]`.
+
+Score/rank analysis found deterministic CPU/EP sensitivity in both models, but no material C2-specific population interaction. It does not establish a provider bug, exact rounding mode, or LSB-level cause. EP-aware tuning is `{ep_tuning}`.
 
 ## Conditional passport
 
-Matched performance: `{'pass' if performance_pass else 'fail-or-not-opened'}`. Stability: `{'pass' if stability_pass else 'fail-or-not-opened'}`. EP-aware tuning: `{ep_tuning}`. The accepted custom engine remains a read-only cross-surface application reference, not a same-source backend comparison. No camera work was run.
+Matched performance: `{performance_status}`. Stability: `{stability_status}`. Same-boot custom execution: `not-run-task-gate-closed`. These gates were correctly not opened after task failure; they did not fail experimentally. The accepted custom engine remains a read-only cross-surface accuracy reference, not a same-source backend comparison. No camera work was run.
 
 ## Disposition
 
-C2 is not automatically promoted. B2 remains the universal control until human review. XSlim, the custom executor, protected main and `/data/ncnn` are unchanged; board eMMC project writes are zero.
+C2 remains frozen diagnostic evidence and is not promotion-ready. B2 remains the vendor universal control. XSlim, the custom executor, protected main and `/data/ncnn` are unchanged; board eMMC project writes are zero. No runtime default or persistent board state required rollback.
 """
     (out / "STAGE65D_R1_FINAL_REPORT.md").write_text(report, encoding="utf-8")
     (out / "STAGE65D_R1_SUMMARY_RU.md").write_text(
@@ -409,19 +471,21 @@ C2 is not automatically promoted. B2 remains the universal control until human r
         f"минус B2 EP `{c2_ep_delta:.12f}` mAP50-95; основной task gate "
         f"`{'пройден' if task_pass else 'не пройден'}`. Взаимодействие provider: "
         f"`{'существенное' if material else 'неопределенное' if inconclusive else 'нейтральное'}`. "
-        f"Производительность: `{'pass' if performance_pass else 'fail/not-opened'}`, "
-        f"стабильность: `{'pass' if stability_pass else 'fail/not-opened'}`. Автоматического "
+        f"AR-small delta `{point_deltas['ar_small']:.12f}`, AR-large delta "
+        f"`{point_deltas['ar_large']:.12f}`. Производительность: `{performance_status}`, "
+        f"стабильность: `{stability_status}`; эти ветви не запускались после task-gate "
+        "fail и не являются экспериментальными отказами. Автоматического "
         "продвижения C2 нет; B2 остается контрольной моделью. Камера не использовалась.\n",
         encoding="utf-8",
     )
     (out / "stage_readiness_or_blocker.md").write_text(
-        f"# Stage readiness\n\nClassification: `{classification}`. C2 disposition requires human review; no runtime promotion is authorized. EP-aware tuning is `{ep_tuning}`.\n",
+        f"# Stage readiness\n\nClassification: `{classification}`. C2 remains a frozen diagnostic artifact; B2 remains the vendor control. Performance, stability, and same-boot custom execution are `not-run-task-gate-closed`. No runtime promotion is authorized. EP-aware tuning is `{ep_tuning}`.\n",
         encoding="utf-8",
     )
     (out / "human_decision_options.md").write_text(
         "# Human decision options\n\n- Retain B2 as the vendor baseline.\n"
-        "- Review C2 as a research baseline only if the complete task/performance/stability passport supports it.\n"
-        "- If and only if a material provider interaction was proven, separately authorize the bounded EP-aware charter.\n"
+        "- Keep C2 as a frozen diagnostic artifact; do not promote it under the current universal task contract.\n"
+        "- Do not open EP-aware qparam tuning from this evidence: no material provider interaction was proven.\n"
         "- Separately authorize head-only QAT, model/executor co-design, or same-source K1X_INT8_V2 comparison.\n\nNo option is automatic.\n",
         encoding="utf-8",
     )

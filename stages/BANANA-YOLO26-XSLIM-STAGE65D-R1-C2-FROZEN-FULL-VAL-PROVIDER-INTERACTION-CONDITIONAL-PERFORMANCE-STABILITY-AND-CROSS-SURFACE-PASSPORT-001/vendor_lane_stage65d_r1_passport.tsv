@@ -1,0 +1,5 @@
+artifact	role	host_map50_95	board_cpu_map50_95	board_ep_map50_95	placement	provider_interaction	performance	stability	disposition
+B2	vendor-universal-control	0.3658592288412378	0.3656463372292463	0.36625103775505324	one-925-node-fused-subgraph	control-reference	not-run-task-gate-closed	not-run-task-gate-closed	retain-control
+C2	frozen-vendor-candidate	0.3785087779678713	0.37862579021097253	0.37885017812504546	one-925-node-fused-subgraph	inconclusive	not-run-task-gate-closed	not-run-task-gate-closed	task-failed-retain-b2
+A1	historical-frozen-research	0.37293515356510193	historical-Stage65C-R1	historical-Stage65C-R1	historical-pass	historical-inconclusive	not-opened-historical	not-opened-historical	not-promoted
+custom-engine	cross-surface-application-reference	0.3707408944391919	not-comparable	not-comparable	different-runtime	not-applicable	not-run-task-gate-closed	accepted-historical-only	unchanged
