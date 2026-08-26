@@ -31,7 +31,7 @@ Score/rank analysis found deterministic CPU/EP sensitivity in both models, but n
 
 ## Conditional passport
 
-Matched performance: `not-run-task-gate-closed`. Stability: `not-run-task-gate-closed`. Same-boot custom execution: `not-run-task-gate-closed`. These gates were correctly not opened after task failure; they did not fail experimentally. The accepted custom engine remains a read-only cross-surface accuracy reference, not a same-source backend comparison. No camera work was run.
+Matched performance: `not-run-task-gate-closed`. Stability: `not-run-task-gate-closed`. Custom-engine application context: `not-run-task-gate-closed`. These gates were correctly not opened after task failure; they did not fail experimentally. No camera work was run.
 
 ## Disposition
 

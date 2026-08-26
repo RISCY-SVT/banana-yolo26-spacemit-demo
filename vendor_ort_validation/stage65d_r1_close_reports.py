@@ -202,70 +202,85 @@ def main() -> int:
 
     board = {row["surface"]: row for row in read_tsv(out / "full_val_board_metrics.tsv")}
     host = {row["surface"]: row for row in read_tsv(DEV001C / "full_val_metrics.tsv")}
-    fp32 = next(row for row in read_tsv(R3 / "selected_full_coco.tsv") if row["surface"] == "H8")
-    same_source = [
-        metric_row(fp32, "FP32-H8", "host-CPU", "host", "accepted-reference"),
-        metric_row(host["B2"], "B2", "host-CPU", "host", "accepted-reference"),
-        metric_row(host["C2"], "C2", "host-CPU", "host", "accepted-reference"),
-        metric_row(board["B2_CPU"], "B2", "board-CPU", "board", "reused-exact"),
-        metric_row(board["B2_EP"], "B2", "board-SpaceMIT-EP", "board", "reused-exact"),
-        metric_row(board["C2_CPU"], "C2", "board-CPU", "board", "fresh-Stage65D-R1"),
-        metric_row(board["C2_EP"], "C2", "board-SpaceMIT-EP", "board", "fresh-Stage65D-R1"),
-    ]
-    write_tsv(out / "same_source_vendor_accuracy_table.tsv", same_source)
+    custom_map = "not-run-task-gate-closed"
+    if task_pass:
+        fp32 = next(
+            row
+            for row in read_tsv(R3 / "selected_full_coco.tsv")
+            if row["surface"] == "H8"
+        )
+        same_source = [
+            metric_row(fp32, "FP32-H8", "host-CPU", "host", "accepted-reference"),
+            metric_row(host["B2"], "B2", "host-CPU", "host", "accepted-reference"),
+            metric_row(host["C2"], "C2", "host-CPU", "host", "accepted-reference"),
+            metric_row(board["B2_CPU"], "B2", "board-CPU", "board", "reused-exact"),
+            metric_row(board["B2_EP"], "B2", "board-SpaceMIT-EP", "board", "reused-exact"),
+            metric_row(board["C2_CPU"], "C2", "board-CPU", "board", "fresh-Stage65D-R1"),
+            metric_row(board["C2_EP"], "C2", "board-SpaceMIT-EP", "board", "fresh-Stage65D-R1"),
+        ]
+        write_tsv(out / "same_source_vendor_accuracy_table.tsv", same_source)
 
-    custom_summary = read_tsv(CUSTOM / "outputs/accuracy/full_coco_summary.tsv")[0]
-    custom_detail = read_tsv(CUSTOM / "outputs/evidence/resolution_coco_results_v2.tsv")[0]
-    cross = [
-        {
-            "surface": "accepted-custom-engine",
-            "model_sha256": "30a94e4738606673b5e0a73499cbc977167f046f8fa8637d6040ce744f429c0c",
-            "lineage": "different source/export/quantization/runtime surface",
-            "quantization_runtime": "K1X_INT8_V1 / 0.10.0-internal-rd.1",
-            "map50_95": custom_summary["map50_95"],
-            "ap_small": custom_summary["ap_small"],
-            "ap_medium": custom_summary["ap_medium"],
-            "ap_large": custom_summary["ap_large"],
-            "ar_large": "not-reported",
-            "prediction_count": custom_detail["prediction_count"],
-            "caveat": "application-level cross-surface context; not engine-only or quantizer-only",
-        },
-        {
-            "surface": "B2-SpaceMIT-EP",
-            "model_sha256": "40ba6a7f9aebaa98a1c3abe5fce1f66f1bebcd0b10b7af3d26d30414a331d853",
-            "lineage": "same-source vendor split S8-QDQ plus common FP32 tail",
-            "quantization_runtime": "S8-QDQ / SpaceMIT ORT 2.0.6",
-            "map50_95": board["B2_EP"]["map50_95"],
-            "ap_small": board["B2_EP"]["ap_small"],
-            "ap_medium": board["B2_EP"]["ap_medium"],
-            "ap_large": board["B2_EP"]["ap_large"],
-            "ar_large": board["B2_EP"]["ar_large"],
-            "prediction_count": board["B2_EP"]["prediction_count"],
-            "caveat": "different model surface from custom engine",
-        },
-        {
-            "surface": "C2-SpaceMIT-EP",
-            "model_sha256": "281f4acd1261e7ee2c38b6e3bdecbf61c3d91cf710c63e6bc6cdaf257a52669b",
-            "lineage": "same-source vendor split S8-QDQ plus common FP32 tail",
-            "quantization_runtime": "S8-QDQ / SpaceMIT ORT 2.0.6",
-            "map50_95": board["C2_EP"]["map50_95"],
-            "ap_small": board["C2_EP"]["ap_small"],
-            "ap_medium": board["C2_EP"]["ap_medium"],
-            "ap_large": board["C2_EP"]["ap_large"],
-            "ar_large": board["C2_EP"]["ar_large"],
-            "prediction_count": board["C2_EP"]["prediction_count"],
-            "caveat": "different model surface from custom engine",
-        },
-    ]
-    write_tsv(out / "cross_surface_application_accuracy_table.tsv", cross)
-    (out / "cross_surface_comparison_caveats.md").write_text(
-        "# Cross-surface comparison caveats\n\nThe accepted custom executor and vendor "
-        "B2/C2 rows use different source/export/quantization/runtime surfaces. Their "
-        "accuracy and same-boot timing are application-level context only, not an "
-        "engine-only, quantizer-only, or same-source backend comparison. No camera "
-        "surface was run.\n",
-        encoding="utf-8",
-    )
+        custom_summary = read_tsv(CUSTOM / "outputs/accuracy/full_coco_summary.tsv")[0]
+        custom_detail = read_tsv(
+            CUSTOM / "outputs/evidence/resolution_coco_results_v2.tsv"
+        )[0]
+        custom_map = custom_summary["map50_95"]
+        cross = [
+            {
+                "surface": "accepted-custom-engine",
+                "model_sha256": "30a94e4738606673b5e0a73499cbc977167f046f8fa8637d6040ce744f429c0c",
+                "lineage": "different source/export/quantization/runtime surface",
+                "quantization_runtime": "K1X_INT8_V1 / 0.10.0-internal-rd.1",
+                "map50_95": custom_summary["map50_95"],
+                "ap_small": custom_summary["ap_small"],
+                "ap_medium": custom_summary["ap_medium"],
+                "ap_large": custom_summary["ap_large"],
+                "ar_large": "not-reported",
+                "prediction_count": custom_detail["prediction_count"],
+                "caveat": "application-level cross-surface context; not engine-only or quantizer-only",
+            },
+            {
+                "surface": "B2-SpaceMIT-EP",
+                "model_sha256": "40ba6a7f9aebaa98a1c3abe5fce1f66f1bebcd0b10b7af3d26d30414a331d853",
+                "lineage": "same-source vendor split S8-QDQ plus common FP32 tail",
+                "quantization_runtime": "S8-QDQ / SpaceMIT ORT 2.0.6",
+                "map50_95": board["B2_EP"]["map50_95"],
+                "ap_small": board["B2_EP"]["ap_small"],
+                "ap_medium": board["B2_EP"]["ap_medium"],
+                "ap_large": board["B2_EP"]["ap_large"],
+                "ar_large": board["B2_EP"]["ar_large"],
+                "prediction_count": board["B2_EP"]["prediction_count"],
+                "caveat": "different model surface from custom engine",
+            },
+            {
+                "surface": "C2-SpaceMIT-EP",
+                "model_sha256": "281f4acd1261e7ee2c38b6e3bdecbf61c3d91cf710c63e6bc6cdaf257a52669b",
+                "lineage": "same-source vendor split S8-QDQ plus common FP32 tail",
+                "quantization_runtime": "S8-QDQ / SpaceMIT ORT 2.0.6",
+                "map50_95": board["C2_EP"]["map50_95"],
+                "ap_small": board["C2_EP"]["ap_small"],
+                "ap_medium": board["C2_EP"]["ap_medium"],
+                "ap_large": board["C2_EP"]["ap_large"],
+                "ar_large": board["C2_EP"]["ar_large"],
+                "prediction_count": board["C2_EP"]["prediction_count"],
+                "caveat": "different model surface from custom engine",
+            },
+        ]
+        write_tsv(out / "cross_surface_application_accuracy_table.tsv", cross)
+        (out / "cross_surface_comparison_caveats.md").write_text(
+            "# Cross-surface comparison caveats\n\nThe accepted custom executor and "
+            "vendor B2/C2 rows use different source/export/quantization/runtime "
+            "surfaces. Their accuracy and same-boot timing are application-level "
+            "context only, not an engine-only, quantizer-only, or same-source "
+            "backend comparison. No camera surface was run.\n",
+            encoding="utf-8",
+        )
+    else:
+        write_not_run(out / "same_source_vendor_accuracy_table.tsv", "task-gate-closed")
+        write_not_run(
+            out / "cross_surface_application_accuracy_table.tsv", "task-gate-closed"
+        )
+        write_not_run(out / "cross_surface_comparison_caveats.md", "task-gate-closed")
 
     perf_path = out / "cross_surface_performance_context.tsv"
     perf = (
@@ -324,7 +339,7 @@ def main() -> int:
         {
             "artifact": "custom-engine",
             "role": "cross-surface-application-reference",
-            "host_map50_95": custom_summary["map50_95"],
+            "host_map50_95": custom_map,
             "board_cpu_map50_95": "not-comparable",
             "board_ep_map50_95": "not-comparable",
             "placement": "different-runtime",
@@ -458,7 +473,7 @@ Score/rank analysis found deterministic CPU/EP sensitivity in both models, but n
 
 ## Conditional passport
 
-Matched performance: `{performance_status}`. Stability: `{stability_status}`. Same-boot custom execution: `not-run-task-gate-closed`. These gates were correctly not opened after task failure; they did not fail experimentally. The accepted custom engine remains a read-only cross-surface accuracy reference, not a same-source backend comparison. No camera work was run.
+Matched performance: `{performance_status}`. Stability: `{stability_status}`. Custom-engine application context: `not-run-task-gate-closed`. These gates were correctly not opened after task failure; they did not fail experimentally. No camera work was run.
 
 ## Disposition
 
