@@ -11,9 +11,18 @@ output_name=/model.23/one2one_cv3.0/one2one_cv3.0.2/Conv_output_0
 out="$root/fusion-probes"
 ulimit -c 0
 
+output_names=(
+  /model.23/one2one_cv2.0/one2one_cv2.0.2/Conv_output_0
+  /model.23/one2one_cv3.0/one2one_cv3.0.2/Conv_output_0
+  /model.23/one2one_cv2.1/one2one_cv2.1.2/Conv_output_0
+  /model.23/one2one_cv3.1/one2one_cv3.1.2/Conv_output_0
+  /model.23/one2one_cv2.2/one2one_cv2.2.2/Conv_output_0
+  /model.23/one2one_cv3.2/one2one_cv3.2.2/Conv_output_0
+)
+
 [[ ! -e $out ]] || { printf 'fusion probe output exists: %s\n' "$out" >&2; exit 2; }
 mkdir -p "$out"
-printf 'model\topt_level\texit_code\toutput_sha256\tprofile_count\tprovider_dump_count\tlog_sha256\n' >"$out/optimization-status.raw.tsv"
+printf 'model\topt_level\texit_code\toutput_sha256\tboundary_count\tboundary_manifest_sha256\tprofile_count\tprovider_dump_count\tlog_sha256\n' >"$out/optimization-status.raw.tsv"
 printf 'probe\tmodel\texit_code\tartifact\tartifact_bytes\tartifact_sha256\tlog_sha256\n' >"$out/capability-status.raw.tsv"
 
 inference_for() {
@@ -34,7 +43,8 @@ hash_or_missing() {
 }
 
 run_level() {
-  local model=$1 level=$2 inference directory rc=0 profiles dumps
+  local model=$1 level=$2 inference directory rc=0 profiles dumps index auxiliary_rc
+  local boundary_count=0 boundary_manifest_sha=missing
   inference=$(inference_for "$model")
   directory="$out/optimization-${model}-${level}"
   mkdir -p "$directory/tmp" "$directory/cache" "$directory/profile" "$directory/provider-dumps"
@@ -51,10 +61,42 @@ run_level() {
       >"$directory/run.log" 2>&1
   rc=$?
   set -e
+  mkdir -p "$directory/boundary-outputs"
+  printf 'index\tname\tbytes\tsha256\n' >"$directory/boundary-output-manifest.tsv"
+  if [[ $rc -eq 0 ]]; then
+    for index in "${!output_names[@]}"; do
+      set +e
+      env LD_LIBRARY_PATH="$runtime" TMPDIR="$directory/tmp" XDG_CACHE_HOME="$directory/cache" \
+        timeout --signal=TERM --kill-after=10s 900s taskset -c 0-3 "$runner" \
+          --provider spacemit --model "$inference" --input "$input" \
+          --output "$directory/boundary-outputs/output-${index}.bin" \
+          --input-name images --output-name "${output_names[$index]}" --opt-level "$level" \
+          --execution-mode sequential --intra-threads 4 --inter-threads 1 \
+          --memory-pattern 1 --cpu-arena 1 --thread-spinning 0 \
+          --log-severity 2 --log-verbosity 0 --warmup 1 --runs 1 --repeats 1 \
+          >"$directory/boundary-outputs/output-${index}.log" 2>&1
+      auxiliary_rc=$?
+      set -e
+      if [[ $auxiliary_rc -ne 0 ]]; then
+        rc=$auxiliary_rc
+        break
+      fi
+      printf '%s\t%s\t%s\t%s\n' "$index" "${output_names[$index]}" \
+        "$(stat -c %s "$directory/boundary-outputs/output-${index}.bin")" \
+        "$(hash_or_missing "$directory/boundary-outputs/output-${index}.bin")" \
+        >>"$directory/boundary-output-manifest.tsv"
+    done
+  fi
+  boundary_count=$(($(wc -l <"$directory/boundary-output-manifest.tsv") - 1))
+  if [[ $boundary_count -eq 6 ]]; then
+    boundary_manifest_sha=$(hash_or_missing "$directory/boundary-output-manifest.tsv")
+  else
+    rc=3
+  fi
   profiles=$(find "$directory/profile" -type f | wc -l)
   dumps=$(find "$directory/provider-dumps" -type f -name 'SpaceMITExecutionProvider_*.onnx' | wc -l)
-  printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\n' "$model" "$level" "$rc" \
-    "$(hash_or_missing "$directory/output.bin")" "$profiles" "$dumps" \
+  printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' "$model" "$level" "$rc" \
+    "$(hash_or_missing "$directory/output.bin")" "$boundary_count" "$boundary_manifest_sha" "$profiles" "$dumps" \
     "$(hash_or_missing "$directory/run.log")" >>"$out/optimization-status.raw.tsv"
 }
 

@@ -141,8 +141,13 @@ def collect(root: Path) -> dict[str, object]:
         ]
         if not resource_rows:
             raise RuntimeError(f"missing resource samples: {directory}")
+        steady_resource_rows = [
+            row for row in resource_rows if int(row["sample"]) >= 30
+        ]
+        if not steady_resource_rows:
+            raise RuntimeError(f"missing post-initialization resource samples: {directory}")
         numeric = {
-            name: [int(row[name]) for row in resource_rows]
+            name: [int(row[name]) for row in steady_resource_rows]
             for name in (
                 "rss_kib",
                 "peak_rss_kib",
@@ -157,12 +162,16 @@ def collect(root: Path) -> dict[str, object]:
             "segment": status_row["segment"],
             "position": status_row["position"],
             "model": model,
-            "samples": len(resource_rows),
+            "samples_total": len(resource_rows),
+            "steady_samples": len(steady_resource_rows),
+            "rss_startup_first_kib": int(resource_rows[0]["rss_kib"]),
             "rss_first_kib": numeric["rss_kib"][0],
             "rss_last_kib": numeric["rss_kib"][-1],
             "rss_max_kib": max(numeric["rss_kib"]),
             "peak_rss_max_kib": max(numeric["peak_rss_kib"]),
-            "rss_slope_kib_per_sample": (numeric["rss_kib"][-1] - numeric["rss_kib"][0]) / max(1, len(resource_rows) - 1),
+            "rss_slope_kib_per_sample": (
+                numeric["rss_kib"][-1] - numeric["rss_kib"][0]
+            ) / max(1, len(steady_resource_rows) - 1),
             "fds_min": min(numeric["fds"]),
             "fds_max": max(numeric["fds"]),
             "threads_min": min(numeric["threads"]),
@@ -306,7 +315,9 @@ def main() -> int:
         "segments of 1000 runs. Second-half/first-half median ratios are "
         f"B2 `{drift_by_model['B2']:.9f}` and C2 `{drift_by_model['C2']:.9f}` "
         "(accepted range 0.95..1.05). "
-        f"Thermal/frequency state: `{'pass' if thermal_pass else 'fail'}`.\n",
+        f"Thermal/frequency state: `{'pass' if thermal_pass else 'fail'}`. The first 30 valid "
+        "one-second resource samples remain in raw evidence as the expected process/session "
+        "initialization ramp; RSS/FD/thread drift gates use the post-initialization window.\n",
         encoding="utf-8",
     )
     return 0 if passed else 3

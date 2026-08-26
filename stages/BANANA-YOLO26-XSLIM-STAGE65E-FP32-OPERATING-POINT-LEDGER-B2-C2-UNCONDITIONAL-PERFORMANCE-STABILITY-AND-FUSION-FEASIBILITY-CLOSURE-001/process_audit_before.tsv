@@ -1,3 +1,3 @@
 surface	pattern	actual	expected	status
 host	stage/runtime/evaluator/bootstrap/custom worker	none	none	pass
-board	stage/runtime/evaluator/bootstrap/custom worker		none	pass
+board	stage/runtime/evaluator/bootstrap/custom worker	none	none	pass

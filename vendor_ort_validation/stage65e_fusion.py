@@ -146,12 +146,34 @@ def profile_providers(path: Path) -> tuple[int, int]:
 
 def graph_summary(path: Path) -> dict[str, object]:
     graph = onnx.load(path, load_external_data=False).graph
+    topology_payload = {
+        "inputs": [value.name for value in graph.input],
+        "outputs": [value.name for value in graph.output],
+        "nodes": [
+            {
+                "name": node.name,
+                "domain": node.domain,
+                "op_type": node.op_type,
+                "inputs": list(node.input),
+                "outputs": list(node.output),
+            }
+            for node in graph.node
+        ],
+    }
     return {
         "nodes": len(graph.node),
         "inputs": len(graph.input),
         "outputs": len(graph.output),
         "op_types": Counter(node.op_type for node in graph.node),
         "sha256": sha256(path),
+        "topology_sha256": hashlib.sha256(
+            json.dumps(
+                topology_payload,
+                ensure_ascii=True,
+                separators=(",", ":"),
+                sort_keys=True,
+            ).encode("utf-8")
+        ).hexdigest(),
     }
 
 
@@ -196,6 +218,18 @@ def main() -> int:
         raise RuntimeError("six-output host/device boundary does not match the common tail")
     if summaries["B2"]["qdq"] != 812 or summaries["C2"]["qdq"] != 812:
         raise RuntimeError("frozen Q/DQ census changed")
+    for name, dtype, shape in tail_inputs:
+        census_rows.append({
+            "model": "B2/C2-common",
+            "graph_role": "SpaceMIT-to-CPU-tail-boundary",
+            "record_type": "host-device-boundary",
+            "name": name,
+            "op_type": "tensor",
+            "count": 1,
+            "dtype": dtype,
+            "shape": shape,
+            "sha256": sha256(tail),
+        })
     write_tsv(options.tracked_root / "main_graph_and_tail_census.tsv", census_rows)
 
     optimization_status = read_tsv(options.raw_root / "optimization-status.raw.tsv")
@@ -219,12 +253,17 @@ def main() -> int:
                 "p95_us": "unavailable",
                 "output_sha256": status["output_sha256"],
                 "output_equal_to_disable": "unresolved",
+                "boundary_count": status["boundary_count"],
+                "boundary_manifest_sha256": status["boundary_manifest_sha256"],
+                "six_boundary_equal_to_disable": "unresolved",
                 "fused_subgraphs": len(dumps),
                 "partition_nodes": "unavailable",
                 "partition_inputs": "unavailable",
                 "partition_outputs": "unavailable",
                 "unexpected_cpu_events": "unavailable",
                 "partition_sha256": "unavailable",
+                "partition_topology_sha256": "unavailable",
+                "partition_topology_equal_to_disable": "unresolved",
                 "decision": "reject-probe-failed",
             })
             continue
@@ -232,10 +271,18 @@ def main() -> int:
         partition = graph_summary(dumps[0])
         spacemit_events, cpu_events = profile_providers(profiles[0])
         output_hash = status["output_sha256"]
+        boundary_count = int(status["boundary_count"])
+        boundary_manifest_hash = status["boundary_manifest_sha256"]
         median = float(timing["median_us"])
         level_medians[(model, level)] = median
         if level == "disable":
             disable_medians[model] = median
+        if partition["nodes"] != 925 or cpu_events != 0 or spacemit_events == 0:
+            probe_decision = "reject-placement-drift"
+        elif boundary_count != 6 or boundary_manifest_hash == "missing":
+            probe_decision = "reject-six-boundary-capture"
+        else:
+            probe_decision = "pass"
         optimization_rows.append({
             "model": model,
             "opt_level": level,
@@ -243,16 +290,18 @@ def main() -> int:
             **timing,
             "output_sha256": output_hash,
             "output_equal_to_disable": "pending",
+            "boundary_count": boundary_count,
+            "boundary_manifest_sha256": boundary_manifest_hash,
+            "six_boundary_equal_to_disable": "pending",
             "fused_subgraphs": 1,
             "partition_nodes": partition["nodes"],
             "partition_inputs": partition["inputs"],
             "partition_outputs": partition["outputs"],
             "unexpected_cpu_events": cpu_events,
             "partition_sha256": partition["sha256"],
-            "decision": (
-                "pass" if partition["nodes"] == 925 and cpu_events == 0 and spacemit_events > 0
-                else "reject-placement-drift"
-            ),
+            "partition_topology_sha256": partition["topology_sha256"],
+            "partition_topology_equal_to_disable": "pending",
+            "decision": probe_decision,
         })
     for row in optimization_rows:
         if row["decision"] == "reject-probe-failed":
@@ -266,6 +315,27 @@ def main() -> int:
         row["output_equal_to_disable"] = "yes" if equal else "no"
         if not equal:
             row["decision"] = "reject-output-drift"
+        disable_boundary_hash = next(
+            item["boundary_manifest_sha256"]
+            for item in optimization_rows
+            if item["model"] == row["model"] and item["opt_level"] == "disable"
+        )
+        boundaries_equal = (
+            row["boundary_count"] == 6
+            and row["boundary_manifest_sha256"] == disable_boundary_hash
+        )
+        row["six_boundary_equal_to_disable"] = "yes" if boundaries_equal else "no"
+        if not boundaries_equal:
+            row["decision"] = "reject-six-boundary-drift"
+        disable_topology_hash = next(
+            item["partition_topology_sha256"]
+            for item in optimization_rows
+            if item["model"] == row["model"] and item["opt_level"] == "disable"
+        )
+        topology_equal = row["partition_topology_sha256"] == disable_topology_hash
+        row["partition_topology_equal_to_disable"] = "yes" if topology_equal else "no"
+        if not topology_equal:
+            row["decision"] = "reject-partition-topology-drift"
     write_tsv(options.tracked_root / "ort_optimization_matrix.tsv", optimization_rows)
 
     capability = read_tsv(options.raw_root / "capability-status.raw.tsv")

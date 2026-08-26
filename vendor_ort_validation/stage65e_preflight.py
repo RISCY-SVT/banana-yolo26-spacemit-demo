@@ -352,7 +352,13 @@ def main() -> int:
             "none",
             "pass" if not host_active else "fail",
         ),
-        ("board", "stage/runtime/evaluator/bootstrap/custom worker", board.get("active_processes", ""), "none", "pass" if not board.get("active_processes", "") else "fail"),
+        (
+            "board",
+            "stage/runtime/evaluator/bootstrap/custom worker",
+            board.get("active_processes", "") or "none",
+            "none",
+            "pass" if not board.get("active_processes", "") else "fail",
+        ),
     )
 
     write_tsv(options.tracked_root / "protected_state_before.tsv", ("field", "actual", "expected", "status"), protected_rows)

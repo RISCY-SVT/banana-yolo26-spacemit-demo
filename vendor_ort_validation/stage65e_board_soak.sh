@@ -75,6 +75,7 @@ resource_gate() {
   awk -F '\t' '
     NR == 1 { next }
     ($3 + 0) <= 0 || ($5 + 0) <= 0 || ($6 + 0) <= 0 { next }
+    ($1 + 0) < 30 { next }
     count == 0 {
       first_rss = $3 + 0
       min_fd = max_fd = $5 + 0
@@ -149,7 +150,7 @@ run_segment() {
       voluntary=$(awk '$1 == "voluntary_ctxt_switches:" {print $2}' "/proc/$pid/status" 2>/dev/null || true)
       nonvoluntary=$(awk '$1 == "nonvoluntary_ctxt_switches:" {print $2}' "/proc/$pid/status" 2>/dev/null || true)
       fds=$(find "/proc/$pid/fd" -mindepth 1 -maxdepth 1 2>/dev/null | wc -l || true)
-      if [[ -z $rss || -z $threads ]]; then
+      if [[ -z $rss || -z $peak || -z $fds || -z $threads || $fds -le 0 ]]; then
         sleep 1
         continue
       fi
