@@ -1,0 +1,7 @@
+surface	candidate_minus_corresponding_b2_map50_95	host_b2_to_fp32_gap	fraction_host_gap_recovered	scope_caveat
+A1_HOST	0.0070759247238641465	0.03596256618502902	0.19675805912898972	same-scope numerator; denominator is host B2-to-FP32 gap
+C2_HOST	0.01264954912663352	0.03596256618502902	0.3517421159978134	same-scope numerator; denominator is host B2-to-FP32 gap
+A1_BOARD_CPU	0.007308952829442772	0.03596256618502902	0.2032377998788485	same-scope numerator; denominator is host B2-to-FP32 gap
+A1_BOARD_EP	0.006115297854051516	0.03596256618502902	0.17004620367156317	same-scope numerator; denominator is host B2-to-FP32 gap
+C2_BOARD_CPU	0.012979452981726258	0.03596256618502902	0.36091565087281	same-scope numerator; denominator is host B2-to-FP32 gap
+C2_BOARD_EP	0.012599140369992212	0.03596256618502902	0.3503404152297995	same-scope numerator; denominator is host B2-to-FP32 gap
