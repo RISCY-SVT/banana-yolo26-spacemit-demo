@@ -1,0 +1,24 @@
+path	change	role
+README.md	rewritten	product entrypoint and validated scope
+README_zh.md	rewritten	upstream Chinese entrypoint with downstream identity
+INSTALL.md	created	installation and verification
+QUICKSTART.md	created	minimal generic PTQ workflow
+CHANGELOG.md	created	downstream release history
+SECURITY.md	created	security reporting and support boundary
+SUPPORT.md	created	support and evidence expectations
+CONTRIBUTING.md	created	contribution and test contract
+UPSTREAM.md	rewritten	upstream base and derivative provenance
+docs/USER_GUIDE.md	created	complete human workflow
+docs/CONFIG_REFERENCE.md	created	configuration schema and precedence
+docs/ACCURACY_TUNING.md	created	deterministic tuning and validation
+docs/K1X_SPACEMIT_S8_QDQ_PROFILE.md	created	proven structural target contract
+docs/K1X_YOLO26_COOKBOOK.md	created	six-output YOLO26 end-to-end cookbook
+docs/RECONSTRUCTION_GUIDE.md	created	honest adaptive-rounding/reconstruction scope
+docs/VALIDATION_TOOLS.md	created	structural and semantic CLI use
+docs/TROUBLESHOOTING.md	created	failures and fixes
+docs/LIMITATIONS.md	created	unproven and unsupported claims
+docs/RELEASE_AND_PROVENANCE.md	created	release identity and verification
+docs/ru/README.md	created	Russian documentation entrypoint
+docs/ru/QUICKSTART.md	created	Russian quick start
+docs/ru/K1X_YOLO26_COOKBOOK.md	created	Russian YOLO26 cookbook
+docs/ru/TROUBLESHOOTING.md	created	Russian troubleshooting

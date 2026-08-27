@@ -1,0 +1,9 @@
+name	bytes	sha256	github	gitlab
+SHA256SUMS	578	abc04f786b6decfd0d34e345c349c70e2b4baeced62b0b4cb6f883a03f935b54	byte-identical	byte-identical
+SHA512SUMS	962	b8c98ae5b9a3080f0caa7619c6c17109e2b154ad7e5924c008a17d4e68dddccf	byte-identical	byte-identical
+release-manifest.json	1371	3f02772f99bc3fadba424603f81e7cbde54f73625e1db7d4c27498e6b729a7ef	byte-identical	byte-identical
+xslim-2.1.2+riscy.2-docs.tar.gz	68382	fb4452340b57b0df76dd9413834ca6e42ae47b81b7f5e8b1b84a907c5d6b6c1e	byte-identical	byte-identical
+xslim-2.1.2+riscy.2-py3-none-any.whl	365913	442e190df3e6ab70daa01b9d3f3cbcedbb80ecd46c302ec491a3a6aec3b2d61b	byte-identical	byte-identical
+xslim-2.1.2+riscy.2-source.tar.gz	431677	d7b00a0bfbbf9ec4f695ba9c61994105cd9c46ec4de541775266d2679ead8809	byte-identical	byte-identical
+xslim-2.1.2+riscy.2.spdx.json	142108	e76b00c72c768a6ac1ff12cf62d6c152bbddb8f00db147056d550d33d4ae92e1	byte-identical	byte-identical
+xslim-2.1.2+riscy.2.tar.gz	401176	cf65215e93f0c2fd55b7c9875c999ed02344bf59883c3bf4183e77cfe1484c9d	byte-identical	byte-identical

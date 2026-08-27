@@ -1,0 +1,5 @@
+artifact	standard	packages	files	relationships	validator	status
+xslim-2.1.2+riscy.2.spdx.json	SPDX-2.3	1	222	223	pyspdxtools-0.8.3	pass
+field	value	x	x	x	x	x
+document-namespace	https://github.com/RISCY-SVT/xslim/spdx/2.1.2+riscy.2/80204be22906962c82879112014f255828f69c64	x	x	x	x	pass
+data-license	CC0-1.0	x	x	x	x	pass

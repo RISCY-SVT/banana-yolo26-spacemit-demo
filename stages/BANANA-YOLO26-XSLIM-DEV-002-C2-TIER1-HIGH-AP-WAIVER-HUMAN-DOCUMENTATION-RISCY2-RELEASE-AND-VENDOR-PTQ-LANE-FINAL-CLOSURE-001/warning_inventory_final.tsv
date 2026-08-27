@@ -1,0 +1,11 @@
+surface	final_observation	status	reason
+pytest	212 cases plus 65 subtests; 0 failures/errors/skips; 0 uncaptured warnings	fixed	exact external warning contract is asserted locally
+ruff	all checks passed	fixed	version 0.16.1
+shellcheck	2-of-2 shipped scripts pass	fixed	version 0.10.0.1
+compileall	src/tests/tools/samples pass	fixed	Python 3.12.3
+focused-mypy	11 target modules; 0 errors	fixed	strict with follow-imports=skip; inherited graph audited separately
+whole-tree-mypy	2877 errors in 94 files	accepted-upstream-with-exact-reason	legacy PPQ/XSlim type debt; no false pass claim
+reuse	bad/missing/deprecated/read-error license counts all zero; per-file metadata incomplete	accepted-upstream-with-exact-reason	Apache license/notices/provenance and SPDX SBOM pass
+package-build	one no-match/prune-noop warning class	accepted-upstream-with-exact-reason	export-ignore removes the dataset before build; direct checkout prune remains defensive
+release-publication	initial GitLab CLI link construction rejected plus-sign filepath	fixed	explicit host and sanitized storage paths retain exact public display names and bytes
+blockers	none	fixed	all release gates passed

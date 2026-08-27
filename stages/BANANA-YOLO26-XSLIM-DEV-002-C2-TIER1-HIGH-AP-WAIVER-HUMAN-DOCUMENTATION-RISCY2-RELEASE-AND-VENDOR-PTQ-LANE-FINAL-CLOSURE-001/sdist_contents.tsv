@@ -1,0 +1,7 @@
+artifact	bytes	file_entries	validation	forbidden_payloads
+xslim-2.1.2+riscy.2.tar.gz	401176	207	twine-pass;fresh-install-pass	0
+component	presence	status	x	x
+source-tests-docs-samples	present	pass	x	x
+license-notice-provenance	present	pass	x	x
+sample-bert-npy-dataset	absent	pass	x	x
+model-prediction-dataset-vendor-binary	absent	pass	x	x

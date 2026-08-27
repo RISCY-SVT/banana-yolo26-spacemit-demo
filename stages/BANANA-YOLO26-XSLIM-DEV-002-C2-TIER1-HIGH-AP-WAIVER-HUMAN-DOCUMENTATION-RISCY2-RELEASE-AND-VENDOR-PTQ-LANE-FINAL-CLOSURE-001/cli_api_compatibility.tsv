@@ -1,0 +1,11 @@
+surface	check	result
+xslim-import	fresh-wheel-and-sdist	pass
+version	2.1.2+riscy.2	pass
+xslim	--help-and---version	pass
+xslim-yolo-output-check	--help	pass
+xslim-qdq-boundary-audit	--help	pass
+xslim-spacemit-profile-check	--help	pass
+existing-config-fixtures	JSON-parse-and-factory-smoke	pass
+public-signatures	existing-signatures-unchanged; CLI version/help additive	pass
+quantization-semantics	no quantization-semantic source changed	pass-reuse-accepted-neutrality
+banana-tooling	28 tests	pass

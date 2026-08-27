@@ -1,0 +1,7 @@
+artifact	bytes	file_entries	validation	forbidden_payloads
+xslim-2.1.2+riscy.2-py3-none-any.whl	365913	129	check-wheel-contents-pass;twine-pass	0
+component	presence	status	x	x
+xslim-package	present	pass	x	x
+dist-info-license-notice-provenance	present	pass	x	x
+four-console-entry-points	present	pass	x	x
+model-prediction-dataset-vendor-binary	absent	pass	x	x

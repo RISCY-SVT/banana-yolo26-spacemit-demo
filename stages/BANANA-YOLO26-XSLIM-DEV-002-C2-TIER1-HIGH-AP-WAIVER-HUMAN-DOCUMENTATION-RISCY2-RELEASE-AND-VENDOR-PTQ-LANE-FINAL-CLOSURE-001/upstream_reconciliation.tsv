@@ -1,0 +1,14 @@
+surface	ref	commit	classification	action
+upstream-main	main	9a33f2f770d00fd02ff8bc0f1907135e9bf47f8c	already-present	no-merge; accepted base is current
+upstream-branch	add-yolodecode-function	a8f1e6d73c1dcb61c2c30ceeb240941b6f0883d6	superseded-by-riscy	merged YoloDecode capability already exists in accepted base; no cherry-pick
+upstream-branch	fix/yolo-26-reduce-max	6ad15ebbfaaadc7379602210816499d242c4e2fe	superseded-by-riscy	accepted base already contains merged Reduce work; no cherry-pick
+upstream-branch	copilot/update-readme-and-documentation	f097b471032551c5242f8077271f9c7fc7acd0c7	documentation-only-reusable	downstream documentation independently reconciled with attribution
+upstream-branch	copilot/test-xslim-python-package	7bbcb0d55e4293f78f28d696a25e106ecc038042	test-only-reusable	ideas audited; downstream release tests implemented independently
+upstream-branch	copilot/bump-version-and-add-tests	4e2ec3ae4a2712713590d696292ca5f447e6747e	requires-separate-stage	unmerged semantic/version branch; not selected
+upstream-branch	copilot/fix-onnxslim-fp16-conversion	f1379a649c9bfd31f52d55b6147be4bb8ad6bff5	semantic-source-change	not required for this release; no merge
+upstream-branch	copilot/update-version-number-in-defs	c711dc7d5ec191edfe8cb7171be730acbabade40	packaging-only-reusable	downstream version lookup fixed without taking branch history
+upstream-branch	copilot/upload-whl-to-pypi	995e12371ed1f0548b67380fb39f257388c0350b	not-relevant	PyPI explicitly forbidden; inherited workflow remains fail-closed
+upstream-branch	copilot/add-grid-sample-depth-to-space	9afdbbef6121fe92da2282ba011c9c90047c5d87	semantic-source-change	not required; no merge
+upstream-branch	fix-fp16-function	57a166cd725d7e35a61b2321f045b1a642e2adaa	semantic-source-change	not required; no merge
+upstream-branch	fix-l2-norm	01a0a9c86fd3a078db494eaf2c21690868643619	semantic-source-change	not required; no merge
+upstream-branch	fix-package	facb251a9c680488bf7a951213f30a7a5c55867c	packaging-only-reusable	not required; release packaging validated independently

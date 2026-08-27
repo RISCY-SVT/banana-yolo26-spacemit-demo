@@ -1,0 +1,2 @@
+tool	version	scope	result
+ruff	0.16.1	complete XSlim release tree	pass-all-checks

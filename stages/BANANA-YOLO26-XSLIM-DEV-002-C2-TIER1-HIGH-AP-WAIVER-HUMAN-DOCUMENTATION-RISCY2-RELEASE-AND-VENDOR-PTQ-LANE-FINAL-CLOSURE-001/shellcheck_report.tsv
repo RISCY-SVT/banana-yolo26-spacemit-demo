@@ -1,0 +1,3 @@
+script	shebang	strict_mode	bash_n	shellcheck
+samples/demo.sh	/usr/bin/env-bash	set-euo-pipefail	pass	pass
+samples/download_data.sh	/usr/bin/env-bash	set-euo-pipefail	pass	pass

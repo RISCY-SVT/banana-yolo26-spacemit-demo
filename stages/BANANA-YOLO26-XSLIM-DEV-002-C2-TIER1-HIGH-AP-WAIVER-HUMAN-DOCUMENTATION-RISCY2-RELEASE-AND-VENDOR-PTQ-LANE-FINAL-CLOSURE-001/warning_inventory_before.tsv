@@ -1,0 +1,9 @@
+surface	observation	count	initial_status	final_decision
+pytest	third-party onnxconverter_common FP16 truncation warning emissions	8	warning	fixed as narrowly asserted expected behavior; final summary has zero uncaptured warnings
+shellcheck	SC2148 missing shell identity in samples/download_data.sh	1	warning	fixed with bash shebang and strict mode
+focused-mypy	annotation/import boundary errors in the first focused audit	14-in-4-files	debt	fixed for the final 11-module isolated strict surface
+whole-tree-mypy	inherited untyped PPQ/XSlim dependency graph	2877-in-94-files	debt	accepted inherited debt; not represented as a pass
+reuse	missing per-file SPDX metadata	212-of-241-without-copyright;241-of-241-without-license-info	debt	accepted upstream aggregate-license debt; aggregate licenses/notices/SBOM validated
+setuptools	no-match/prune-noop message in clean exported source	1-class	warning	accepted harmless hygiene rule retained for direct-checkout builds
+cli-version	source-tree VERSION_NUMBER lookup used wrong parent depth	1	bug	fixed; wheel/sdist report exact release version
+install-smoke	initial harness used an invalid import/path placeholder	2-attempts	harness-error	excluded; corrected clean wheel/sdist matrix passed

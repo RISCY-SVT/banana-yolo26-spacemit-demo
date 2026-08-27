@@ -1,0 +1,17 @@
+error_code	count	classification
+no-untyped-def	754	inherited-legacy-debt
+attr-defined	471	inherited-legacy-debt
+assignment	382	inherited-legacy-debt
+no-untyped-call	241	inherited-legacy-debt
+arg-type	198	inherited-legacy-debt
+type-arg	193	inherited-legacy-debt
+import-untyped	90	third-party-and-legacy-debt
+no-any-return	81	inherited-legacy-debt
+var-annotated	62	inherited-legacy-debt
+misc	61	inherited-legacy-debt
+override	55	inherited-legacy-debt
+list-item	51	inherited-legacy-debt
+return-value	46	inherited-legacy-debt
+operator	40	inherited-legacy-debt
+other-codes	152	inherited-legacy-debt
+TOTAL	2877-errors-in-94-files-checked-117-source-files	accepted-not-release-blocking; not claimed as pass

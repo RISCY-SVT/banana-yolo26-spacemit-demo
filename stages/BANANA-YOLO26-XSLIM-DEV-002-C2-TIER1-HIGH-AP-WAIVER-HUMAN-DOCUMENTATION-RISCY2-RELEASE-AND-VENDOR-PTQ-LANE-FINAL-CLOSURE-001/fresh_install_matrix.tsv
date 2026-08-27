@@ -1,0 +1,6 @@
+artifact	clean_environment	install	import	version	four_cli_help	config_smoke	pip_check	uninstall
+wheel	wheel-install-venv	pass	pass	2.1.2+riscy.2	pass	pass	pass	pass
+sdist	sdist-install-venv	pass	pass	2.1.2+riscy.2	pass	pass	pass	pass
+initial-wheel-smoke-attempt-1	excluded-intermediate	not-applicable	fail-wrong-test-import	not-run	not-run	not-run	not-run	not-run
+initial-wheel-smoke-attempt-2	excluded-intermediate	pass	pass	pass	not-run	fail-placeholder-calibration-list	not-run	not-run
+corrected-clean-matrix	accepted	pass	pass	pass	pass	pass	pass	pass

@@ -1,0 +1,7 @@
+artifact	bytes	file_entries	validation	forbidden_payloads
+xslim-2.1.2+riscy.2-docs.tar.gz	68382	58	128-links-and-106-executable-snippets-pass	0
+component	presence	status	x	x
+root-human-docs	present	pass	x	x
+English-user-guides	present	pass	x	x
+Russian-guides	present	pass	x	x
+sanitized-example-configs	present	pass	x	x

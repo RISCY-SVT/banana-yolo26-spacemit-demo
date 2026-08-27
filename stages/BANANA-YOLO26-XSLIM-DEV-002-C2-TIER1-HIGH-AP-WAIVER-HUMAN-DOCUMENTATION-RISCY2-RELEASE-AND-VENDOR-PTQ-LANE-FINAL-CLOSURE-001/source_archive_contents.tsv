@@ -1,0 +1,6 @@
+artifact	bytes	file_entries	commit	tree	forbidden_payloads
+xslim-2.1.2+riscy.2-source.tar.gz	431677	222	80204be22906962c82879112014f255828f69c64	535f0b4d3244020ad6bec747e4ec6dc7b7f6330c	0
+check	observation	status	x	x	x
+escaping-symlinks	0	pass	x	x	x
+private-path-sentinels	one allowlisted negative-test assertion; no actual private path	pass	x	x	x
+models-predictions-datasets-vendor-binaries	0	pass	x	x	x
