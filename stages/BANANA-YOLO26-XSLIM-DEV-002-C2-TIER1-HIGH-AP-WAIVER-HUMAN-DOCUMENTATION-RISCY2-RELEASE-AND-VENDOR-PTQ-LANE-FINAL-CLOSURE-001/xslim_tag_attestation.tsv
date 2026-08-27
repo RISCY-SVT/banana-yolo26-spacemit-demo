@@ -1,0 +1,7 @@
+field	local	github	gitlab	status
+tag_name	v2.1.2-riscy.2	v2.1.2-riscy.2	v2.1.2-riscy.2	pass
+tag_type	annotated	annotated	annotated	pass
+tag_object	30ab31f2c30983d9f0975fbf8be539d04faa4edb	30ab31f2c30983d9f0975fbf8be539d04faa4edb	30ab31f2c30983d9f0975fbf8be539d04faa4edb	pass
+peeled_commit	80204be22906962c82879112014f255828f69c64	80204be22906962c82879112014f255828f69c64	80204be22906962c82879112014f255828f69c64	pass
+tag_message	XSlim-2.1.2+riscy.2-downstream-release	XSlim-2.1.2+riscy.2-downstream-release	XSlim-2.1.2+riscy.2-downstream-release	pass
+previous_tag_v2.1.2-riscy.1	unchanged	unchanged	unchanged	pass

@@ -1,0 +1,13 @@
+field	value	status
+package	xslim	pass
+version	2.1.2+riscy.2	pass
+branch	riscy/k1x-yolo26	pass
+commit	80204be22906962c82879112014f255828f69c64	pass
+tree	535f0b4d3244020ad6bec747e4ec6dc7b7f6330c	pass
+tag	v2.1.2-riscy.2	pass
+tag_object	30ab31f2c30983d9f0975fbf8be539d04faa4edb	pass
+tag_peeled	80204be22906962c82879112014f255828f69c64	pass
+github_release	https://github.com/RISCY-SVT/xslim/releases/tag/v2.1.2-riscy.2	pass
+gitlab_release	https://gitlab.itglobal.com/riscy/sw/xslim/-/releases/v2.1.2-riscy.2	pass
+asset_count	8	pass
+pypi	not-published	pass-forbidden
