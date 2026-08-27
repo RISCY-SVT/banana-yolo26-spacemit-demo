@@ -115,21 +115,28 @@ def expected_keys() -> set[tuple[str, int, int, str, str]]:
 
 
 def summarize_resource(path: Path) -> dict[str, int]:
-    rows = [
+    all_rows = [
         row
         for row in read_tsv(path)
         if int(row["rss_kib"]) > 0
         and int(row["threads"]) > 0
         and int(row["fds"]) > 0
     ]
-    if not rows:
+    if not all_rows:
         raise RuntimeError(f"no resource samples: {path}")
+    steady_candidates = [row for row in all_rows if int(row["sample"]) >= 30]
+    if len(steady_candidates) < 2:
+        raise RuntimeError(f"no post-initialization resource samples: {path}")
+    rows = steady_candidates[:-1]
     values = {
         key: [int(row[key]) for row in rows]
         for key in ("rss_kib", "peak_rss_kib", "fds", "threads")
     }
     return {
-        "resource_samples": len(rows),
+        "resource_samples": len(all_rows),
+        "steady_resource_samples": len(rows),
+        "terminal_samples_excluded": 1,
+        "rss_startup_first_kib": int(all_rows[0]["rss_kib"]),
         "rss_min_kib": min(values["rss_kib"]),
         "rss_max_kib": max(values["rss_kib"]),
         "hwm_max_kib": max(values["peak_rss_kib"]),
@@ -164,6 +171,7 @@ def main() -> int:
     values_by_slot: dict[tuple[str, int, int, str, str], list[float]] = {}
     output_hashes: dict[tuple[str, str], set[str]] = defaultdict(set)
     fnv_hashes: dict[tuple[str, str], set[str]] = defaultdict(set)
+    sample_hash_modes: set[str] = set()
     observed: set[tuple[str, int, int, str, str]] = set()
 
     for directory in sorted(path for path in options.performance_root.iterdir() if path.is_dir()):
@@ -189,7 +197,15 @@ def main() -> int:
             raise RuntimeError(f"expected 100 measured runs in {key}, got {len(sample_rows)}")
         surface = (model, provider)
         output_hashes[surface].add(status["output_sha256"])
-        fnv_hashes[surface].update(row["output_fnv1a64"] for row in sample_rows)
+        sample_fields = set(sample_rows[0])
+        required_sample_fields = {"repeat", "run", "inference_us", "tail_us", "total_us"}
+        if not required_sample_fields.issubset(sample_fields):
+            raise RuntimeError(f"timing sample contract drift: {key}")
+        if "output_fnv1a64" in sample_fields:
+            sample_hash_modes.add("per-run-fnv1a64")
+            fnv_hashes[surface].update(row["output_fnv1a64"] for row in sample_rows)
+        else:
+            sample_hash_modes.add("not-emitted-by-bound-runner")
         resource = summarize_resource(directory / "resource.tsv")
         parsed = parse_samples(directory / "samples.tsv")
         for metric, values in parsed.items():
@@ -253,7 +269,10 @@ def main() -> int:
         raise RuntimeError(f"performance schedule mismatch; missing={missing[:3]} extra={extra[:3]}")
     if any(len(values) != 1 for values in output_hashes.values()):
         raise RuntimeError("output SHA changed within an exact model/provider surface")
-    if any(len(values) != 1 for values in fnv_hashes.values()):
+    if len(sample_hash_modes) != 1:
+        raise RuntimeError(f"mixed per-run output-hash contracts: {sample_hash_modes}")
+    per_run_hashes = sample_hash_modes == {"per-run-fnv1a64"}
+    if per_run_hashes and any(len(values) != 1 for values in fnv_hashes.values()):
         raise RuntimeError("per-run output hash changed within an exact model/provider surface")
     if sum(row["provider"] == "spacemit" for row in creation_rows if row["model"] == "B2") < 10:
         raise RuntimeError("fewer than ten clean B2 EP session creations")
@@ -384,6 +403,7 @@ def main() -> int:
     resource_pass = all(
         int(row["fds_max"]) - int(row["fds_min"]) <= 2
         and int(row["threads_max"]) - int(row["threads_min"]) <= 2
+        and int(row["rss_max_kib"]) - int(row["rss_min_kib"]) <= 16384
         for row in slot_rows
     )
 
@@ -419,7 +439,12 @@ def main() -> int:
         "`performance-equivalent-within-noise`. "
         f"Governor/frequency/thermal state: `{'pass' if state_pass else 'fail'}`; per-slot "
         f"resource bounds: `{'pass' if resource_pass else 'fail'}`. CPU and file-pipeline "
-        "rows are reference surfaces and no camera path was run.\n",
+        "rows are reference surfaces and no camera path was run. The identity-bound Stage65E "
+        f"runner per-run output fingerprint contract is `{'emitted-and-stable' if per_run_hashes else 'not-emitted'}`; "
+        "determinism is therefore gated by exact output SHA-256 across every fresh process/session slot. "
+        "All resource samples are retained; the normal process/session initialization ramp is reported "
+        "separately and FD/thread/RSS bounds use samples 30 onward while excluding the final "
+        "process-teardown observation, matching the stability contract.\n",
         encoding="utf-8",
     )
     return 0 if passed else 3

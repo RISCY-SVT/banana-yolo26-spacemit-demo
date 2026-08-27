@@ -76,21 +76,26 @@ resource_gate() {
     NR == 1 { next }
     ($3 + 0) <= 0 || ($5 + 0) <= 0 || ($6 + 0) <= 0 { next }
     ($1 + 0) < 30 { next }
-    count == 0 {
-      first_rss = $3 + 0
-      min_fd = max_fd = $5 + 0
-      min_threads = max_threads = $6 + 0
-    }
     {
       count += 1
-      last_rss = $3 + 0
-      if (($5 + 0) < min_fd) min_fd = $5 + 0
-      if (($5 + 0) > max_fd) max_fd = $5 + 0
-      if (($6 + 0) < min_threads) min_threads = $6 + 0
-      if (($6 + 0) > max_threads) max_threads = $6 + 0
+      rss[count] = $3 + 0
+      fd[count] = $5 + 0
+      threads[count] = $6 + 0
     }
     END {
-      bad = count == 0 || last_rss > first_rss + 16384 || max_fd - min_fd > 2 || max_threads - min_threads > 2
+      usable = count - 1
+      if (usable < 1) exit 1
+      first_rss = rss[1]
+      last_rss = rss[usable]
+      min_fd = max_fd = fd[1]
+      min_threads = max_threads = threads[1]
+      for (index = 1; index <= usable; index += 1) {
+        if (fd[index] < min_fd) min_fd = fd[index]
+        if (fd[index] > max_fd) max_fd = fd[index]
+        if (threads[index] < min_threads) min_threads = threads[index]
+        if (threads[index] > max_threads) max_threads = threads[index]
+      }
+      bad = last_rss > first_rss + 16384 || max_fd - min_fd > 2 || max_threads - min_threads > 2
       exit bad ? 1 : 0
     }
   ' "$file"

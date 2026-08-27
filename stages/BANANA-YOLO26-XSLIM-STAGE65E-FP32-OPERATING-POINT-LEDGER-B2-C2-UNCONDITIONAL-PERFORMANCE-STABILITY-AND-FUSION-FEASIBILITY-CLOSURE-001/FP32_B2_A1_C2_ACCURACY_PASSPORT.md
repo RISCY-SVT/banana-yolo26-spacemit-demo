@@ -15,4 +15,21 @@ All rows use the same source lineage, six-output split contract, common FP32 tai
 | C2_BOARD_CPU | 0.378625790211 | 0.178835569319 | 0.425950951488 | 0.558499516351 | 0.370355738654 | 0.645939798038 | 0.788051671109 | 638556 |
 | C2_BOARD_EP | 0.378850178125 | 0.178210773539 | 0.425354181318 | 0.556125230739 | 0.367130773892 | 0.645575537507 | 0.782956956986 | 633640 |
 
-C2 is the same-source INT8 mAP/AP leader but remains subject to the immutable Stage65D-R1 recall-contract failure. B2 remains the universal vendor control; A1 remains historical frozen evidence.
+## Board EP operating points
+
+The table uses exact COCOeval matching at IoU 0.50, maxDets 100 and area `all`; ignored/crowd rows remain excluded from TP/FP/FN according to the accepted contract.
+
+| Surface | Score | TP | FP | FN | Precision | Recall | F1 | Detections |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| B2_BOARD_EP | 0.001 | 30214 | 535506 | 6121 | 0.053408 | 0.831540 | 0.100370 | 591784 |
+| B2_BOARD_EP | 0.010 | 26820 | 101815 | 9515 | 0.208497 | 0.738131 | 0.325150 | 144600 |
+| B2_BOARD_EP | 0.050 | 21565 | 19925 | 14770 | 0.519764 | 0.593505 | 0.554192 | 44434 |
+| B2_BOARD_EP | 0.250 | 14427 | 2731 | 21908 | 0.840832 | 0.397055 | 0.539398 | 17449 |
+| B2_BOARD_EP | 0.500 | 9818 | 835 | 26517 | 0.921618 | 0.270208 | 0.417894 | 10711 |
+| C2_BOARD_EP | 0.001 | 30168 | 518326 | 6167 | 0.055002 | 0.830274 | 0.103169 | 574583 |
+| C2_BOARD_EP | 0.010 | 26877 | 101454 | 9458 | 0.209435 | 0.739700 | 0.326443 | 144196 |
+| C2_BOARD_EP | 0.050 | 21618 | 20099 | 14717 | 0.518206 | 0.594964 | 0.553938 | 44727 |
+| C2_BOARD_EP | 0.250 | 13361 | 2400 | 22974 | 0.847725 | 0.367717 | 0.512938 | 15974 |
+| C2_BOARD_EP | 0.500 | 9299 | 690 | 27036 | 0.930924 | 0.255924 | 0.401477 | 10038 |
+
+C2 is the same-source INT8 mAP/AP leader but remains subject to the immutable Stage65D-R1 recall-contract failure. B2 remains the universal vendor control; A1 remains historical frozen evidence. The operating-point rows show why an application-specific threshold and false-negative budget are mandatory before any C2 waiver.

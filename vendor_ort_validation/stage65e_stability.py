@@ -71,6 +71,7 @@ def collect(root: Path) -> dict[str, object]:
     aggregate: dict[str, list[float]] = defaultdict(list)
     output_hashes: dict[str, set[str]] = defaultdict(set)
     fnv_hashes: dict[str, set[str]] = defaultdict(set)
+    sample_hash_modes: set[str] = set()
     thermal: list[dict[str, object]] = []
     diagnostics: list[dict[str, object]] = []
     seen: set[tuple[str, str, str]] = set()
@@ -97,11 +98,18 @@ def collect(root: Path) -> dict[str, object]:
         if len(sample_rows) != expected_runs:
             raise RuntimeError(f"sample count mismatch: {directory}")
         values = {"inference": [], "tail": [], "two_stage": []}
+        sample_fields = set(sample_rows[0])
+        required_sample_fields = {"repeat", "run", "inference_us", "tail_us", "total_us"}
+        if not required_sample_fields.issubset(sample_fields):
+            raise RuntimeError(f"timing sample contract drift: {directory}")
+        has_per_run_hash = "output_fnv1a64" in sample_fields
+        sample_hash_modes.add("per-run-fnv1a64" if has_per_run_hash else "not-emitted-by-bound-runner")
         for row in sample_rows:
             values["inference"].append(float(row["inference_us"]))
             values["tail"].append(float(row["tail_us"]))
             values["two_stage"].append(float(row["total_us"]))
-            fnv_hashes[model].add(row["output_fnv1a64"])
+            if has_per_run_hash:
+                fnv_hashes[model].add(row["output_fnv1a64"])
         log = (directory / "run.log").read_text(encoding="utf-8", errors="replace")
         if "stage64_result status=pass" not in log:
             raise RuntimeError(f"missing runner pass marker: {directory}")
@@ -141,11 +149,12 @@ def collect(root: Path) -> dict[str, object]:
         ]
         if not resource_rows:
             raise RuntimeError(f"missing resource samples: {directory}")
-        steady_resource_rows = [
+        steady_candidates = [
             row for row in resource_rows if int(row["sample"]) >= 30
         ]
-        if not steady_resource_rows:
+        if len(steady_candidates) < 2:
             raise RuntimeError(f"missing post-initialization resource samples: {directory}")
+        steady_resource_rows = steady_candidates[:-1]
         numeric = {
             name: [int(row[name]) for row in steady_resource_rows]
             for name in (
@@ -164,6 +173,7 @@ def collect(root: Path) -> dict[str, object]:
             "model": model,
             "samples_total": len(resource_rows),
             "steady_samples": len(steady_resource_rows),
+            "terminal_samples_excluded": 1,
             "rss_startup_first_kib": int(resource_rows[0]["rss_kib"]),
             "rss_first_kib": numeric["rss_kib"][0],
             "rss_last_kib": numeric["rss_kib"][-1],
@@ -194,12 +204,15 @@ def collect(root: Path) -> dict[str, object]:
                         "source": fields[1],
                         "value": fields[2],
                     })
+    if len(sample_hash_modes) != 1:
+        raise RuntimeError(f"mixed per-run output-hash contracts in {root}: {sample_hash_modes}")
     return {
         "windows": windows,
         "resources": resources,
         "aggregate": aggregate,
         "output_hashes": output_hashes,
         "fnv_hashes": fnv_hashes,
+        "sample_hash_mode": next(iter(sample_hash_modes)),
         "thermal": thermal,
         "diagnostics": diagnostics,
     }
@@ -217,6 +230,10 @@ def main() -> int:
     b2_long = collect(options.b2_long_root)
     c2_long = collect(options.c2_long_root)
     collections = (short, b2_long, c2_long)
+    sample_hash_modes = {str(collected["sample_hash_mode"]) for collected in collections}
+    if len(sample_hash_modes) != 1:
+        raise RuntimeError(f"mixed soak output-hash contracts: {sample_hash_modes}")
+    per_run_hashes = sample_hash_modes == {"per-run-fnv1a64"}
 
     short_rows: list[dict[str, object]] = []
     for model in ("B2", "C2"):
@@ -269,14 +286,14 @@ def main() -> int:
         short_pass = (
             short_runs == 2000
             and len(short["output_hashes"][model]) == 1
-            and len(short["fnv_hashes"][model]) == 1
+            and (not per_run_hashes or len(short["fnv_hashes"][model]) == 1)
             and all(row["status"] == "pass" for row in short["diagnostics"] if row["model"] == model)
         )
         hash_rows.append({
             "surface": f"short-order-balanced-{model}",
             "runs": short_runs,
             "output_sha256_count": len(short["output_hashes"][model]),
-            "output_fnv1a64_count": len(short["fnv_hashes"][model]),
+            "output_fnv1a64_count": len(short["fnv_hashes"][model]) if per_run_hashes else "not-emitted-by-bound-runner",
             "status": "pass" if short_pass else "fail",
         })
         windows = [
@@ -294,7 +311,7 @@ def main() -> int:
             len(windows) == 10
             and long_runs == 10000
             and len(combined_output_hashes) == 1
-            and len(combined_fnv_hashes) == 1
+            and (not per_run_hashes or len(combined_fnv_hashes) == 1)
             and 0.95 <= drift <= 1.05
             and all(row["status"] == "pass" for row in long_collection["diagnostics"])
         )
@@ -302,7 +319,7 @@ def main() -> int:
             "surface": f"{model.lower()}-10x1000-clean-session",
             "runs": long_runs,
             "output_sha256_count": len(combined_output_hashes),
-            "output_fnv1a64_count": len(combined_fnv_hashes),
+            "output_fnv1a64_count": len(combined_fnv_hashes) if per_run_hashes else "not-emitted-by-bound-runner",
             "status": "pass" if long_pass else "fail",
         })
         passed = passed and short_pass and long_pass
@@ -317,7 +334,9 @@ def main() -> int:
         "(accepted range 0.95..1.05). "
         f"Thermal/frequency state: `{'pass' if thermal_pass else 'fail'}`. The first 30 valid "
         "one-second resource samples remain in raw evidence as the expected process/session "
-        "initialization ramp; RSS/FD/thread drift gates use the post-initialization window.\n",
+        "initialization ramp; RSS/FD/thread drift gates use the post-initialization window and "
+        "exclude the final process-teardown observation.\n"
+        f"The bound runner per-run output fingerprint contract is `{'emitted-and-stable' if per_run_hashes else 'not-emitted'}`; exact final output SHA-256 is instead required across all independent short and long process/session segments.\n",
         encoding="utf-8",
     )
     return 0 if passed else 3

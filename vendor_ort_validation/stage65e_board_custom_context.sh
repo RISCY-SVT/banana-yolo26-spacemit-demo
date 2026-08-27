@@ -53,6 +53,24 @@ snapshot() {
   [[ -s $file ]] || return 3
 }
 
+output_semantic_gate() {
+  local file=$1
+  python3 - "$file" <<'PY'
+import math
+import struct
+import sys
+
+payload = open(sys.argv[1], "rb").read()
+if len(payload) != 1800 * 4:
+    raise SystemExit(1)
+values = struct.unpack("<1800f", payload)
+if not all(math.isfinite(value) for value in values):
+    raise SystemExit(1)
+if len(set(values[4::6])) < 2:
+    raise SystemExit(1)
+PY
+}
+
 run_vendor() {
   local model=$1 inference directory
   case "$model" in
@@ -70,6 +88,7 @@ run_vendor() {
       --samples-output "$directory/samples.tsv" --intra-threads 4 --inter-threads 1 \
       --warmup 10 --runs 100 --repeats 5 >"$directory/run.log" 2>&1
   snapshot "$directory/state-after.tsv"
+  output_semantic_gate "$directory/output.bin"
   sha256sum "$directory/output.bin" "$directory/samples.tsv" >"$directory/output-sha256.txt"
 }
 

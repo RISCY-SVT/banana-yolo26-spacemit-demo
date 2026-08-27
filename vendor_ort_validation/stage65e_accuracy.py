@@ -384,6 +384,55 @@ def delta_rows(table: dict[str, dict[str, object]], reference: str, kind: str) -
     return rows
 
 
+def write_accuracy_passport(
+    path: Path,
+    absolute: list[dict[str, object]],
+    census: list[dict[str, object]],
+) -> None:
+    lines = [
+        "# FP32/B2/A1/C2 accuracy passport", "",
+        "All rows use the same source lineage, six-output split contract, common FP32 tail, val2017 list and COCO evaluator. Host, board CPU and board EP remain explicit execution surfaces.", "",
+        "| Surface | mAP50-95 | AP-S | AP-M | AP-L | AR-S | AR-M | AR-L | Predictions |",
+        "|---|---:|---:|---:|---:|---:|---:|---:|---:|",
+    ]
+    for row in absolute:
+        lines.append(
+            f"| {row['surface']} | {float(row['map50_95']):.12f} | {float(row['ap_small']):.12f} | "
+            f"{float(row['ap_medium']):.12f} | {float(row['ap_large']):.12f} | "
+            f"{float(row['ar_small']):.12f} | {float(row['ar_medium']):.12f} | "
+            f"{float(row['ar_large']):.12f} | {row['prediction_count']} |"
+        )
+    lines.extend([
+        "",
+        "## Board EP operating points",
+        "",
+        "The table uses exact COCOeval matching at IoU 0.50, maxDets 100 and area `all`; ignored/crowd rows remain excluded from TP/FP/FN according to the accepted contract.",
+        "",
+        "| Surface | Score | TP | FP | FN | Precision | Recall | F1 | Detections |",
+        "|---|---:|---:|---:|---:|---:|---:|---:|---:|",
+    ])
+    selected = [
+        row
+        for row in census
+        if row["surface"] in {"B2_BOARD_EP", "C2_BOARD_EP"}
+        and float(row["iou_threshold"]) == 0.50
+        and int(row["max_dets"]) == 100
+        and row["area"] == "all"
+    ]
+    selected.sort(key=lambda row: (str(row["surface"]), float(row["score_threshold"])))
+    for row in selected:
+        lines.append(
+            f"| {row['surface']} | {float(row['score_threshold']):.3f} | {row['tp']} | "
+            f"{row['fp']} | {row['fn']} | {float(row['precision']):.6f} | "
+            f"{float(row['recall']):.6f} | {float(row['f1']):.6f} | {row['detections']} |"
+        )
+    lines.extend([
+        "",
+        "C2 is the same-source INT8 mAP/AP leader but remains subject to the immutable Stage65D-R1 recall-contract failure. B2 remains the universal vendor control; A1 remains historical frozen evidence. The operating-point rows show why an application-specific threshold and false-negative budget are mandatory before any C2 waiver.",
+    ])
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--raw-root", required=True, type=Path)
@@ -499,22 +548,10 @@ def main() -> int:
         "re-accumulation checks against every accepted aggregate metric.\n",
         encoding="utf-8",
     )
-    passport_lines = [
-        "# FP32/B2/A1/C2 accuracy passport", "",
-        "All rows use the same source lineage, six-output split contract, common FP32 tail, val2017 list and COCO evaluator. Host, board CPU and board EP remain explicit execution surfaces.", "",
-        "| Surface | mAP50-95 | AP-S | AP-M | AP-L | AR-S | AR-M | AR-L | Predictions |",
-        "|---|---:|---:|---:|---:|---:|---:|---:|---:|",
-    ]
-    for row in absolute:
-        passport_lines.append(
-            f"| {row['surface']} | {float(row['map50_95']):.12f} | {float(row['ap_small']):.12f} | "
-            f"{float(row['ap_medium']):.12f} | {float(row['ap_large']):.12f} | "
-            f"{float(row['ar_small']):.12f} | {float(row['ar_medium']):.12f} | "
-            f"{float(row['ar_large']):.12f} | {row['prediction_count']} |"
-        )
-    passport_lines.extend(("", "C2 is the same-source INT8 mAP/AP leader but remains subject to the immutable Stage65D-R1 recall-contract failure. B2 remains the universal vendor control; A1 remains historical frozen evidence."))
-    (options.tracked_root / "FP32_B2_A1_C2_ACCURACY_PASSPORT.md").write_text(
-        "\n".join(passport_lines) + "\n", encoding="utf-8"
+    write_accuracy_passport(
+        options.tracked_root / "FP32_B2_A1_C2_ACCURACY_PASSPORT.md",
+        absolute,
+        census,
     )
     failures = [row for row in validation if row["status"] != "pass"]
     if failures:

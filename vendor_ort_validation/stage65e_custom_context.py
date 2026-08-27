@@ -126,8 +126,15 @@ def main() -> int:
     vendor_rows: list[dict[str, object]] = []
     for model in ("B2", "C2"):
         samples = read_tsv(options.raw_root / f"vendor-{model}/samples.tsv")
-        if len(samples) != 500 or len({row["output_fnv1a64"] for row in samples}) != 1:
-            raise RuntimeError(f"vendor {model} timing count or output hash changed")
+        required_sample_fields = {"repeat", "run", "inference_us", "tail_us", "total_us"}
+        if len(samples) != 500 or not required_sample_fields.issubset(samples[0]):
+            raise RuntimeError(f"vendor {model} timing contract changed")
+        per_run_hashes = "output_fnv1a64" in samples[0]
+        if per_run_hashes and len({row["output_fnv1a64"] for row in samples}) != 1:
+            raise RuntimeError(f"vendor {model} per-run output hash changed")
+        output_path = options.raw_root / f"vendor-{model}/output.bin"
+        if output_path.stat().st_size != 1800 * 4:
+            raise RuntimeError(f"vendor {model} output-size contract changed")
         log = (options.raw_root / f"vendor-{model}/run.log").read_text(encoding="utf-8", errors="replace")
         if "stage64_result status=pass" not in log:
             raise RuntimeError(f"vendor {model} context run did not pass")
@@ -142,7 +149,8 @@ def main() -> int:
                 "role": role,
                 "input_sha256": "64d11ef4c1e470282a385f7d293607b639da2f40405c92238897253dd1e23f14",
                 **stats([float(row[field]) for row in samples]),
-                "caveat": "same-source vendor S8-QDQ; common FP32 tail is separate",
+                "caveat": "same-source vendor S8-QDQ; common FP32 tail is separate; "
+                + ("per-run FNV stable" if per_run_hashes else "bound runner does not emit per-run FNV; final output SHA is identity-bound"),
             })
     write_tsv(options.tracked_root / "same_source_vendor_performance_table.tsv", vendor_rows)
 

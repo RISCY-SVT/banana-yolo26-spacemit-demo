@@ -15,6 +15,20 @@ import onnx
 from onnx import TensorProto
 
 
+STAGE64_DIRECT_E2E = Path(
+    "/data/worktrees/banana-yolo26-xslim211-s8-qdq-validation/stages/"
+    "BANANA-YOLO26-VENDOR-ORT-STAGE64-XSLIM211-AND-VENDOR-COMMIT-S8-QDQ-"
+    "YOLO26-FULLMODEL-COCO-AND-RT206-GATE-001/direct_e2e_diagnostic.tsv"
+)
+STAGE64_DIRECT_E2E_SHA256 = (
+    "064b9b89086f0a9c3bdcc84420a9f084f3c9a72fc13c4e3e8e0e9f4765818422"
+)
+STAGE64_CAUSAL_DECISION = STAGE64_DIRECT_E2E.with_name("causal_decision.md")
+STAGE64_CAUSAL_DECISION_SHA256 = (
+    "15c892bc2529900dcc91a591187110943ce4483fbb3e85b04e5388abc0ab1565"
+)
+
+
 STATS_RE = re.compile(
     r"stage46_stats metric=wall mean_us=(?P<mean>[0-9.]+).*?"
     r"median_us=(?P<median>[0-9.]+).*?p95_us=(?P<p95>[0-9.]+)"
@@ -177,6 +191,35 @@ def graph_summary(path: Path) -> dict[str, object]:
     }
 
 
+def accepted_fixture_signature(root: Path, model: str) -> list[tuple[int, str]]:
+    fixture = root / f"{model}-spacemit-fixture"
+    boundary_dir = fixture / "boundaries"
+    files = sorted(boundary_dir.glob("boundary-*.bin"))
+    expected_files = [boundary_dir / f"boundary-{index}.bin" for index in range(6)]
+    if files != expected_files:
+        raise RuntimeError(f"accepted {model} fixture does not contain exactly six ordered boundaries")
+    signature = [(path.stat().st_size, sha256(path)) for path in expected_files]
+    declared = []
+    for line in (fixture / "boundary-sha256.txt").read_text(encoding="utf-8").splitlines():
+        digest, _path = line.split(maxsplit=1)
+        declared.append(digest)
+    if declared != [digest for _bytes, digest in signature]:
+        raise RuntimeError(f"accepted {model} fixture boundary manifest drift")
+    return signature
+
+
+def probe_boundary_signature(
+    path: Path,
+    expected_names: list[str],
+) -> list[tuple[int, str]]:
+    rows = read_tsv(path)
+    if [int(row["index"]) for row in rows] != list(range(6)):
+        raise RuntimeError(f"probe boundary ordering drift: {path}")
+    if [row["name"] for row in rows] != expected_names:
+        raise RuntimeError(f"probe boundary-name contract drift: {path}")
+    return [(int(row["bytes"]), row["sha256"]) for row in rows]
+
+
 def status_markdown(title: str, state: str, paragraphs: list[str]) -> str:
     body = "\n\n".join(paragraphs)
     return f"# {title}\n\nStatus: `{state}`.\n\n{body}\n"
@@ -189,6 +232,7 @@ def main() -> int:
     parser.add_argument("--frozen-identity", required=True, type=Path)
     parser.add_argument("--performance-ratios", required=True, type=Path)
     parser.add_argument("--tail-timing", required=True, type=Path)
+    parser.add_argument("--accepted-fixture-root", required=True, type=Path)
     parser.add_argument("--xslim-root", required=True, type=Path)
     parser.add_argument("--runtime-root", required=True, type=Path)
     options = parser.parse_args()
@@ -218,6 +262,10 @@ def main() -> int:
         raise RuntimeError("six-output host/device boundary does not match the common tail")
     if summaries["B2"]["qdq"] != 812 or summaries["C2"]["qdq"] != 812:
         raise RuntimeError("frozen Q/DQ census changed")
+    fixture_signatures = {
+        model: accepted_fixture_signature(options.accepted_fixture_root, model)
+        for model in ("B2", "C2")
+    }
     for name, dtype, shape in tail_inputs:
         census_rows.append({
             "model": "B2/C2-common",
@@ -256,6 +304,7 @@ def main() -> int:
                 "boundary_count": status["boundary_count"],
                 "boundary_manifest_sha256": status["boundary_manifest_sha256"],
                 "six_boundary_equal_to_disable": "unresolved",
+                "six_boundary_equal_to_accepted_fixture": "unresolved",
                 "fused_subgraphs": len(dumps),
                 "partition_nodes": "unavailable",
                 "partition_inputs": "unavailable",
@@ -293,6 +342,7 @@ def main() -> int:
             "boundary_count": boundary_count,
             "boundary_manifest_sha256": boundary_manifest_hash,
             "six_boundary_equal_to_disable": "pending",
+            "six_boundary_equal_to_accepted_fixture": "pending",
             "fused_subgraphs": 1,
             "partition_nodes": partition["nodes"],
             "partition_inputs": partition["inputs"],
@@ -327,6 +377,16 @@ def main() -> int:
         row["six_boundary_equal_to_disable"] = "yes" if boundaries_equal else "no"
         if not boundaries_equal:
             row["decision"] = "reject-six-boundary-drift"
+        probe_signature = probe_boundary_signature(
+            options.raw_root
+            / f"optimization-{row['model']}-{row['opt_level']}"
+            / "boundary-output-manifest.tsv",
+            [name for name, _dtype, _shape in summaries[str(row["model"])]["output_contract"]],
+        )
+        fixture_equal = probe_signature == fixture_signatures[str(row["model"])]
+        row["six_boundary_equal_to_accepted_fixture"] = "yes" if fixture_equal else "no"
+        if not fixture_equal:
+            row["decision"] = "reject-accepted-fixture-output-drift"
         disable_topology_hash = next(
             item["partition_topology_sha256"]
             for item in optimization_rows
@@ -419,13 +479,33 @@ def main() -> int:
     yolo_source = options.xslim_root / "src/xslim/onnxslim_pass/yolo_decode.py"
     yolo_text = yolo_source.read_text(encoding="utf-8", errors="strict")
     yolo_present = "YoloDecodePatternMatcher" in yolo_text and "FusionYoloDecode" in yolo_text
+    if sha256(STAGE64_DIRECT_E2E) != STAGE64_DIRECT_E2E_SHA256:
+        raise RuntimeError("Stage64 direct-E2E evidence identity drift")
+    direct_e2e = next(
+        row
+        for row in read_tsv(STAGE64_DIRECT_E2E)
+        if row["lane"] == "XSLIM_VENDOR_REF_9A33"
+    )
+    collapse_bound = (
+        direct_e2e["status"] == "host-semantic-failure"
+        and direct_e2e["host_images"] == "100"
+        and direct_e2e["host_passes"] == "0"
+        and direct_e2e["score_collapses"] == "100"
+    )
+    if not collapse_bound:
+        raise RuntimeError("Stage64 direct-E2E score-collapse contract drift")
+    if sha256(STAGE64_CAUSAL_DECISION) != STAGE64_CAUSAL_DECISION_SHA256:
+        raise RuntimeError("Stage64 direct-E2E causal-decision identity drift")
+    causal_text = STAGE64_CAUSAL_DECISION.read_text(encoding="utf-8")
+    if "all 100 host holdout\nimages have finite `1x300x6` outputs but zero nonzero scores" not in causal_text:
+        raise RuntimeError("Stage64 direct-E2E finite-output statement drift")
     options.tracked_root.joinpath("xslim_yolodecode_status.md").write_text(
         status_markdown(
             "XSlim YoloDecode status",
             "source-present-frozen-split-does-not-use-it",
             [
                 f"Current XSlim source contains the YoloDecode fusion implementation: `{'yes' if yolo_present else 'no'}`. The frozen B2/C2 inference graphs intentionally stop at six head boundaries and contain no `YoloDecode` node.",
-                "Stage64's repaired direct-E2E diagnostic produced finite `1x300x6` output but zero nonzero scores on all 100 holdout images. That score-collapse remains unreconciled, so direct-E2E generation is not justified by this audit.",
+                f"Stage64's exact `direct_e2e_diagnostic.tsv` (SHA-256 `{STAGE64_DIRECT_E2E_SHA256}`) binds the repaired vendor-reference direct-E2E lane to 100 holdout images, zero passes, and 100 score collapses. The exact causal decision (SHA-256 `{STAGE64_CAUSAL_DECISION_SHA256}`) binds those cases to finite `1x300x6` outputs with zero nonzero scores. The defect remains unreconciled, so direct-E2E generation is not justified by this audit.",
                 "A future exact candidate would have to preserve the current source/model/qparams, reproduce the 34-node tail exactly, retain finite noncollapsed task output, and re-prove provider placement and COCO accuracy.",
             ],
         ),
