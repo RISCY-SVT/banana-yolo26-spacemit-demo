@@ -7,11 +7,15 @@ import argparse
 import csv
 import hashlib
 import math
+import re
 import statistics
 from collections import defaultdict
 from pathlib import Path
 
 import numpy as np
+
+
+RESULT_HASH_RE = re.compile(r"stage64_result .*output_fnv1a64=(?P<hash>0x[0-9a-fA-F]+)")
 
 
 def percentile(values: list[float], fraction: float) -> float:
@@ -71,9 +75,11 @@ def collect(root: Path) -> dict[str, object]:
     aggregate: dict[str, list[float]] = defaultdict(list)
     output_hashes: dict[str, set[str]] = defaultdict(set)
     fnv_hashes: dict[str, set[str]] = defaultdict(set)
+    result_fnv_hashes: dict[str, set[str]] = defaultdict(set)
     sample_hash_modes: set[str] = set()
     thermal: list[dict[str, object]] = []
     diagnostics: list[dict[str, object]] = []
+    identities: list[dict[str, object]] = []
     seen: set[tuple[str, str, str]] = set()
 
     for status_row in status:
@@ -92,6 +98,18 @@ def collect(root: Path) -> dict[str, object]:
         ):
             if sha256(directory / filename) != status_row[field]:
                 raise RuntimeError(f"{field} mismatch: {directory}")
+        identities.append({
+            "root": root.name,
+            "segment": status_row["segment"],
+            "position": status_row["position"],
+            "model": model,
+            "runs": status_row["runs"],
+            "output_sha256": status_row["output_sha256"],
+            "samples_sha256": status_row["samples_sha256"],
+            "resource_sha256": status_row["resource_sha256"],
+            "exit_code": status_row["exit_code"],
+            "status": "pass",
+        })
         output_hashes[model].add(status_row["output_sha256"])
         sample_rows = read_tsv(directory / "samples.tsv")
         expected_runs = int(status_row["runs"])
@@ -111,8 +129,10 @@ def collect(root: Path) -> dict[str, object]:
             if has_per_run_hash:
                 fnv_hashes[model].add(row["output_fnv1a64"])
         log = (directory / "run.log").read_text(encoding="utf-8", errors="replace")
-        if "stage64_result status=pass" not in log:
+        result_hash = RESULT_HASH_RE.search(log)
+        if "stage64_result status=pass" not in log or not result_hash:
             raise RuntimeError(f"missing runner pass marker: {directory}")
+        result_fnv_hashes[model].add(result_hash.group("hash").lower())
         output = np.fromfile(directory / "output.bin", dtype="<f4")
         finite = int(np.isfinite(output).sum())
         scores = output.reshape(300, 6)[:, 4] if output.size == 1800 else np.asarray([], dtype=np.float32)
@@ -212,9 +232,11 @@ def collect(root: Path) -> dict[str, object]:
         "aggregate": aggregate,
         "output_hashes": output_hashes,
         "fnv_hashes": fnv_hashes,
+        "result_fnv_hashes": result_fnv_hashes,
         "sample_hash_mode": next(iter(sample_hash_modes)),
         "thermal": thermal,
         "diagnostics": diagnostics,
+        "identities": identities,
     }
 
 
@@ -234,6 +256,11 @@ def main() -> int:
     if len(sample_hash_modes) != 1:
         raise RuntimeError(f"mixed soak output-hash contracts: {sample_hash_modes}")
     per_run_hashes = sample_hash_modes == {"per-run-fnv1a64"}
+    fixtures = read_tsv(options.tracked_root / "bounded_fixture_recheck.tsv")
+    accepted_output_hash = {
+        "B2": next(row["output_sha256"] for row in fixtures if row["surface"] == "B2_spacemit_fixture"),
+        "C2": next(row["output_sha256"] for row in fixtures if row["surface"] == "C2_spacemit_fixture"),
+    }
 
     short_rows: list[dict[str, object]] = []
     for model in ("B2", "C2"):
@@ -269,6 +296,9 @@ def main() -> int:
     write_tsv(options.tracked_root / "soak_output_semantics.tsv", diagnostics)
     passed = passed and all(row["status"] == "pass" for row in diagnostics)
 
+    identities = [row for collected in collections for row in collected["identities"]]
+    write_tsv(options.tracked_root / "soak_segment_identity.tsv", identities)
+
     thermal = [row for collected in collections for row in collected["thermal"]]
     write_tsv(options.tracked_root / "thermal_frequency_soak.tsv", thermal)
     governors = {str(row["value"]) for row in thermal if row["kind"] == "governor"}
@@ -285,15 +315,19 @@ def main() -> int:
         short_runs = len(short["aggregate"][f"{model}:two_stage"])
         short_pass = (
             short_runs == 2000
-            and len(short["output_hashes"][model]) == 1
+            and short["output_hashes"][model] == {accepted_output_hash[model]}
             and (not per_run_hashes or len(short["fnv_hashes"][model]) == 1)
+            and len(short["result_fnv_hashes"][model]) == 1
             and all(row["status"] == "pass" for row in short["diagnostics"] if row["model"] == model)
         )
         hash_rows.append({
             "surface": f"short-order-balanced-{model}",
             "runs": short_runs,
             "output_sha256_count": len(short["output_hashes"][model]),
+            "accepted_fixture_sha256": accepted_output_hash[model],
+            "equal_to_accepted_fixture": "yes" if short["output_hashes"][model] == {accepted_output_hash[model]} else "no",
             "output_fnv1a64_count": len(short["fnv_hashes"][model]) if per_run_hashes else "not-emitted-by-bound-runner",
+            "result_fnv1a64_count": len(short["result_fnv_hashes"][model]),
             "status": "pass" if short_pass else "fail",
         })
         windows = [
@@ -307,11 +341,13 @@ def main() -> int:
         long_runs = len(long_collection["aggregate"][f"{model}:two_stage"])
         combined_output_hashes = set(short["output_hashes"][model]) | set(long_collection["output_hashes"][model])
         combined_fnv_hashes = set(short["fnv_hashes"][model]) | set(long_collection["fnv_hashes"][model])
+        combined_result_fnv_hashes = set(short["result_fnv_hashes"][model]) | set(long_collection["result_fnv_hashes"][model])
         long_pass = (
             len(windows) == 10
             and long_runs == 10000
-            and len(combined_output_hashes) == 1
+            and combined_output_hashes == {accepted_output_hash[model]}
             and (not per_run_hashes or len(combined_fnv_hashes) == 1)
+            and len(combined_result_fnv_hashes) == 1
             and 0.95 <= drift <= 1.05
             and all(row["status"] == "pass" for row in long_collection["diagnostics"])
         )
@@ -319,7 +355,10 @@ def main() -> int:
             "surface": f"{model.lower()}-10x1000-clean-session",
             "runs": long_runs,
             "output_sha256_count": len(combined_output_hashes),
+            "accepted_fixture_sha256": accepted_output_hash[model],
+            "equal_to_accepted_fixture": "yes" if combined_output_hashes == {accepted_output_hash[model]} else "no",
             "output_fnv1a64_count": len(combined_fnv_hashes) if per_run_hashes else "not-emitted-by-bound-runner",
+            "result_fnv1a64_count": len(combined_result_fnv_hashes),
             "status": "pass" if long_pass else "fail",
         })
         passed = passed and short_pass and long_pass
@@ -336,7 +375,7 @@ def main() -> int:
         "one-second resource samples remain in raw evidence as the expected process/session "
         "initialization ramp; RSS/FD/thread drift gates use the post-initialization window and "
         "exclude the final process-teardown observation.\n"
-        f"The bound runner per-run output fingerprint contract is `{'emitted-and-stable' if per_run_hashes else 'not-emitted'}`; exact final output SHA-256 is instead required across all independent short and long process/session segments.\n",
+        f"The bound runner per-run sample fingerprint contract is `{'emitted-and-stable' if per_run_hashes else 'not-emitted'}`; the emitted final-result FNV must remain stable, and exact final output SHA-256 is required across all independent short and long process/session segments and must equal the accepted bounded SpaceMIT fixture.\n",
         encoding="utf-8",
     )
     return 0 if passed else 3

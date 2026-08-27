@@ -89,11 +89,11 @@ resource_gate() {
       last_rss = rss[usable]
       min_fd = max_fd = fd[1]
       min_threads = max_threads = threads[1]
-      for (index = 1; index <= usable; index += 1) {
-        if (fd[index] < min_fd) min_fd = fd[index]
-        if (fd[index] > max_fd) max_fd = fd[index]
-        if (threads[index] < min_threads) min_threads = threads[index]
-        if (threads[index] > max_threads) max_threads = threads[index]
+      for (row_index = 1; row_index <= usable; row_index += 1) {
+        if (fd[row_index] < min_fd) min_fd = fd[row_index]
+        if (fd[row_index] > max_fd) max_fd = fd[row_index]
+        if (threads[row_index] < min_threads) min_threads = threads[row_index]
+        if (threads[row_index] > max_threads) max_threads = threads[row_index]
       }
       bad = last_rss > first_rss + 16384 || max_fd - min_fd > 2 || max_threads - min_threads > 2
       exit bad ? 1 : 0

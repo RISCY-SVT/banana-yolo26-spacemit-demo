@@ -22,8 +22,50 @@ output_names=(
 
 [[ ! -e $out ]] || { printf 'fusion probe output exists: %s\n' "$out" >&2; exit 2; }
 mkdir -p "$out"
-printf 'model\topt_level\texit_code\toutput_sha256\tboundary_count\tboundary_manifest_sha256\tprofile_count\tprovider_dump_count\tlog_sha256\n' >"$out/optimization-status.raw.tsv"
+printf 'model\topt_level\texit_code\toutput_sha256\tprofile_output_sha256\tboundary_count\tboundary_manifest_sha256\tprofile_count\tprovider_dump_count\ttiming_log_sha256\tprofile_log_sha256\n' >"$out/optimization-status.raw.tsv"
 printf 'probe\tmodel\texit_code\tartifact\tartifact_bytes\tartifact_sha256\tlog_sha256\n' >"$out/capability-status.raw.tsv"
+
+snapshot() {
+  local file=$1
+  {
+    printf 'timestamp_utc\t%s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+    for path in /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor; do
+      [[ -r $path ]] || continue
+      printf 'governor\t%s\t%s\n' "$path" "$(cat "$path")"
+    done
+    for path in /sys/devices/system/cpu/cpu*/cpufreq/scaling_cur_freq; do
+      [[ -r $path ]] || continue
+      printf 'frequency_khz\t%s\t%s\n' "$path" "$(cat "$path")"
+    done
+    for path in /sys/class/thermal/thermal_zone*/temp; do
+      [[ -r $path ]] || continue
+      printf 'temperature_millic\t%s\t%s\n' "$path" "$(cat "$path")"
+    done
+  } >"$file"
+  [[ -s $file ]] || return 3
+}
+
+state_gate() {
+  local file=$1
+  awk -F '\t' '
+    $1 == "governor" { governors += 1; if ($3 != "performance") bad = 1 }
+    $1 == "frequency_khz" {
+      frequencies += 1
+      value = $3 + 0
+      if (minimum == 0 || value < minimum) minimum = value
+      if (value > maximum) maximum = value
+    }
+    $1 == "temperature_millic" { temperatures += 1; if (($3 + 0) > 85000) bad = 1 }
+    END {
+      if (governors == 0 || frequencies == 0 || temperatures == 0 || maximum == 0) bad = 1
+      if (minimum < 0.95 * maximum) bad = 1
+      exit bad ? 1 : 0
+    }
+  ' "$file"
+}
+
+snapshot "$out/state-before.tsv"
+state_gate "$out/state-before.tsv"
 
 inference_for() {
   case "$1" in
@@ -52,15 +94,28 @@ run_level() {
   env LD_LIBRARY_PATH="$runtime" TMPDIR="$directory/tmp" XDG_CACHE_HOME="$directory/cache" \
     SPACEMIT_EP_DUMP_SUBGRAPHS=1 SPACEMIT_EP_DUMP_SUBGRAPHS_DIR="$directory/provider-dumps" \
     timeout --signal=TERM --kill-after=10s 900s taskset -c 0-3 "$runner" \
-      --provider spacemit --model "$inference" --input "$input" --output "$directory/output.bin" \
+      --provider spacemit --model "$inference" --input "$input" --output "$directory/profile-output.bin" \
       --input-name images --output-name "$output_name" --opt-level "$level" \
       --execution-mode sequential --intra-threads 4 --inter-threads 1 \
       --memory-pattern 1 --cpu-arena 1 --thread-spinning 0 \
       --log-severity 2 --log-verbosity 0 --warmup 5 --runs 20 --repeats 1 \
       --profile-prefix "$directory/profile/ort-profile" \
-      >"$directory/run.log" 2>&1
+      >"$directory/profile-run.log" 2>&1
   rc=$?
   set -e
+  if [[ $rc -eq 0 ]]; then
+    set +e
+    env LD_LIBRARY_PATH="$runtime" TMPDIR="$directory/tmp" XDG_CACHE_HOME="$directory/cache" \
+      timeout --signal=TERM --kill-after=10s 900s taskset -c 0-3 "$runner" \
+        --provider spacemit --model "$inference" --input "$input" --output "$directory/output.bin" \
+        --input-name images --output-name "$output_name" --opt-level "$level" \
+        --execution-mode sequential --intra-threads 4 --inter-threads 1 \
+        --memory-pattern 1 --cpu-arena 1 --thread-spinning 0 \
+        --log-severity 2 --log-verbosity 0 --warmup 10 --runs 100 --repeats 1 \
+        >"$directory/run.log" 2>&1
+    rc=$?
+    set -e
+  fi
   mkdir -p "$directory/boundary-outputs"
   printf 'index\tname\tbytes\tsha256\n' >"$directory/boundary-output-manifest.tsv"
   if [[ $rc -eq 0 ]]; then
@@ -95,9 +150,11 @@ run_level() {
   fi
   profiles=$(find "$directory/profile" -type f | wc -l)
   dumps=$(find "$directory/provider-dumps" -type f -name 'SpaceMITExecutionProvider_*.onnx' | wc -l)
-  printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' "$model" "$level" "$rc" \
-    "$(hash_or_missing "$directory/output.bin")" "$boundary_count" "$boundary_manifest_sha" "$profiles" "$dumps" \
-    "$(hash_or_missing "$directory/run.log")" >>"$out/optimization-status.raw.tsv"
+  printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' "$model" "$level" "$rc" \
+    "$(hash_or_missing "$directory/output.bin")" "$(hash_or_missing "$directory/profile-output.bin")" \
+    "$boundary_count" "$boundary_manifest_sha" "$profiles" "$dumps" \
+    "$(hash_or_missing "$directory/run.log")" "$(hash_or_missing "$directory/profile-run.log")" \
+    >>"$out/optimization-status.raw.tsv"
 }
 
 run_capability() {
@@ -132,6 +189,9 @@ for model in B2 C2; do
   inference=$(inference_for "$model")
   run_capability offline-optimized "$model" optimized.onnx \
     "$perf" -e spacemit -o 99 -u optimized.onnx -m times -r 1 -x 4 -y 1 -S 65016 "$inference" perf-results.txt
+  run_capability offline-optimized-readback "$model" no-artifact \
+    "$perf" -e spacemit -o 99 -m times -r 1 -x 4 -y 1 -S 65016 \
+      "$out/offline-optimized-$model/optimized.onnx" perf-results.txt
   run_capability iobinding-baseline "$model" no-artifact \
     "$perf" -e spacemit -o 0 -m times -r 10 -x 4 -y 1 -S 65016 "$inference" perf-results.txt
   run_capability iobinding-input "$model" no-artifact \
@@ -139,6 +199,9 @@ for model in B2 C2; do
   run_capability ep-context "$model" compiled-context.onnx \
     "$perf" --compile_ep_context --compile_only --compile_model_path compiled-context.onnx \
       -e spacemit -o 99 -x 4 -y 1 "$inference"
+  run_capability ep-context-readback "$model" no-artifact \
+    "$perf" -e spacemit -o 99 -m times -r 1 -x 4 -y 1 \
+      "$out/ep-context-$model/compiled-context.onnx" perf-results.txt
 done
 
 set +e
@@ -148,4 +211,6 @@ set -e
 printf 'ep-device-list\tall\t%s\t%s\t0\tmissing\t%s\n' "$devices_rc" "$out/ep-devices.log" \
   "$(hash_or_missing "$out/ep-devices.log")" >>"$out/capability-status.raw.tsv"
 
+snapshot "$out/state-after.tsv"
+state_gate "$out/state-after.tsv"
 printf 'stage65e_board_fusion_probe status=complete\n'

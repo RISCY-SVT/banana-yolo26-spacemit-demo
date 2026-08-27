@@ -124,6 +124,7 @@ def graph_census(model_name: str, role: str, path: Path) -> tuple[list[dict[str,
         "nodes": len(graph.node),
         "inputs": len(graph.input),
         "outputs": len(graph.output),
+        "sha256": sha256(path),
         "qdq": op_types["QuantizeLinear"] + op_types["DequantizeLinear"],
         "op_types": op_types,
         "output_contract": [(value.name, *tensor_contract(value)) for value in graph.output],
@@ -156,6 +157,76 @@ def profile_providers(path: Path) -> tuple[int, int]:
         for event in node_events
     )
     return spacemit, cpu
+
+
+def profile_partition_summary(
+    path: Path,
+    source_summary: dict[str, object],
+    accepted_partition: dict[str, str],
+    accepted_profile: Path,
+) -> dict[str, object]:
+    events = json.loads(path.read_text(encoding="utf-8"))
+    node_events = [event for event in events if event.get("cat") == "Node"]
+    ep_events = [
+        event
+        for event in node_events
+        if event.get("args", {}).get("provider") == "SpaceMITExecutionProvider"
+    ]
+    op_names = sorted({event.get("args", {}).get("op_name", "") for event in ep_events})
+    if len(op_names) != 1 or not op_names[0]:
+        raise RuntimeError(f"profile does not prove exactly one SpaceMIT partition: {path}")
+    accepted_events = json.loads(accepted_profile.read_text(encoding="utf-8"))
+    accepted_op_names = sorted({
+        event.get("args", {}).get("op_name", "")
+        for event in accepted_events
+        if event.get("cat") == "Node"
+        and event.get("args", {}).get("provider") == "SpaceMITExecutionProvider"
+    })
+    if op_names != accepted_op_names:
+        raise RuntimeError(f"SpaceMIT partition identity differs from accepted profile: {path}")
+    if (
+        accepted_partition["status"] != "pass"
+        or accepted_partition["fused_subgraphs"] != "1"
+        or accepted_partition["fused_node_count"] != "925"
+        or accepted_partition["graph_inputs"] != "1"
+        or accepted_partition["graph_outputs"] != "6"
+        or accepted_partition["unexpected_cpu_events"] != "0"
+    ):
+        raise RuntimeError("accepted 925-node partition contract is invalid")
+    input_contracts = {
+        json.dumps(event.get("args", {}).get("input_type_shape", []), sort_keys=True)
+        for event in ep_events
+    }
+    output_contracts = {
+        json.dumps(event.get("args", {}).get("output_type_shape", []), sort_keys=True)
+        for event in ep_events
+    }
+    if len(input_contracts) != 1 or len(output_contracts) != 1:
+        raise RuntimeError(f"SpaceMIT partition contract changed within profile: {path}")
+    payload = {
+        "provider": "SpaceMITExecutionProvider",
+        "op_names": op_names,
+        "accepted_provider_dump_sha256": accepted_partition["provider_dump_sha256"],
+        "source_graph_sha256": source_summary["sha256"],
+        "source_partition_nodes": int(accepted_partition["fused_node_count"]),
+        "partition_inputs": int(accepted_partition["graph_inputs"]),
+        "partition_outputs": int(accepted_partition["graph_outputs"]),
+        "input_type_shape": json.loads(next(iter(input_contracts))),
+        "output_type_shape": json.loads(next(iter(output_contracts))),
+    }
+    identity = hashlib.sha256(
+        json.dumps(payload, ensure_ascii=True, separators=(",", ":"), sort_keys=True).encode(
+            "utf-8"
+        )
+    ).hexdigest()
+    return {
+        "nodes": int(accepted_partition["fused_node_count"]),
+        "inputs": int(accepted_partition["graph_inputs"]),
+        "outputs": int(accepted_partition["graph_outputs"]),
+        "fused_subgraphs": 1,
+        "sha256": identity,
+        "topology_sha256": identity,
+    }
 
 
 def graph_summary(path: Path) -> dict[str, object]:
@@ -280,16 +351,38 @@ def main() -> int:
         })
     write_tsv(options.tracked_root / "main_graph_and_tail_census.tsv", census_rows)
 
+    accepted_tail_median: dict[str, float] = {}
+    for row in read_tsv(options.tail_timing):
+        if row["metric"] == "tail" and row["model"] in {"B2", "C2"}:
+            accepted_tail_median[row["model"]] = float(row["median_us"])
+    if set(accepted_tail_median) != {"B2", "C2"}:
+        raise RuntimeError("accepted B2/C2 tail timing reference is incomplete")
+
+    accepted_partitions = {
+        row["model"]: row
+        for row in read_tsv(options.tracked_root / "provider_partition_comparison.tsv")
+        if row["model"] in {"B2", "C2"}
+    }
+    accepted_profiles = {
+        row["model"]: Path(row["profile"])
+        for row in read_tsv(options.tracked_root / "provider_profile_inventory.tsv")
+        if row["model"] in {"B2", "C2"}
+    }
+    if set(accepted_partitions) != {"B2", "C2"} or set(accepted_profiles) != {"B2", "C2"}:
+        raise RuntimeError("accepted provider-partition evidence is incomplete")
+    if any(not path.is_file() for path in accepted_profiles.values()):
+        raise RuntimeError("accepted provider profile is unavailable")
+
     optimization_status = read_tsv(options.raw_root / "optimization-status.raw.tsv")
     optimization_rows: list[dict[str, object]] = []
-    disable_medians: dict[str, float] = {}
-    level_medians: dict[tuple[str, str], float] = {}
+    disable_two_stage_medians: dict[str, float] = {}
+    level_two_stage_medians: dict[tuple[str, str], float] = {}
     for status in optimization_status:
         model, level = status["model"], status["opt_level"]
         directory = options.raw_root / f"optimization-{model}-{level}"
         profiles = list((directory / "profile").glob("*.json"))
         dumps = list((directory / "provider-dumps").rglob("SpaceMITExecutionProvider_*.onnx"))
-        if int(status["exit_code"]) != 0 or len(profiles) != 1 or len(dumps) != 1:
+        if int(status["exit_code"]) != 0 or len(profiles) != 1 or len(dumps) > 1:
             optimization_rows.append({
                 "model": model,
                 "opt_level": level,
@@ -300,12 +393,18 @@ def main() -> int:
                 "median_us": "unavailable",
                 "p95_us": "unavailable",
                 "output_sha256": status["output_sha256"],
+                "profile_output_sha256": status["profile_output_sha256"],
+                "profile_output_equal_to_unprofiled": "unresolved",
                 "output_equal_to_disable": "unresolved",
+                "tail_median_us_reference": accepted_tail_median[model],
+                "projected_two_stage_median_us": "unavailable",
+                "two_stage_measurement_kind": "not-available-probe-failed",
                 "boundary_count": status["boundary_count"],
                 "boundary_manifest_sha256": status["boundary_manifest_sha256"],
                 "six_boundary_equal_to_disable": "unresolved",
                 "six_boundary_equal_to_accepted_fixture": "unresolved",
                 "fused_subgraphs": len(dumps),
+                "partition_evidence": "unavailable",
                 "partition_nodes": "unavailable",
                 "partition_inputs": "unavailable",
                 "partition_outputs": "unavailable",
@@ -316,16 +415,30 @@ def main() -> int:
                 "decision": "reject-probe-failed",
             })
             continue
-        timing = parse_perf_log(directory / "run.log")
-        partition = graph_summary(dumps[0])
         spacemit_events, cpu_events = profile_providers(profiles[0])
+        timing = parse_perf_log(directory / "run.log")
+        if dumps:
+            partition = graph_summary(dumps[0])
+            partition_evidence = "provider-subgraph-dump"
+        else:
+            partition = profile_partition_summary(
+                profiles[0],
+                summaries[model],
+                accepted_partitions[model],
+                accepted_profiles[model],
+            )
+            partition_evidence = (
+                "current-single-EP-profile-matched-accepted-925-node-partition-contract"
+            )
         output_hash = status["output_sha256"]
+        profile_output_hash = status["profile_output_sha256"]
         boundary_count = int(status["boundary_count"])
         boundary_manifest_hash = status["boundary_manifest_sha256"]
         median = float(timing["median_us"])
-        level_medians[(model, level)] = median
+        projected_two_stage_median = median + accepted_tail_median[model]
+        level_two_stage_medians[(model, level)] = projected_two_stage_median
         if level == "disable":
-            disable_medians[model] = median
+            disable_two_stage_medians[model] = projected_two_stage_median
         if partition["nodes"] != 925 or cpu_events != 0 or spacemit_events == 0:
             probe_decision = "reject-placement-drift"
         elif boundary_count != 6 or boundary_manifest_hash == "missing":
@@ -338,12 +451,18 @@ def main() -> int:
             "exit_code": status["exit_code"],
             **timing,
             "output_sha256": output_hash,
+            "profile_output_sha256": profile_output_hash,
+            "profile_output_equal_to_unprofiled": "pending",
             "output_equal_to_disable": "pending",
+            "tail_median_us_reference": accepted_tail_median[model],
+            "projected_two_stage_median_us": projected_two_stage_median,
+            "two_stage_measurement_kind": "unprofiled-main-plus-exact-accepted-tail-reference",
             "boundary_count": boundary_count,
             "boundary_manifest_sha256": boundary_manifest_hash,
             "six_boundary_equal_to_disable": "pending",
             "six_boundary_equal_to_accepted_fixture": "pending",
-            "fused_subgraphs": 1,
+            "fused_subgraphs": partition.get("fused_subgraphs", 1),
+            "partition_evidence": partition_evidence,
             "partition_nodes": partition["nodes"],
             "partition_inputs": partition["inputs"],
             "partition_outputs": partition["outputs"],
@@ -365,6 +484,10 @@ def main() -> int:
         row["output_equal_to_disable"] = "yes" if equal else "no"
         if not equal:
             row["decision"] = "reject-output-drift"
+        profile_equal = row["profile_output_sha256"] == row["output_sha256"]
+        row["profile_output_equal_to_unprofiled"] = "yes" if profile_equal else "no"
+        if not profile_equal:
+            row["decision"] = "reject-profile-output-drift"
         disable_boundary_hash = next(
             item["boundary_manifest_sha256"]
             for item in optimization_rows
@@ -403,20 +526,32 @@ def main() -> int:
     for row in capability:
         by_probe.setdefault(row["probe"], []).append(row)
     offline_rows = by_probe.get("offline-optimized", [])
-    offline_supported = bool(offline_rows) and all(
+    offline_readback_rows = by_probe.get("offline-optimized-readback", [])
+    offline_created = bool(offline_rows) and all(
         row["exit_code"] == "0"
         and int(row["artifact_bytes"]) > 0
         and row["artifact_sha256"] != "missing"
         for row in offline_rows
     )
-    offline_state = "supported-capability-only" if offline_supported else "unsupported"
+    offline_supported = (
+        offline_created
+        and len(offline_readback_rows) == 2
+        and all(row["exit_code"] == "0" for row in offline_readback_rows)
+    )
+    offline_state = (
+        "supported-create-and-readback-capability-only"
+        if offline_supported
+        else "creation-only-readback-failed"
+        if offline_created
+        else "unsupported"
+    )
     options.tracked_root.joinpath("offline_optimization_capability.md").write_text(
         status_markdown(
             "Offline optimization capability",
             offline_state,
             [
                 "The shipped target `onnxruntime_perf_test` was invoked on the physical K1X with the exact SpaceMIT provider. "
-                + ("It emitted non-empty optimized ONNX artifacts for both frozen models." if offline_supported else "It did not emit a valid optimized artifact for both frozen models."),
+                + ("It emitted and successfully read back non-empty optimized ONNX artifacts for both frozen models." if offline_supported else "It did not complete valid create-and-readback for both frozen models."),
                 "Artifacts remain raw diagnostic bytes and do not replace B2 or C2. This capability alone does not prove a startup or steady-state benefit.",
             ],
         ),
@@ -441,19 +576,31 @@ def main() -> int:
     )
 
     ep_rows = by_probe.get("ep-context", [])
-    ep_supported = bool(ep_rows) and all(
+    ep_readback_rows = by_probe.get("ep-context-readback", [])
+    ep_created = bool(ep_rows) and all(
         row["exit_code"] == "0"
         and int(row["artifact_bytes"]) > 0
         and row["artifact_sha256"] != "missing"
         for row in ep_rows
     )
-    ep_state = "supported-capability-only" if ep_supported else "unsupported"
+    ep_supported = (
+        ep_created
+        and len(ep_readback_rows) == 2
+        and all(row["exit_code"] == "0" for row in ep_readback_rows)
+    )
+    ep_state = (
+        "supported-create-and-readback-capability-only"
+        if ep_supported
+        else "creation-only-readback-failed"
+        if ep_created
+        else "unsupported"
+    )
     options.tracked_root.joinpath("ep_context_capability.md").write_text(
         status_markdown(
             "EPContext capability",
             ep_state,
             [
-                "The shipped tool accepted the compile/readback flow and emitted artifacts for both models." if ep_supported else "The shipped tool did not complete the compile/readback flow with valid artifacts for both models.",
+                "The shipped tool accepted the compile flow, emitted artifacts, and read them back successfully for both models." if ep_supported else "The shipped tool did not complete the compile-and-readback flow with valid artifacts for both models.",
                 "Any emitted context remains raw, is not accepted model evidence, and has no proven portability or startup benefit until a separately authorized load/readback benchmark succeeds.",
             ],
         ),
@@ -512,8 +659,8 @@ def main() -> int:
         encoding="utf-8",
     )
 
-    tail_timing = read_tsv(options.tail_timing)
     tail_share: dict[str, float] = {}
+    tail_timing = read_tsv(options.tail_timing)
     for model in ("B2", "C2"):
         tail_median = float(next(row["median_us"] for row in tail_timing if row["model"] == model and row["metric"] == "tail"))
         total_median = float(next(row["median_us"] for row in tail_timing if row["model"] == model and row["metric"] == "two_stage"))
@@ -531,17 +678,17 @@ def main() -> int:
             "evidence": "matched ABBA median tail/two-stage share",
         })
     performance_ratios = read_tsv(options.performance_ratios)
-    inference_noise_floor = float(next(
+    two_stage_noise_floor = float(next(
         row["comparison_noise_floor"]
         for row in performance_ratios
-        if row["metric"] == "inference" and row["statistic"] == "median"
+        if row["metric"] == "two_stage" and row["statistic"] == "median"
     ))
     common_level_gain: dict[str, float] = {}
     for level in ("disable", "basic", "extended", "all"):
         gains = []
         for model in ("B2", "C2"):
-            baseline = disable_medians.get(model)
-            candidate = level_medians.get((model, level))
+            baseline = disable_two_stage_medians.get(model)
+            candidate = level_two_stage_medians.get((model, level))
             if baseline is None or candidate is None:
                 gains = []
                 break
@@ -558,8 +705,8 @@ def main() -> int:
             "measured_value": best_steady_gain,
             "threshold": "steady gain >= 0.02 beyond noise with exact placement/output",
             "placement_output_status": "see ort_optimization_matrix.tsv",
-            "classification": "steady-state-opportunity" if best_steady_gain >= max(0.02, inference_noise_floor) else "low-roi",
-            "evidence": f"best common level={best_level}; 20-run read-only main-partition probe; empirical noise floor={inference_noise_floor}; tail excluded",
+            "classification": "steady-state-opportunity" if best_steady_gain >= max(0.02, two_stage_noise_floor) else "low-roi",
+            "evidence": f"best common level={best_level}; 100-run unprofiled main-partition timing plus exact accepted tail reference; empirical two-stage noise floor={two_stage_noise_floor}",
         },
         {
             "opportunity": "offline-optimized-model",
@@ -609,7 +756,13 @@ def main() -> int:
             "classification": "raw-diagnostic-only",
             "evidence": f"log_sha256={row['log_sha256']}",
         })
-    for probe in ("iobinding-baseline", "iobinding-input", "ep-device-list"):
+    for probe in (
+        "offline-optimized-readback",
+        "iobinding-baseline",
+        "iobinding-input",
+        "ep-context-readback",
+        "ep-device-list",
+    ):
         for row in by_probe.get(probe, []):
             opportunity_rows.append({
                 "opportunity": f"{probe}-probe",
@@ -627,7 +780,7 @@ def main() -> int:
     # prompt's opening threshold is not satisfied.
     placement_output_pass = all(row["decision"] == "pass" for row in optimization_rows)
     opt_qualified = (
-        best_steady_gain >= max(0.02, inference_noise_floor)
+        best_steady_gain >= max(0.02, two_stage_noise_floor)
         and placement_output_pass
     )
     stage65f_justified = opt_qualified
@@ -638,7 +791,7 @@ def main() -> int:
             decision,
             [
                 f"Measured median CPU-tail shares are B2 `{tail_share['B2']:.6f}` and C2 `{tail_share['C2']:.6f}` of two-stage latency. They establish an upper bound, not a projected exact-tail gain; no tail implementation benchmark is authorized in this Stage.",
-                f"The best common B2/C2 read-only main-partition ORT optimization-level gain versus `ORT_DISABLE_ALL` is `{best_steady_gain:.6f}` at `{best_level}`; the matched inference noise floor is `{inference_noise_floor:.6f}`. A >=2% option is accepted only when the gain also exceeds that floor and output plus 925-node placement remain exact.",
+                f"The best common B2/C2 read-only projected two-stage ORT optimization-level gain versus `ORT_DISABLE_ALL` is `{best_steady_gain:.6f}` at `{best_level}`; the matched two-stage noise floor is `{two_stage_noise_floor:.6f}`. Main-partition timing is unprofiled; the exact accepted per-model tail median is added as an invariant reference only after six-boundary output identity passes. A >=2% option is accepted only when the gain also exceeds that floor and output plus 925-node placement remain exact.",
                 "Offline optimization, I/O Binding, EPContext, plugin-tail, and YoloDecode results are capability evidence only. No accepted model, runtime default, or source was changed.",
             ],
         ),

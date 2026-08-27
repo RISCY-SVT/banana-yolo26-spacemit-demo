@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import csv
 import hashlib
+import json
 import math
 import statistics
 import subprocess
@@ -82,6 +83,44 @@ def parse_custom_raw(path: Path) -> list[dict[str, str]]:
     return rows
 
 
+def state_contract(root: Path) -> tuple[str, str]:
+    paths = [
+        root / arm / f"state-{moment}.tsv"
+        for arm in ("vendor-B2", "vendor-C2", "custom")
+        for moment in ("before", "after")
+    ]
+    governors: set[str] = set()
+    frequencies: list[int] = []
+    temperatures: list[int] = []
+    for path in paths:
+        if not path.is_file() or path.stat().st_size == 0:
+            return f"missing-or-empty={path}", "fail"
+        for line in path.read_text(encoding="utf-8").splitlines():
+            fields = line.split("\t")
+            if len(fields) != 3:
+                continue
+            if fields[0] == "governor":
+                governors.add(fields[2])
+            elif fields[0] == "frequency_khz":
+                frequencies.append(int(fields[2]))
+            elif fields[0] == "temperature_millic":
+                temperatures.append(int(fields[2]))
+    passed = (
+        governors == {"performance"}
+        and bool(frequencies)
+        and min(frequencies) >= 0.95 * max(frequencies)
+        and bool(temperatures)
+        and max(temperatures) <= 85000
+    )
+    actual = (
+        f"snapshots={len(paths)};governors={','.join(sorted(governors))};"
+        f"frequency_khz={min(frequencies) if frequencies else 'missing'}.."
+        f"{max(frequencies) if frequencies else 'missing'};"
+        f"temperature_millic_max={max(temperatures) if temperatures else 'missing'}"
+    )
+    return actual, "pass" if passed else "fail"
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--raw-root", required=True, type=Path)
@@ -119,6 +158,13 @@ def main() -> int:
         {"field": f"board_{row['field']}", "actual": row["actual"], "expected": row["expected"], "status": row["status"]}
         for row in board_identity
     )
+    state_actual, state_status = state_contract(options.raw_root)
+    binding.append({
+        "field": "same_boot_system_state",
+        "actual": state_actual,
+        "expected": "performance governor; <=5% frequency spread; <=85000 millic",
+        "status": state_status,
+    })
     write_tsv(options.tracked_root / "custom_release_binding.tsv", binding)
     if any(row["status"] != "pass" for row in binding):
         raise RuntimeError("accepted custom package binding failed")
@@ -158,8 +204,20 @@ def main() -> int:
     required_fields = {"repeat", "run", "wall_us", "input_us", "affinity_ok", "hash"}
     if len(custom_rows) != 500 or any(not required_fields.issubset(row) for row in custom_rows):
         raise RuntimeError("custom benchmark did not produce the expected 500-row contract")
+    sample_grid = {(int(row["repeat"]), int(row["run"])) for row in custom_rows}
+    if sample_grid != {(repeat, run) for repeat in range(5) for run in range(100)}:
+        raise RuntimeError("custom benchmark repeat/run grid is incomplete or duplicated")
     if {row["hash"] for row in custom_rows} != {"0xd43f5e018b415631"} or {row["affinity_ok"] for row in custom_rows} != {"1"}:
         raise RuntimeError("custom output hash or affinity contract changed")
+    detections = json.loads((options.raw_root / "custom/output.json").read_text(encoding="utf-8"))
+    if len(detections) != 300:
+        raise RuntimeError("custom output JSON does not contain exactly 300 rows")
+    for detection in detections:
+        values = [*detection.get("box", []), detection.get("score"), detection.get("class")]
+        if len(values) != 6 or any(not isinstance(value, (int, float)) for value in values):
+            raise RuntimeError("custom output JSON row contract changed")
+        if any(not math.isfinite(float(value)) for value in values):
+            raise RuntimeError("custom output JSON contains a non-finite value")
     wall = [float(row["wall_us"]) for row in custom_rows]
     input_values = [float(row["input_us"]) for row in custom_rows]
     pure = [total - input_time for total, input_time in zip(wall, input_values)]
@@ -214,7 +272,9 @@ def main() -> int:
         "The accepted custom executor and the B2/C2 vendor lane use different model/export "
         "lineages, quantization formats, runtime backends, and output implementations. Their "
         "same-boot fixed-input timings and accepted COCO metrics are application-level context, "
-        "not an engine-only or quantizer-only comparison. No custom model or executable was rebuilt.\n",
+        "not an engine-only or quantizer-only comparison. The frozen vendor timing contract uses "
+        "CPU0-3, while the accepted custom low-latency profile natively uses CPU0-4; rows remain "
+        "separate and no direct speedup ratio is claimed. No custom model or executable was rebuilt.\n",
         encoding="utf-8",
     )
     return 0

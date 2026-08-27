@@ -21,6 +21,7 @@ FIRST_RE = re.compile(
     r"stage64_first inference_us=(?P<inference>[0-9.]+) "
     r"tail_us=(?P<tail>[0-9.]+) total_us=(?P<total>[0-9.]+)"
 )
+RESULT_HASH_RE = re.compile(r"stage64_result .*output_fnv1a64=(?P<hash>0x[0-9a-fA-F]+)")
 LABEL_RE = re.compile(
     r"(noise_b2|noise_c2|abba|cpu)-b([0-9]+)-s([0-9]+)-(B2|C2)-(spacemit|cpu)"
 )
@@ -171,6 +172,7 @@ def main() -> int:
     values_by_slot: dict[tuple[str, int, int, str, str], list[float]] = {}
     output_hashes: dict[tuple[str, str], set[str]] = defaultdict(set)
     fnv_hashes: dict[tuple[str, str], set[str]] = defaultdict(set)
+    result_fnv_hashes: dict[tuple[str, str], set[str]] = defaultdict(set)
     sample_hash_modes: set[str] = set()
     observed: set[tuple[str, int, int, str, str]] = set()
 
@@ -223,8 +225,10 @@ def main() -> int:
         text = (directory / "run.log").read_text(encoding="utf-8", errors="replace")
         session = SESSION_RE.search(text)
         first = FIRST_RE.search(text)
-        if not session or not first or "stage64_result status=pass" not in text:
+        result_hash = RESULT_HASH_RE.search(text)
+        if not session or not first or not result_hash or "stage64_result status=pass" not in text:
             raise RuntimeError(f"incomplete runner log: {directory}")
+        result_fnv_hashes[surface].add(result_hash.group("hash").lower())
         creation_rows.append({
             "phase": phase,
             "block": block,
@@ -274,10 +278,28 @@ def main() -> int:
     per_run_hashes = sample_hash_modes == {"per-run-fnv1a64"}
     if per_run_hashes and any(len(values) != 1 for values in fnv_hashes.values()):
         raise RuntimeError("per-run output hash changed within an exact model/provider surface")
+    if any(len(values) != 1 for values in result_fnv_hashes.values()):
+        raise RuntimeError("result FNV changed within an exact model/provider surface")
     if sum(row["provider"] == "spacemit" for row in creation_rows if row["model"] == "B2") < 10:
         raise RuntimeError("fewer than ten clean B2 EP session creations")
     if sum(row["provider"] == "spacemit" for row in creation_rows if row["model"] == "C2") < 10:
         raise RuntimeError("fewer than ten clean C2 EP session creations")
+
+    hash_rows = []
+    for model, provider in sorted(output_hashes):
+        hash_rows.append({
+            "model": model,
+            "provider": provider,
+            "fresh_session_slots": sum(
+                row["model"] == model and row["provider"] == provider
+                for row in creation_rows
+            ),
+            "output_sha256": next(iter(output_hashes[(model, provider)])),
+            "result_fnv1a64": next(iter(result_fnv_hashes[(model, provider)])),
+            "per_run_sample_fingerprint": "emitted" if per_run_hashes else "not-emitted-by-bound-runner",
+            "status": "pass",
+        })
+    write_tsv(options.tracked_root / "performance_output_hash_stability.tsv", hash_rows)
 
     write_tsv(options.tracked_root / "session_creation_timing.tsv", creation_rows)
     write_tsv(options.tracked_root / "first_run_timing.tsv", first_rows)
@@ -440,8 +462,8 @@ def main() -> int:
         f"Governor/frequency/thermal state: `{'pass' if state_pass else 'fail'}`; per-slot "
         f"resource bounds: `{'pass' if resource_pass else 'fail'}`. CPU and file-pipeline "
         "rows are reference surfaces and no camera path was run. The identity-bound Stage65E "
-        f"runner per-run output fingerprint contract is `{'emitted-and-stable' if per_run_hashes else 'not-emitted'}`; "
-        "determinism is therefore gated by exact output SHA-256 across every fresh process/session slot. "
+        f"runner per-run sample fingerprint contract is `{'emitted-and-stable' if per_run_hashes else 'not-emitted'}`; "
+        "determinism is gated by the emitted final-result FNV and exact output SHA-256 across every fresh process/session slot. "
         "All resource samples are retained; the normal process/session initialization ramp is reported "
         "separately and FD/thread/RSS bounds use samples 30 onward while excluding the final "
         "process-teardown observation, matching the stability contract.\n",

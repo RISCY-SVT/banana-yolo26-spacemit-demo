@@ -1,5 +1,9 @@
 {
   "excluded_or_intermediate_roots": {
+    "custom_context_stdout_collision_v1": {
+      "path": "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65E-FP32-OPERATING-POINT-LEDGER-B2-C2-UNCONDITIONAL-PERFORMANCE-STABILITY-AND-FUSION-FEASIBILITY-CLOSURE-001/board/custom-context-stage65e",
+      "reason": "read-only executor run passed but omitted --output-json, so /dev/stdout JSON truncated the redirected benchmark stream; root excluded and clean v2 produced the complete 500-row contract"
+    },
     "performance_proc_race_v2": {
       "path": "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65E-FP32-OPERATING-POINT-LEDGER-B2-C2-UNCONDITIONAL-PERFORMANCE-STABILITY-AND-FUSION-FEASIBILITY-CLOSURE-001/excluded/performance-proc-race-v2",
       "reason": "resource sampler observed a normal process-exit /proc race; partial root isolated before accepted clean run"

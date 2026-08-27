@@ -1,0 +1,4 @@
+# Stage65E stability decision
+
+Decision: `pass`. The short surface contains reversed-order B2/C2 1k arms (2k runs per model). Both long surfaces contain ten clean process/session segments of 1000 runs. Second-half/first-half median ratios are B2 `1.001362782` and C2 `0.999206018` (accepted range 0.95..1.05). Thermal/frequency state: `pass`. The first 30 valid one-second resource samples remain in raw evidence as the expected process/session initialization ramp; RSS/FD/thread drift gates use the post-initialization window and exclude the final process-teardown observation.
+The bound runner per-run sample fingerprint contract is `not-emitted`; the emitted final-result FNV must remain stable, and exact final output SHA-256 is required across all independent short and long process/session segments and must equal the accepted bounded SpaceMIT fixture.

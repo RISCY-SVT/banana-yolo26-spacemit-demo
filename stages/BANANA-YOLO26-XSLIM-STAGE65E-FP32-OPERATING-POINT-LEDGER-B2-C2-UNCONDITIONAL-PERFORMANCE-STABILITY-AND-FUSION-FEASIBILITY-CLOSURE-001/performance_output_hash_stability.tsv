@@ -1,0 +1,5 @@
+model	provider	fresh_session_slots	output_sha256	result_fnv1a64	per_run_sample_fingerprint	status
+B2	cpu	4	0f5e224ef2e38418626746cb16bc854a8f1c2535a1f389a2d3181e7c4aaf89ec	0x739599ba269e694e	not-emitted-by-bound-runner	pass
+B2	spacemit	56	990f1bc423375d1d078a24ca849d810436576ccf1a4f6869169ab0541795f32c	0x18801c836491c28	not-emitted-by-bound-runner	pass
+C2	cpu	4	49677e5baf35ed0388788da6be8e5ce740006b4e34ed852d5165dfff33ffe426	0xdb1bc63ba8e747bd	not-emitted-by-bound-runner	pass
+C2	spacemit	56	5c6ce86ebcf02b21b8069f316ff609cc0c9e03cef93c2c8c09644ca07771c4f3	0xa7bb46f9fa86790d	not-emitted-by-bound-runner	pass

@@ -1,0 +1,20 @@
+opportunity	model	measured_value	threshold	placement_output_status	classification	evidence
+exact-tail-implementation-upper-bound	B2	0.12770023763807273	tail share >= 0.05; projected exact gain >= 0.02	unchanged-frozen-model; implementation-not-run	needs-implementation-benchmark	matched ABBA median tail/two-stage share
+exact-tail-implementation-upper-bound	C2	0.1280227848123392	tail share >= 0.05; projected exact gain >= 0.02	unchanged-frozen-model; implementation-not-run	needs-implementation-benchmark	matched ABBA median tail/two-stage share
+ORT-optimization-level	B2/C2	0.0	steady gain >= 0.02 beyond noise with exact placement/output	see ort_optimization_matrix.tsv	low-roi	best common level=disable; 100-run unprofiled main-partition timing plus exact accepted tail reference; empirical two-stage noise floor=0.014548991964918656
+offline-optimized-model	B2/C2	capability-only	operationally material startup reduction	unsupported	unsupported	target perf-test compile probe
+EPContext	B2/C2	capability-only	operationally material startup reduction	unsupported	unsupported	target perf-test compile probe
+I/O-Binding	B2/C2	unsupported	exact output/placement and >= 0.02 two-stage gain	CPU-tail requires host-readable six-output boundary	no-proven-two-stage-opportunity	target perf-test input-binding probe only
+offline-optimized-artifact-identity	B2	bytes=0;sha256=missing	non-empty identity-bound diagnostic artifact	unsupported	raw-diagnostic-only	log_sha256=0b33710fb4ef286e5e81671d0e17a1c4b38cb7bc89eb8b445acc5dac28e7fe54
+offline-optimized-artifact-identity	C2	bytes=0;sha256=missing	non-empty identity-bound diagnostic artifact	unsupported	raw-diagnostic-only	log_sha256=0b33710fb4ef286e5e81671d0e17a1c4b38cb7bc89eb8b445acc5dac28e7fe54
+EPContext-artifact-identity	B2	bytes=0;sha256=missing	non-empty identity-bound diagnostic artifact	unsupported	raw-diagnostic-only	log_sha256=ffe5aa60cd14101fe51586fa87ae164a43271410ba44146fcb35f806130074b4
+EPContext-artifact-identity	C2	bytes=0;sha256=missing	non-empty identity-bound diagnostic artifact	unsupported	raw-diagnostic-only	log_sha256=ffe5aa60cd14101fe51586fa87ae164a43271410ba44146fcb35f806130074b4
+offline-optimized-readback-probe	B2	exit_code=255	capability readback only	not-an-accepted-model-surface	unsupported	log_sha256=e6417f81ce5c1b7f4db2d4990af4a91a5b39d4694e9aeb3cb57f07059d55287a
+offline-optimized-readback-probe	C2	exit_code=255	capability readback only	not-an-accepted-model-surface	unsupported	log_sha256=dda369b9b1405b5fed7d27a372ab0b64151a1162d88a4362f17f260a4096a875
+iobinding-baseline-probe	B2	exit_code=255	capability readback only	not-an-accepted-model-surface	unsupported	log_sha256=c24ee1d6b2ae896efa975753187d3bddbd3ec1df0377c0272b86a0ff18534516
+iobinding-baseline-probe	C2	exit_code=255	capability readback only	not-an-accepted-model-surface	unsupported	log_sha256=c24ee1d6b2ae896efa975753187d3bddbd3ec1df0377c0272b86a0ff18534516
+iobinding-input-probe	B2	exit_code=0	capability readback only	not-an-accepted-model-surface	capability-only	log_sha256=3f9ce6cb654ea06edae03d17ef6c43d8c49c084b68b029abae0318c3c801221e
+iobinding-input-probe	C2	exit_code=0	capability readback only	not-an-accepted-model-surface	capability-only	log_sha256=a7720e9c1031b4200a5d70f9a7426a564dfaa8ee5bb2ba72fe9280ce8850b372
+ep-context-readback-probe	B2	exit_code=255	capability readback only	not-an-accepted-model-surface	unsupported	log_sha256=cde32b43c59dd9dcc42ae5d956e5a71850e01f965d045aa31de7f84cb645e0a9
+ep-context-readback-probe	C2	exit_code=255	capability readback only	not-an-accepted-model-surface	unsupported	log_sha256=276b79be6cf3ad89d1b9f6d00091e8a2e921329e956b5ec6fb95e4fd2e81b62d
+ep-device-list-probe	all	exit_code=0	capability readback only	not-an-accepted-model-surface	capability-only	log_sha256=3d6ceb368201ba3d0ad4b32058937533c66fef11d399974ffbe7b78699372e54
