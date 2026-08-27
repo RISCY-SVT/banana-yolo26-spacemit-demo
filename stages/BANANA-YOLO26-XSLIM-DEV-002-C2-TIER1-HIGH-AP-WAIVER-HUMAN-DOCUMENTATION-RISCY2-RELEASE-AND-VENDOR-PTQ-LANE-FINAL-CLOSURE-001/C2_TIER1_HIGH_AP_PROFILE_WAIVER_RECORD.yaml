@@ -1,0 +1,40 @@
+record_id: BANANA-YOLO26-C2-HIGH-AP-PROFILE-TIER1-WAIVER-001
+record_type: append-only-human-disposition
+historical_universal_gate:
+  status: fail
+  changed: false
+profiles:
+  B2:
+    disposition: universal-vendor-control-and-rollback
+    deployable_sha256: 0e7040d4e8b1b2d08a4e36cec4c99dcea6d52294e04901d17dfce10725c6d617
+    inference_sha256: 40ba6a7f9aebaa98a1c3abe5fce1f66f1bebcd0b10b7af3d26d30414a331d853
+  C2:
+    disposition: approved-frozen-higher-ap-application-research-profile
+    tier: TIER-1-waiver
+    deployable_sha256: e963be11c57c048f23caa34df1e2d140211632cc4dfd6b734b14909a30ea4b55
+    inference_sha256: 281f4acd1261e7ee2c38b6e3bdecbf61c3d91cf710c63e6bc6cdaf257a52669b
+common_tail_sha256: 18ffff41e6812fa781baf7b9c1fcd41b41d6118145d785c3e550499070a512a3
+board_ep_delta_c2_minus_b2:
+  map50_95: 0.012599140370
+  ap_large: 0.039947408575
+  ar_small: -0.003444784993
+  ar_large: -0.003078277927
+performance: equivalent-within-empirical-noise
+stability:
+  B2: 10000-run-pass
+  C2: 10000-run-pass
+operating_point_warning:
+  score: 0.25
+  iou: 0.50
+  max_dets: 100
+  c2_vs_b2: fewer-fp-more-fn
+  threshold_dependence: proven
+  required_action: select-and-validate-c2-specific-score-threshold
+not_authorized:
+  - universal-baseline-replacement
+  - runtime-default-promotion
+  - model-publication
+  - camera-claim
+  - model-mutation
+  - qparam-mutation
+  - new-quantization

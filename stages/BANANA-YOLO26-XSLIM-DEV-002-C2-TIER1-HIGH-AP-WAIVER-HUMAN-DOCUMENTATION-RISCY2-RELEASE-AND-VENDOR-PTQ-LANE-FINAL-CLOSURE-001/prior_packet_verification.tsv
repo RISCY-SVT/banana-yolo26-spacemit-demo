@@ -1,0 +1,5 @@
+packet	field	actual	expected	status
+Stage65E	tree_sha256	aa824e294bb4276a8655de5c0f8220e7900998f7044b4456ce5d1ba4e18641a5	aa824e294bb4276a8655de5c0f8220e7900998f7044b4456ce5d1ba4e18641a5	pass
+Stage65E	file_count	105	105	pass
+Stage65E	byte_count	9843288	9843288	pass
+Stage65E	symlink_count	0	0	pass

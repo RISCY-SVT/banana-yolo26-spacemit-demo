@@ -1,0 +1,20 @@
+tracked_stage:
+  path: /data/worktrees/banana-yolo26-xslim211-s8-qdq-validation/stages/BANANA-YOLO26-XSLIM-DEV-002-C2-TIER1-HIGH-AP-WAIVER-HUMAN-DOCUMENTATION-RISCY2-RELEASE-AND-VENDOR-PTQ-LANE-FINAL-CLOSURE-001
+raw_stage:
+  path: /data/k1x-stage-runs/BANANA-YOLO26-XSLIM-DEV-002-C2-TIER1-HIGH-AP-WAIVER-HUMAN-DOCUMENTATION-RISCY2-RELEASE-AND-VENDOR-PTQ-LANE-FINAL-CLOSURE-001
+shared_log:
+  path: /data/ncnn-logs/ai-team/2026-08-27/2026-08-27_10-39-26__contcodex__BANANA-YOLO26-XSLIM-DEV-002-C2-TIER1-HIGH-AP-WAIVER-HUMAN-DOCUMENTATION-RISCY2-RELEASE-AND-VENDOR-PTQ-LANE-FINAL-CLOSURE-001__dev002-release-closure
+stage65e_result_packet:
+  path: /exchange/results/outbox/BANANA-YOLO26-XSLIM-STAGE65E-FP32-OPERATING-POINT-LEDGER-B2-C2-UNCONDITIONAL-PERFORMANCE-STABILITY-AND-FUSION-FEASIBILITY-CLOSURE-001
+  tree_sha256: aa824e294bb4276a8655de5c0f8220e7900998f7044b4456ce5d1ba4e18641a5
+frozen_models:
+  role: identity-only; model bytes remain in accepted raw roots and are not exported
+release_assets:
+  role: generated only after quality gates; published to matching GitHub and GitLab releases
+excluded:
+  - models
+  - predictions
+  - datasets
+  - vendor runtimes
+  - credentials
+  - raw test caches

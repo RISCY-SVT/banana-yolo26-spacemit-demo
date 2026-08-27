@@ -1,0 +1,27 @@
+stage_id: BANANA-YOLO26-XSLIM-DEV-002-C2-TIER1-HIGH-AP-WAIVER-HUMAN-DOCUMENTATION-RISCY2-RELEASE-AND-VENDOR-PTQ-LANE-FINAL-CLOSURE-001
+execution_authority: direct-user-authorization
+execute_exactly_one_stage_then_stop: true
+host_only: true
+board_execution: forbidden
+model_generation: forbidden
+quantization_run: forbidden
+source_branches:
+  banana: yolo26-vendor-ort-xslim211-s8-qdq-validation
+  xslim: riscy/k1x-yolo26
+release:
+  version: 2.1.2+riscy.2
+  tag: v2.1.2-riscy.2
+  pypi: forbidden
+  github_actions_enable: forbidden
+roots:
+  banana: /data/worktrees/banana-yolo26-xslim211-s8-qdq-validation
+  xslim: /data/worktrees/riscy-xslim-k1x-yolo26
+  raw: /data/k1x-stage-runs/BANANA-YOLO26-XSLIM-DEV-002-C2-TIER1-HIGH-AP-WAIVER-HUMAN-DOCUMENTATION-RISCY2-RELEASE-AND-VENDOR-PTQ-LANE-FINAL-CLOSURE-001
+  result_packet: /exchange/results/outbox/BANANA-YOLO26-XSLIM-DEV-002-C2-TIER1-HIGH-AP-WAIVER-HUMAN-DOCUMENTATION-RISCY2-RELEASE-AND-VENDOR-PTQ-LANE-FINAL-CLOSURE-001
+immutable_inputs:
+  stage65e_packet_tree_sha256: aa824e294bb4276a8655de5c0f8220e7900998f7044b4456ce5d1ba4e18641a5
+  b2_deployable_sha256: 0e7040d4e8b1b2d08a4e36cec4c99dcea6d52294e04901d17dfce10725c6d617
+  b2_inference_sha256: 40ba6a7f9aebaa98a1c3abe5fce1f66f1bebcd0b10b7af3d26d30414a331d853
+  c2_deployable_sha256: e963be11c57c048f23caa34df1e2d140211632cc4dfd6b734b14909a30ea4b55
+  c2_inference_sha256: 281f4acd1261e7ee2c38b6e3bdecbf61c3d91cf710c63e6bc6cdaf257a52669b
+  common_tail_sha256: 18ffff41e6812fa781baf7b9c1fcd41b41d6118145d785c3e550499070a512a3
