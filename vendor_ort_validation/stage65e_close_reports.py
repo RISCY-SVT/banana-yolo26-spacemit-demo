@@ -39,6 +39,13 @@ def report_decision(path: Path) -> str:
     return "pass" if "Decision: `pass`" in text else "fail"
 
 
+def markdown_status(path: Path) -> str:
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if line.startswith("Status: `") and line.endswith("`."):
+            return line.removeprefix("Status: `").removesuffix("`.")
+    raise RuntimeError(f"missing status in {path}")
+
+
 def format_metric(value: str | float) -> str:
     return f"{float(value):.9f}"
 
@@ -153,6 +160,23 @@ def main() -> int:
     c2_soak = next(row for row in read_tsv(root / "c2_10k_soak.tsv") if row["metric"] == "two_stage")
     stable_hashes = read_tsv(root / "output_hash_stability.tsv")
     stable = all(row["status"] == "pass" for row in stable_hashes)
+    application_performance = {
+        (row["surface"], row["role"]): row
+        for row in read_tsv(root / "cross_surface_application_performance_table.tsv")
+    }
+    custom_pure = application_performance[("accepted-custom-engine", "custom-pure-executor")]
+    custom_total = application_performance[
+        ("accepted-custom-engine", "custom-total-model-to-1x300x6")
+    ]
+    optimization = read_tsv(root / "ort_optimization_matrix.tsv")
+    accepted_opt_levels = [
+        f"{row['model']}:{row['opt_level']}"
+        for row in optimization
+        if row["decision"] == "pass"
+    ]
+    offline_status = markdown_status(root / "offline_optimization_capability.md")
+    iobinding_status = markdown_status(root / "iobinding_capability.md")
+    ep_context_status = markdown_status(root / "ep_context_capability.md")
 
     main_report = f"""# Stage65E final report
 
@@ -192,15 +216,17 @@ Matched C2/B2 ratios are inference median `{float(inference_median['c2_b2_ratio'
 
 Two earlier incomplete harness roots are explicitly excluded: one exposed an orphaned watchdog-sleep design defect and one exposed a normal `/proc` process-exit sampling race. The clean accepted root was fresh, complete and independent; neither partial root contributes a timing row. No reboot is inferred from either root.
 
+The first read-only custom-context root is also excluded as a tooling-output collision: omitting `--output-json` caused the executor's `/dev/stdout` JSON writer to truncate the redirected benchmark stream. A clean v2 run separated JSON and produced the complete deterministic 5x100 timing grid; no model, package or executable bytes changed.
+
 Both models completed reversed-order short soaks and ten clean-session 1000-run segments. B2 10k two-stage median is `{float(b2_soak['p50_us']):.3f}` us; C2 is `{float(c2_soak['p50_us']):.3f}` us. Stability decision: `{stability}`; stable output/resource contract: `{'pass' if stable else 'fail'}`.
 
 ## Read-only application context
 
-The accepted custom package remains `0.10.0-internal-rd.1`, contract `K1X_INT8_V1`, with model SHA `30a94e4738606673b5e0a73499cbc977167f046f8fa8637d6040ce744f429c0c`. Same-boot timing is application-level context only because model lineage, export, quantization, runtime and output implementation differ. No rebuild or source mutation occurred.
+The accepted custom package remains `0.10.0-internal-rd.1`, contract `K1X_INT8_V1`, with model SHA `30a94e4738606673b5e0a73499cbc977167f046f8fa8637d6040ce744f429c0c`. Its fixed-input median is `{float(custom_pure['median_us']):.3f}` us for the custom pure executor and `{float(custom_total['median_us']):.3f}` us to `1x300x6`. Same-boot timing is application-level context only because model lineage, export, quantization, runtime, affinity and output implementation differ. No direct speedup ratio is claimed, and no rebuild or source mutation occurred.
 
 ## Fusion feasibility
 
-Stage65F opening condition: `{'met-but-not-authorized' if fusion_justified else 'not-met'}`. ORT optimization levels, offline optimization, I/O Binding, EPContext, shipped plugin APIs and XSlim YoloDecode were capability-probed without changing accepted artifacts. See `fusion_opportunity_ledger.tsv`; unsupported or unquantified paths are not promoted into performance claims.
+Stage65F opening condition: `{'met-but-not-authorized' if fusion_justified else 'not-met'}`. Exact accepted ORT-level rows are `{', '.join(accepted_opt_levels)}`; BASIC/EXTENDED/ALL changed six-boundary bytes and were rejected even where a point timing looked lower. Offline optimization is `{offline_status}`, I/O Binding is `{iobinding_status}`, and EPContext is `{ep_context_status}`. Shipped plugin APIs and XSlim YoloDecode were capability-audited without changing accepted artifacts. The measured tail share is an upper bound only; no exact-tail implementation gain was projected. See `fusion_opportunity_ledger.tsv`.
 
 ## Disposition
 
@@ -226,7 +252,9 @@ C2 остается лучшим зафиксированным INT8-вариа�
 
 Размещение B2 и C2 одинаковое: один SpaceMIT-раздел на 925 исходных узлов, неожиданного CPU fallback нет. Сопоставимый ABBA-тест дал отношение медиан C2/B2 `{float(inference_median['c2_b2_ratio']):.6f}` для inference и `{float(two_stage_median['c2_b2_ratio']):.6f}` для inference+tail. Решение по производительности: `{performance}`. Оба варианта прошли короткие взаимно переставленные прогоны и по 10 000 запусков в десяти чистых сессиях; решение по стабильности: `{stability}`.
 
-Сравнение с custom engine является только сравнением готовых приложений: модели, квантизация и backend различаются. Камера не использовалась. Возможности ORT/offline optimization/I/O Binding/EPContext/plugin/YoloDecode проверены только как feasibility; реализация и продвижение не выполнялись. Stage65F: `{'обоснован, но не разрешен' if fusion_justified else 'не обоснован текущими порогами'}`.
+Сравнение с custom engine является только сравнением готовых приложений: модели, квантизация, affinity и backend различаются. Его медиана составила `{float(custom_pure['median_us']):.3f}` мкс для pure executor и `{float(custom_total['median_us']):.3f}` мкс до `1x300x6`; прямой коэффициент ускорения не заявляется. Первый custom-context root исключен: без `--output-json` JSON и benchmark конфликтовали в stdout. Чистый v2 дал полную детерминированную сетку 5x100 без изменения package или executable.
+
+Камера не использовалась. Из уровней ORT точные boundary-выходы сохранил только DISABLE_ALL; BASIC/EXTENDED/ALL отклонены из-за численного drift. Offline optimization: `{offline_status}`, I/O Binding: `{iobinding_status}`, EPContext: `{ep_context_status}`. Реализация и продвижение не выполнялись. Stage65F: `{'обоснован, но не разрешен' if fusion_justified else 'не обоснован текущими порогами'}`.
 
 Весь подробный паспорт TP/FP/FN, latency, ресурсов и capability находится в TSV/MD этого Stage. Время: `{timestamp}`.
 """

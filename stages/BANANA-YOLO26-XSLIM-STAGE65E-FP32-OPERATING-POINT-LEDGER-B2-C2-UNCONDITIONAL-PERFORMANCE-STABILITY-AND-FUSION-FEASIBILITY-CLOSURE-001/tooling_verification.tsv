@@ -1,0 +1,8 @@
+check	scope	result	note
+python_compileall	all eight Stage65E Python modules	pass	quiet compile completed with exit code 0
+bash_n	all five Stage65E board shell modules	pass	syntax check completed with exit code 0
+ruff	Stage65E Python modules	unavailable-not-installed	recorded without modifying the immutable environment
+shellcheck	Stage65E shell modules	unavailable-not-installed	recorded without installing packages
+json_yaml_parse	all Stage65E JSON/YAML files	pass	2 structured files parsed with Python json/PyYAML
+git_diff_check	working tree	pass	no whitespace errors before closure commit
+raw_normalizers	accuracy/performance/stability/custom/fusion	pass	all accepted raw roots parsed with their fail-closed normalizers

@@ -117,13 +117,31 @@ def source_hygiene(stage_root: Path, source_files: list[Path]) -> tuple[bool, st
     diff_check = subprocess.run(
         ["git", "diff", "--check"], cwd=BANANA, capture_output=True, text=True, check=False
     )
-    passed = not forbidden and not large and not symlinks and not hardlinks and not secrets and diff_check.returncode == 0
+    verification_path = stage_root / "tooling_verification.tsv"
+    verification_rows: list[dict[str, str]] = []
+    if verification_path.is_file():
+        with verification_path.open(encoding="utf-8", newline="") as stream:
+            verification_rows = list(csv.DictReader(stream, delimiter="\t"))
+    allowed_verification_results = {"pass", "unavailable-not-installed"}
+    verification_pass = bool(verification_rows) and all(
+        row["result"] in allowed_verification_results for row in verification_rows
+    )
+    passed = (
+        not forbidden
+        and not large
+        and not symlinks
+        and not hardlinks
+        and not secrets
+        and diff_check.returncode == 0
+        and verification_pass
+    )
     report = (
         "# Source hygiene report\n\n"
         f"Status: `{'pass' if passed else 'fail'}`.\n\n"
         f"Scanned files: `{len(files)}`. Forbidden model/data/runtime payloads: `{len(forbidden)}`. "
         f"Files over 16 MiB: `{len(large)}`. Symlinks: `{len(symlinks)}`. Hard-linked files: `{len(hardlinks)}`. "
-        f"Secret-pattern hits: `{len(secrets)}`. `git diff --check`: `{'pass' if diff_check.returncode == 0 else 'fail'}`.\n\n"
+        f"Secret-pattern hits: `{len(secrets)}`. `git diff --check`: `{'pass' if diff_check.returncode == 0 else 'fail'}`. "
+        f"Compile/syntax/structured-data verification matrix: `{'pass' if verification_pass else 'fail'}`; Ruff and shellcheck are explicitly recorded as unavailable rather than installed into the immutable environment.\n\n"
         "Raw ONNX, predictions, images, samples, provider artifacts and large timing logs remain under the Stage raw root. No credential or authorization material is part of the tracked evidence.\n"
     )
     if not passed:
