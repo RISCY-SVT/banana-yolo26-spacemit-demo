@@ -1,0 +1,57 @@
+{
+  "scope": "source-bound-procedural-export-not-full-chat-export",
+  "complete_five_source_assimilation": false,
+  "private_root": "/home/svt/.local/state/k1x-maint001-backup/maint001-019f26cb/sanitized-handoff",
+  "preferred_synced_root_status": "not-created-mirror-filter-unverified",
+  "sources": [
+    {
+      "source": "codex-container",
+      "status": "partial",
+      "source_id": "019f26cb-2025-7642-b125-4b6f00b5ed67",
+      "first_covered_message": "current MAINT-001 user submission 2026-09-07T15:41:56.739Z",
+      "last_covered_message": "current MAINT-001 submission; derived execution receipts through closure",
+      "artifact_references": [
+        "authorization.json",
+        "OPERATOR_RUNBOOK_INDEX.md",
+        "SKILL_INVENTORY.tsv"
+      ],
+      "raw_chat_export": false
+    },
+    {
+      "source": "claude-chat",
+      "status": "missing",
+      "source_id": null,
+      "first_covered_message": null,
+      "last_covered_message": null,
+      "artifact_references": [],
+      "raw_chat_export": false
+    },
+    {
+      "source": "gpt-old",
+      "status": "missing",
+      "source_id": null,
+      "first_covered_message": null,
+      "last_covered_message": null,
+      "artifact_references": [],
+      "raw_chat_export": false
+    },
+    {
+      "source": "gpt-new",
+      "status": "missing",
+      "source_id": null,
+      "first_covered_message": null,
+      "last_covered_message": null,
+      "artifact_references": [],
+      "raw_chat_export": false
+    },
+    {
+      "source": "gpt-current",
+      "status": "missing",
+      "source_id": null,
+      "first_covered_message": null,
+      "last_covered_message": null,
+      "artifact_references": [],
+      "raw_chat_export": false
+    }
+  ]
+}

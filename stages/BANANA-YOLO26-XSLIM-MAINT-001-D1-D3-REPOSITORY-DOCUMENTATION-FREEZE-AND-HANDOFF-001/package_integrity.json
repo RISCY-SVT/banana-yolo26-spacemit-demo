@@ -1,0 +1,9 @@
+{
+  "spdx_version": "SPDX-2.3",
+  "sbom_files_verified": 227,
+  "scope": "source file checksums, not full REUSE conformance",
+  "archive_safety_inventory": "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-MAINT-001-D1-D3-REPOSITORY-DOCUMENTATION-FREEZE-AND-HANDOFF-001/archive-safety-inventory.json",
+  "archive_safety_inventory_sha256": "7b08f1027b91dea166c631185bed2b82a156e5ad35e748312f3ddeebea496bce",
+  "twine_check": "pass",
+  "license_notice_in_all_archives": true
+}

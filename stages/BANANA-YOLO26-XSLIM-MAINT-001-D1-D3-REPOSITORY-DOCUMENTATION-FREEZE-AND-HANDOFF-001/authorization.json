@@ -1,0 +1,15 @@
+{
+  "stage_id": "BANANA-YOLO26-XSLIM-MAINT-001-D1-D3-REPOSITORY-DOCUMENTATION-FREEZE-AND-HANDOFF-001",
+  "source": "actual-owner-submitted-user-message",
+  "thread_id": "019f26cb-2025-7642-b125-4b6f00b5ed67",
+  "source_record_line": 170298,
+  "submitted_at_utc": "2026-09-07T15:41:56.739Z",
+  "prompt_sha256": "b885e2fd5990cbabba909b37a0e50d39cdeaebcc85e7424b308902a1cb957f8c",
+  "prompt_bytes": 24326,
+  "remote_push": false,
+  "new_tag": false,
+  "new_release": false,
+  "actor": "codex",
+  "bridge_actor_label": "contcodex",
+  "bridge_actor_reason": "existing export helper only accepts its legacy transport label; no Council dependency"
+}

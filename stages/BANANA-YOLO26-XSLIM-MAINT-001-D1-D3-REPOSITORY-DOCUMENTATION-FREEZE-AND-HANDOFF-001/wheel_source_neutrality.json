@@ -1,0 +1,7 @@
+{
+  "python_modules_identical": 117,
+  "requires_dist_identical": true,
+  "requires_python": "<3.13,>=3.12.3",
+  "old_sha256": "442e190df3e6ab70daa01b9d3f3cbcedbb80ecd46c302ec491a3a6aec3b2d61b",
+  "new_sha256": "516ba0feda50c72e33c5632d38617bb5c3f5782e66f0d5732904e72aa1c8fe9b"
+}

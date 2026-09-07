@@ -1,0 +1,6 @@
+source	backup	sha256	verification
+/data/build_scripts/01-env.sh	/home/svt/.local/state/k1x-maint001-backup/maint001-019f26cb/sanitized-handoff/helpers/data/build_scripts/01-env.sh	e5bf62475c74779c4b303a03cd9521724dd1d19903e8a17cc1bb6d2f4dd3bced	copied-byte-identical-private-only
+/data/build_scripts/build-ncnn-bench.sh	/home/svt/.local/state/k1x-maint001-backup/maint001-019f26cb/sanitized-handoff/helpers/data/build_scripts/build-ncnn-bench.sh	c0eaa6ff075c924ffcfdb3fd61f954244d850a138f2a4e0c762ea879aced2bbd	copied-byte-identical-private-only
+/data/lab/scripts/export-result-packet.sh	/home/svt/.local/state/k1x-maint001-backup/maint001-019f26cb/sanitized-handoff/helpers/data/lab/scripts/export-result-packet.sh	e78c7de421c4d1096e7dab01d0679a680d99812be7096ba744e7c63d0a33a7df	copied-byte-identical-private-only
+/data/lab/scripts/scan-export-candidates.sh	/home/svt/.local/state/k1x-maint001-backup/maint001-019f26cb/sanitized-handoff/helpers/data/lab/scripts/scan-export-candidates.sh	ffa5799c952e5b67dfe37dbfc98d5cdbe283fb8b19854c67358fb2a73ad0f713	copied-byte-identical-private-only
+/data/ncnn git diff --binary HEAD	/home/svt/.local/state/k1x-maint001-backup/maint001-019f26cb/ncnn-accepted-dirty.diff	2bf1cc38885018a02478aa7542581639786c79bca5ce11a6e827d24bcc5f4eca	accepted-three-path-baseline-not-modified

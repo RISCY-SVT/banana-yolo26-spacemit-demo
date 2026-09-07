@@ -1,0 +1,23 @@
+{
+  "source_commit": "f5007ceb086d91cc06da0b19bfbc2ce90908fdd5",
+  "source_tree": "9903811c33f447974a2d31ce1a16dbbdfc130353",
+  "epoch": "1788797074",
+  "argv": [
+    "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-MAINT-001-D1-D3-REPOSITORY-DOCUMENTATION-FREEZE-AND-HANDOFF-001/qa-venv/bin/python",
+    "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-MAINT-001-D1-D3-REPOSITORY-DOCUMENTATION-FREEZE-AND-HANDOFF-001/build-1/source/tools/release/build_release.py",
+    "--source",
+    "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-MAINT-001-D1-D3-REPOSITORY-DOCUMENTATION-FREEZE-AND-HANDOFF-001/build-1/source",
+    "--output",
+    "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-MAINT-001-D1-D3-REPOSITORY-DOCUMENTATION-FREEZE-AND-HANDOFF-001/build-1/assets",
+    "--source-commit",
+    "f5007ceb086d91cc06da0b19bfbc2ce90908fdd5",
+    "--source-tree",
+    "9903811c33f447974a2d31ce1a16dbbdfc130353",
+    "--source-date-epoch",
+    "1788797074",
+    "--raw-package-dir",
+    "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-MAINT-001-D1-D3-REPOSITORY-DOCUMENTATION-FREEZE-AND-HANDOFF-001/build-1/native-backend-bytes",
+    "--python",
+    "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-MAINT-001-D1-D3-REPOSITORY-DOCUMENTATION-FREEZE-AND-HANDOFF-001/qa-venv/bin/python"
+  ]
+}

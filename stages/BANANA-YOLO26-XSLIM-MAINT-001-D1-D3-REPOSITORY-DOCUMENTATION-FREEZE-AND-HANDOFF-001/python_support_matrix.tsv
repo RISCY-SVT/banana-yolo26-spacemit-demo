@@ -1,0 +1,8 @@
+version	platform	metadata	execution	certification
+3.12.3	Ubuntu 24.04 Linux x86_64 glibc 2.39	supported	fresh-wheel-and-sdist; offline-preseeded-exact-accepted-closure	tested
+other 3.12 patches >=3.12.3	not independently tested	accepted by bounded field	not-run	not individually certified
+3.9.23	pip --python-version cross-target on Linux; not a real interpreter install	rejected	bounded-resolver-rejection	unsupported
+3.11.13	pip --python-version cross-target on Linux; not a real interpreter install	rejected	bounded-resolver-rejection	unsupported
+3.12.2	pip --python-version cross-target on Linux; not a real interpreter install	rejected	bounded-resolver-rejection	unsupported
+3.13.0	pip --python-version cross-target on Linux; not a real interpreter install	rejected	bounded-resolver-rejection	unsupported
+3.10 and future >=3.13	not-tested	rejected	metadata-and-unit-test-only	unsupported

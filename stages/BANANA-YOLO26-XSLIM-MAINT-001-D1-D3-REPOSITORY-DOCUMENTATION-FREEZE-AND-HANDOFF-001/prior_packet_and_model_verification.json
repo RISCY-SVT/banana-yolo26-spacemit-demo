@@ -1,0 +1,123 @@
+{
+  "helper": "/data/worktrees/banana-yolo26-xslim211-s8-qdq-validation/vendor_ort_validation/stage65e_preflight.py",
+  "helper_sha256": "870f3f3193050fd7a42c457f4fe56be4d9019b115db2e98216d0175c4e884c26",
+  "rows": [
+    {
+      "kind": "packet",
+      "path": "/exchange/results/outbox/BANANA-YOLO26-XSLIM-DEV-002-C2-TIER1-HIGH-AP-WAIVER-HUMAN-DOCUMENTATION-RISCY2-RELEASE-AND-VENDOR-PTQ-LANE-FINAL-CLOSURE-001",
+      "actual": [
+        "64617f46bc16fe608cd332202b732d4925b4750cb24ec8db53920a9053b6a544",
+        61,
+        61422
+      ],
+      "expected": [
+        "64617f46bc16fe608cd332202b732d4925b4750cb24ec8db53920a9053b6a544",
+        61,
+        61422
+      ],
+      "pass": true
+    },
+    {
+      "kind": "packet",
+      "path": "/exchange/results/outbox/BANANA-YOLO26-XSLIM-STAGE65E-FP32-OPERATING-POINT-LEDGER-B2-C2-UNCONDITIONAL-PERFORMANCE-STABILITY-AND-FUSION-FEASIBILITY-CLOSURE-001",
+      "actual": [
+        "aa824e294bb4276a8655de5c0f8220e7900998f7044b4456ce5d1ba4e18641a5",
+        105,
+        9843288
+      ],
+      "expected": [
+        "aa824e294bb4276a8655de5c0f8220e7900998f7044b4456ce5d1ba4e18641a5",
+        105,
+        9843288
+      ],
+      "pass": true
+    },
+    {
+      "kind": "B2-deployable",
+      "path": "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65B-R1-COCO-TRAIN2017-EVALUATION-DISJOINT-CORPUS-PTQ-GRAPHWISE-AND-PYRAMID-CAUSAL-LOCALIZATION-001/quantization/B2/run1/output/stage65b_r1_b2_split_s8_qdq.onnx",
+      "bytes": 2939171,
+      "sha256": "0e7040d4e8b1b2d08a4e36cec4c99dcea6d52294e04901d17dfce10725c6d617",
+      "expected": "0e7040d4e8b1b2d08a4e36cec4c99dcea6d52294e04901d17dfce10725c6d617",
+      "pass": true
+    },
+    {
+      "kind": "B2-inference",
+      "path": "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65B-R1-COCO-TRAIN2017-EVALUATION-DISJOINT-CORPUS-PTQ-GRAPHWISE-AND-PYRAMID-CAUSAL-LOCALIZATION-001/postprocess/B2/candidate-gate/B2/models/stage65b_r1_b2.inference.onnx",
+      "bytes": 2762851,
+      "sha256": "40ba6a7f9aebaa98a1c3abe5fce1f66f1bebcd0b10b7af3d26d30414a331d853",
+      "expected": "40ba6a7f9aebaa98a1c3abe5fce1f66f1bebcd0b10b7af3d26d30414a331d853",
+      "pass": true
+    },
+    {
+      "kind": "A1-deployable",
+      "path": "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-DEV-001A-SPACEMIT-S8-QDQ-CONSTRAINED-RANGE-OBSERVER-TERMINAL-DOMAIN-AND-POLICY-A-HOST-CANDIDATE-GATE-001/candidates/quantization/A1/run1/output/xslim_dev_001a_a1_split_s8_qdq.onnx",
+      "bytes": 2939171,
+      "sha256": "8fad9fa0e385f58da281d963c5e18b010c80c402dcbeed0b46e3ca3065d010f3",
+      "expected": "8fad9fa0e385f58da281d963c5e18b010c80c402dcbeed0b46e3ca3065d010f3",
+      "pass": true
+    },
+    {
+      "kind": "A1-inference",
+      "path": "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-DEV-001A-SPACEMIT-S8-QDQ-CONSTRAINED-RANGE-OBSERVER-TERMINAL-DOMAIN-AND-POLICY-A-HOST-CANDIDATE-GATE-001/candidates/postprocess/A1/models/stage65b_r1_a1.inference.onnx",
+      "bytes": 2762851,
+      "sha256": "f7c5345f68cf79a5c3748274239a14cdaa59f77eac0425f7771694febaa24632",
+      "expected": "f7c5345f68cf79a5c3748274239a14cdaa59f77eac0425f7771694febaa24632",
+      "pass": true
+    },
+    {
+      "kind": "C2-deployable",
+      "path": "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-DEV-001B-ALL-S8-GENERIC-HARDENING-ADAPTIVE-ROUNDING-BLOCK-RECONSTRUCTION-AND-DETECTOR-PARETO-HOST-GATE-001/candidates/run1/C2_T6_RANK_QP/c2_t6_rank_qp.deployable.onnx",
+      "bytes": 2939171,
+      "sha256": "e963be11c57c048f23caa34df1e2d140211632cc4dfd6b734b14909a30ea4b55",
+      "expected": "e963be11c57c048f23caa34df1e2d140211632cc4dfd6b734b14909a30ea4b55",
+      "pass": true
+    },
+    {
+      "kind": "C2-inference",
+      "path": "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-DEV-001B-ALL-S8-GENERIC-HARDENING-ADAPTIVE-ROUNDING-BLOCK-RECONSTRUCTION-AND-DETECTOR-PARETO-HOST-GATE-001/candidates/run1/C2_T6_RANK_QP/c2_t6_rank_qp.inference.onnx",
+      "bytes": 2762851,
+      "sha256": "281f4acd1261e7ee2c38b6e3bdecbf61c3d91cf710c63e6bc6cdaf257a52669b",
+      "expected": "281f4acd1261e7ee2c38b6e3bdecbf61c3d91cf710c63e6bc6cdaf257a52669b",
+      "pass": true
+    },
+    {
+      "kind": "common-tail",
+      "path": "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-STAGE65B-R1-COCO-TRAIN2017-EVALUATION-DISJOINT-CORPUS-PTQ-GRAPHWISE-AND-PYRAMID-CAUSAL-LOCALIZATION-001/postprocess/B2/candidate-gate/B2/models/stage65b_r1_b2.postprocess.onnx",
+      "bytes": 176243,
+      "sha256": "18ffff41e6812fa781baf7b9c1fcd41b41d6118145d785c3e550499070a512a3",
+      "expected": "18ffff41e6812fa781baf7b9c1fcd41b41d6118145d785c3e550499070a512a3",
+      "pass": true
+    },
+    {
+      "kind": "FP32-inference",
+      "path": "/data/k1x-stage-runs/BANANA-YOLO26-VENDOR-ORT-STAGE64-XSLIM211-AND-VENDOR-COMMIT-S8-QDQ-YOLO26-FULLMODEL-COCO-AND-RT206-GATE-001/models/fp32-split/yolo26n_640_e2e_fp32.inference.onnx",
+      "bytes": 9740610,
+      "sha256": "72eb6136b41104753c53b8e13aeff50e7961c4cefba79e50b70894cbd169f8d8",
+      "expected": "72eb6136b41104753c53b8e13aeff50e7961c4cefba79e50b70894cbd169f8d8",
+      "pass": true
+    },
+    {
+      "kind": "published-asset",
+      "name": "xslim-2.1.2+riscy.2-py3-none-any.whl",
+      "matches": [
+        "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-DEV-002-C2-TIER1-HIGH-AP-WAIVER-HUMAN-DOCUMENTATION-RISCY2-RELEASE-AND-VENDOR-PTQ-LANE-FINAL-CLOSURE-001/final-release/build-3/assets/xslim-2.1.2+riscy.2-py3-none-any.whl",
+        "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-DEV-002-C2-TIER1-HIGH-AP-WAIVER-HUMAN-DOCUMENTATION-RISCY2-RELEASE-AND-VENDOR-PTQ-LANE-FINAL-CLOSURE-001/final-release/build-4/assets/xslim-2.1.2+riscy.2-py3-none-any.whl",
+        "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-DEV-002-C2-TIER1-HIGH-AP-WAIVER-HUMAN-DOCUMENTATION-RISCY2-RELEASE-AND-VENDOR-PTQ-LANE-FINAL-CLOSURE-001/release-assets/xslim-2.1.2+riscy.2-py3-none-any.whl"
+      ],
+      "expected": "442e190df3e6ab70daa01b9d3f3cbcedbb80ecd46c302ec491a3a6aec3b2d61b",
+      "pass": true
+    },
+    {
+      "kind": "published-asset",
+      "name": "xslim-2.1.2+riscy.2-source.tar.gz",
+      "matches": [
+        "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-DEV-002-C2-TIER1-HIGH-AP-WAIVER-HUMAN-DOCUMENTATION-RISCY2-RELEASE-AND-VENDOR-PTQ-LANE-FINAL-CLOSURE-001/final-release/build-3/assets/xslim-2.1.2+riscy.2-source.tar.gz",
+        "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-DEV-002-C2-TIER1-HIGH-AP-WAIVER-HUMAN-DOCUMENTATION-RISCY2-RELEASE-AND-VENDOR-PTQ-LANE-FINAL-CLOSURE-001/final-release/build-4/assets/xslim-2.1.2+riscy.2-source.tar.gz",
+        "/data/k1x-stage-runs/BANANA-YOLO26-XSLIM-DEV-002-C2-TIER1-HIGH-AP-WAIVER-HUMAN-DOCUMENTATION-RISCY2-RELEASE-AND-VENDOR-PTQ-LANE-FINAL-CLOSURE-001/release-assets/xslim-2.1.2+riscy.2-source.tar.gz"
+      ],
+      "expected": "d7b00a0bfbbf9ec4f695ba9c61994105cd9c46ec4de541775266d2679ead8809",
+      "pass": true
+    }
+  ],
+  "pass": true
+}
