@@ -2,10 +2,12 @@
 
 ## XSlim Vendor Chapter Status
 
-The vendor research chapter is locally frozen after documentation/metadata
-maintenance. See the [MAINT-001 closure](stages/BANANA-YOLO26-XSLIM-MAINT-001-D1-D3-REPOSITORY-DOCUMENTATION-FREEZE-AND-HANDOFF-001/CHAPTER_CLOSURE_RU.md)
+The vendor research chapter is frozen after documentation/metadata maintenance.
+See the [source-publication addendum](stages/BANANA-YOLO26-XSLIM-MAINT-001-PUB-DUAL-REMOTE-BRANCH-PARITY-RESTORE-CHECK-AND-FINAL-CLOSURE-001/publication_status_addendum.md),
+the historical [MAINT-001 closure](stages/BANANA-YOLO26-XSLIM-MAINT-001-D1-D3-REPOSITORY-DOCUMENTATION-FREEZE-AND-HANDOFF-001/CHAPTER_CLOSURE_RU.md)
 and [operator summary](stages/BANANA-YOLO26-XSLIM-MAINT-001-D1-D3-REPOSITORY-DOCUMENTATION-FREEZE-AND-HANDOFF-001/MAINT001_OPERATOR_SUMMARY_EN.md).
-XSlim `2.1.2+riscy.2.1` is local-only, not a published release. B2 remains the
+XSlim `2.1.2+riscy.2.1` source-branch publication does not publish its local
+candidate packages or create a maintenance release. B2 remains the
 universal vendor control; C2 retains its existing separate TIER-1 higher-AP
 waiver and historical universal FAIL. This does not change the custom executor,
 runtime defaults, frozen models, or authorize a new campaign.
